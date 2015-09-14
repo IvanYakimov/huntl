@@ -1,0 +1,2 @@
+echo clean
+rm -rv docs/*
