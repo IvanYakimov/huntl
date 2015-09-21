@@ -6,7 +6,7 @@
 
 namespace solver
 {
-  class Z3Expr : IExpr
+  class Z3Expr : public IExpr
   {
     
   };
