@@ -1,6 +1,6 @@
 # include "iexpr.hpp"
 
-namespace Solver
+namespace solver
 {
   /**
  * Interface for an abstract incremental solver.

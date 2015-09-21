@@ -1,6 +1,10 @@
+// internals
 # include "iexpr.hpp"
 
-namespace Solver
+// std
+# include <memory>
+
+namespace solver
 {
   /**
    * Interface for an expression factory.
@@ -18,6 +22,18 @@ namespace Solver
      */
     virtual std::unique_ptr <IExpr> Not
     (const IExpr& a) = 0;
+
+    /**
+     * Create new expression representing "a and b" operation.
+     */
+    virtual std::unique_ptr <IExpr> And
+    (const IExpr& a, const IExpr& b);
+
+    /**
+     * Create new expression representing "a or b" expression
+     */
+    virtual std::unique_ptr <IExpr> Or
+    (const IExpr &a, const IExpr& b);
 
     /**
      * Create new expression representing "a + b" operation.
