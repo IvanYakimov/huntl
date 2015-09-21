@@ -1,20 +1,23 @@
 src = ../src
+test = ../test
 z3-src = $(src)/solver/z3-binding
-compile = clang -std=c++14
+z3-test = $(test)/solver/z3-binding
+compile = clang -std=c++14 -c
 
-target: solver expr expr-factory
-solver: z3-solver.o
-expr-factory: z3-expr-factory.o
-expr: z3-expr.o
+# solver infrastructure
 
 # z3 support
 z3-expr.o: $(z3-src)/z3-expr.hpp $(z3-src)/z3-expr.cpp
-	$(compile) -c $(z3-src)/z3-expr.cpp
+	$(compile) $(z3-src)/z3-expr.cpp
 
 z3-expr-factory.o: $(z3-src)/z3-expr-factory.hpp \
 	$(z3-src)/z3-expr-factory.hpp
-	$(compile) -c $(z3-src)/z3-expr-factory.cpp
+	$(compile) $(z3-src)/z3-expr-factory.cpp
 
+z3-op-test: $(z3-test)/z3-op-test.hpp $(z3-test)/z3-op-test.cpp
+	$(compile) $(z3-test)/z3-op-test.cpp
+
+# phony
 clean:
 	rm -fv *.o
 	rm -fv $(z3-src)/*~
