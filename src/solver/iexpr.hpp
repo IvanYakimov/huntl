@@ -1,8 +1,10 @@
+// std
+# include <memory>
+
 namespace solver
 {
   class IExpr
   {
-    virtual IExpr & operator= (const IExpr& obj) = 0;
-    
+    virtual std::unique_ptr <void> Get () = 0;
   };
 }

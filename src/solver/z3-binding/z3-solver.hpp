@@ -11,11 +11,16 @@ namespace solver
 {
   class Z3Solver : public ISolver
   {
+  public:
     Z3Solver ();
     ~Z3Solver ();
+    
+    virtual void AssertExpr (const IExpr& expr) = 0;
+    virtual void Push () = 0;
+    virtual void Pop () = 0;
 
   private:
-    std::shared_ptr <z3::context> z3_context_;
-    std::unique_ptr <z3::solver> z3_solver_;
+    std::shared_ptr <z3::context> context_;
+    std::unique_ptr <z3::solver> solver_;
   };
 }
