@@ -9,6 +9,9 @@ compile = clang -std=c++14 -c
 # solver infrastructure
 
 # z3 support
+z3-solver.o: $(z3-src)/z3-solver.hpp $(z3-src)/z3-solver.cpp
+	$(compile) $(z3-src)/z3-solver.cpp
+
 z3-expr.o: $(z3-src)/z3-expr.hpp $(z3-src)/z3-expr.cpp
 	$(compile) $(z3-src)/z3-expr.cpp
 
