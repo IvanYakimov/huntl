@@ -1,4 +1,8 @@
+# ifndef __BITVECTOR_EXPR_HPP__
+# define __BITVECTOR_EXPR_HPP__
+
 # include "expr.hpp"
+# include "expr-factory.hpp"
 
 namespace solver
 {
@@ -13,32 +17,34 @@ namespace solver
   class BitvectorNeg : public UnaryExpr
   {
   protected:
-    BitvectorNeg (SharedExprPtr expr)
-      : UnaryExpr (expr) {}
+    BitvectorNeg (SharedExprPtr a)
+      : UnaryExpr (a) {}
     friend ExprFactory;
   };
-  
+    
   class BitvectorMult : public BinaryExpr
   {
   protected:
-    BitvectorMult (SharedExprPtr expr)
-      : BinaryExpr (expr) {}
+    BitvectorMult (SharedExprPtr a, SharedExprPtr b)
+      : BinaryExpr (a, b) {}
     friend ExprFactory;
   };
   
   class BitvectorAdd : public BinaryExpr
   {
   protected:
-    BitvectorMult (SharedExprPtr expr)
-      : BinaryExpr (expr) {}
+    BitvectorAdd (SharedExprPtr a, SharedExprPtr b)
+      : BinaryExpr (a, b) {}
     friend ExprFactory;
   };
     
   class BitvectorSub : public BinaryExpr
   {
   protected:
-    BitvectorSub (SharedExprPtr expr)
-      : BinaryExpr (expr) {}
+    BitvectorSub (SharedExprPtr a, SharedExprPtr b)
+      : BinaryExpr (a, b) {}
     friend ExprFactory;
   };
 }
+
+# endif /* __BITVECTOR_EXPR_HPP__ */
