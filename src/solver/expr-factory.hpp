@@ -5,12 +5,15 @@
 # include "bitvector-expr.hpp"
 
 # include <memory>
+# include <string>
 
 namespace solver
 {
   class ExprFactory
   {
-    SharedExprPtr ProduceBitvectorConst ();
+template <size_t N>
+SharedExprPtr ProduceBitvectorConst (unsigned long long val);
+    SharedExprPtr ProduceBitvectorVariable (std::string name);
     SharedExprPtr ProduceBitvectorNeg (SharedExprPtr a);
     SharedExprPtr ProduceBitvectorMult (SharedExprPtr a, SharedExprPtr b);
     SharedExprPtr ProduceBitvectorAdd (SharedExprPtr a, SharedExprPtr b);

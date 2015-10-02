@@ -2,9 +2,15 @@
 
 namespace solver
 {
-  SharedExprPtr ExprFactory :: ProduceBitvectorConst ()
+  template <size_t N>
+  SharedExprPtr ExprFactory :: ProduceBitvectorConst (unsigned long long val)
   {
-    return std::make_shared <BitvectorConst> ();
+    return std::make_shared <BitvectorConst<N>> (val);
+  }
+
+  SharedExprPtr ExprFactory :: ProduceBitvectorVariable (std::string name)
+  {
+    return std::make_shared <BitvectorVariable> (name);
   }
 
   SharedExprPtr ExprFactory :: ProduceBitvectorNeg (SharedExprPtr a)

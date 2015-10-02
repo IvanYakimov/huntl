@@ -1,11 +1,11 @@
 # ifndef __EXPR_HPP__
 # define __EXPR_HPP__
 
-
 //TODO: documentation
 //TODO: testing
 # include <memory>
 # include <list>
+# include <string>
 
 namespace solver
 {
@@ -19,13 +19,24 @@ namespace solver
 
   class ConstExpr : public Expr
   {
+  };
 
+  class VariableExpr : public Expr
+  {
+  public:
+    VariableExpr (std::string name)
+    {
+      name_ = name;
+    }
+    
+    std::string name () { return name_; }
+    
+  private:
+    std::string name_;
   };
 
   class UnaryExpr : public Expr
   {
-  private:
-    SharedExprPtr child_;
   public:
     UnaryExpr (SharedExprPtr child)
     {
@@ -33,13 +44,13 @@ namespace solver
     }
 
     SharedExprPtr first () { return child_; }
+
+  private:
+    SharedExprPtr child_;
   };
 
   class BinaryExpr : public Expr
   {
-  private:
-    SharedExprPtr left_child_;
-    SharedExprPtr right_child_;
   public:
     BinaryExpr (SharedExprPtr left_child,
 		SharedExprPtr right_child)
@@ -50,6 +61,10 @@ namespace solver
 
     SharedExprPtr left_child	() { return left_child_; }
     SharedExprPtr right_child	() { return right_child_; }
+
+  private:
+    SharedExprPtr left_child_;
+    SharedExprPtr right_child_;
   };
 }
 
