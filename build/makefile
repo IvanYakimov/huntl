@@ -6,10 +6,14 @@ CXX = g++ -fdiagnostics-color=auto
 CXXFLAGS = -std=c++14 -c
 # LDFLAGS =
 
-expr: $(solver)/expr.hpp $(solver)/expr.cpp
+expr.o: $(solver)/expr.hpp $(solver)/expr.cpp
 	$(CXX) $(CXXFLAGS) $(solver)/expr.cpp
 
-expr-factory: $(solver)/expr-factory.hpp $(solver)/expr-factory.cpp \
+bitvector-expr.o: $(solver)/bitvector-expr.hpp $(solver)/bitvector-expr.cpp \
+	$(solver)/expr.hpp $(solver)/expr-factory.hpp
+	$(CXX) $(CXXFLAGS) $(solver)/bitvector-expr.cpp
+
+expr-factory.o: $(solver)/expr-factory.hpp $(solver)/expr-factory.cpp \
 	$(solver)/expr.hpp
 	$(CXX) $(CXXFLAGS) $(solver)/expr-factory.cpp
 

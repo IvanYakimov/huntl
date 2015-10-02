@@ -8,42 +8,37 @@ namespace solver
 {
   class BitvectorConst : public ConstExpr
   {
-  protected:
+  public:
     BitvectorConst ()
-      : ConstExpr () {};
-    friend ExprFactory;
+      : ConstExpr () {}
   };
     
   class BitvectorNeg : public UnaryExpr
   {
-  protected:
+  public:
     BitvectorNeg (SharedExprPtr a)
       : UnaryExpr (a) {}
-    friend ExprFactory;
   };
     
   class BitvectorMult : public BinaryExpr
   {
-  protected:
+  public:
     BitvectorMult (SharedExprPtr a, SharedExprPtr b)
       : BinaryExpr (a, b) {}
-    friend ExprFactory;
   };
   
   class BitvectorAdd : public BinaryExpr
   {
-  protected:
+  public:
     BitvectorAdd (SharedExprPtr a, SharedExprPtr b)
       : BinaryExpr (a, b) {}
-    friend ExprFactory;
   };
     
   class BitvectorSub : public BinaryExpr
   {
-  protected:
+  public:
     BitvectorSub (SharedExprPtr a, SharedExprPtr b)
       : BinaryExpr (a, b) {}
-    friend ExprFactory;
   };
 }
 

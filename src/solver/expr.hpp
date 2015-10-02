@@ -1,3 +1,7 @@
+# ifndef __EXPR_HPP__
+# define __EXPR_HPP__
+
+
 //TODO: documentation
 //TODO: testing
 # include <memory>
@@ -7,28 +11,27 @@ namespace solver
 {
   class Expr
   {
-  protected:
-    virtual ~Expr () = 0;
   public:
+    virtual ~Expr () = 0;
   };
   
   typedef std::shared_ptr <Expr> SharedExprPtr;
 
   class ConstExpr : public Expr
   {
-  protected:
+
   };
 
   class UnaryExpr : public Expr
   {
   private:
     SharedExprPtr child_;
-  protected:
+  public:
     UnaryExpr (SharedExprPtr child)
     {
       child_ = child;
     }
-  public:
+
     SharedExprPtr first () { return child_; }
   };
 
@@ -37,7 +40,7 @@ namespace solver
   private:
     SharedExprPtr left_child_;
     SharedExprPtr right_child_;
-  protected:
+  public:
     BinaryExpr (SharedExprPtr left_child,
 		SharedExprPtr right_child)
     {
@@ -47,7 +50,7 @@ namespace solver
 
     SharedExprPtr left_child	() { return left_child_; }
     SharedExprPtr right_child	() { return right_child_; }
-  public:
   };
 }
 
+# endif /* __EXPR_HPP__ */
