@@ -1,6 +1,8 @@
 // CppUnit
 # include <cppunit/extensions/HelperMacros.h>
 # include <cppunit/TestFixture.h>
+#include <cppunit/extensions/TestFactoryRegistry.h>
+#include <cppunit/ui/text/TestRunner.h>
 
 # include "src/solver/expr.hpp"
 # include "src/solver/expr-factory.hpp"
@@ -8,7 +10,12 @@
 
 int main ()
 {
-  
+  CppUnit::TextUi::TestRunner runner;
+  CppUnit::TestFactoryRegistry &registry
+    = CppUnit::TestFactoryRegistry::getRegistry();
+  runner.addTest( registry.makeTest() );
+  bool wasSucessful = runner.run( "", false );
+  return wasSucessful;
 }
 
 class BitvectorTest : public CppUnit::TestFixture
@@ -29,5 +36,8 @@ public:
   
   void testConst ()
   {
+    CPPUNIT_ASSERT (false);
   }
 };
+
+CPPUNIT_TEST_SUITE_REGISTRATION (BitvectorTest);
