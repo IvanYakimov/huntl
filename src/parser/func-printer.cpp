@@ -40,6 +40,7 @@ bool FuncPrinter::runOnFunction (Function &F)
   while (!WorkList.empty ())
     {
       // todo: apply Instruction Visitors http://llvm.org/doxygen/InstVisitor_8h-source.html
+      // or just get operands http://stackoverflow.com/questions/8651829/getting-the-operands-in-an-llvm-instruction
       Instruction *I = *WorkList.begin ();
       WorkList.erase (WorkList.begin ());
       errs ().write_escaped (I->getOpcodeName ()) << "\n";
