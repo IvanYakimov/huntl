@@ -13,7 +13,7 @@ clean:
 	rm -vf *~ *.o *.out *.so
 
 run:
-	opt -load=./func-printer.so -FuncPrinter test.ll > /dev/nullg
+	opt -load=./func-printer.so -FuncPrinter test.ll > /dev/null
 
 debug:
 	gdb opt

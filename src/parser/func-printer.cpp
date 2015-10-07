@@ -4,6 +4,7 @@
 # include "llvm/IR/Function.h"
 # include "llvm/IR/Instruction.h"
 # include "llvm/IR/InstIterator.h"
+# include "llvm/IR/InstVisitor.h"
 # include "llvm/Support/raw_ostream.h"
 
 # include <set>
@@ -25,6 +26,16 @@ static RegisterPass <FuncPrinter> X("FuncPrinter", "Func Printer Pass",
 				    false /* Only looks at CFG */,
 				    false /* Analysis Pass */);
 
+
+struct CountReturnVisitor : public InstVisitor <CountReturnVisitor>
+{
+  CountReturnVisitor () {}
+  void visitReturnInst (ReturnInst &I)
+  {
+    errs () << "return instruction\n";
+  }
+};
+
 /// Print function
 bool FuncPrinter::runOnFunction (Function &F)
 {
@@ -32,7 +43,10 @@ bool FuncPrinter::runOnFunction (Function &F)
   errs () << "func: ";
   errs ().write_escaped (F.getName ()) << "\n";
 
-  // Init instruction list
+  // Initialize instruction list
+  // TODO:
+  // * replace std::set by (std::list or std::vector, or another similar container)
+  // * replace raw pointer by smart pointer
   std::set <Instruction*> WorkList;
   for (inst_iterator i = inst_begin (F), e = inst_end (F); i != e; i++)
     WorkList.insert (&*i);
@@ -46,6 +60,10 @@ bool FuncPrinter::runOnFunction (Function &F)
       errs ().write_escaped (I->getOpcodeName ()) << "\n";
     }
 
+  // Visit return instructions
+  CountReturnVisitor ret_visitor;
+  ret_visitor.visit (F);
+    
   // No transformations.
   return false;
 }
