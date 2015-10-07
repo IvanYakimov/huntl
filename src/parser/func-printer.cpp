@@ -26,8 +26,7 @@ static RegisterPass <FuncPrinter> X("FuncPrinter", "Func Printer Pass",
 				    false /* Only looks at CFG */,
 				    false /* Analysis Pass */);
 
-// TODO: check visiting order
-// does it use depth-first search? :
+// TODO: check traversing order
 // http://stackoverflow.com/questions/32853884/how-does-the-llvm-instvisitor-traverse-ir
 struct Interpreter : public InstVisitor <Interpreter>
 {
@@ -35,32 +34,32 @@ struct Interpreter : public InstVisitor <Interpreter>
 
   // --------------------------------------------------
   // Specific Instruction type classes
-  void visitReturnInst (ReturnInst &inst)
+  void visitReturnInst (const ReturnInst &inst)
   {
     errs () << "return inst\n";
   }
 
-  void visitBranchInst (BranchInst &inst)
+  void visitBranchInst (const BranchInst &inst)
   {
     errs () << "branch inst\n";
   }
 
-  void visitICmpInst (ICmpInst &inst)
+  void visitICmpInst (const ICmpInst &inst)
   {
     errs () << "icmp inst\n";
   }
   
-  void visitAllocaInst (AllocaInst &inst)
+  void visitAllocaInst (const AllocaInst &inst)
   {
     errs () << "alloca inst\n";
   }
 
-  void visitLoadInst (LoadInst &inst)
+  void visitLoadInst (const LoadInst &inst)
   {
     errs () << "load inst\n";
   }
 
-  void visitStoreInst (StoreInst &inst)
+  void visitStoreInst (const StoreInst &inst)
   {
     errs () << "store inst\n";
   }
