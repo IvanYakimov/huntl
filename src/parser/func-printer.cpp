@@ -36,45 +36,49 @@ struct Interpreter : public InstVisitor <Interpreter>
   // Specific Instruction type classes
   void visitReturnInst (const ReturnInst &inst)
   {
-    errs () << "return inst\n";
+    errs () << "ret";
+    errs () << "\n";
   }
 
   void visitBranchInst (const BranchInst &inst)
   {
-    errs () << "branch inst\n";
+    errs () << "br";
+    errs () << "\n";
   }
 
   void visitICmpInst (const ICmpInst &inst)
   {
-    errs () << "icmp inst\n";
+    errs () << "icmp";
+    errs () << "\n";
   }
   
   void visitAllocaInst (const AllocaInst &inst)
   {
     errs () << "alloca inst";
     auto op_num = inst.getNumOperands ();
-    errs () << ": " << op_num << " operands\n";
+    errs () << ": " << op_num << " ops";
+    errs () << "\n";
   }
 
   void visitLoadInst (const LoadInst &inst)
   {
     // http://www.isi.edu/~pedro/Teaching/CSCI565-Spring14/Projects/Project1-LLVM/docs/Project1-LLVM.pdf
-    errs () << "LoadInst";
+    errs () << "load";
     auto op_num = inst.getNumOperands ();
     errs () << ": " << op_num << " ops. ";
+    errs () << "\n";
   }
 
   void visitStoreInst (const StoreInst &inst)
   {
     // store i32 %x, i32* %2, align 4
-    errs () << "store inst";
+    errs () << "store ";
     auto op_num = inst.getNumOperands ();
     errs () << ": " << op_num << " operands ";
     if (Argument *arg = dyn_cast <Argument> (inst.getOperand (0)))
       {
 	StringRef name = arg->getName ();
-	errs () << "arg0 ";
-	errs () << name.str ();
+	errs () << "%" << name.str ();
       }
     if (dyn_cast <Argument> (inst.getOperand (1)))
       errs () << "arg1 ";
@@ -85,9 +89,8 @@ struct Interpreter : public InstVisitor <Interpreter>
 /// Print function
 bool FuncPrinter::runOnFunction (Function &F)
 {
-  errs () << "------------------------------\n";
-  errs () << "func: ";
-  errs ().write_escaped (F.getName ()) << "\n";
+  errs () << "define ";
+  errs () << "@" << F.getName () << "\n";
 
   // Visit instructions
   Interpreter interpreter;
@@ -106,7 +109,7 @@ bool FuncPrinter::runOnFunction (Function &F)
       // or just get operands http://stackoverflow.com/questions/8651829/getting-the-operands-in-an-llvm-instruction
       Instruction *I = *WorkList.begin ();
       WorkList.erase (WorkList.begin ());
-      errs ().write_escaped (I->getOpcodeName ()) << "\n";
+      // /*disabled */ errs ().write_escaped (I->getOpcodeName ()) << "\n";
     }
   // ----------------------------------------
     
