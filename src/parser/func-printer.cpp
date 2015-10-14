@@ -51,17 +51,34 @@ struct Interpreter : public InstVisitor <Interpreter>
   
   void visitAllocaInst (const AllocaInst &inst)
   {
-    errs () << "alloca inst\n";
+    errs () << "alloca inst";
+    auto op_num = inst.getNumOperands ();
+    errs () << ": " << op_num << " operands\n";
   }
 
   void visitLoadInst (const LoadInst &inst)
   {
-    errs () << "load inst\n";
+    // http://www.isi.edu/~pedro/Teaching/CSCI565-Spring14/Projects/Project1-LLVM/docs/Project1-LLVM.pdf
+    errs () << "LoadInst";
+    auto op_num = inst.getNumOperands ();
+    errs () << ": " << op_num << " ops. ";
   }
 
   void visitStoreInst (const StoreInst &inst)
   {
-    errs () << "store inst\n";
+    // store i32 %x, i32* %2, align 4
+    errs () << "store inst";
+    auto op_num = inst.getNumOperands ();
+    errs () << ": " << op_num << " operands ";
+    if (Argument *arg = dyn_cast <Argument> (inst.getOperand (0)))
+      {
+	StringRef name = arg->getName ();
+	errs () << "arg0 ";
+	errs () << name.str ();
+      }
+    if (dyn_cast <Argument> (inst.getOperand (1)))
+      errs () << "arg1 ";
+    errs () << "\n";
   }
 };
 
@@ -71,6 +88,10 @@ bool FuncPrinter::runOnFunction (Function &F)
   errs () << "------------------------------\n";
   errs () << "func: ";
   errs ().write_escaped (F.getName ()) << "\n";
+
+  // Visit instructions
+  Interpreter interpreter;
+  interpreter.visit (F);
 
   // ----------------------------------------
   // TODO: remove, this is just for checking the instruction visitors
@@ -88,10 +109,6 @@ bool FuncPrinter::runOnFunction (Function &F)
       errs ().write_escaped (I->getOpcodeName ()) << "\n";
     }
   // ----------------------------------------
-
-  // Visit instructions
-  Interpreter interpreter;
-  interpreter.visit (F);
     
   // No transformations.
   return false;
