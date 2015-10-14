@@ -1,5 +1,11 @@
 // based on http://llvm.org/docs/WritingAnLLVMPass.html tutorial
 
+// USEFUL REFERENCES:
+// * learn llvm by example
+// https://gist.github.com/alloy/d86b007b1b14607a112f
+// * Analyse llvm code
+// http://www.cs.cmu.edu/afs/cs.cmu.edu/academic/class/15745-s13/public/lectures/L6-LLVM-Detail-1up.pdf
+
 # include "llvm/Pass.h"
 # include "llvm/IR/Function.h"
 # include "llvm/IR/Instruction.h"
@@ -25,6 +31,9 @@ char FuncPrinter::ID = 0;
 static RegisterPass <FuncPrinter> X("FuncPrinter", "Func Printer Pass",
 				    false /* Only looks at CFG */,
 				    false /* Analysis Pass */);
+
+// TODO: add mapping for temporary "registy names" like %1, %2, ...
+// http://llvm.org/docs/FAQ.html#what-api-do-i-use-to-store-a-value-to-one-of-the-virtual-registers-in-llvm-ir-s-ssa-representation
 
 // TODO: check traversing order
 // http://stackoverflow.com/questions/32853884/how-does-the-llvm-instvisitor-traverse-ir
@@ -74,14 +83,33 @@ struct Interpreter : public InstVisitor <Interpreter>
     // store i32 %x, i32* %2, align 4
     errs () << "store ";
     auto op_num = inst.getNumOperands ();
-    errs () << ": " << op_num << " operands ";
-    if (Argument *arg = dyn_cast <Argument> (inst.getOperand (0)))
+    if (Argument *op0 = dyn_cast <Argument> (inst.getOperand (0)))
       {
-	StringRef name = arg->getName ();
-	errs () << "%" << name.str ();
+	// i32 %x
+	Type *type = op0->getType ();
+	if (type->isIntegerTy ())
+	  {
+	    unsigned width = type->getIntegerBitWidth ();
+	    errs () << "i" << width << " ";
+	  }
+	StringRef name = op0->getName ();
+	errs () << "%" << name.str () << ", ";
       }
-    if (dyn_cast <Argument> (inst.getOperand (1)))
-      errs () << "arg1 ";
+    if (AllocaInst *op1 = dyn_cast <AllocaInst> (inst.getOperand (1)))
+      {
+	// i32* %2
+	Type *type = op1->getAllocatedType ();
+	if (type->isIntegerTy ())
+	  {	    
+	    unsigned width = type->getIntegerBitWidth ();
+	    errs () << "i" << width;
+	    // this is a pointer
+	    errs () << "* ";
+	  }
+	
+	unsigned allign = op1->getAlignment ();
+	errs () << " align " << allign;
+      }
     errs () << "\n";
   }
 };
