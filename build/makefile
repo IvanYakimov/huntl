@@ -20,3 +20,4 @@ expr-factory.o: $(solver)/expr-factory.hpp $(solver)/expr-factory.cpp \
 # phony
 clean:
 	rm -fv *.o
+	rm -rfv ../docs/*
