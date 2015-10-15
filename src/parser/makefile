@@ -6,8 +6,11 @@ lib = `llvm-config --libs` -pthread -ltinfo `llvm-config --ldflags` -ldl
 func-printer.so: func-printer.o
 	$(gxx) -shared -o func-printer.so func-printer.o
 
-func-printer.o: func-printer.cpp
+func-printer.o: func-printer.cpp func-printer.hpp
 	$(gxx) -c -fpic func-printer.cpp $(src)
+
+printer.o: printer.cpp printer.hpp
+	$(gxx) -c printer.cpp
 
 clean:
 	rm -vf *~ *.o *.out *.so
