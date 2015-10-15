@@ -1,3 +1,6 @@
+# ifndef __FUNC_PRINTER_HPP__
+# define __FUNC_PRINTER_HPP__
+
 // based on http://llvm.org/docs/WritingAnLLVMPass.html tutorial
 
 // USEFUL REFERENCES:
@@ -37,3 +40,5 @@ static RegisterPass <FuncPrinter> X("FuncPrinter", "Func Printer Pass",
 
 // TODO: check traversing order
 // http://stackoverflow.com/questions/32853884/how-does-the-llvm-instvisitor-traverse-ir
+
+# endif /* __FUNC_PRINTER_HPP__ */

@@ -3,14 +3,18 @@ gxx = g++ -fdiagnostics-color=always -O0 -g
 src = `llvm-config --cxxflags`
 lib = `llvm-config --libs` -pthread -ltinfo `llvm-config --ldflags` -ldl
 
-func-printer.so: func-printer.o
-	$(gxx) -shared -o func-printer.so func-printer.o
+func-printer.so: linked.o 
+	$(gxx) -shared -o func-printer.so linked.o
+
+linked.o: func-printer.o inst-printer.o
+	ld -r func-printer.o inst-printer.o \
+		-o linked.o
 
 func-printer.o: func-printer.cpp func-printer.hpp
 	$(gxx) -c -fpic func-printer.cpp $(src)
 
-printer.o: printer.cpp printer.hpp
-	$(gxx) -c printer.cpp
+inst-printer.o: inst-printer.cpp inst-printer.hpp
+	$(gxx) -c inst-printer.cpp $(src)
 
 clean:
 	rm -vf *~ *.o *.out *.so
