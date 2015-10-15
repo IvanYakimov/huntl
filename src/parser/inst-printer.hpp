@@ -9,7 +9,6 @@ using namespace llvm;
 struct InstPrinter : public InstVisitor <InstPrinter>
 {
   InstPrinter () {}
-
   // --------------------------------------------------
   // Specific Instruction type classes
   void visitReturnInst (const ReturnInst &inst);
@@ -19,5 +18,8 @@ struct InstPrinter : public InstVisitor <InstPrinter>
   void visitLoadInst (const LoadInst &inst);
   void visitStoreInst (const StoreInst &inst);
 };
+
+void PrintArgOp (const Argument *op);
+void PrintAllocaOp (const AllocaInst *op);
 
 # endif /* __INST_PRINTER_HPP__ */
