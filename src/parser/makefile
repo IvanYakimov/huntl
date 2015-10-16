@@ -22,7 +22,7 @@ test.ll: test.c
 api-pattern.cpp: test.ll
 	llc -march=cpp test.ll -o api-pattern.cpp
 
-run:	test.ll
+run:	func-printer.so test.ll
 	opt -load=./func-printer.so -FuncPrinter test.ll > /dev/null
 
 debug:

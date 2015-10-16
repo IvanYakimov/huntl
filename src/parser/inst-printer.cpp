@@ -3,6 +3,7 @@
 void InstPrinter::visitReturnInst (const ReturnInst &inst)
 {
   errs () << "ret";
+  PrintOpList (&inst);
   errs () << "\n";
 }
 
@@ -22,10 +23,9 @@ void InstPrinter::visitAllocaInst (const AllocaInst &inst)
 {
   // register this instruction
   register_map_.Add (&inst);
-  errs () << register_map_.GetName (&inst) << " = ";
+  PrintPrefix (&inst);
   errs () << "alloca";
-  auto op_num = inst.getNumOperands ();
-  errs () << ": " << op_num << " ops";
+  PrintOpList (&inst);
   errs () << "\n";
 
 }
@@ -33,9 +33,10 @@ void InstPrinter::visitAllocaInst (const AllocaInst &inst)
 void InstPrinter::visitLoadInst (const LoadInst &inst)
 {
   // http://www.isi.edu/~pedro/Teaching/CSCI565-Spring14/Projects/Project1-LLVM/docs/Project1-LLVM.pdf
-  errs () << "load";
-  auto op_num = inst.getNumOperands ();
-  errs () << ": " << op_num << " ops. ";
+  register_map_.Add (&inst);
+  PrintPrefix (&inst);
+  errs () << "load ";
+  PrintOpList (&inst);
   errs () << "\n";
 }
 
@@ -43,6 +44,23 @@ void InstPrinter::visitLoadInst (const LoadInst &inst)
 void InstPrinter::visitStoreInst (const StoreInst &inst)
 {
   errs () << "store ";
+  PrintOpList (&inst);
+  errs () << "\n";
+  // loop
+  /*
+  auto op_num = inst.getNumOperands ();
+  for (unsigned i = 0; i < op_num; i++)
+    {
+      Value *op = inst.getOperand (i);
+      if (Argument *arg = dyn_cast <Argument> (op))
+	PrintArgOp (arg);
+      else if (AllocaInst *alloca = dyn_cast <AllocaInst> (op))
+	PrintAllocaOp (alloca);
+      else
+	errs () << " *unrecognized operand type* ";
+    }
+  */
+  /*
   auto op_num = inst.getNumOperands ();
   if (Argument *op0 = dyn_cast <Argument> (inst.getOperand (0)))
     {
@@ -52,7 +70,27 @@ void InstPrinter::visitStoreInst (const StoreInst &inst)
     {
       PrintAllocaOp (op1);
     }
-  errs () << "\n";
+  */
+}
+
+void InstPrinter::PrintOpList (const Instruction *inst)
+{
+  auto op_num = inst->getNumOperands ();
+  for (unsigned i = 0; i < op_num; i++)
+    {
+      Value *op = inst->getOperand (i);
+      if (Argument *arg = dyn_cast <Argument> (op))
+	PrintArgOp (arg);
+      else if (AllocaInst *alloca = dyn_cast <AllocaInst> (op))
+	PrintAllocaOp (alloca);
+      else
+	errs () << " *unrecognized operand type* ";
+    }
+}
+
+void InstPrinter::PrintPrefix (const Instruction *inst)
+{
+  errs () << register_map_.GetName (inst) << " = ";
 }
 
 // TODO: check symbol table usage
@@ -77,11 +115,11 @@ void InstPrinter::PrintAllocaOp (const AllocaInst *op)
     {	    
       unsigned width = type->getIntegerBitWidth ();
       errs () << "i" << width;
-      // this is a pointer
+      // TODO: looks like junk code (this represents pointer)
       errs () << "* ";
     }
   auto reg_name = register_map_.GetName (op);
-  errs () << reg_name << " ";
+  errs () << reg_name << ", ";
   unsigned allign = op->getAlignment ();
   errs () << " align " << allign;
 }

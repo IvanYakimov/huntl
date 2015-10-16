@@ -24,8 +24,11 @@ struct InstPrinter : public InstVisitor <InstPrinter>
   
   // --------------------------------------------------
 private:
+  void PrintOpList (const llvm::Instruction *inst);
+  void PrintPrefix (const llvm::Instruction *inst);
   void PrintArgOp (const llvm::Argument *arg);
   void PrintAllocaOp (const llvm::AllocaInst *op);
+
   class RegisterMap
   {
   public:
