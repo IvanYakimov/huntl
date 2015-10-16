@@ -27,7 +27,8 @@ private:
   void PrintOpList (const llvm::Instruction *inst);
   void PrintPrefix (const llvm::Instruction *inst);
   void PrintArgOp (const llvm::Argument *arg);
-  void PrintAllocaOp (const llvm::AllocaInst *op);
+  void PrintAllocaOp (const llvm::AllocaInst *alloca);
+  void PrintBinaryOperatorOp (const llvm::BinaryOperator *bin_op);
 
   class RegisterMap
   {
