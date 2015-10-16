@@ -29,6 +29,7 @@ private:
   void PrintArgOp (const llvm::Argument *arg);
   void PrintAllocaOp (const llvm::AllocaInst *alloca);
   void PrintBinaryOperatorOp (const llvm::BinaryOperator *bin_op);
+  void PrintConstantOp (const llvm::Constant *constant);
 
   class RegisterMap
   {

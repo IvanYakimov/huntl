@@ -58,6 +58,8 @@ void InstPrinter::PrintOpList (const Instruction *inst)
 	PrintAllocaOp (alloca);
       else if (BinaryOperator *bin_op = dyn_cast <BinaryOperator> (op))
 	PrintBinaryOperatorOp (bin_op);
+      else if (Constant *constant = dyn_cast <Constant> (op))
+	PrintConstantOp (constant);
       else
 	{
 	  Type *op_type = op->getType ();
@@ -110,8 +112,18 @@ void InstPrinter::PrintBinaryOperatorOp (const BinaryOperator *bin_op)
     {
       unsigned width = type->getIntegerBitWidth ();
       errs () << "i" << width;
-      errs () << " #value# ";
+      errs () << " #reg# ";
     }
+}
+
+void InstPrinter::PrintConstantOp (const Constant *constant)
+{
+  Type *type = constant->getType ();
+  {
+    unsigned width = type->getIntegerBitWidth ();
+    errs () << "i" << width;
+    errs () << " #c# ";
+  }
 }
 
 void InstPrinter::RegisterMap::Add (const llvm::Instruction *inst)
