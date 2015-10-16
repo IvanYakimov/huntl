@@ -38,10 +38,18 @@ void InstPrinter::visitLoadInst (const LoadInst &inst)
   errs () << "\n";
 }
 
-
 void InstPrinter::visitStoreInst (const StoreInst &inst)
 {
   errs () << "store ";
+  PrintOpList (&inst);
+  errs () << "\n";
+}
+
+void InstPrinter::visitBinaryOperator (const BinaryOperator &inst)
+{
+  register_map_.Add (&inst);
+  PrintPrefix (&inst);
+  errs () << "#binop# ";
   PrintOpList (&inst);
   errs () << "\n";
 }
@@ -56,10 +64,12 @@ void InstPrinter::PrintOpList (const Instruction *inst)
 	PrintArgOp (arg);
       else if (AllocaInst *alloca = dyn_cast <AllocaInst> (op))
 	PrintAllocaOp (alloca);
+      else if (LoadInst *load = dyn_cast <LoadInst> (op))
+	PrintLoadOp (load);
       else if (BinaryOperator *bin_op = dyn_cast <BinaryOperator> (op))
 	PrintBinaryOperatorOp (bin_op);
-      else if (Constant *constant = dyn_cast <Constant> (op))
-	PrintConstantOp (constant);
+      else if (ConstantInt *constant = dyn_cast <ConstantInt> (op))
+	PrintConstantIntOp (constant);
       else
 	{
 	  Type *op_type = op->getType ();
@@ -96,13 +106,30 @@ void InstPrinter::PrintAllocaOp (const AllocaInst *op)
     {	    
       unsigned width = type->getIntegerBitWidth ();
       errs () << "i" << width;
-      // TODO: looks like junk code (this represents pointer)
-      errs () << " #*# ";
+      // TODO: looks like buggish junk code (this represents pointer)
+      errs () << "* ";
     }
   auto reg_name = register_map_.GetName (op);
   errs () << reg_name << ", ";
   unsigned allign = op->getAlignment ();
   errs () << " align " << allign;
+}
+
+void InstPrinter::PrintLoadOp (const LoadInst *op)
+{
+  Type *type = op->getType ();
+  if (type->isIntegerTy ())
+    {
+      unsigned width = type->getIntegerBitWidth ();
+      errs () << "i" << width;
+      // TODO: looks like buggish junk code (this represents pointer)
+      errs () << "'*' ";
+    }
+  auto reg_name = register_map_.GetName (op);
+  errs () << reg_name << " ";
+  //errs () << reg_name << ", ";
+  //unsigned allign = op->getAlignment ();
+  //errs () << " align " << allign;
 }
 
 void InstPrinter::PrintBinaryOperatorOp (const BinaryOperator *bin_op)
@@ -112,18 +139,19 @@ void InstPrinter::PrintBinaryOperatorOp (const BinaryOperator *bin_op)
     {
       unsigned width = type->getIntegerBitWidth ();
       errs () << "i" << width;
-      errs () << " #reg# ";
+      errs () << " " << register_map_.GetName (bin_op);
     }
 }
 
-void InstPrinter::PrintConstantOp (const Constant *constant)
+void InstPrinter::PrintConstantIntOp (const ConstantInt *constant)
 {
   Type *type = constant->getType ();
-  {
-    unsigned width = type->getIntegerBitWidth ();
-    errs () << "i" << width;
-    errs () << " #c# ";
-  }
+
+  unsigned width = type->getIntegerBitWidth ();
+  errs () << "i" << width;
+  auto const_int_val = constant->getSExtValue ();
+  errs () << " ";
+  errs () << const_int_val;  
 }
 
 void InstPrinter::RegisterMap::Add (const llvm::Instruction *inst)
@@ -134,7 +162,7 @@ void InstPrinter::RegisterMap::Add (const llvm::Instruction *inst)
 
 InstPrinter::RegisterMap::RegisterNumber InstPrinter::RegisterMap::GetNumber (const llvm::Instruction *inst)
 {
-  //todo: dummy
+  //TODO: dummy
   return map_[inst];
 }
 

@@ -21,6 +21,7 @@ struct InstPrinter : public InstVisitor <InstPrinter>
   void visitAllocaInst (const AllocaInst &inst);
   void visitLoadInst (const LoadInst &inst);
   void visitStoreInst (const StoreInst &inst);
+  void visitBinaryOperator (const BinaryOperator &inst);
   
   // --------------------------------------------------
 private:
@@ -28,8 +29,9 @@ private:
   void PrintPrefix (const llvm::Instruction *inst);
   void PrintArgOp (const llvm::Argument *arg);
   void PrintAllocaOp (const llvm::AllocaInst *alloca);
+  void PrintLoadOp (const llvm::LoadInst *load);
   void PrintBinaryOperatorOp (const llvm::BinaryOperator *bin_op);
-  void PrintConstantOp (const llvm::Constant *constant);
+  void PrintConstantIntOp (const llvm::ConstantInt *constant);
 
   class RegisterMap
   {
