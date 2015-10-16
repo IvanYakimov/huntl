@@ -20,10 +20,14 @@ void InstPrinter::visitICmpInst (const ICmpInst &inst)
 
 void InstPrinter::visitAllocaInst (const AllocaInst &inst)
 {
-  errs () << "alloca inst";
+  // register this instruction
+  register_map_.Add (&inst);
+  errs () << register_map_.GetName (&inst) << " = ";
+  errs () << "alloca";
   auto op_num = inst.getNumOperands ();
   errs () << ": " << op_num << " ops";
   errs () << "\n";
+
 }
 
 void InstPrinter::visitLoadInst (const LoadInst &inst)
@@ -52,7 +56,7 @@ void InstPrinter::visitStoreInst (const StoreInst &inst)
 }
 
 // TODO: check symbol table usage
-void PrintArgOp (const Argument *arg)
+void InstPrinter::PrintArgOp (const Argument *arg)
 {
   Type *type = arg->getType ();
   if (type->isIntegerTy ())
@@ -66,7 +70,7 @@ void PrintArgOp (const Argument *arg)
 
 // TODO: virtual register name
 // TODO: check "pointer problem"
-void PrintAllocaOp (const AllocaInst *op)
+void InstPrinter::PrintAllocaOp (const AllocaInst *op)
 {
   Type *type = op->getAllocatedType ();
   if (type->isIntegerTy ())
@@ -76,7 +80,29 @@ void PrintAllocaOp (const AllocaInst *op)
       // this is a pointer
       errs () << "* ";
     }
-	
+  auto reg_name = register_map_.GetName (op);
+  errs () << reg_name << " ";
   unsigned allign = op->getAlignment ();
   errs () << " align " << allign;
+}
+
+void InstPrinter::RegisterMap::Add (const llvm::Instruction *inst)
+{
+  map_.insert (std::pair <const Instruction*, RegisterNumber>
+			(inst, ++counter_));
+}
+
+InstPrinter::RegisterMap::RegisterNumber InstPrinter::RegisterMap::GetNumber (const llvm::Instruction *inst)
+{
+  //todo: dummy
+  return map_[inst];
+}
+
+std::string InstPrinter::RegisterMap::GetName (const llvm::Instruction *inst)
+{
+  auto reg_num = map_[inst];
+  std::string name;
+  name += "%";
+  name += std::to_string (reg_num);
+  return name;
 }

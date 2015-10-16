@@ -16,11 +16,18 @@ func-printer.o: func-printer.cpp func-printer.hpp
 inst-printer.o: inst-printer.cpp inst-printer.hpp
 	$(gxx) -c inst-printer.cpp $(src)
 
-clean:
-	rm -vf *~ *.o *.out *.so
+test.ll: test.c
+	clang -S -emit-llvm test.c
+
+api-pattern.cpp: test.ll
+	llc -march=cpp test.ll -o api-pattern.cpp
 
 run:
 	opt -load=./func-printer.so -FuncPrinter test.ll > /dev/null
 
 debug:
 	gdb opt
+
+clean:
+	@rm -vf *~ *.o *.out *.so
+	@rm -vf *.ll api-pattern.cpp
