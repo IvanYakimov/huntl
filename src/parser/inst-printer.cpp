@@ -1,5 +1,20 @@
 # include "inst-printer.hpp"
 
+bool InstPrinter::Case (const Instruction &inst, unsigned i)
+{
+  return true;
+}
+
+template <typename T, typename... Targs>
+bool InstPrinter::Case (const Instruction &inst, unsigned i, T value, Targs... Fargs)
+{
+  // (some cryptic code) if the case matches the value
+  if (isa <typename std::remove_pointer<T>::type> (inst.getOperand (i))) {
+    return true && Case (inst, ++i, Fargs...);
+  }
+  return false;
+}
+
 void InstPrinter::visitReturnInst (const ReturnInst &inst)
 {
   errs () << "ret ";
@@ -41,7 +56,20 @@ void InstPrinter::visitLoadInst (const LoadInst &inst)
 void InstPrinter::visitStoreInst (const StoreInst &inst)
 {
   errs () << "store ";
-  PrintOpList (&inst);
+  //PrintOpList (&inst);
+  Argument *arg = NULL;
+  AllocaInst *alloca = NULL;
+  errs () << " arg alloca ";
+  if (Case (inst, 0, arg, alloca))
+    errs () << "matched";
+  else
+    errs () << "didn't match";
+  errs () << ";\t";
+  errs () << "arg arg ";
+  if (Case (inst, 0, arg, arg))
+    errs () << "matched";
+  else
+    errs () << "didn't match";
   errs () << "\n";
 }
 

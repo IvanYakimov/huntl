@@ -1,5 +1,5 @@
 objects = func-printer.o 
-gxx = g++ -fdiagnostics-color=always -O0 -g
+gxx = g++ -fdiagnostics-color=always -O0 -g -fexceptions
 src = `llvm-config --cxxflags`
 lib = `llvm-config --libs` -pthread -ltinfo `llvm-config --ldflags` -ldl
 
@@ -15,6 +15,10 @@ func-printer.o: func-printer.cpp func-printer.hpp
 
 inst-printer.o: inst-printer.cpp inst-printer.hpp
 	$(gxx) -c inst-printer.cpp $(src)
+
+pattern-matcher.out: pattern-matcher.cpp
+	$(gxx) pattern-matcher.cpp -o pattern-matcher.out $(src);
+	chmod u+x pattern-matcher.out
 
 test.ll: test.c
 	clang -S -emit-llvm test.c

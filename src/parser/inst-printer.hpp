@@ -1,8 +1,23 @@
 # ifndef __INST_PRINTER_HPP__
 # define __INST_PRINTER_HPP__
 
+/* 
+author: Ivan Yakimov
+date: 2015
+e-mail: ivan.yakimov.research@yandex.ru
+Licensed under LGPL license.
+*/
+
+// useful links:
+/*
+http://en.cppreference.com/w/cpp/language/parameter_pack
+http://www.cplusplus.com/reference/type_traits/remove_pointer/
+ */
+
 # include "llvm/IR/InstVisitor.h"
+# include "llvm/IR/Instruction.h"
 # include "llvm/Support/raw_ostream.h"
+# include <type_traits>
 
 # include <map>
 # include <string>
@@ -32,6 +47,12 @@ private:
   void PrintLoadOp (const llvm::LoadInst *load);
   void PrintBinaryOperatorOp (const llvm::BinaryOperator *bin_op);
   void PrintConstantIntOp (const llvm::ConstantInt *constant);
+
+
+  // "pattern matching"
+  bool Case (const Instruction &inst, unsigned i); // base case
+  template <typename T, typename... Targs>
+  bool Case (const Instruction &inst, unsigned i, T value, Targs... Fargs); // inductive case
 
   class RegisterMap
   {
