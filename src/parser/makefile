@@ -6,15 +6,15 @@ lib = `llvm-config --libs` -pthread -ltinfo `llvm-config --ldflags` -ldl
 func-printer.so: linked.o 
 	$(gxx) -shared -o func-printer.so linked.o
 
-linked.o: func-printer.o inst-printer.o
-	ld -r func-printer.o inst-printer.o \
+linked.o: func-printer.o pattern-matcher.o
+	ld -r func-printer.o pattern-matcher.o \
 		-o linked.o
 
 func-printer.o: func-printer.cpp func-printer.hpp
 	$(gxx) -c -fpic func-printer.cpp $(src)
 
-inst-printer.o: inst-printer.cpp inst-printer.hpp
-	$(gxx) -c inst-printer.cpp $(src)
+pattern-matcher.o: pattern-matcher.cpp pattern-matcher.hpp
+	$(gxx) -c pattern-matcher.cpp $(src)
 
 pattern-matcher.out: pattern-matcher.cpp
 	$(gxx) pattern-matcher.cpp -o pattern-matcher.out $(src);

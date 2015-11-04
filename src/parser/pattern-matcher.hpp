@@ -25,9 +25,9 @@ http://www.cplusplus.com/reference/type_traits/remove_pointer/
 
 using namespace llvm;
 
-struct InstPrinter : public InstVisitor <InstPrinter>
+struct PatternMatcher : public InstVisitor <PatternMatcher>
 {
-  InstPrinter () {}
+  PatternMatcher () {}
   // --------------------------------------------------
   // Specific Instruction type classes
   void visitReturnInst (const ReturnInst &inst);

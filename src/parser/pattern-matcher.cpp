@@ -1,12 +1,12 @@
-# include "inst-printer.hpp"
+#include "pattern-matcher.hpp"
 
-bool InstPrinter::Case (const Instruction &inst, unsigned i)
+bool PatternMatcher::Case (const Instruction &inst, unsigned i)
 {
   return true;
 }
 
 template <typename T, typename... Targs>
-bool InstPrinter::Case (const Instruction &inst, unsigned i, T value, Targs... Fargs)
+bool PatternMatcher::Case (const Instruction &inst, unsigned i, T value, Targs... Fargs)
 {
   // (some cryptic code) if the case matches the value
   if (isa <typename std::remove_pointer<T>::type> (inst.getOperand (i))) {
@@ -15,26 +15,26 @@ bool InstPrinter::Case (const Instruction &inst, unsigned i, T value, Targs... F
   return false;
 }
 
-void InstPrinter::visitReturnInst (const ReturnInst &inst)
+void PatternMatcher::visitReturnInst (const ReturnInst &inst)
 {
   errs () << "ret ";
   PrintOpList (&inst);
   errs () << "\n";
 }
 
-void InstPrinter::visitBranchInst (const BranchInst &inst)
+void PatternMatcher::visitBranchInst (const BranchInst &inst)
 {
   errs () << "br ";
   errs () << "\n";
 }
 
-void InstPrinter::visitICmpInst (const ICmpInst &inst)
+void PatternMatcher::visitICmpInst (const ICmpInst &inst)
 {
   errs () << "icmp ";
   errs () << "\n";
 }
 
-void InstPrinter::visitAllocaInst (const AllocaInst &inst)
+void PatternMatcher::visitAllocaInst (const AllocaInst &inst)
 {
   register_map_.Add (&inst);
   PrintPrefix (&inst);
@@ -44,7 +44,7 @@ void InstPrinter::visitAllocaInst (const AllocaInst &inst)
 
 }
 
-void InstPrinter::visitLoadInst (const LoadInst &inst)
+void PatternMatcher::visitLoadInst (const LoadInst &inst)
 {
   register_map_.Add (&inst);
   PrintPrefix (&inst);
@@ -53,7 +53,7 @@ void InstPrinter::visitLoadInst (const LoadInst &inst)
   errs () << "\n";
 }
 
-void InstPrinter::visitStoreInst (const StoreInst &inst)
+void PatternMatcher::visitStoreInst (const StoreInst &inst)
 {
   errs () << "store ";
   //PrintOpList (&inst);
@@ -73,7 +73,7 @@ void InstPrinter::visitStoreInst (const StoreInst &inst)
   errs () << "\n";
 }
 
-void InstPrinter::visitBinaryOperator (const BinaryOperator &inst)
+void PatternMatcher::visitBinaryOperator (const BinaryOperator &inst)
 {
   register_map_.Add (&inst);
   PrintPrefix (&inst);
@@ -82,7 +82,7 @@ void InstPrinter::visitBinaryOperator (const BinaryOperator &inst)
   errs () << "\n";
 }
 
-void InstPrinter::PrintOpList (const Instruction *inst)
+void PatternMatcher::PrintOpList (const Instruction *inst)
 {
   auto op_num = inst->getNumOperands ();
   for (unsigned i = 0; i < op_num; i++)
@@ -107,13 +107,13 @@ void InstPrinter::PrintOpList (const Instruction *inst)
     }
 }
 
-void InstPrinter::PrintPrefix (const Instruction *inst)
+void PatternMatcher::PrintPrefix (const Instruction *inst)
 {
   errs () << register_map_.GetName (inst) << " = ";
 }
 
 // TODO: check symbol table usage
-void InstPrinter::PrintArgOp (const Argument *arg)
+void PatternMatcher::PrintArgOp (const Argument *arg)
 {
   Type *type = arg->getType ();
   if (type->isIntegerTy ())
@@ -127,7 +127,7 @@ void InstPrinter::PrintArgOp (const Argument *arg)
 
 // TODO: virtual register name
 // TODO: check "pointer problem"
-void InstPrinter::PrintAllocaOp (const AllocaInst *op)
+void PatternMatcher::PrintAllocaOp (const AllocaInst *op)
 {
   Type *type = op->getAllocatedType ();
   if (type->isIntegerTy ())
@@ -143,7 +143,7 @@ void InstPrinter::PrintAllocaOp (const AllocaInst *op)
   errs () << " align " << allign;
 }
 
-void InstPrinter::PrintLoadOp (const LoadInst *op)
+void PatternMatcher::PrintLoadOp (const LoadInst *op)
 {
   Type *type = op->getType ();
   if (type->isIntegerTy ())
@@ -160,7 +160,7 @@ void InstPrinter::PrintLoadOp (const LoadInst *op)
   //errs () << " align " << allign;
 }
 
-void InstPrinter::PrintBinaryOperatorOp (const BinaryOperator *bin_op)
+void PatternMatcher::PrintBinaryOperatorOp (const BinaryOperator *bin_op)
 {
   Type *type = bin_op->getType ();
   if (type->isIntegerTy ())
@@ -171,7 +171,7 @@ void InstPrinter::PrintBinaryOperatorOp (const BinaryOperator *bin_op)
     }
 }
 
-void InstPrinter::PrintConstantIntOp (const ConstantInt *constant)
+void PatternMatcher::PrintConstantIntOp (const ConstantInt *constant)
 {
   Type *type = constant->getType ();
 
@@ -182,19 +182,19 @@ void InstPrinter::PrintConstantIntOp (const ConstantInt *constant)
   errs () << const_int_val;  
 }
 
-void InstPrinter::RegisterMap::Add (const llvm::Instruction *inst)
+void PatternMatcher::RegisterMap::Add (const llvm::Instruction *inst)
 {
   map_.insert (std::pair <const Instruction*, RegisterNumber>
 			(inst, ++counter_));
 }
 
-InstPrinter::RegisterMap::RegisterNumber InstPrinter::RegisterMap::GetNumber (const llvm::Instruction *inst)
+PatternMatcher::RegisterMap::RegisterNumber PatternMatcher::RegisterMap::GetNumber (const llvm::Instruction *inst)
 {
   //TODO: dummy
   return map_[inst];
 }
 
-std::string InstPrinter::RegisterMap::GetName (const llvm::Instruction *inst)
+std::string PatternMatcher::RegisterMap::GetName (const llvm::Instruction *inst)
 {
   auto reg_num = map_[inst];
   std::string name;
