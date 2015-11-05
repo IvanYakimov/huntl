@@ -45,6 +45,7 @@ private:
 
 protected:
   std::unique_ptr <IRegisterMap> register_map_;
+
   virtual void HandleStoreInst (const llvm::Argument *arg, const llvm::AllocaInst *alloca) = 0;
   virtual void HandleStoreInst (const llvm::ConstantInt *const_int, const llvm::AllocaInst *alloca) = 0;
   virtual void HandleStoreInst (const llvm::Instruction &inst);

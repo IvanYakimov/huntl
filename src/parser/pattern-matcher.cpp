@@ -1,6 +1,13 @@
 #include "pattern-matcher.hpp"
 using namespace llvm;
 
+/*
+author: Ivan Yakimov
+date: 2015
+e-mail: ivan.yakimov.research@yandex.ru
+Licensed under LGPL license.
+*/
+
 bool PatternMatcher::Case (const Instruction &inst, unsigned i)
 {
 	if (inst.getNumOperands () != i)
