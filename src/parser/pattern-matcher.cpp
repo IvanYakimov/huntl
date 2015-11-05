@@ -2,7 +2,10 @@
 
 bool PatternMatcher::Case (const Instruction &inst, unsigned i)
 {
-  return true;
+	if (inst.getNumOperands () != i)
+		return false;
+	else
+		return true;
 }
 
 template <typename T, typename... Targs>
