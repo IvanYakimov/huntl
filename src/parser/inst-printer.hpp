@@ -17,18 +17,15 @@ Licensed under LGPL license.
 
 # include "pattern-matcher.hpp"
 
-class InstPrinter : public PatternMatcher
+// TODO: check - maybe remove final from methods
+class InstPrinter final : public PatternMatcher
 {
 public:
-	InstPrinter () {
-		register_map_ = std::unique_ptr <IRegisterMap> (new RegisterMap ());
-	}
-
-	~InstPrinter () {
-		//TODO:
-	}
+	InstPrinter () {}
+	~InstPrinter () {}
 
 private:
+	virtual void AddRegister (const llvm::Instruction &inst) final;
 	// Handlers
 	virtual void HandleStoreInst (const llvm::Argument *arg, const llvm::AllocaInst *alloca) final;
 	virtual void HandleStoreInst (const llvm::ConstantInt *const_int, const llvm::AllocaInst *alloca) final;
@@ -41,17 +38,14 @@ private:
 	void Comma ();
 	void Endl ();
 
-private:
-	class RegisterMap : public IRegisterMap
+	//TODO: implementation
+	class RegisterMap
 	{
 	public:
-		typedef unsigned RegNum;
-		void Add (const llvm::Instruction *inst);
-		RegNum GetNumber (const llvm::Instruction *inst);
-		std::string GetName (const llvm::Instruction *inst);
+		void Add (const llvm::Instruction &inst);
+		std::string GetName (const llvm::Instruction &inst);
 	private:
-		std::map <const llvm::Instruction *, RegNum> internal_map_;
-		RegNum counter_ = 0;
+		unsigned reg_counter_ = 0;
 	};
 };
 

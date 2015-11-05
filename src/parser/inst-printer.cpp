@@ -1,6 +1,13 @@
 # include "inst-printer.hpp"
 using namespace llvm;
 
+//
+
+void InstPrinter::AddRegister (const llvm::Instruction &inst)
+{
+
+}
+
 // Handlers implementation
 
 void InstPrinter::HandleStoreInst (const llvm::Argument *arg, const llvm::AllocaInst *alloca)
@@ -48,25 +55,4 @@ void InstPrinter::PrintAlloca (const llvm::AllocaInst *alloca)
 void InstPrinter::PrintConstantInt (const llvm::ConstantInt *constant)
 {
 	errs () << "const";
-}
-
-// Register map implementation
-
-void InstPrinter::RegisterMap::Add (const Instruction *inst)
-{
-	internal_map_.insert (std::pair <const llvm::Instruction*, RegNum> (inst, ++counter_));
-}
-
-InstPrinter::RegisterMap::RegNum InstPrinter::RegisterMap::GetNumber (const Instruction *inst)
-{
-	return internal_map_ [inst];
-}
-
-std::string InstPrinter::RegisterMap::GetName (const Instruction *inst)
-{
-	auto reg_num = internal_map_ [inst];
-	std::string name;
-	name += "%";
-	name += std::to_string (reg_num);
-	return name;
 }

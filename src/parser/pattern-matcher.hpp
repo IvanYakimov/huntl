@@ -24,31 +24,26 @@ http://www.cplusplus.com/reference/type_traits/remove_pointer/
 # include <string>
 # include <memory>
 
-class IRegisterMap
-{
-public:
-	virtual ~IRegisterMap () = 0;
-	virtual void Add (const llvm::Instruction *inst) = 0;
-};
-
+// TODO: throw exception on unimplemented virtual methods (or maybe only in the constructor)
 class PatternMatcher : public llvm::InstVisitor <PatternMatcher>
 {
 public:
   PatternMatcher () {}
-  virtual ~PatternMatcher () = 0;
+  virtual ~PatternMatcher () {}
 
-  //TODO: check, whether of not these methods should be private
-//private:
+//protected:
   void visitAllocaInst (const llvm::AllocaInst &inst);
   void visitLoadInst (const llvm::LoadInst &inst);
   void visitStoreInst (const llvm::StoreInst &inst);
 
 protected:
-  std::unique_ptr <IRegisterMap> register_map_;
+  // TODO: throw exception on unimplemented virtual methods
+  virtual void AddRegister (const llvm::Instruction &inst) {}
 
-  virtual void HandleStoreInst (const llvm::Argument *arg, const llvm::AllocaInst *alloca) = 0;
-  virtual void HandleStoreInst (const llvm::ConstantInt *const_int, const llvm::AllocaInst *alloca) = 0;
-  virtual void HandleStoreInst (const llvm::Instruction &inst) = 0;
+  // TODO: throw exception on unimplemented virtual methods
+  virtual void HandleStoreInst (const llvm::Argument *arg, const llvm::AllocaInst *alloca) {}
+  virtual void HandleStoreInst (const llvm::ConstantInt *const_int, const llvm::AllocaInst *alloca) {}
+  virtual void HandleStoreInst (const llvm::Instruction &inst) {}
 
 private:
   // "pattern matching"
