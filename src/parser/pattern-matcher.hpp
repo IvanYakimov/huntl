@@ -35,10 +35,10 @@ class PatternMatcher : public llvm::InstVisitor <PatternMatcher>
 {
 public:
   PatternMatcher () {}
-  virtual ~PatternMatcher () {}
+  virtual ~PatternMatcher () = 0;
 
   //TODO: check, whether of not these methods should be private
-private:
+//private:
   void visitAllocaInst (const llvm::AllocaInst &inst);
   void visitLoadInst (const llvm::LoadInst &inst);
   void visitStoreInst (const llvm::StoreInst &inst);
@@ -48,7 +48,7 @@ protected:
 
   virtual void HandleStoreInst (const llvm::Argument *arg, const llvm::AllocaInst *alloca) = 0;
   virtual void HandleStoreInst (const llvm::ConstantInt *const_int, const llvm::AllocaInst *alloca) = 0;
-  virtual void HandleStoreInst (const llvm::Instruction &inst);
+  virtual void HandleStoreInst (const llvm::Instruction &inst) = 0;
 
 private:
   // "pattern matching"

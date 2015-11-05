@@ -1,7 +1,5 @@
 # include "func-printer.hpp"
 
-#include "pattern-matcher.hpp"
-
 /// Print function
 bool FuncPrinter::runOnFunction (Function &F)
 {
@@ -9,7 +7,7 @@ bool FuncPrinter::runOnFunction (Function &F)
   errs () << "@" << F.getName () << "\n";
 
   // Visit instructions
-  PatternMatcher inst_printer;
+  InstPrinter inst_printer;
   inst_printer.visit (F);
     
   // No transformations.

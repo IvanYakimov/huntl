@@ -18,6 +18,8 @@
 
 # include <set>
 
+#include "inst-printer.hpp"
+
 using namespace llvm;
 
 namespace

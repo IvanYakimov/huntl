@@ -38,23 +38,16 @@ void InstPrinter::Endl ()
 
 void InstPrinter::PrintArg (const llvm::Argument *arg)
 {
-	Type *type = arg->getType ();
-	if (type->isIntegerTy ()) {
-		auto width = type->getIntegerBitWidth ();
-		errs () << "i" << width << " ";
-	}
-	//TODO: probably there is a bug here:
-	StringRef name = arg->getValueName();
-	errs () << "%" << name.str ();
+	errs () << "arg";
 }
 void InstPrinter::PrintAlloca (const llvm::AllocaInst *alloca)
 {
-
+	errs () << "alloca";
 }
 
 void InstPrinter::PrintConstantInt (const llvm::ConstantInt *constant)
 {
-
+	errs () << "const";
 }
 
 // Register map implementation

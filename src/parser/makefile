@@ -1,18 +1,17 @@
 objects = func-printer.o 
-gxx = g++ -fdiagnostics-color=always -O0 -ggdb -fexceptions -std=c++14
+gxx = g++ -fdiagnostics-color=always -O0 -ggdb -fexceptions -std=c++14 -fpic
 src = `llvm-config --cxxflags`
 lib = `llvm-config --libs` -pthread -ltinfo `llvm-config --ldflags` -ldl
 
 func-printer.so: linked.o 
 	$(gxx) -shared -o func-printer.so linked.o
 
-linked.o: func-printer.o pattern-matcher.o
-	ld -r func-printer.o pattern-matcher.o \
-		inst-printer.o \
+linked.o: func-printer.o pattern-matcher.o inst-printer.o
+	ld -r func-printer.o pattern-matcher.o inst-printer.o \
 		-o linked.o
 
 func-printer.o: func-printer.cpp func-printer.hpp
-	$(gxx) -c -fpic func-printer.cpp $(src)
+	$(gxx) -c func-printer.cpp $(src)
 
 pattern-matcher.o: pattern-matcher.cpp pattern-matcher.hpp
 	$(gxx) -c pattern-matcher.cpp $(src)
@@ -38,3 +37,4 @@ lldebug: func-printer.so test.ll
 clean:
 	@rm -vf *~ *.o *.out *.so
 	@rm -vf *.ll api-pattern.cpp
+	@rm -vf \#*\#
