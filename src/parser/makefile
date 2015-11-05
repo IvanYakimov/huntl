@@ -29,7 +29,7 @@ api-pattern.cpp: test.ll
 run:	func-printer.so test.ll
 	opt -load=./func-printer.so -FuncPrinter test.ll > /dev/null
 
-debug:
+debug: func-printer.so
 	gdb opt
 
 clean:
