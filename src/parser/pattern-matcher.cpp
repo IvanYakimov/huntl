@@ -41,10 +41,22 @@ void PatternMatcher::visitStoreInst (const StoreInst &inst)
   Argument *arg = NULL;
   AllocaInst *alloca = NULL;
   if (Case (inst, 0, &const_int, &alloca)) {
-	  //TODO: virtual method call
+	  HandleStoreInst (const_int, alloca);
   }
   else if (Case (inst, 0, &arg, &alloca)) {
-	  //TODO: virtual method call
+	  HandleStoreInst (arg, alloca);
   }
+  else // pattern matching fault
+	  HandleStoreInst (inst);
 }
+
+
+
+
+
+
+
+
+
+
 
