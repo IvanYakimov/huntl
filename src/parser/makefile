@@ -1,5 +1,5 @@
 objects = func-printer.o 
-gxx = g++ -fdiagnostics-color=always -O0 -g -fexceptions -std=c++14
+gxx = g++ -fdiagnostics-color=always -O0 -ggdb -fexceptions -std=c++14
 src = `llvm-config --cxxflags`
 lib = `llvm-config --libs` -pthread -ltinfo `llvm-config --ldflags` -ldl
 
@@ -29,8 +29,11 @@ api-pattern.cpp: test.ll
 run:	func-printer.so test.ll
 	opt -load=./func-printer.so -FuncPrinter test.ll > /dev/null
 
-debug: func-printer.so
+debug: func-printer.so test.ll
 	gdb opt
+	
+lldebug: func-printer.so test.ll
+	lldb opt
 
 clean:
 	@rm -vf *~ *.o *.out *.so

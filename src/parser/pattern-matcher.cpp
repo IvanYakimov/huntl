@@ -8,14 +8,15 @@ bool PatternMatcher::Case (const Instruction &inst, unsigned i)
 template <typename T, typename... Targs>
 bool PatternMatcher::Case (const Instruction &inst, unsigned i, T value, Targs... Fargs)
 {
-	// (some cryptic code) if the case matches the value
-	typedef typename std::remove_pointer <T>::type V;
-	auto operand = inst.getOperand(i);
+	typedef typename std::remove_pointer <T>::type pV;
+	typedef typename std::remove_pointer <pV>::type V;
+	auto operand = inst.getOperand (i);
 	if (isa <V> (operand)) {
-		value = dyn_cast <V> (operand);
+		*value = dyn_cast <V> (operand);
 		return true && Case (inst, ++i, Fargs...);
 	}
-	return false;
+	else
+		return false;
 }
 
 void PatternMatcher::visitReturnInst (const ReturnInst &inst)
@@ -59,12 +60,19 @@ void PatternMatcher::visitLoadInst (const LoadInst &inst)
 void PatternMatcher::visitStoreInst (const StoreInst &inst)
 {
   errs () << "store ";
+  ConstantInt *const_int = NULL;
   Argument *arg = NULL;
   AllocaInst *alloca = NULL;
-  if (Case (inst, 0, arg, alloca)) {
-	  //PrintArgOp (arg);
-	  //PrintAllocaOp (alloca);
-	  errs () << " matches ";
+  if (Case (inst, 0, &const_int, &alloca)) {
+	  PrintConstantInt (const_int);
+	  PrintAlloca (alloca);
+	  errs () << "\t#const_int alloca#";
+  }
+  else if (Case (inst, 0, &arg, &alloca)) {
+	  PrintArg (arg);
+	  PrintAlloca (alloca);
+	  errs () << "\t#arg alloca#";
+
   }
   errs () << "\n";
 }
@@ -85,21 +93,21 @@ void PatternMatcher::PrintOpList (const Instruction *inst)
     {
       Value *op = inst->getOperand (i);
       if (Argument *arg = dyn_cast <Argument> (op))
-	PrintArgOp (arg);
-      else if (AllocaInst *alloca = dyn_cast <AllocaInst> (op))
-	PrintAllocaOp (alloca);
-      else if (LoadInst *load = dyn_cast <LoadInst> (op))
-	PrintLoadOp (load);
-      else if (BinaryOperator *bin_op = dyn_cast <BinaryOperator> (op))
-	PrintBinaryOperatorOp (bin_op);
-      else if (ConstantInt *constant = dyn_cast <ConstantInt> (op))
-	PrintConstantIntOp (constant);
-      else
-	{
-	  Type *op_type = op->getType ();
-	  errs () << " #T# ";
-	  op_type->print (errs ());
-	}
+		PrintArg (arg);
+		  else if (AllocaInst *alloca = dyn_cast <AllocaInst> (op))
+		PrintAlloca (alloca);
+		  else if (LoadInst *load = dyn_cast <LoadInst> (op))
+		PrintLoad (load);
+		  else if (BinaryOperator *bin_op = dyn_cast <BinaryOperator> (op))
+		PrintBinaryOperator (bin_op);
+		  else if (ConstantInt *constant = dyn_cast <ConstantInt> (op))
+		PrintConstantInt (constant);
+		  else
+		{
+		  Type *op_type = op->getType ();
+		  errs () << " #T# ";
+		  op_type->print (errs ());
+		}
     }
 }
 
@@ -109,21 +117,21 @@ void PatternMatcher::PrintPrefix (const Instruction *inst)
 }
 
 // TODO: check symbol table usage
-void PatternMatcher::PrintArgOp (const Argument *arg)
+void PatternMatcher::PrintArg (const Argument *arg)
 {
-  Type *type = arg->getType ();
-  if (type->isIntegerTy ())
-    {
-      unsigned width = type->getIntegerBitWidth ();
-      errs () << "i" << width << " ";
-    }
-  StringRef name = arg->getName ();
-  errs () << "%" << name.str () << ", ";
+	  Type *type = arg->getType ();
+	  if (type->isIntegerTy ())
+		{
+		  unsigned width = type->getIntegerBitWidth ();
+		  errs () << "i" << width << " ";
+		}
+	  StringRef name = arg->getName ();
+	  errs () << "%" << name.str () << ", ";
 }
 
 // TODO: virtual register name
 // TODO: check "pointer problem"
-void PatternMatcher::PrintAllocaOp (const AllocaInst *op)
+void PatternMatcher::PrintAlloca (const AllocaInst *op)
 {
   Type *type = op->getAllocatedType ();
   if (type->isIntegerTy ())
@@ -139,7 +147,7 @@ void PatternMatcher::PrintAllocaOp (const AllocaInst *op)
   errs () << " align " << allign;
 }
 
-void PatternMatcher::PrintLoadOp (const LoadInst *op)
+void PatternMatcher::PrintLoad (const LoadInst *op)
 {
   Type *type = op->getType ();
   if (type->isIntegerTy ())
@@ -156,7 +164,7 @@ void PatternMatcher::PrintLoadOp (const LoadInst *op)
   //errs () << " align " << allign;
 }
 
-void PatternMatcher::PrintBinaryOperatorOp (const BinaryOperator *bin_op)
+void PatternMatcher::PrintBinaryOperator (const BinaryOperator *bin_op)
 {
   Type *type = bin_op->getType ();
   if (type->isIntegerTy ())
@@ -167,15 +175,15 @@ void PatternMatcher::PrintBinaryOperatorOp (const BinaryOperator *bin_op)
     }
 }
 
-void PatternMatcher::PrintConstantIntOp (const ConstantInt *constant)
+void PatternMatcher::PrintConstantInt (const ConstantInt *constant)
 {
   Type *type = constant->getType ();
 
   unsigned width = type->getIntegerBitWidth ();
-  errs () << "i" << width;
+  errs () << "i" << width << " ";
   auto const_int_val = constant->getSExtValue ();
-  errs () << " ";
-  errs () << const_int_val;  
+  errs () << const_int_val;
+  errs () << ", ";
 }
 
 void PatternMatcher::RegisterMap::Add (const llvm::Instruction *inst)

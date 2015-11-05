@@ -42,12 +42,11 @@ struct PatternMatcher : public InstVisitor <PatternMatcher>
 private:
   void PrintOpList (const llvm::Instruction *inst);
   void PrintPrefix (const llvm::Instruction *inst);
-  void PrintArgOp (const llvm::Argument *arg);
-  void PrintAllocaOp (const llvm::AllocaInst *alloca);
-  void PrintLoadOp (const llvm::LoadInst *load);
-  void PrintBinaryOperatorOp (const llvm::BinaryOperator *bin_op);
-  void PrintConstantIntOp (const llvm::ConstantInt *constant);
-
+  void PrintArg (const llvm::Argument *arg);
+  void PrintAlloca (const llvm::AllocaInst *alloca);
+  void PrintLoad (const llvm::LoadInst *load);
+  void PrintBinaryOperator (const llvm::BinaryOperator *bin_op);
+  void PrintConstantInt (const llvm::ConstantInt *constant);
 
   // "pattern matching"
   bool Case (const Instruction &inst, unsigned i); // base case
