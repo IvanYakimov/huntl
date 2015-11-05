@@ -8,6 +8,7 @@ func-printer.so: linked.o
 
 linked.o: func-printer.o pattern-matcher.o
 	ld -r func-printer.o pattern-matcher.o \
+		inst-printer.o \
 		-o linked.o
 
 func-printer.o: func-printer.cpp func-printer.hpp
@@ -16,9 +17,8 @@ func-printer.o: func-printer.cpp func-printer.hpp
 pattern-matcher.o: pattern-matcher.cpp pattern-matcher.hpp
 	$(gxx) -c pattern-matcher.cpp $(src)
 
-pattern-matcher.out: pattern-matcher.cpp
-	$(gxx) pattern-matcher.cpp -o pattern-matcher.out $(src);
-	chmod u+x pattern-matcher.out
+inst-printer.o: inst-printer.cpp inst-printer.hpp
+	$(gxx) -c inst-printer.cpp $(src)
 
 test.ll: test.c
 	clang -S -emit-llvm test.c

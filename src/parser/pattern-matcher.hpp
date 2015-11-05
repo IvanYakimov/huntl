@@ -1,5 +1,6 @@
-# ifndef __INST_PRINTER_HPP__
-# define __INST_PRINTER_HPP__
+# ifndef __PATTERN_MATCHER_HPP__
+# define __PATTERN_MATCHER_HPP__
+
 
 /* 
 author: Ivan Yakimov
@@ -23,47 +24,32 @@ http://www.cplusplus.com/reference/type_traits/remove_pointer/
 # include <string>
 # include <memory>
 
-using namespace llvm;
-
-struct PatternMatcher : public InstVisitor <PatternMatcher>
+class IRegisterMap
 {
+public:
+	virtual ~IRegisterMap () = 0;
+	virtual void Add (const llvm::Instruction *inst) = 0;
+};
+
+class PatternMatcher : public llvm::InstVisitor <PatternMatcher>
+{
+public:
   PatternMatcher () {}
-  // --------------------------------------------------
-  // Specific Instruction type classes
-  void visitReturnInst (const ReturnInst &inst);
-  void visitBranchInst (const BranchInst &inst);
-  void visitICmpInst (const ICmpInst &inst);  
-  void visitAllocaInst (const AllocaInst &inst);
-  void visitLoadInst (const LoadInst &inst);
-  void visitStoreInst (const StoreInst &inst);
-  void visitBinaryOperator (const BinaryOperator &inst);
-  
-  // --------------------------------------------------
+
+  //TODO: check, whether of not these methods should be private
 private:
-  void PrintOpList (const llvm::Instruction *inst);
-  void PrintPrefix (const llvm::Instruction *inst);
-  void PrintArg (const llvm::Argument *arg);
-  void PrintAlloca (const llvm::AllocaInst *alloca);
-  void PrintLoad (const llvm::LoadInst *load);
-  void PrintBinaryOperator (const llvm::BinaryOperator *bin_op);
-  void PrintConstantInt (const llvm::ConstantInt *constant);
+  void visitAllocaInst (const llvm::AllocaInst &inst);
+  void visitLoadInst (const llvm::LoadInst &inst);
+  void visitStoreInst (const llvm::StoreInst &inst);
 
+protected:
+  std::unique_ptr <IRegisterMap> register_map_;
+
+private:
   // "pattern matching"
-  bool Case (const Instruction &inst, unsigned i); // base case
+  bool Case (const llvm::Instruction &inst, unsigned i); // base case
   template <typename T, typename... Targs>
-  bool Case (const Instruction &inst, unsigned i, T value, Targs... Fargs); // inductive case
-
-  class RegisterMap
-  {
-  public:
-    typedef unsigned RegisterNumber;
-    void Add (const llvm::Instruction *inst);
-    RegisterNumber GetNumber (const llvm::Instruction *inst);
-    std::string GetName (const llvm::Instruction *inst);
-  private:
-    std::map <const llvm::Instruction*, RegisterNumber> map_;
-    RegisterNumber counter_ = 0;
-  } register_map_;
+  bool Case (const llvm::Instruction &inst, unsigned i, T value, Targs... Fargs); // inductive case
 };
 
 # endif /* __INST_PRINTER_HPP__ */
