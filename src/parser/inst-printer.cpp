@@ -45,7 +45,14 @@ void InstPrinter::Endl ()
 
 void InstPrinter::PrintArg (const llvm::Argument *arg)
 {
-	errs () << "arg";
+	std::string res;
+	Type *type = arg->getType ();
+	if (type->isIntegerTy ()) {
+		auto width = type->getIntegerBitWidth ();
+		res += "i" + std::to_string (width) + " ";
+	}
+	StringRef name = arg->getName ();
+	res += "%" + name.str ();
 }
 void InstPrinter::PrintAlloca (const llvm::AllocaInst *alloca)
 {
