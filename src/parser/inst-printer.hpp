@@ -25,11 +25,11 @@ public:
 	~InstPrinter () {}
 
 private:
-	virtual void AddRegister (const llvm::Instruction &inst) final;
+	virtual void AddRegister (const llvm::Instruction *inst);
 	// Handlers
-	virtual void HandleStoreInst (const llvm::Argument *arg, const llvm::AllocaInst *alloca) final;
-	virtual void HandleStoreInst (const llvm::ConstantInt *const_int, const llvm::AllocaInst *alloca) final;
-	virtual void HandleStoreInst (const llvm::Instruction &inst) final;
+	virtual void HandleStoreInst (const llvm::Argument *arg, const llvm::AllocaInst *alloca);
+	virtual void HandleStoreInst (const llvm::ConstantInt *const_int, const llvm::AllocaInst *alloca);
+	virtual void HandleStoreInst (const llvm::Instruction &inst);
 
 	// Printing methods
 	void PrintArg (const llvm::Argument *arg);
@@ -38,15 +38,18 @@ private:
 	void Comma ();
 	void Endl ();
 
-	//TODO: implementation
 	class RegisterMap
 	{
 	public:
-		void Add (const llvm::Instruction &inst);
-		std::string GetName (const llvm::Instruction &inst);
+		void Add (const llvm::Instruction *inst);
+		std::string GetName (const llvm::Instruction *inst);
 	private:
-		unsigned reg_counter_ = 0;
-	};
+		typedef unsigned RegNum;
+		typedef std::pair <const llvm::Instruction*, RegNum> RegInfo;
+		typedef std::map <const llvm::Instruction*, RegNum> RegMap;
+		RegNum reg_counter_ = 0;
+		RegMap internal_;
+	} register_map_;
 };
 
 # endif /* __INST_PRINTER_HPP__ */

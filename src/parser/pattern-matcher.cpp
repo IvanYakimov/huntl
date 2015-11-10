@@ -32,14 +32,14 @@ bool PatternMatcher::Case (const Instruction &inst, unsigned i, T value, Targs..
 
 void PatternMatcher::visitAllocaInst (const AllocaInst &inst)
 {
-  AddRegister (inst);
-  //TODO: pattern matching
+	AddRegister (&inst);
+	//TODO: pattern matching
 }
 
 void PatternMatcher::visitLoadInst (const LoadInst &inst)
 {
-  AddRegister (inst);
-  //TODO: pattern matching
+	AddRegister (&inst);
+	//TODO: pattern matching
 }
 
 void PatternMatcher::visitStoreInst (const StoreInst &inst)

@@ -3,9 +3,9 @@ using namespace llvm;
 
 //
 
-void InstPrinter::AddRegister (const llvm::Instruction &inst)
+void InstPrinter::AddRegister (const llvm::Instruction *inst)
 {
-
+	register_map_.Add (inst);
 }
 
 // Handlers implementation
@@ -45,15 +45,9 @@ void InstPrinter::Endl ()
 
 void InstPrinter::PrintArg (const llvm::Argument *arg)
 {
-	std::string res;
-	Type *type = arg->getType ();
-	if (type->isIntegerTy ()) {
-		auto width = type->getIntegerBitWidth ();
-		res += "i" + std::to_string (width) + " ";
-	}
-	StringRef name = arg->getName ();
-	res += "%" + name.str ();
+	errs () << "arg";
 }
+
 void InstPrinter::PrintAlloca (const llvm::AllocaInst *alloca)
 {
 	errs () << "alloca";
@@ -63,3 +57,26 @@ void InstPrinter::PrintConstantInt (const llvm::ConstantInt *constant)
 {
 	errs () << "const";
 }
+
+void InstPrinter::RegisterMap::Add(const llvm::Instruction *inst)
+{
+	internal_.insert (RegInfo (inst, ++reg_counter_));
+}
+
+std::string InstPrinter::RegisterMap::GetName (const llvm::Instruction *inst)
+{
+	auto reg_num = internal_[inst];
+	std::string name;
+	name += "%";
+	name += std::to_string (reg_num);
+	return name;
+}
+
+
+
+
+
+
+
+
+
