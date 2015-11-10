@@ -8,23 +8,33 @@ e-mail: ivan.yakimov.research@yandex.ru
 Licensed under LGPL license.
 */
 
+// Standard Library
 # include <map>
 # include <utility>
 # include <string>
 # include <memory>
+# include <functional>
 
+// LLVM
 # include "llvm/IR/Instruction.h"
 
+// Internal
 # include "pattern-matcher.hpp"
+
+typedef std::function <llvm::raw_ostream&()> Printer;
 
 // TODO: check - maybe remove final from methods
 class InstPrinter final : public PatternMatcher
 {
 public:
-	InstPrinter () {}
+	InstPrinter () {printer_ = &llvm::errs;}
+	InstPrinter (Printer printer) {printer_ = printer;}
+
 	~InstPrinter () {}
 
 private:
+	Printer printer_;
+
 	virtual void AddRegister (const llvm::Instruction *inst);
 	// Handlers
 	virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Argument *arg, const llvm::AllocaInst *alloca);

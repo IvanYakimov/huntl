@@ -12,14 +12,16 @@ void InstPrinter::AddRegister (const llvm::Instruction *inst)
 
 void InstPrinter::HandleStoreInst (const llvm::Instruction &inst, const llvm::Argument *arg, const llvm::AllocaInst *alloca)
 {
-	string arg_str = ArgStr (arg),
-			alloca_str = AllocaStr (alloca);
-	errs() << InstLine ("store", arg_str, alloca_str);
+	string arg_str = ArgStr(arg),
+			alloca_str = AllocaStr(alloca);
+	printer_() << InstLine("store", arg_str, alloca_str);
 }
 
 void InstPrinter::HandleStoreInst (const llvm::Instruction &inst, const llvm::ConstantInt *const_int, const llvm::AllocaInst *alloca)
 {
-
+	string const_str = ConstantIntStr(const_int),
+			alloca_str = AllocaStr(alloca);
+	printer_() << InstLine("store", const_str, alloca_str);
 }
 
 void InstPrinter::HandleStoreInst (const llvm::Instruction &inst)
@@ -33,19 +35,22 @@ std::string InstPrinter::InstPrinter::ArgStr (const llvm::Argument *arg)
 {
 	string type_str = TypeStr(arg->getType());
 	string name_str = NameStr (arg);
-	return ProduceOperand (type_str, name_str);
+	return ProduceOperand(type_str, name_str);
 }
 
 std::string InstPrinter::AllocaStr (const llvm::AllocaInst *alloca)
 {
 	string type_str = TypeStr(alloca->getAllocatedType());
 	string reg_name = register_map_.GetName(alloca);
-	return ProduceOperand (type_str, reg_name) + AllignStr (alloca);
+	return ProduceOperand(type_str, reg_name) + AllignStr(alloca);
 }
 
 std::string InstPrinter::ConstantIntStr (const llvm::ConstantInt *constant)
 {
-	return "const";
+	string type_str = TypeStr(constant->getType());
+	auto val = constant->getSExtValue();
+	string val_str = std::to_string(val);
+	return ProduceOperand(type_str, val_str);
 }
 
 //-------------------------------------

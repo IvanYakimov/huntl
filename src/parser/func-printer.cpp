@@ -7,7 +7,7 @@ bool FuncPrinter::runOnFunction (Function &F)
   errs () << "@" << F.getName () << "\n";
 
   // Visit instructions
-  InstPrinter inst_printer;
+  InstPrinter inst_printer (&errs);
   inst_printer.visit (F);
     
   // No transformations.
