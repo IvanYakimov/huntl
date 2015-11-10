@@ -27,8 +27,8 @@ public:
 private:
 	virtual void AddRegister (const llvm::Instruction *inst);
 	// Handlers
-	virtual void HandleStoreInst (const llvm::Argument *arg, const llvm::AllocaInst *alloca);
-	virtual void HandleStoreInst (const llvm::ConstantInt *const_int, const llvm::AllocaInst *alloca);
+	virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Argument *arg, const llvm::AllocaInst *alloca);
+	virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::ConstantInt *const_int, const llvm::AllocaInst *alloca);
 	virtual void HandleStoreInst (const llvm::Instruction &inst);
 
 	// Printing methods

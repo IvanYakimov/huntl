@@ -48,10 +48,10 @@ void PatternMatcher::visitStoreInst (const StoreInst &inst)
   Argument *arg = NULL;
   AllocaInst *alloca = NULL;
   if (Case (inst, 0, &const_int, &alloca)) {
-	  HandleStoreInst (const_int, alloca);
+	  HandleStoreInst (inst, const_int, alloca);
   }
   else if (Case (inst, 0, &arg, &alloca)) {
-	  HandleStoreInst (arg, alloca);
+	  HandleStoreInst (inst, arg, alloca);
   }
   else // pattern matching fault
 	  HandleStoreInst (inst);

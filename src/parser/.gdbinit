@@ -1,6 +1,4 @@
 run -load=./func-printer.so -FuncPrinter test.ll > /dev/null
-break func-printer.cpp:8
+break func-printer.cpp:6
 run
-break pattern-matcher.cpp:5
-break pattern-matcher.cpp:13
-break pattern-matcher.cpp:67
+break pattern-matcher.cpp:47

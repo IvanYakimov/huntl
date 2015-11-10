@@ -10,7 +10,7 @@ void InstPrinter::AddRegister (const llvm::Instruction *inst)
 
 // Handlers implementation
 
-void InstPrinter::HandleStoreInst (const llvm::Argument *arg, const llvm::AllocaInst *alloca)
+void InstPrinter::HandleStoreInst (const llvm::Instruction &inst, const llvm::Argument *arg, const llvm::AllocaInst *alloca)
 {
 	PrintArg (arg);
 	Comma ();
@@ -18,7 +18,7 @@ void InstPrinter::HandleStoreInst (const llvm::Argument *arg, const llvm::Alloca
 	Endl ();
 }
 
-void InstPrinter::HandleStoreInst (const llvm::ConstantInt *const_int, const llvm::AllocaInst *alloca)
+void InstPrinter::HandleStoreInst (const llvm::Instruction &inst, const llvm::ConstantInt *const_int, const llvm::AllocaInst *alloca)
 {
 	PrintConstantInt (const_int);
 	Comma ();
