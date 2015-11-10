@@ -43,7 +43,6 @@ private:
 
 	template <typename... Targs>
 	std::string InstLine (std::string name, Targs... Operands);
-	template <typename... Targs>
 
 	std::string TypeStr (const llvm::Type *type);
 	std::string NameStr (const llvm::Argument *arg);
