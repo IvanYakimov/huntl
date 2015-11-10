@@ -10,7 +10,7 @@ Licensed under LGPL license.
 
 bool PatternMatcher::Case (const Instruction &inst, unsigned i)
 {
-	if (inst.getNumOperands () != i)
+	if (inst.getNumOperands() != i)
 		return false;
 	else
 		return true;
@@ -19,12 +19,12 @@ bool PatternMatcher::Case (const Instruction &inst, unsigned i)
 template <typename T, typename... Targs>
 bool PatternMatcher::Case (const Instruction &inst, unsigned i, T value, Targs... Fargs)
 {
-	typedef typename std::remove_pointer <T>::type pV;
-	typedef typename std::remove_pointer <pV>::type V;
+	typedef typename std::remove_pointer<T>::type pV;
+	typedef typename std::remove_pointer<pV>::type V;
 	auto operand = inst.getOperand (i);
-	if (isa <V> (operand)) {
-		*value = dyn_cast <V> (operand);
-		return true && Case (inst, ++i, Fargs...);
+	if (isa<V>(operand)) {
+		*value = dyn_cast<V>(operand);
+		return true && Case(inst, ++i, Fargs...);
 	}
 	else
 		return false;
@@ -32,13 +32,13 @@ bool PatternMatcher::Case (const Instruction &inst, unsigned i, T value, Targs..
 
 void PatternMatcher::visitAllocaInst (const AllocaInst &inst)
 {
-	AddRegister (&inst);
+	AddRegister(&inst);
 	//TODO: pattern matching
 }
 
 void PatternMatcher::visitLoadInst (const LoadInst &inst)
 {
-	AddRegister (&inst);
+	AddRegister(&inst);
 	//TODO: pattern matching
 }
 
@@ -48,13 +48,13 @@ void PatternMatcher::visitStoreInst (const StoreInst &inst)
   Argument *arg = NULL;
   AllocaInst *alloca = NULL;
   if (Case (inst, 0, &const_int, &alloca)) {
-	  HandleStoreInst (inst, const_int, alloca);
+	  HandleStoreInst(inst, const_int, alloca);
   }
   else if (Case (inst, 0, &arg, &alloca)) {
-	  HandleStoreInst (inst, arg, alloca);
+	  HandleStoreInst(inst, arg, alloca);
   }
   else // pattern matching fault
-	  HandleStoreInst (inst);
+	  HandleStoreInst(inst);
 }
 
 

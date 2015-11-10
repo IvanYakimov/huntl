@@ -32,11 +32,23 @@ private:
 	virtual void HandleStoreInst (const llvm::Instruction &inst);
 
 	// Printing methods
-	void PrintArg (const llvm::Argument *arg);
-	void PrintAlloca (const llvm::AllocaInst *alloca);
-	void PrintConstantInt (const llvm::ConstantInt *constant);
-	void Comma ();
-	void Endl ();
+	std::string ArgStr (const llvm::Argument *arg);
+	std::string AllocaStr (const llvm::AllocaInst *alloca);
+	std::string ConstantIntStr (const llvm::ConstantInt *constant);
+
+	// Helper methods
+	std::string Separated (const std::string &separator, const std::string &endl, std::string current);
+	template <typename... Targs>
+	std::string Separated (const std::string &separator, const std::string &endl, std::string current, Targs... Operands);
+
+	template <typename... Targs>
+	std::string InstLine (std::string name, Targs... Operands);
+	template <typename... Targs>
+
+	std::string TypeStr (const llvm::Type *type);
+	std::string NameStr (const llvm::Argument *arg);
+	std::string AllignStr (const llvm::AllocaInst *alloca);
+	std::string ProduceOperand (std::string prefix, std::string postfix);
 
 	class RegisterMap
 	{

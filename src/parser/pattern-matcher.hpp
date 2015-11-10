@@ -44,6 +44,7 @@ protected:
   virtual void HandleStoreInst (const llvm::Instruction &inst) = 0;
 
 private:
+  //TODO: extract a helper function
   // "pattern matching"
   bool Case (const llvm::Instruction &inst, unsigned i); // base case
   template <typename T, typename... Targs>
