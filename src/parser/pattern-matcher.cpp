@@ -32,8 +32,15 @@ bool PatternMatcher::Case (const Instruction &inst, unsigned i, T value, Targs..
 
 void PatternMatcher::visitAllocaInst (const AllocaInst &inst)
 {
-	AddRegister(&inst);
-	//TODO: pattern matching
+	if (inst.getName() == "")
+		AddRegister(&inst);
+
+	Constant *const_val = NULL;
+	if (Case (inst, 0, &const_val)) {
+		HandleAllocaInst(inst, const_val);
+	}
+	else
+		HandleAllocaInst(inst);
 }
 
 void PatternMatcher::visitLoadInst (const LoadInst &inst)
@@ -57,7 +64,16 @@ void PatternMatcher::visitStoreInst (const StoreInst &inst)
 	  HandleStoreInst(inst);
 }
 
-
+void PatternMatcher::visitReturnInst (const ReturnInst &inst)
+{
+	ConstantInt *const_int = NULL;
+	Argument *arg = NULL;
+	if (Case (inst, 0, &const_int)) {
+		HandleReturnInst(inst, const_int);
+	}
+	else
+		HandleReturnInst(inst);
+}
 
 
 

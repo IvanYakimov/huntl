@@ -35,13 +35,22 @@ public:
   void visitAllocaInst (const llvm::AllocaInst &inst);
   void visitLoadInst (const llvm::LoadInst &inst);
   void visitStoreInst (const llvm::StoreInst &inst);
+  void visitReturnInst (const llvm::ReturnInst &inst);
 
 protected:
   virtual void AddRegister (const llvm::Instruction *inst) = 0;
 
+  // Store instruction
+  virtual void HandleAllocaInst (const llvm::Instruction &inst, const llvm::Constant *const_val) = 0;
+  virtual void HandleAllocaInst (const llvm::Instruction &inst) = 0;
+
   virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Argument *arg, const llvm::AllocaInst *alloca) = 0;
   virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::ConstantInt *const_int, const llvm::AllocaInst *alloca) = 0;
   virtual void HandleStoreInst (const llvm::Instruction &inst) = 0;
+
+  // Return instruction
+  virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::ConstantInt *const_int) = 0;
+  virtual void HandleReturnInst (const llvm::Instruction &inst) = 0;
 
 private:
   //TODO: extract a helper function

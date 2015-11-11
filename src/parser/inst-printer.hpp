@@ -37,14 +37,15 @@ private:
 
 	virtual void AddRegister (const llvm::Instruction *inst);
 	// Handlers
+	virtual void HandleAllocaInst (const llvm::Instruction &inst, const llvm::Constant *const_val);
+	virtual void HandleAllocaInst (const llvm::Instruction &inst);
+
 	virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Argument *arg, const llvm::AllocaInst *alloca);
 	virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::ConstantInt *const_int, const llvm::AllocaInst *alloca);
 	virtual void HandleStoreInst (const llvm::Instruction &inst);
-
-	// Printing methods
-	std::string ArgStr (const llvm::Argument *arg);
-	std::string AllocaStr (const llvm::AllocaInst *alloca);
-	std::string ConstantIntStr (const llvm::ConstantInt *constant);
+	//
+	virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::ConstantInt *const_int);
+	virtual void HandleReturnInst (const llvm::Instruction &inst);
 
 	// Helper methods
 	std::string Separated (const std::string &separator, const std::string &endl, std::string current);
@@ -54,9 +55,16 @@ private:
 	template <typename... Targs>
 	std::string InstLine (std::string name, Targs... Operands);
 
+	// Printing methods
+	std::string ArgStr (const llvm::Argument *arg);
+	std::string AllocaStr (const llvm::AllocaInst *alloca);
+	std::string ConstantIntStr (const llvm::ConstantInt *constant);
+
 	std::string TypeStr (const llvm::Type *type);
-	std::string NameStr (const llvm::Argument *arg);
+	std::string ArgNameStr (const llvm::Argument *arg);
 	std::string AllignStr (const llvm::AllocaInst *alloca);
+	std::string PrefixStr (const llvm::Instruction *inst);
+
 	std::string ProduceOperand (std::string prefix, std::string postfix);
 
 	class RegisterMap
