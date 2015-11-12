@@ -3,6 +3,7 @@
 # https://www.gnu.org/prep/standards/html_node/Makefile-Conventions.html
 SHELL = /bin/sh
 
+OBJ = func-printer.o pattern-matcher.o inst-printer.o
 CXX = g++ 
 CXXFLAGS = -fdiagnostics-color=always -O0 -ggdb -fexceptions -std=c++1y -fpic 
 LLVMFLAGS = `llvm-config --cxxflags`
@@ -11,9 +12,13 @@ lib = `llvm-config --libs` -pthread -ltinfo `llvm-config --ldflags` -ldl
 func-printer.so: linked.o 
 	$(CXX) $(CXXFLAGS) -shared -o func-printer.so linked.o
 
-linked.o: func-printer.o pattern-matcher.o inst-printer.o
+linked.o: $(OBJ)
+	ld -r $(OBJ) -o linked.o
+
+#\
+linked.o: func-printer.o pattern-matcher.o inst-printer.o	\
 	ld -r func-printer.o pattern-matcher.o inst-printer.o \
-		-o linked.o
+		-o linked.o	
 		
 # see https://www.gnu.org/software/make/manual/html_node/Automatic-Variables.html#Automatic-Variables
 %.o: %.cpp %.hpp

@@ -97,7 +97,7 @@ void PatternMatcher::visitReturnInst (const ReturnInst &inst)
 		errs() << "ret void\n";
 	}
 	else
-		errs() << "ret pattern matching failed";
+		errs() << "ret pattern matching failed\n";
 }
 
 
