@@ -14,16 +14,11 @@ func-printer.so: linked.o
 
 linked.o: $(OBJ)
 	ld -r $(OBJ) -o linked.o
-
-#\
-linked.o: func-printer.o pattern-matcher.o inst-printer.o	\
-	ld -r func-printer.o pattern-matcher.o inst-printer.o \
-		-o linked.o	
 		
-# see https://www.gnu.org/software/make/manual/html_node/Automatic-Variables.html#Automatic-Variables
 %.o: %.cpp %.hpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@ $(LLVMFLAGS)
 
+# < helpers
 test.ll: test.c
 	clang -S -emit-llvm test.c -Wimplicit-int
 
@@ -35,9 +30,8 @@ run:	func-printer.so test.ll
 
 debug: func-printer.so test.ll
 	gdb opt
-	
-lldebug: func-printer.so test.ll
-	lldb opt
+		
+# helpers />
 
 clean:
 	@rm -vf *~ *.o *.out *.so
