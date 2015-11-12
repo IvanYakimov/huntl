@@ -10,7 +10,7 @@ void InstPrinter::AddRegister (const llvm::Instruction *inst)
 
 // Handlers implementation
 
-void InstPrinter::HandleAllocaInst (const llvm::Instruction &inst, const llvm::Constant *const_val)
+void InstPrinter::HandleAllocaInst (const llvm::Instruction &inst, const llvm::ConstantInt *const_val)
 {
 	string prefix = PrefixStr(&inst);
 

@@ -37,7 +37,7 @@ private:
 
 	virtual void AddRegister (const llvm::Instruction *inst);
 	// Handlers
-	virtual void HandleAllocaInst (const llvm::Instruction &inst, const llvm::Constant *const_val);
+	virtual void HandleAllocaInst (const llvm::Instruction &inst, const llvm::ConstantInt *const_val);
 	virtual void HandleAllocaInst (const llvm::Instruction &inst);
 
 	virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Argument *arg, const llvm::AllocaInst *alloca);

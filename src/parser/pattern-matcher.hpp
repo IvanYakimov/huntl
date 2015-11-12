@@ -41,11 +41,11 @@ protected:
   virtual void AddRegister (const llvm::Instruction *inst) = 0;
 
   // Store instruction
-  virtual void HandleAllocaInst (const llvm::Instruction &inst, const llvm::Constant *const_val) = 0;
+  virtual void HandleAllocaInst (const llvm::Instruction &inst, const llvm::ConstantInt *constant_int) = 0;
   virtual void HandleAllocaInst (const llvm::Instruction &inst) = 0;
 
   virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Argument *arg, const llvm::AllocaInst *alloca) = 0;
-  virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::ConstantInt *const_int, const llvm::AllocaInst *alloca) = 0;
+  virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::ConstantInt *constant_int, const llvm::AllocaInst *alloca) = 0;
   virtual void HandleStoreInst (const llvm::Instruction &inst) = 0;
 
   // Return instruction

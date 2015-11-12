@@ -30,59 +30,74 @@ bool PatternMatcher::Case (const Instruction &inst, unsigned i, T value, Targs..
 		return false;
 }
 
+// --------------------------------------------------------
+// Instruction visitors
+
 void PatternMatcher::visitAllocaInst (const AllocaInst &inst)
 {
 	if (inst.getName() == "")
 		AddRegister(&inst);
 
-	Constant *const_val = NULL;
-	if (Case (inst, 0, &const_val)) {
-		HandleAllocaInst(inst, const_val);
+	ConstantInt *constant_int = NULL;
+	if (Case (inst, 0, &constant_int)) {
+		//TODO:
 	}
 	else
-		HandleAllocaInst(inst);
+		;
 }
 
 void PatternMatcher::visitLoadInst (const LoadInst &inst)
 {
-	AddRegister(&inst);
-	//TODO: pattern matching
+	if (inst.getName() == "")
+			AddRegister(&inst);
+	AllocaInst *alloca = NULL;
+	BinaryOperator *bin_op = NULL;
+	if (Case (inst, 0, &alloca)) {
+		errs() << "load alloca\n";
+	}
+	else
+		errs() << "load pattern matching failed\n";
 }
 
 void PatternMatcher::visitStoreInst (const StoreInst &inst)
 {
-  ConstantInt *const_int = NULL;
+  ConstantInt *constant_int = NULL;
+  ConstantFP *constant_fp = NULL;
   Argument *arg = NULL;
   AllocaInst *alloca = NULL;
-  if (Case (inst, 0, &const_int, &alloca)) {
-	  HandleStoreInst(inst, const_int, alloca);
+  BinaryOperator *bin_op = NULL;
+  if (Case (inst, 0, &arg, &alloca)) {
+  	  errs() << "store argument, alloca\n";
   }
-  else if (Case (inst, 0, &arg, &alloca)) {
-	  HandleStoreInst(inst, arg, alloca);
+  else if (Case (inst, 0, &bin_op, &alloca)) {
+	  errs() << "store bin_op, alloca\n";
+  }
+  else if (Case (inst, 0, &constant_int, &alloca)) {
+	  errs() << "store constant_int, alloca\n";
+  }
+  else if (Case (inst, 0, &constant_fp, &alloca)) {
+	  errs() << "store constant_fp, alloca\n";
   }
   else // pattern matching fault
-	  HandleStoreInst(inst);
+	  errs() << "store pattern matching failed\n";
 }
 
 void PatternMatcher::visitReturnInst (const ReturnInst &inst)
 {
-	Value *val = NULL;
+	Value *value = NULL;
 	ConstantInt *constant_int = NULL;
-	Constant *constant= NULL;
+	BinaryOperator *bin_op = NULL;
 	if (Case (inst, 0, &constant_int)) {
-		errs() << "ret constant_int\n";
+		errs() << "ret constant_fp\n";
 	}
-	else if (Case (inst, 0, &constant)) {
-			errs() << "ret constant\n";
-	}
-	else if (Case (inst, 0, &val)) {
-		errs() << "ret val\n";
+	else if (Case (inst, 0, &bin_op)) {
+		//TODO:
 	}
 	else if (Case (inst, 0)) {
 		errs() << "ret void\n";
 	}
 	else
-		HandleReturnInst(inst);
+		errs() << "ret pattern matching failed";
 }
 
 
