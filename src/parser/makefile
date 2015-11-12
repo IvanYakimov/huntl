@@ -1,5 +1,5 @@
 objects = func-printer.o 
-gxx = g++ -fdiagnostics-color=always -O0 -ggdb -fexceptions -std=c++14 -fpic
+gxx = g++ -fdiagnostics-color=always -O0 -ggdb -fexceptions -std=c++1y -fpic
 src = `llvm-config --cxxflags`
 lib = `llvm-config --libs` -pthread -ltinfo `llvm-config --ldflags` -ldl
 

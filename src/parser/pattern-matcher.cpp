@@ -66,10 +66,20 @@ void PatternMatcher::visitStoreInst (const StoreInst &inst)
 
 void PatternMatcher::visitReturnInst (const ReturnInst &inst)
 {
-	ConstantInt *const_int = NULL;
-	Argument *arg = NULL;
-	if (Case (inst, 0, &const_int)) {
-		HandleReturnInst(inst, const_int);
+	Value *val = NULL;
+	ConstantInt *constant_int = NULL;
+	Constant *constant= NULL;
+	if (Case (inst, 0, &constant_int)) {
+		errs() << "ret constant_int\n";
+	}
+	else if (Case (inst, 0, &constant)) {
+			errs() << "ret constant\n";
+	}
+	else if (Case (inst, 0, &val)) {
+		errs() << "ret val\n";
+	}
+	else if (Case (inst, 0)) {
+		errs() << "ret void\n";
 	}
 	else
 		HandleReturnInst(inst);

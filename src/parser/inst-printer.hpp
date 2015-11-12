@@ -44,7 +44,7 @@ private:
 	virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::ConstantInt *const_int, const llvm::AllocaInst *alloca);
 	virtual void HandleStoreInst (const llvm::Instruction &inst);
 	//
-	virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::ConstantInt *const_int);
+
 	virtual void HandleReturnInst (const llvm::Instruction &inst);
 
 	// Helper methods
@@ -52,8 +52,12 @@ private:
 	template <typename... Targs>
 	std::string Separated (const std::string &separator, const std::string &endl, std::string current, Targs... Operands);
 
+	//TODO: foldr
+	/*template <typename F, typename T, typename Targs... Fargs>
+	T Foldr (F func, T zero, )*/
+
 	template <typename... Targs>
-	std::string InstLine (std::string name, Targs... Operands);
+	std::string InstLine (const llvm::Instruction &inst, Targs... Operands);
 
 	// Printing methods
 	std::string ArgStr (const llvm::Argument *arg);

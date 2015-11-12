@@ -19,7 +19,7 @@ void InstPrinter::HandleAllocaInst (const llvm::Instruction &inst, const llvm::C
 
 void InstPrinter::HandleAllocaInst (const llvm::Instruction &inst)
 {
-
+	//TODO: pattern matching fault handling
 }
 
 void InstPrinter::HandleStoreInst (const llvm::Instruction &inst, const llvm::Argument *arg, const llvm::AllocaInst *alloca)
@@ -27,14 +27,14 @@ void InstPrinter::HandleStoreInst (const llvm::Instruction &inst, const llvm::Ar
 	string arg_str = ArgStr(arg),
 			alloca_str = AllocaStr(alloca),
 			allign_str = AllignStr(alloca);
-	printer_() << InstLine("store", arg_str, alloca_str, allign_str);
+	printer_() << InstLine(inst, arg_str, alloca_str, allign_str);
 }
 
 void InstPrinter::HandleStoreInst (const llvm::Instruction &inst, const llvm::ConstantInt *const_int, const llvm::AllocaInst *alloca)
 {
 	string const_str = ConstantIntStr(const_int),
 			alloca_str = AllocaStr(alloca);
-	printer_() << InstLine("store", const_str, alloca_str);
+	printer_() << InstLine(inst, const_str, alloca_str);
 }
 
 void InstPrinter::HandleStoreInst (const llvm::Instruction &inst)
@@ -42,15 +42,9 @@ void InstPrinter::HandleStoreInst (const llvm::Instruction &inst)
 	//TODO: pattern matching fault handling
 }
 
-void InstPrinter::HandleReturnInst (const llvm::Instruction &inst, const llvm::ConstantInt *const_int)
-{
-	string const_str = ConstantIntStr(const_int);
-	printer_() << InstLine("ret", const_str);
-}
-
 void InstPrinter::HandleReturnInst (const llvm::Instruction &inst)
 {
-
+	//TODO: pattern matching fault handling
 }
 
 //-------------------------------------
@@ -67,10 +61,23 @@ std::string InstPrinter::Separated (const std::string &separator, const std::str
 }
 
 template <typename... Targs>
-std::string InstPrinter::InstLine (std::string name, Targs... Operands)
+std::string InstPrinter::InstLine (const llvm::Instruction &inst, Targs... Operands)
 {
-	//TODO: prefix
-	return name + " " + Separated (", ", "\n", Operands...);
+	const string kStore = "store";
+	const string kRet	= "ret";
+
+	string op_list = Separated (", ", "\n", Operands...);
+
+	auto with_prefix = [] (string prefix, string name, string operands)
+			{return prefix + " = " + name + " " + operands;};
+	auto simple = [] (string name, string operands)
+			{return name + " " + operands;};
+
+	if (isa<StoreInst>(inst)) {
+		return simple (kStore, op_list);
+	}
+
+	return "inst line \n";
 }
 
 // Printing methods

@@ -49,7 +49,6 @@ protected:
   virtual void HandleStoreInst (const llvm::Instruction &inst) = 0;
 
   // Return instruction
-  virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::ConstantInt *const_int) = 0;
   virtual void HandleReturnInst (const llvm::Instruction &inst) = 0;
 
 private:
