@@ -9,7 +9,11 @@ CXXFLAGS = -fdiagnostics-color=always -O0 -ggdb -fexceptions -std=c++1y -fpic
 LLVMFLAGS = `llvm-config --cxxflags`
 lib = `llvm-config --libs` -pthread -ltinfo `llvm-config --ldflags` -ldl
 
-VPATH = ../src/parser/
+#VPATH = ../src/parser/
+vpath %.o ../src/parser/
+vpath %.cpp ../src/parser/
+vpath %.hpp ../src/parser
+vpath %.c ../src/parser
 
 .PHONY: all
 all: func-printer.so
@@ -28,7 +32,7 @@ test.ll: test.c
 	clang -S -emit-llvm $< -Wimplicit-int
 
 api-pattern.cpp: test.ll
-	llc -march=cpp test.ll -o api-pattern.cpp
+	llc -march=cpp $< -o api-pattern.cpp
 
 .PHONY: run debug
 run:	func-printer.so test.ll
