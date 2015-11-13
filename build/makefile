@@ -20,4 +20,8 @@ program: $(OBJ)
 # phony
 clean:
 	rm -fv *.o
+<<<<<<< HEAD
 
+=======
+	rm -rfv ../docs/*
+>>>>>>> llvm-parser
