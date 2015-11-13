@@ -9,6 +9,9 @@ CXXFLAGS = -fdiagnostics-color=always -O0 -ggdb -fexceptions -std=c++1y -fpic
 LLVMFLAGS = `llvm-config --cxxflags`
 lib = `llvm-config --libs` -pthread -ltinfo `llvm-config --ldflags` -ldl
 
+.PHONY: all
+all: func-printer.so
+
 func-printer.so: linked.o 
 	$(CXX) $(CXXFLAGS) -shared -o func-printer.so linked.o
 
@@ -25,15 +28,39 @@ test.ll: test.c
 api-pattern.cpp: test.ll
 	llc -march=cpp test.ll -o api-pattern.cpp
 
+.PHONY: run debug
 run:	func-printer.so test.ll
 	@opt -load=./func-printer.so -FuncPrinter test.ll > /dev/null
 
 debug: func-printer.so test.ll
-	gdb opt
-		
+	gdb opt	
 # helpers />
 
+print: *.hpp *.cpp
+	lpr $?
+	touch $@
+
+.PHONY: clean
 clean:
 	@rm -vf *~ *.o *.out *.so
 	@rm -vf *.ll api-pattern.cpp
 	@rm -vf \#*\#
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
