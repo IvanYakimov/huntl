@@ -1,27 +1,54 @@
-# see http://scottmcpeak.com/autodepend/autodepend.html
+# useful links:
+# https://www.gnu.org/software/make/manual/html_node/Pattern-Rules.html
+# https://www.gnu.org/prep/standards/html_node/Makefile-Conventions.html
+SHELL = /bin/sh
 
-src = ../src
-solver = $(src)/solver
-z3-src = $(src)/solver/z3-binding
-cvc4-src = $(src)/solver/cvc4-binding
-CXX = g++ -fdiagnostics-color=auto
-CXXFLAGS = -std=c++14 -c
-# LDFLAGS =
-OBJS = $(solver)/expr.o
+OBJ = func-printer.o pattern-matcher.o inst-printer.o
+CXX = g++ 
+CXXFLAGS = -fdiagnostics-color=always -O0 -ggdb -fexceptions -std=c++1y -fpic 
+LLVMFLAGS = `llvm-config --cxxflags`
+lib = `llvm-config --libs` -pthread -ltinfo `llvm-config --ldflags` -ldl
 
-# link
-program: $(OBJ)
-	$(GXX) -o program
+VPATH = ../src/parser/
 
-# compile
-%.o: %.cpp
-	$(CXX) $(CXXFLAGS) $
+.PHONY: all
+all: func-printer.so
 
-# phony
+func-printer.so: linked.o 
+	$(CXX) $(CXXFLAGS) -shared -o func-printer.so linked.o
+
+linked.o: $(OBJ)
+	ld -r $(OBJ) -o linked.o
+
+%.o: %.cpp %.hpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@ $(LLVMFLAGS)
+
+# < helpers
+test.ll: test.c
+	clang -S -emit-llvm $< -Wimplicit-int
+
+api-pattern.cpp: test.ll
+	llc -march=cpp test.ll -o api-pattern.cpp
+
+.PHONY: run debug
+run:	func-printer.so test.ll
+	@opt -load=./func-printer.so -FuncPrinter test.ll > /dev/null
+
+debug: func-printer.so test.ll
+	gdb opt	
+# helpers />
+
+print: *.hpp *.cpp
+	lpr $?
+	touch $@
+
+.PHONY: clean
 clean:
-	rm -fv *.o
-<<<<<<< HEAD
+	@rm -vf *~ *.o *.out *.so
+	@rm -vf *.ll api-pattern.cpp
+	@rm -vf \#*\#
 
-=======
-	rm -rfv ../docs/*
->>>>>>> llvm-parser
+
+
+
+
