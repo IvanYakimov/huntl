@@ -10,7 +10,6 @@ LLVMFLAGS = `llvm-config --cxxflags`
 lib = `llvm-config --libs` -pthread -ltinfo `llvm-config --ldflags` -ldl
 
 #VPATH = ../src/parser/
-vpath %.o ../src/parser/
 vpath %.cpp ../src/parser/
 vpath %.hpp ../src/parser
 vpath %.c ../src/parser
@@ -24,6 +23,7 @@ func-printer.so: linked.o
 linked.o: $(OBJ)
 	ld -r $(OBJ) -o linked.o
 
+$(OBJ):
 %.o: %.cpp %.hpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@ $(LLVMFLAGS)
 
