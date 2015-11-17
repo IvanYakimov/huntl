@@ -63,6 +63,7 @@ std::string InstPrinter::Separated (const std::string &separator, const std::str
 template <typename... Targs>
 std::string InstPrinter::InstLine (const llvm::Instruction &inst, Targs... Operands)
 {
+	// use Instruction::getOpCodeName instead of this:
 	const string kStore = "store";
 	const string kRet	= "ret";
 

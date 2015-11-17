@@ -2,34 +2,24 @@
 
 namespace solver
 {
-  template <size_t N>
-  SharedExprPtr ExprFactory :: ProduceBitvectorConst (unsigned long long val)
+  template <size_t W>
+  SharedExprPtr ExprFactory :: ProduceConst (signed int val)
   {
-    return std::make_shared <BitvectorConst<N>> (val);
+    return std::make_shared <IntegerConst<W>>>(val);
   }
 
-  SharedExprPtr ExprFactory :: ProduceBitvectorVariable (std::string name)
+  SharedExprPtr ExprFactory :: ProduceVariable (std::string name)
   {
-    return std::make_shared <BitvectorVariable> (name);
+    return std::make_shared <Variable>(name);
   }
 
-  SharedExprPtr ExprFactory :: ProduceBitvectorNeg (SharedExprPtr a)
+  SharedExprPtr ExprFactory :: ProduceUnaryOperation (SharedExprPtr a)
   {
-    return std::make_shared <BitvectorNeg> (a);
+    return std::make_shared <UnaryOperation>(a);
   }
 
-  SharedExprPtr ExprFactory :: ProduceBitvectorMult (SharedExprPtr a, SharedExprPtr b)
+  SharedExprPtr ExprFactory :: ProduceBinaryOperation (SharedExprPtr a, SharedExprPtr b)
   {
-    return std::make_shared <BitvectorMult> (a, b);
-  }
-
-  SharedExprPtr ExprFactory :: ProduceBitvectorAdd (SharedExprPtr a, SharedExprPtr b)
-  {
-    return std::make_shared <BitvectorAdd> (a, b);
-  }
-
-  SharedExprPtr ExprFactory :: ProduceBitvectorSub (SharedExprPtr a, SharedExprPtr b)
-  {
-    return std::make_shared <BitvectorSub> (a, b);
+    return std::make_shared <BinaryOperation>(a, b);
   }
 }
