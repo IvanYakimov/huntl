@@ -22,7 +22,17 @@ const int kAlign_4 = 32;
   {
   public:
 	  typedef enum {
-		  ADD
+		  kAdd,
+		  kSub,
+		  kMul,
+		  kSignDev,
+		  kSignRem,
+		  kShiftLeft,
+		  kLogicalShiftRight,
+		  kArithShirtRight,
+		  kAnd,
+		  kOr,
+		  kXor
 	  } OpCode;
 
 	  Operation (OpCode op_code) : op_code_(op_code) {}
