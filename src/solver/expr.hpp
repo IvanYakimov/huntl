@@ -4,6 +4,7 @@
 // STL
 # include <memory>
 # include <list>
+# include <map>
 # include <string>
 # include <bitset>
 
@@ -29,14 +30,29 @@ const int kAlign_4 = 32;
 		  kSignRem,
 		  kShiftLeft,
 		  kLogicalShiftRight,
-		  kArithShirtRight,
+		  kArithShiftRight,
 		  kAnd,
 		  kOr,
 		  kXor
 	  } OpCode;
 
+	  std::map <unsigned, std::string> op_code_map_ = {
+			  {kAdd, "add"},
+			  {kSub, "sub"},
+			  {kMul, "kMul"},
+			  {kSignDev, "sdev"},
+			  {kSignRem, "srem"},
+			  {kShiftLeft, "shl"},
+			  {kLogicalShiftRight, "lshr"},
+			  {kArithShiftRight, "ashr"},
+			  {kAnd, "and"},
+			  {kOr, "or"},
+			  {kXor, "xor"}
+	  };
+
 	  Operation (OpCode op_code) : op_code_(op_code) {}
 	  OpCode op_code() {return op_code_;}
+	  std::string op_code_name() {return op_code_map_[op_code_];}
 
   private:
 	  OpCode op_code_;
