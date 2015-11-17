@@ -3,9 +3,9 @@
 namespace solver
 {
   template <size_t W>
-  SharedExprPtr ExprFactory :: ProduceConst (signed int val)
+  SharedExprPtr ExprFactory :: ProduceConst (I32 val)
   {
-    return std::make_shared <IntegerConst<W>>>(val);
+	  return std::make_shared <Constant<W>>>(val);
   }
 
   SharedExprPtr ExprFactory :: ProduceVariable (std::string name)
@@ -13,13 +13,14 @@ namespace solver
     return std::make_shared <Variable>(name);
   }
 
-  SharedExprPtr ExprFactory :: ProduceUnaryOperation (SharedExprPtr a)
+  SharedExprPtr ExprFactory :: ProduceUnaryOperation (SharedExprPtr a, Operation::OpCode op_code)
   {
-    return std::make_shared <UnaryOperation>(a);
+    return std::make_shared <UnaryOperation>(a, op_code);
   }
 
-  SharedExprPtr ExprFactory :: ProduceBinaryOperation (SharedExprPtr a, SharedExprPtr b)
+  SharedExprPtr ExprFactory :: ProduceBinaryOperation (SharedExprPtr a, SharedExprPtr b, Operation::OpCode op_code)
   {
-    return std::make_shared <BinaryOperation>(a, b);
+    return std::make_shared <BinaryOperation>(a, b, op_code);
   }
 }
+

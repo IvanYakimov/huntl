@@ -4,18 +4,17 @@
 # include "expr.hpp"
 # include <memory>
 # include <string>
-#include "integer.hpp"
 
 namespace solver
 {
-// TODO: re-implement by using templates
-// NOTE: this factory produces only signed i32 expressions
+// NOTE: this factory produces only signed i32 expressions (temporary)
 	class ExprFactory
 	{
-		SharedExprPtr ProduceConst (signed int val);
+		template <size_t W>
+		SharedExprPtr ProduceConst (I32 val);
 		SharedExprPtr ProduceVariable (std::string name);
-		SharedExprPtr ProduceUnaryOperation (SharedExprPtr a);
-		SharedExprPtr ProduceBinaryOperation (SharedExprPtr a, SharedExprPtr b);
+		SharedExprPtr ProduceUnaryOperation (SharedExprPtr a, Operation::OpCode op_code);
+		SharedExprPtr ProduceBinaryOperation (SharedExprPtr a, SharedExprPtr b, Operation::OpCode op_code);
 	};
 }
 
