@@ -3,29 +3,35 @@
 # https://www.gnu.org/prep/standards/html_node/Makefile-Conventions.html
 SHELL = /bin/sh
 
-OBJ = func-printer.o pattern-matcher.o inst-printer.o
+PARSER = func-printer.o pattern-matcher.o inst-printer.o
+SOLVER = expr.o expr-factory.o integer.o
 CXX = g++ 
 CXXFLAGS = -fdiagnostics-color=always -O0 -ggdb -fexceptions -std=c++1y -fpic 
 LLVMFLAGS = `llvm-config --cxxflags`
-lib = `llvm-config --libs` -pthread -ltinfo `llvm-config --ldflags` -ldl
+#lib = `llvm-config --libs` -pthread -ltinfo `llvm-config --ldflags` -ldl
 
 #VPATH = ../src/parser/
-vpath %.cpp ../src/parser/
-vpath %.hpp ../src/parser
+vpath %.cpp ../src/parser/ ../src/solver/
+vpath %.hpp ../src/parser ../src/solver/
 vpath %.c ../src/parser
+# solver
 
 .PHONY: all
 all: func-printer.so
 
-func-printer.so: linked.o 
-	$(CXX) $(CXXFLAGS) -shared -o func-printer.so linked.o
+func-printer.so: parser.o 
+	$(CXX) -shared $< -o $@ $(CXXFLAGS) 
 
-linked.o: $(OBJ)
-	ld -r $(OBJ) -o linked.o
+parser.o: $(PARSER)
+	ld -r $(PARSER) -o $@
 
-$(OBJ):
+$(PARSER):
 %.o: %.cpp %.hpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@ $(LLVMFLAGS)
+	$(CXX) -c $< -o $@ $(CXXFLAGS) $(LLVMFLAGS)
+
+$(SOLVER):
+%.o: %.cpp %.hpp
+	$(CXX) -c $< -o $@ $(CXXFLAGS)
 
 # < helpers
 test.ll: test.c
