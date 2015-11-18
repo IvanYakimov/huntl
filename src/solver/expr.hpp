@@ -17,8 +17,11 @@ const int kAlign_4 = 32;
   {
   public:
     virtual ~Expr() = 0;
+    virtual std::string ToString() = 0;
   };
   
+  typedef std::shared_ptr <Expr> SharedExprPtr;
+
   class Operation : public Expr
   {
   public:
@@ -36,6 +39,11 @@ const int kAlign_4 = 32;
 		  kXor
 	  } OpCode;
 
+	  Operation (OpCode op_code) : op_code_(op_code) {}
+	  OpCode GetOpCode() {return op_code_;}
+
+private:
+	  OpCode op_code_;
 	  std::map <unsigned, std::string> op_code_map_ = {
 			  {kAdd, "add"},
 			  {kSub, "sub"},
@@ -49,16 +57,8 @@ const int kAlign_4 = 32;
 			  {kOr, "or"},
 			  {kXor, "xor"}
 	  };
-
-	  Operation (OpCode op_code) : op_code_(op_code) {}
-	  OpCode op_code() {return op_code_;}
-	  std::string op_code_name() {return op_code_map_[op_code_];}
-
-  private:
-	  OpCode op_code_;
+	  std::string GetOpCodeName() {return op_code_map_[op_code_];}
   };
-
-  typedef std::shared_ptr <Expr> SharedExprPtr;
 
   template <size_t W> /** width (alignment) */
   class Constant : public Expr
@@ -74,7 +74,7 @@ const int kAlign_4 = 32;
   {
   public:
 	  Variable (std::string name) : name_(name) {}
-	  std::string name() {return name_;}
+	  std::string GetName() {return name_;}
   private:
 	  std::string name_;
   };
@@ -83,7 +83,7 @@ const int kAlign_4 = 32;
   {
   public:
     UnaryOperation (SharedExprPtr child, OpCode op_code) : Operation(op_code), child_ (child) {}
-    SharedExprPtr child() {return child_;}
+    SharedExprPtr GetChild() {return child_;}
   private:
     SharedExprPtr child_;
   };
@@ -93,8 +93,8 @@ const int kAlign_4 = 32;
   public:
     BinaryOperation (SharedExprPtr left_child, SharedExprPtr right_child, OpCode op_code) :
     	Operation(op_code), left_child_(left_child), right_child_(right_child) {}
-    SharedExprPtr left_child() {return left_child_;}
-    SharedExprPtr right_child() {return right_child_;}
+    SharedExprPtr GetLeftChild() {return left_child_;}
+    SharedExprPtr GetRightChild() {return right_child_;}
   private:
     SharedExprPtr left_child_;
     SharedExprPtr right_child_;

@@ -16,7 +16,7 @@ vpath %.hpp ../src/parser ../src/solver/
 vpath %.c ../src/parser
 # solver
 
-.PHONY: all
+.PHONY: all style
 all: func-printer.so
 
 .PHONY: solvertest.out
