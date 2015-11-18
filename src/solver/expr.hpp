@@ -16,7 +16,7 @@ const int kAlign_4 = 32;
   class Expr : public std::enable_shared_from_this <Expr>
   {
   public:
-    virtual ~Expr() = 0;
+    virtual ~Expr() {}
     virtual std::string ToString() = 0;
   };
   

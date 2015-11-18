@@ -1,25 +1,32 @@
-# useful links:
+#########################
+#	SOLVER MAKEFILE		# 
+######################### useful links:
 # https://www.gnu.org/software/make/manual/html_node/Pattern-Rules.html
 # https://www.gnu.org/prep/standards/html_node/Makefile-Conventions.html
 SHELL = /bin/sh
 
-SOLVERTEST = expr-test.o 
-SOLVER = expr.o
-CXX = g++ 
+TESTOBJ = test-expr.o 
+# test-expr-factory.o 
+OBJ = expr.o
+# expr-factory.o
+CXX = g++
 CXXFLAGS = -fdiagnostics-color=always -O0 -ggdb -fexceptions -std=c++1y -fpic
-LDFLAGS = -lgtest -pthread 
+LDFLAGS = 
 
-vpath %.cpp ../test/solver/
-vpath %.hpp ../test/solver/
+vpath %.cpp ../../src/solver ../../test/solver/
+vpath %.hpp ../../src/solver ../../test/solver/
 
-solvertest.out: $(SOLVERTEST) $(SOLVER)
-	$(CXX) $^ -o $@ $(LDFLAGS) $(CSSFLAGS)
+solvertest.out: $(TESTOBJ) $(OBJ)
+	$(CXX) $^ -o $@ -lgtest -pthread 
 
-$(SOLVERTEST):
+$(OBJ):
 %.o: %.cpp %.hpp
 	$(CXX) -c $< -o $@ $(CXXFLAGS)
 
 print: *.hpp *.cpp
 	lpr $?
 	touch $@
-
+	
+.PHONY: clean
+clean: 
+	@rm -fv *.o \#*\# *.out
