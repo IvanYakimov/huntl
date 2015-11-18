@@ -11,7 +11,8 @@ class ExprTest : public ::testing::Test {
 }
 
 TEST_F(ExprTest, PrintVariable) {
-	ASSERT_TRUE(true);
+	solver::Variable v("x");
+	EXPECT_EQ("x", v.ToString());
 }
 
 int main (int argc, char *argv[]) {
