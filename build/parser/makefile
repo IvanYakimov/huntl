@@ -4,38 +4,24 @@
 SHELL = /bin/sh
 
 PARSER = func-printer.o pattern-matcher.o inst-printer.o
-SOLVER = expr.o expr-factory.o integer.o
 CXX = g++ 
 CXXFLAGS = -fdiagnostics-color=always -O0 -ggdb -fexceptions -std=c++1y -fpic 
 LLVMFLAGS = `llvm-config --cxxflags`
 #lib = `llvm-config --libs` -pthread -ltinfo `llvm-config --ldflags` -ldl
 
-#VPATH = ../src/parser/
-vpath %.cpp ../src/parser/ ../src/solver/
-vpath %.hpp ../src/parser ../src/solver/
-vpath %.c ../src/parser
-# solver
-
-.PHONY: all style
-all: func-printer.so
-
-.PHONY: solvertest.out
-solvertest.out: 
-	$(MAKE) --makefile="solver.test.mk"
+vpath %.cpp ../../src/parser
+vpath %.hpp ../../src/parser
+vpath %.c 	../../src/parser
 
 func-printer.so: parser.o 
 	$(CXX) -shared $< -o $@ $(CXXFLAGS) 
 
 parser.o: $(PARSER)
-	ld -r $(PARSER) -o $@
+	ld -r $^ -o $@
 
 $(PARSER):
 %.o: %.cpp %.hpp
 	$(CXX) -c $< -o $@ $(CXXFLAGS) $(LLVMFLAGS)
-
-$(SOLVER):
-%.o: %.cpp %.hpp
-	$(CXX) -c $< -o $@ $(CXXFLAGS)
 
 # < helpers
 test.ll: test.c
