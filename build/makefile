@@ -19,6 +19,10 @@ vpath %.c ../src/parser
 .PHONY: all
 all: func-printer.so
 
+.PHONY: solvertest.out
+solvertest.out: 
+	$(MAKE) --makefile="solver.test.mk"
+
 func-printer.so: parser.o 
 	$(CXX) -shared $< -o $@ $(CXXFLAGS) 
 
