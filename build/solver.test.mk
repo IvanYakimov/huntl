@@ -4,6 +4,7 @@
 SHELL = /bin/sh
 
 SOLVERTEST = expr-test.o 
+SOLVER = expr.o
 CXX = g++ 
 CXXFLAGS = -fdiagnostics-color=always -O0 -ggdb -fexceptions -std=c++1y -fpic
 LDFLAGS = -lgtest -pthread 
@@ -11,8 +12,8 @@ LDFLAGS = -lgtest -pthread
 vpath %.cpp ../test/solver/
 vpath %.hpp ../test/solver/
 
-solvertest.out: $(SOLVERTEST)
-	$(CXX) $< -o $@ $(LDFLAGS) $(CSSFLAGS)
+solvertest.out: $(SOLVERTEST) $(SOLVER)
+	$(CXX) $^ -o $@ $(LDFLAGS) $(CSSFLAGS)
 
 $(SOLVERTEST):
 %.o: %.cpp %.hpp
