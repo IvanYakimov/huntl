@@ -63,9 +63,8 @@ private:
   template <size_t W> /** width (alignment) */
   class Constant : public Expr
   {
-	  Constant (unsigned int value) {
-		value_ = std::make_unique <std::bitset <W>> (value);
-	  }
+	  Constant (unsigned int value) {value_ = std::make_unique <std::bitset <W>> (value);}
+	  virtual std::string ToString () final;
   private:
 	  std::unique_ptr <std::bitset <W>> value_;
   };
@@ -74,9 +73,11 @@ private:
   {
   public:
 	  Variable (std::string name) : name_(name) {}
-	  std::string GetName() {return name_;}
+	  std::string ToString() final;
+	  virtual ~Variable() final {}
   private:
 	  std::string name_;
+	  std::string GetName() {return name_;}
   };
 
   class UnaryOperation : public Operation
