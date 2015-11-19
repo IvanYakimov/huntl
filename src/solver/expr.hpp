@@ -41,6 +41,7 @@ const int kAlign_4 = 32;
 
 	  Operation (OpCode op_code) : op_code_(op_code) {}
 	  OpCode GetOpCode() {return op_code_;}
+	  std::string GetOpCodeName() {return op_code_map_[op_code_];}
 
 private:
 	  OpCode op_code_;
@@ -57,17 +58,20 @@ private:
 			  {kOr, "or"},
 			  {kXor, "xor"}
 	  };
-	  std::string GetOpCodeName() {return op_code_map_[op_code_];}
   };
 
   template <size_t W> /** width (alignment) */
   class Constant : public Expr
   {
+  public:
 	  Constant (unsigned int value) {value_ = std::make_unique <std::bitset <W>> (value);}
 	  virtual std::string ToString () final;
   private:
 	  std::unique_ptr <std::bitset <W>> value_;
   };
+
+  template class Constant<kAlign_4>;
+  typedef Constant<kAlign_4> ConstantI32;
 
   class Variable : public Expr
   {
@@ -80,14 +84,17 @@ private:
 	  std::string GetName() {return name_;}
   };
 
+  /* deprecated: llvm has no unary arithmetic operations
   class UnaryOperation : public Operation
   {
   public:
     UnaryOperation (SharedExprPtr child, OpCode op_code) : Operation(op_code), child_ (child) {}
     SharedExprPtr GetChild() {return child_;}
+    std::string ToString() final;
   private:
     SharedExprPtr child_;
   };
+  */
 
   class BinaryOperation : public Operation
   {
@@ -96,6 +103,7 @@ private:
     	Operation(op_code), left_child_(left_child), right_child_(right_child) {}
     SharedExprPtr GetLeftChild() {return left_child_;}
     SharedExprPtr GetRightChild() {return right_child_;}
+    std::string ToString() final;
   private:
     SharedExprPtr left_child_;
     SharedExprPtr right_child_;
