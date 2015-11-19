@@ -19,6 +19,7 @@ vpath %.hpp ../../src/solver ../../test/solver/
 solvertest.out: $(TESTOBJ) $(OBJ)
 	$(CXX) $^ -o $@ -lgtest -pthread 
 
+$(TESTOBJ):
 $(OBJ):
 %.o: %.cpp %.hpp
 	$(CXX) -c $< -o $@ $(CXXFLAGS)
