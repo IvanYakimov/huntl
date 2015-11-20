@@ -48,7 +48,7 @@ private:
 	  std::map <unsigned, std::string> op_code_map_ = {
 			  {kAdd, "add"},
 			  {kSub, "sub"},
-			  {kMul, "kMul"},
+			  {kMul, "mul"},
 			  {kSignDev, "sdev"},
 			  {kSignRem, "srem"},
 			  {kShiftLeft, "shl"},
@@ -70,8 +70,11 @@ private:
 	  std::unique_ptr <std::bitset <W>> value_;
   };
 
+  // ConstantI32 Instance
   template class Constant<kAlign_4>;
-  typedef Constant<kAlign_4> ConstantI32;
+  class ConstantI32 : public Constant<kAlign_4> {
+	  public: ConstantI32(I32 value) : Constant(value) {}
+  };
 
   class Variable : public Expr
   {
