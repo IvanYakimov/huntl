@@ -32,10 +32,16 @@ public:
   PatternMatcher () {}
   virtual ~PatternMatcher () {}
 
+  // Specific Instruction type classes
+  void visitReturnInst (const llvm::ReturnInst &inst);
+  void visitBranchInst (const llvm::BranchInst &inst);
+  // TODO: missed instructions
+  void visitICmpInst (const llvm::ICmpInst &inst);
+  // TODO: missed instructions
   void visitAllocaInst (const llvm::AllocaInst &inst);
   void visitLoadInst (const llvm::LoadInst &inst);
   void visitStoreInst (const llvm::StoreInst &inst);
-  void visitReturnInst (const llvm::ReturnInst &inst);
+  // TODO: missed instructions
 
 protected:
   virtual void AddRegister (const llvm::Instruction *inst) = 0;

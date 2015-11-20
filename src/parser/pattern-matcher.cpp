@@ -33,6 +33,32 @@ bool PatternMatcher::Case (const Instruction &inst, unsigned i, T value, Targs..
 // --------------------------------------------------------
 // Instruction visitors
 
+void PatternMatcher::visitReturnInst (const ReturnInst &inst)
+{
+	Value *value = NULL;
+	ConstantInt *constant_int = NULL;
+	BinaryOperator *bin_op = NULL;
+	if (Case (inst, 0, &constant_int)) {
+		errs() << "ret constant_fp\n";
+	}
+	else if (Case (inst, 0, &bin_op)) {
+		//TODO:
+	}
+	else if (Case (inst, 0)) {
+		errs() << "ret void\n";
+	}
+	else
+		errs() << "ret pattern matching failed\n";
+}
+
+void PatternMatcher::visitBranchInst(const BranchInst &inst) {
+	//TODO:
+}
+
+void PatternMatcher::visitICmpInst(const ICmpInst &inst) {
+	//TODO:
+}
+
 void PatternMatcher::visitAllocaInst (const AllocaInst &inst)
 {
 	if (inst.getName() == "")
@@ -81,25 +107,6 @@ void PatternMatcher::visitStoreInst (const StoreInst &inst)
   else // pattern matching fault
 	  errs() << "store pattern matching failed\n";
 }
-
-void PatternMatcher::visitReturnInst (const ReturnInst &inst)
-{
-	Value *value = NULL;
-	ConstantInt *constant_int = NULL;
-	BinaryOperator *bin_op = NULL;
-	if (Case (inst, 0, &constant_int)) {
-		errs() << "ret constant_fp\n";
-	}
-	else if (Case (inst, 0, &bin_op)) {
-		//TODO:
-	}
-	else if (Case (inst, 0)) {
-		errs() << "ret void\n";
-	}
-	else
-		errs() << "ret pattern matching failed\n";
-}
-
 
 
 
