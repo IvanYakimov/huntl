@@ -16,7 +16,6 @@ using namespace llvm;
 // Project
 #include "inst-printer.hpp"
 
-
 namespace
 {
   struct FuncPrinter : public FunctionPass
