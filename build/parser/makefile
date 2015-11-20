@@ -3,7 +3,8 @@
 # https://www.gnu.org/prep/standards/html_node/Makefile-Conventions.html
 SHELL = /bin/sh
 
-PARSER = func-printer.o pattern-matcher.o inst-printer.o interpreter.o
+PARSER = analyzer.o interpreter.o pattern-matcher.o 
+# func-printer.o inst-printer.o
 CXX = g++ 
 CXXFLAGS = -fdiagnostics-color=always -O0 -ggdb -fexceptions -std=c++1y -fpic 
 LLVMFLAGS = `llvm-config --cxxflags`
