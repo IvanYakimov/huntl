@@ -49,24 +49,18 @@ void InstPrinter::HandleReturnInst (const llvm::Instruction &inst)
 
 //-------------------------------------
 // Helper functions
-std::string InstPrinter::Separated (const std::string &separator, const std::string &endl, std::string current)
-{
+std::string InstPrinter::Separated (const std::string &separator, const std::string &endl, std::string current) {
 	return current + endl;
 }
 
 template <typename... Targs>
-std::string InstPrinter::Separated (const std::string &separator, const std::string &endl, std::string current, Targs... Operands)
-{
+std::string InstPrinter::Separated (const std::string &separator, const std::string &endl, std::string current, Targs... Operands) {
 	return current + separator + Separated (separator, endl, Operands...);
 }
 
 template <typename... Targs>
-std::string InstPrinter::InstLine (const llvm::Instruction &inst, Targs... Operands)
-{
-	// use Instruction::getOpCodeName instead of this:
-	const string kStore = "store";
-	const string kRet	= "ret";
-
+std::string InstPrinter::InstLine (const llvm::Instruction &inst, Targs... Operands) {
+	string name = inst.getOpcodeName();
 	string op_list = Separated (", ", "\n", Operands...);
 
 	auto with_prefix = [] (string prefix, string name, string operands)
@@ -75,7 +69,7 @@ std::string InstPrinter::InstLine (const llvm::Instruction &inst, Targs... Opera
 			{return name + " " + operands;};
 
 	if (isa<StoreInst>(inst)) {
-		return simple (kStore, op_list);
+		return simple (name, op_list);
 	}
 
 	return "inst line \n";

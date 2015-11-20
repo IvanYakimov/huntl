@@ -21,6 +21,7 @@ Licensed under LGPL license.
 // Internal
 # include "pattern-matcher.hpp"
 
+// TODO: try to replace typedef by instantiation
 typedef std::function <llvm::raw_ostream&()> Printer;
 
 // TODO: check - maybe remove final from methods

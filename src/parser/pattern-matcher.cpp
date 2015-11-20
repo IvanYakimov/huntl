@@ -114,4 +114,3 @@ void PatternMatcher::visitStoreInst (const StoreInst &inst)
 
 
 
-
