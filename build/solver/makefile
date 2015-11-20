@@ -5,12 +5,10 @@
 # https://www.gnu.org/prep/standards/html_node/Makefile-Conventions.html
 SHELL = /bin/sh
 
-TESTOBJ = test-expr.o 
-# test-expr-factory.o 
-OBJ = expr.o
-# expr-factory.o
-CXX = g++
-CXXFLAGS = -fdiagnostics-color=always -O0 -ggdb -fexceptions -std=c++1y -fpic
+TESTOBJ = test-expr.o test-expr-factory.o 
+OBJ = expr.o expr-factory.o
+CXX = g++ 
+CXXFLAGS = -fdiagnostics-color=always -O0 -ggdb -fexceptions -std=c++1y -fpic -rdynamic
 LDFLAGS = 
 
 vpath %.cpp ../../src/solver ../../test/solver/
