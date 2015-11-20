@@ -11,9 +11,9 @@ namespace solver
 	class ExprFactory
 	{
 		template <size_t W>
-		SharedExprPtr ProduceConst (I32 val);
+		SharedExprPtr ProduceConstant (unsigned int val);
+		SharedExprPtr ProduceConstantI32 (I32 val);
 		SharedExprPtr ProduceVariable (std::string name);
-		SharedExprPtr ProduceUnaryOperation (SharedExprPtr a, Operation::OpCode op_code);
 		SharedExprPtr ProduceBinaryOperation (SharedExprPtr a, SharedExprPtr b, Operation::OpCode op_code);
 	};
 }
