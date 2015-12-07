@@ -18,7 +18,7 @@ string Constant<W>::ToString() {
 }
 
 string BinaryOperation::ToString() {
-	//TODO: use foldr instead of "whitespacing"
+	//TODO: use foldr instead of "whitespacing" (?)
 	return GetOpCodeName() + " " + GetLeftChild()->ToString() + " " + GetRightChild()->ToString();
 }
 }

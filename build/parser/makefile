@@ -3,7 +3,7 @@
 # https://www.gnu.org/prep/standards/html_node/Makefile-Conventions.html
 SHELL = /bin/sh
 
-PARSER = analyzer.o interpreter.o pattern-matcher.o 
+PARSER = parser.o pattern-matcher.o interpreter.o 
 # func-printer.o inst-printer.o
 CXX = g++ 
 CXXFLAGS = -fdiagnostics-color=always -O0 -ggdb -fexceptions -std=c++1y -fpic 
@@ -14,31 +14,17 @@ vpath %.cpp ../../src/parser
 vpath %.hpp ../../src/parser
 vpath %.c 	../../src/parser
 
-func-printer.so: parser.o 
+parser.so: shared.o 
 	$(CXX) -shared $< -o $@ $(CXXFLAGS) 
 
-parser.o: $(PARSER)
+shared.o: $(PARSER)
 	ld -r $^ -o $@
 
 $(PARSER):
 %.o: %.cpp %.hpp
 	$(CXX) -c $< -o $@ $(CXXFLAGS) $(LLVMFLAGS)
 
-# < helpers
-test.ll: test.c
-	clang -S -emit-llvm $< -Wimplicit-int
-
-api-pattern.cpp: test.ll
-	llc -march=cpp $< -o api-pattern.cpp
-
-.PHONY: run debug
-run:	func-printer.so test.ll
-	@opt -load=./func-printer.so -FuncPrinter test.ll > /dev/null
-
-debug: func-printer.so test.ll
-	gdb opt	
-# helpers />
-
+# TODO
 print: *.hpp *.cpp
 	lpr $?
 	touch $@
@@ -49,7 +35,20 @@ clean:
 	@rm -vf *.ll api-pattern.cpp
 	@rm -vf \#*\#
 
+# < helper functions ------------------------------------------------
+test.ll: test.c
+	clang -S -emit-llvm $< -Wimplicit-int
 
+api-pattern.cpp: test.ll
+	llc -march=cpp $< -o api-pattern.cpp
+
+.PHONY: run debug
+run:	parser.so test.ll
+	opt -load=./parser.so -Parser test.ll > /dev/null
+
+debug: parser.so test.ll
+	gdb opt	
+# helper functions ----------------------------------------------- />
 
 
 

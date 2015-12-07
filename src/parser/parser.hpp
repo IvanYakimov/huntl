@@ -1,5 +1,5 @@
-# ifndef __ANALYZER_HPP__
-# define __ANALYZER_HPP__
+# ifndef __PARSER_HPP__
+# define __PARSER_HPP__
 
 // LLVM
 # include "llvm/Pass.h"
@@ -14,23 +14,22 @@ using namespace llvm;
 
 // Project
 
-
 namespace
 {
-  struct Analyzer : public FunctionPass
+  struct Parser : public FunctionPass
   {
     static char ID;
-    Analyzer() : FunctionPass (ID) {}
+    Parser() : FunctionPass (ID) {}
     bool runOnFunction (Function &F) override;
   };
 }
 
-char Analyzer::ID = 0;
-static RegisterPass <Analyzer> X("Analyzer", "Analyzer Pass",
+char Parser::ID = 0;
+static RegisterPass <Parser> X("Parser", "Parser pass",
 				    false, // Only looks at CFG
 				    false); // Analysis Pass
 
-# endif /* __ANALYZER_HPP__ */
+# endif /* __PARSER_HPP__ */
 
 
 

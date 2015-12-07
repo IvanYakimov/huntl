@@ -3,10 +3,12 @@
 
 // STL
 # include <memory>
-# include <list>
 # include <map>
 # include <string>
 # include <bitset>
+
+// Project
+# include "../utils/memory.hpp"
 
 namespace solver
 {
@@ -64,7 +66,7 @@ private:
   class Constant : public Expr
   {
   public:
-	  Constant (unsigned int value) {value_ = std::make_unique <std::bitset <W>> (value);}
+	  Constant (unsigned int value) {value_ = make_unique <std::bitset <W>> (value);}
 	  virtual std::string ToString () final;
   private:
 	  std::unique_ptr <std::bitset <W>> value_;
@@ -86,18 +88,6 @@ private:
 	  std::string name_;
 	  std::string GetName() {return name_;}
   };
-
-  /* deprecated: llvm has no unary arithmetic operations
-  class UnaryOperation : public Operation
-  {
-  public:
-    UnaryOperation (SharedExprPtr child, OpCode op_code) : Operation(op_code), child_ (child) {}
-    SharedExprPtr GetChild() {return child_;}
-    std::string ToString() final;
-  private:
-    SharedExprPtr child_;
-  };
-  */
 
   class BinaryOperation : public Operation
   {
