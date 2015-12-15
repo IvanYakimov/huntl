@@ -7,6 +7,90 @@ date: 2015
 e-mail: ivan.yakimov.research@yandex.ru
 */
 
+void PatternMatcher::DebugInstInfo(const llvm::Instruction &inst) {
+# ifdef DBG
+	errs() << inst << "\n";
+# endif
+}
+
+// --------------------------------------------------------
+// Instruction visitors
+
+void PatternMatcher::visitReturnInst (const ReturnInst &inst) {
+	DebugInstInfo(inst);
+
+	Value *ret_val = NULL;
+
+	if (Case (inst, 0, &ret_val))
+		HandleReturnInst(inst, ret_val);
+	else if (Case (inst, 0))
+		HandleReturnInst(inst);
+}
+
+void PatternMatcher::visitBranchInst(const BranchInst &inst) {
+	DebugInstInfo(inst);
+
+	BasicBlock *iftrue = NULL,
+			*iffalse = NULL,
+			*jump = NULL;
+	Value *cond = NULL;
+
+	if (Case (inst, 0, &cond, &iftrue, &iffalse))
+		HandleBranchInst(inst, cond, iftrue, iffalse);
+	else if (Case (inst, 0, &jump))
+		HandleBranchInst(inst, jump);
+	else
+		HandleBranchInst(inst);
+}
+
+void PatternMatcher::visitICmpInst(const ICmpInst &inst) {
+	DebugInstInfo(inst);
+
+	Value *lhs = NULL,
+			*rhs = NULL;
+
+	if (Case (inst, 0, &lhs, &rhs))
+		HandleICmpInst(inst, lhs, rhs);
+	else
+		HandleICmpInst(inst);
+}
+
+void PatternMatcher::visitAllocaInst (const AllocaInst &inst)
+{
+	DebugInstInfo(inst);
+
+	Value *allocated = NULL;
+	if (Case (inst, 0, &allocated))
+		HandleAllocaInst(inst, allocated);
+	else
+		HandleAllocaInst(inst);
+}
+
+void PatternMatcher::visitLoadInst (const LoadInst &inst)
+{
+	DebugInstInfo(inst);
+
+	Value *ptr= NULL;
+	if (Case (inst, 0, &ptr))
+		HandleLoadInst(inst, ptr);
+	else
+		HandleLoadInst(inst);
+}
+
+void PatternMatcher::visitStoreInst (const StoreInst &inst)
+{
+	DebugInstInfo(inst);
+
+	Value *val = NULL;
+	Value *ptr = NULL;
+	if (Case (inst, 0, &val, &ptr))
+		HandleStoreInst(inst, val, ptr);
+	else
+		HandleStoreInst(inst);
+}
+
+//--------------------
+// Helper methods
 bool PatternMatcher::Case (const Instruction &inst, unsigned i)
 {
 	if (inst.getNumOperands() != i)
@@ -29,66 +113,12 @@ bool PatternMatcher::Case (const Instruction &inst, unsigned i, T value, Targs..
 		return false;
 }
 
-// --------------------------------------------------------
-// Instruction visitors
 
-void PatternMatcher::visitReturnInst (const ReturnInst &inst)
-{
-	Value *value = NULL;
-	if (Case (inst, 0, &value)) {
-		//TODO:
-	}
-	else if (Case (inst, 0)) {
-		//TODO:
-	}
-	else
-		/* TODO: */;
-}
 
-void PatternMatcher::visitBranchInst(const BranchInst &inst) {
-	//TODO:
-}
 
-void PatternMatcher::visitICmpInst(const ICmpInst &inst) {
-	//TODO:
-}
 
-void PatternMatcher::visitAllocaInst (const AllocaInst &inst)
-{
-	if (inst.getName() == "")
-		AddRegister(&inst);
 
-	// always allocates constant_int
-	ConstantInt *constant_int = NULL;
-	if (Case (inst, 0, &constant_int)) {
-		//TODO:
-	}
-	else
-		/*TODO:*/;
-}
 
-void PatternMatcher::visitLoadInst (const LoadInst &inst)
-{
-	if (inst.getName() == "")
-			AddRegister(&inst);
-	AllocaInst *alloca = NULL;
-	if (Case (inst, 0, &alloca)) {
-		/*TODO:*/;
-	}
-	else
-		/*TODO:*/;
-}
-
-void PatternMatcher::visitStoreInst (const StoreInst &inst)
-{
-  Value *val = NULL;
-  AllocaInst *alloca = NULL;
-  if (Case (inst, 0, &val, &alloca)) {
-  	  //TODO:
-  }
-  else // pattern matching fault
-	  /*TODO:*/;
-}
 
 
 

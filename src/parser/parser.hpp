@@ -8,11 +8,14 @@
 # include "llvm/IR/InstIterator.h"
 # include "llvm/IR/InstVisitor.h"
 # include "llvm/Support/raw_ostream.h"
+
+# include "llvm/Support/Debug.h"
 using namespace llvm;
 
 // STL
 
 // Project
+# include "interpreter.hpp"
 
 namespace
 {
@@ -21,6 +24,8 @@ namespace
     static char ID;
     Parser() : FunctionPass (ID) {}
     bool runOnFunction (Function &F) override;
+  private:
+    void DebugFunctionInfo(const llvm::Function &func);
   };
 }
 

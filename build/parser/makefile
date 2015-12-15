@@ -6,13 +6,18 @@ SHELL = /bin/sh
 PARSER = parser.o pattern-matcher.o interpreter.o 
 # func-printer.o inst-printer.o
 CXX = g++ 
-CXXFLAGS = -fdiagnostics-color=always -O0 -ggdb -fexceptions -std=c++1y -fpic 
+CXXFLAGS = -fdiagnostics-color=always -fexceptions -std=c++1y -fpic -ggdb -O0
 LLVMFLAGS = `llvm-config --cxxflags`
 #lib = `llvm-config --libs` -pthread -ltinfo `llvm-config --ldflags` -ldl
 
 vpath %.cpp ../../src/parser
 vpath %.hpp ../../src/parser
 vpath %.c 	../../src/parser
+
+all: parser.so
+
+debug: CXXFLAGS += -D DBG
+debug: parser.so
 
 parser.so: shared.o 
 	$(CXX) -shared $< -o $@ $(CXXFLAGS) 
@@ -35,7 +40,7 @@ clean:
 	@rm -vf *.ll api-pattern.cpp
 	@rm -vf \#*\#
 
-# < helper functions ------------------------------------------------
+# < helpers ------------------------------------------------
 test.ll: test.c
 	clang -S -emit-llvm $< -Wimplicit-int
 
@@ -44,11 +49,11 @@ api-pattern.cpp: test.ll
 
 .PHONY: run debug
 run:	parser.so test.ll
-	opt -load=./parser.so -Parser test.ll > /dev/null
+	opt -load=./parser.so < test.ll > /dev/null -Parser
 
-debug: parser.so test.ll
+gdb: parser.so test.ll
 	gdb opt	
-# helper functions ----------------------------------------------- />
+# helpers ----------------------------------------------- />
 
 
 
