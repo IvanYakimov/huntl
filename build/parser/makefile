@@ -1,10 +1,5 @@
-# useful links:
-# https://www.gnu.org/software/make/manual/html_node/Pattern-Rules.html
-# https://www.gnu.org/prep/standards/html_node/Makefile-Conventions.html
 SHELL = /bin/sh
-
 PARSER = parser.o pattern-matcher.o interpreter.o 
-# func-printer.o inst-printer.o
 CXX = g++ 
 CXXFLAGS = -fdiagnostics-color=always -fexceptions -std=c++1y -fpic -ggdb -O0
 LLVMFLAGS = `llvm-config --cxxflags`
@@ -28,11 +23,6 @@ shared.o: $(PARSER)
 $(PARSER):
 %.o: %.cpp %.hpp
 	$(CXX) -c $< -o $@ $(CXXFLAGS) $(LLVMFLAGS)
-
-# TODO
-print: *.hpp *.cpp
-	lpr $?
-	touch $@
 
 .PHONY: clean
 clean:

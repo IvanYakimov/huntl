@@ -1,7 +1,79 @@
-all:
-	$(MAKE) -C parser all
-	$(MAKE) -C solver all
+SHELL = /bin/sh
 
+SOLVER_TEST = test-expr.o test-expr-factory.o 
+SOLVER = expr.o expr-factory.o
+PARSER_TEST = 
+PARSER = parser.o pattern-matcher.o interpreter.o
+OBJ_TEST = $(SOLVER_TEST) $(PARSER_TEST)
+OBJ = $(SOLVER) $(PARSER)
+CXX = g++ 
+CXXFLAGS = -fdiagnostics-color=always -O0 -ggdb -fexceptions -std=c++1y -fpic -rdynamic $(LLVMFLAGS)
+LDFLAGS = 
+LLVMFLAGS = `llvm-config --cxxflags`
+SRC = ../src
+TST = ../test
+
+vpath %.cpp $(SRC)/solver $(TST)/solver/
+vpath %.cpp $(SRC)/parser
+vpath %.hpp $(SRC)/solver $(TST)/solver/
+vpath %.hpp $(SRC)/parser
+vpath %.c 	$(SRC)/parser
+
+all: program.so
+debug: CXXFLAGS += -D DBG
+debug: program.so
+
+program.so: shared.o 
+	$(CXX) -shared $< -o $@ $(CXXFLAGS) 
+
+shared.o: $(PARSER) $(SOLVER)
+	ld -r $^ -o $@
+
+solvertest.out: $(SOLVER_TEST) $(SOLVER)
+	$(CXX) $^ -o $@ -lgtest -pthread 
+	
+#parsertest.out
+
+$(SOLVER_TEST):
+$(SOLVER):
+$(PARSER_TEST):
+$(PARSER):
+%.o: %.cpp %.hpp
+	$(CXX) -c $< -o $@ $(CXXFLAGS) 
+	
+.PHONY: clean
 clean:
-	$(MAKE) -C parser clean
-	$(MAKE) -C solver clean
+	@rm -vf *~ *.o *.out *.so
+	@rm -vf *.ll api-pattern.cpp
+	@rm -vf \#*\#
+
+# < helpers ------------------------------------------------
+test.ll: test.c
+	clang -S -emit-llvm $< -Wimplicit-int
+
+api-pattern.cpp: test.ll
+	llc -march=cpp $< -o api-pattern.cpp
+
+.PHONY: run debug
+run:	program.so test.ll
+	opt -load=./program.so < test.ll > /dev/null -Parser
+
+gdb: parser.so test.ll
+	gdb opt	
+# helpers ----------------------------------------------- />	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
