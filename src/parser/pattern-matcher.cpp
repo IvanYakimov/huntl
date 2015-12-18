@@ -52,7 +52,7 @@ void PatternMatcher::visitBranchInst(const BranchInst &inst) {
 	else if (Case (inst, 0, &jump))
 		HandleBranchInst(inst, jump);
 	else
-		HandleBranchInst(inst);
+		InterruptionHandler::Do(new MatchingFailure(inst));
 }
 
 void PatternMatcher::visitICmpInst(const ICmpInst &inst) {
@@ -64,7 +64,7 @@ void PatternMatcher::visitICmpInst(const ICmpInst &inst) {
 	if (Case (inst, 0, &lhs, &rhs))
 		HandleICmpInst(inst, lhs, rhs);
 	else
-		HandleICmpInst(inst);
+		InterruptionHandler::Do(new MatchingFailure(inst));
 }
 
 void PatternMatcher::visitAllocaInst (const AllocaInst &inst)
@@ -75,7 +75,7 @@ void PatternMatcher::visitAllocaInst (const AllocaInst &inst)
 	if (Case (inst, 0, &allocated))
 		HandleAllocaInst(inst, allocated);
 	else
-		HandleAllocaInst(inst);
+		InterruptionHandler::Do(new MatchingFailure(inst));
 }
 
 void PatternMatcher::visitLoadInst (const LoadInst &inst)
@@ -86,7 +86,7 @@ void PatternMatcher::visitLoadInst (const LoadInst &inst)
 	if (Case (inst, 0, &ptr))
 		HandleLoadInst(inst, ptr);
 	else
-		HandleLoadInst(inst);
+		InterruptionHandler::Do(new MatchingFailure(inst));
 }
 
 void PatternMatcher::visitStoreInst (const StoreInst &inst)
@@ -94,20 +94,17 @@ void PatternMatcher::visitStoreInst (const StoreInst &inst)
 	DebugInstInfo(inst);
 
 	Value *val = NULL;
-	Instruction *inst_val= NULL;
-	Constant *const_val = NULL;
+	Instruction *instruction= NULL;
+	Constant *constant = NULL;
 	Value *ptr = NULL;
-	if (Case (inst, 0, &inst_val, &ptr))
-		errs() << "inst ptr\n";
-	else if (Case (inst, 0, &const_val, &ptr))
-		errs() << "const ptr\n";
+	if (Case (inst, 0, &instruction, &ptr))
+		HandleStoreInst(inst, instruction, ptr);
+	else if (Case (inst, 0, &constant, &ptr))
+		HandleStoreInst(inst, constant, ptr);
 	else if (Case (inst, 0, &val, &ptr))
-		errs() << "val ptr\n";
-		//HandleStoreInst(inst, val, ptr);
+		HandleStoreInst(inst, val, ptr);
 	else
 		InterruptionHandler::Do(new MatchingFailure(inst));
-
-	DebugOpList(inst);
 }
 
 //--------------------

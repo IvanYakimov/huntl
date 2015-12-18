@@ -69,24 +69,21 @@ protected:
   virtual void HandleBranchInst (const llvm::Instruction &inst,
 		  const llvm::Value *cond, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse) = 0;
   virtual void HandleBranchInst (const llvm::Instruction &inst, const llvm::BasicBlock *jump) = 0;
-  virtual void HandleBranchInst (const llvm::Instruction &inst) = 0;
 
   // Cmp
   virtual void HandleICmpInst (const llvm::Instruction &inst, const llvm::Value *lhs, const llvm::Value *rhs) = 0;
-  virtual void HandleICmpInst (const llvm::Instruction &inst) = 0;
 
   // Alloca
   virtual void HandleAllocaInst (const llvm::Instruction &inst, const llvm::Value *allocated) = 0;
-  virtual void HandleAllocaInst (const llvm::Instruction &inst) = 0;
 
   // Load
   // TODO
   virtual void HandleLoadInst (const llvm::Instruction &inst, const llvm::Value *ptr) = 0;
-  virtual void HandleLoadInst (const llvm::Instruction &inst) = 0;
 
   // Store
   virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Value *val, const llvm::Value *ptr) = 0;
-  virtual void HandleStoreInst (const llvm::Instruction &inst) = 0;
+  virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Instruction *instruction, const llvm::Value *ptr) = 0;
+  virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Constant *constant, const llvm::Value *ptr) = 0;
 
 private:
   //TODO: extract a helper function
