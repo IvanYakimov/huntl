@@ -37,6 +37,8 @@ void PatternMatcher::visitReturnInst (const ReturnInst &inst) {
 		HandleReturnInst(inst, ret_val);
 	else if (Case (inst, 0))
 		HandleReturnInst(inst);
+	else
+		InterruptionHandler::Do(new MatchingFailure(inst));
 }
 
 void PatternMatcher::visitBranchInst(const BranchInst &inst) {
