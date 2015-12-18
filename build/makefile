@@ -4,10 +4,11 @@ SOLVER_TEST = test-expr.o test-expr-factory.o
 SOLVER = expr.o expr-factory.o
 PARSER_TEST = 
 PARSER = parser.o pattern-matcher.o interpreter.o
+UTILS = interruption.o
 OBJ_TEST = $(SOLVER_TEST) $(PARSER_TEST)
-OBJ = $(SOLVER) $(PARSER)
+OBJ = $(SOLVER) $(PARSER) $(UTILS)
 CXX = g++ 
-CXXFLAGS = -fdiagnostics-color=always -O0 -ggdb -fexceptions -std=c++1y -fpic -rdynamic $(LLVMFLAGS)
+CXXFLAGS = -fdiagnostics-color=always -ggdb -std=c++14 -fpic -rdynamic $(LLVMFLAGS)
 LDFLAGS = 
 LLVMFLAGS = `llvm-config --cxxflags`
 SRC = ../src
@@ -15,8 +16,10 @@ TST = ../test
 
 vpath %.cpp $(SRC)/solver $(TST)/solver/
 vpath %.cpp $(SRC)/parser
+vpath %.cpp $(SRC)/utils
 vpath %.hpp $(SRC)/solver $(TST)/solver/
 vpath %.hpp $(SRC)/parser
+vpath %.hpp $(SRC)/utils
 vpath %.c 	$(SRC)/parser
 
 all: program.so
@@ -26,7 +29,7 @@ debug: program.so
 program.so: shared.o 
 	$(CXX) -shared $< -o $@ $(CXXFLAGS) 
 
-shared.o: $(PARSER) $(SOLVER)
+shared.o: $(PARSER) $(SOLVER) $(UTILS)
 	ld -r $^ -o $@
 
 solvertest.out: $(SOLVER_TEST) $(SOLVER)
@@ -38,6 +41,7 @@ $(SOLVER_TEST):
 $(SOLVER):
 $(PARSER_TEST):
 $(PARSER):
+$(UTILS):
 %.o: %.cpp %.hpp
 	$(CXX) -c $< -o $@ $(CXXFLAGS) 
 	

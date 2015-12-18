@@ -13,6 +13,18 @@ void PatternMatcher::DebugInstInfo(const llvm::Instruction &inst) {
 # endif
 }
 
+void PatternMatcher::DebugOpList(const llvm::Instruction &inst) {
+# ifdef DBG
+	for (auto i = 0; i < inst.getNumOperands(); i++) {
+		auto type = inst.getOperand(i)->getType();
+		errs() << *type << " ";
+		if (type->isPointerTy())
+			errs() << "ptr";
+	}
+	errs() << "\n";
+# endif
+}
+
 // --------------------------------------------------------
 // Instruction visitors
 
@@ -82,11 +94,20 @@ void PatternMatcher::visitStoreInst (const StoreInst &inst)
 	DebugInstInfo(inst);
 
 	Value *val = NULL;
+	Instruction *inst_val= NULL;
+	Constant *const_val = NULL;
 	Value *ptr = NULL;
-	if (Case (inst, 0, &val, &ptr))
-		HandleStoreInst(inst, val, ptr);
+	if (Case (inst, 0, &inst_val, &ptr))
+		errs() << "inst ptr\n";
+	else if (Case (inst, 0, &const_val, &ptr))
+		errs() << "const ptr\n";
+	else if (Case (inst, 0, &val, &ptr))
+		errs() << "val ptr\n";
+		//HandleStoreInst(inst, val, ptr);
 	else
-		HandleStoreInst(inst);
+		InterruptionHandler::Do(new MatchingFailure(inst));
+
+	DebugOpList(inst);
 }
 
 //--------------------

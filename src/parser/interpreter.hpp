@@ -14,8 +14,7 @@ private:
   virtual void HandleReturnInst (const llvm::Instruction &inst);
 
   // Branch
-  virtual void HandleBranchInst (const llvm::Instruction &inst,
-		  const llvm::Value *cond, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse);
+  virtual void HandleBranchInst (const llvm::Instruction &inst, const llvm::Value *cond, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse);
   virtual void HandleBranchInst (const llvm::Instruction &inst, const llvm::BasicBlock *jump);
   virtual void HandleBranchInst (const llvm::Instruction &inst);
 
@@ -34,7 +33,6 @@ private:
   // Store
   virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Value *val, const llvm::Value *ptr);
   virtual void HandleStoreInst (const llvm::Instruction &inst);
-
 };
 
 # endif /* __INTERPRETER_HPP__ */

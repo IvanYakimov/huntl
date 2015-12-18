@@ -23,8 +23,26 @@ http://www.cplusplus.com/reference/type_traits/remove_pointer/
 # include <string>
 # include <memory>
 # include <exception>
+# include <ostream>
 
-// TODO: throw exception on unimplemented virtual methods (or maybe only in the constructor)
+#include "../utils/interruption.hpp"
+//# include "../utils/memory.hpp"
+
+class MatchingFailure : public Interruption {
+public:
+	MatchingFailure(const llvm::Instruction &inst) {
+		inst_ = std::unique_ptr<llvm::Instruction>(inst.clone());
+	}
+	virtual ~MatchingFailure() {/*nothing to free*/}
+
+	void Print() {
+		//TODO std::function<> instead of errs()
+		llvm::errs() << "\nPattern Matching failed on: " << *inst_ << "\n";
+	}
+private:
+	std::unique_ptr<llvm::Instruction> inst_ = NULL;
+};
+
 class PatternMatcher : public llvm::InstVisitor <PatternMatcher>
 {
 public:
@@ -78,6 +96,7 @@ private:
   bool Case (const llvm::Instruction &inst, unsigned i, T value, Targs... Fargs); // inductive case
 
   static inline void DebugInstInfo(const llvm::Instruction &inst);
+  static inline void DebugOpList(const llvm::Instruction &inst);
 };
 
 # endif /* __INST_PRINTER_HPP__ */

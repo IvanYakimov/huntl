@@ -16,6 +16,7 @@ using namespace llvm;
 
 // Project
 # include "interpreter.hpp"
+# include "pattern-matcher.hpp"
 
 namespace
 {
