@@ -28,17 +28,31 @@ const int kAlign_4 = 32;
   {
   public:
 	  typedef enum {
+		  /* arithmetical */
 		  kAdd,
 		  kSub,
 		  kMul,
 		  kSignDev,
 		  kSignRem,
+		  /* vector */
 		  kShiftLeft,
 		  kLogicalShiftRight,
 		  kArithShiftRight,
+		  /* logical */
 		  kAnd,
 		  kOr,
-		  kXor
+		  kXor,
+		  /* comparisons */
+		  kEqual,
+		  kNotEqual,
+		  kUnsignedGreaterThan,
+		  kUnsignedGreaterOrEqual,
+		  kUnsignedLessThan,
+		  kUnsignedLessOrEqual,
+		  kSignedGreaterThan,
+		  kSignedGreaterOrEqual,
+		  kSignedLessThan,
+		  kSignedLessOrEqual
 	  } OpCode;
 
 	  Operation (OpCode op_code) : op_code_(op_code) {}
@@ -58,7 +72,17 @@ private:
 			  {kArithShiftRight, "ashr"},
 			  {kAnd, "and"},
 			  {kOr, "or"},
-			  {kXor, "xor"}
+			  {kXor, "xor"},
+			  {kEqual, "eq"},
+			  {kNotEqual, "ne"},
+			  {kUnsignedGreaterThan, "ugt"},
+			  {kUnsignedGreaterOrEqual, "uge"},
+			  {kUnsignedLessThan, "ult"},
+			  {kUnsignedLessOrEqual, "ule"},
+			  {kSignedGreaterThan, "sgt"},
+			  {kSignedGreaterOrEqual, "sge"},
+			  {kSignedLessThan, "slt"},
+			  {kSignedLessOrEqual, "sle"}
 	  };
   };
 

@@ -10,6 +10,7 @@ namespace solver
 // NOTE: this factory produces only signed i32 expressions (temporary)
 	class ExprFactory
 	{
+	public:
 		template <size_t W>
 		SharedExprPtr ProduceConstant (unsigned int val);
 		SharedExprPtr ProduceConstantI32 (I32 val);

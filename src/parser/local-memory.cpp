@@ -2,15 +2,17 @@
 
 using solver::SharedExprPtr;
 
-void LocalMemory::Alloca() {
+void LocalMemory::Alloca(ConstValPtr allocated) {
 	//TODO
 	//just do nothing?
 }
 
-void LocalMemory::Store(ConstInstPtr address, SharedExprPtr value) {
-	memory_.insert(std::make_pair(address, value));
+void LocalMemory::Store(ConstValPtr address, SharedExprPtr value) {
+	//TODO
+	memory_[address] = value;
 }
 
-SharedExprPtr LocalMemory::Load(ConstInstPtr address) {
+SharedExprPtr LocalMemory::Load(ConstValPtr address) {
+	//TODO
 	return memory_[address];
 }

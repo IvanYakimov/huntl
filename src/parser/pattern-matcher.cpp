@@ -32,8 +32,11 @@ void PatternMatcher::visitReturnInst (const ReturnInst &inst) {
 	DebugInstInfo(inst);
 
 	Value *ret_val = NULL;
+	Instruction *ret_inst = NULL;
 
-	if (Case (inst, 0, &ret_val))
+	if (Case (inst, 0, &ret_inst))
+		HandleReturnInst(inst, ret_inst);
+	else if (Case (inst, 0, &ret_val))
 		HandleReturnInst(inst, ret_val);
 	else if (Case (inst, 0))
 		HandleReturnInst(inst);
@@ -99,6 +102,7 @@ void PatternMatcher::visitStoreInst (const StoreInst &inst)
 	Instruction *instruction= NULL;
 	Constant *constant = NULL;
 	Value *ptr = NULL;
+
 	if (Case (inst, 0, &instruction, &ptr))
 		HandleStoreInst(inst, instruction, ptr);
 	else if (Case (inst, 0, &constant, &ptr))

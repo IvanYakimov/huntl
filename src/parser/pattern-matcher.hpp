@@ -63,6 +63,7 @@ public:
 protected:
   // Return
   virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Value *ret_val) = 0;
+  virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst) = 0;
   virtual void HandleReturnInst (const llvm::Instruction &inst) = 0;
 
   // Branch
