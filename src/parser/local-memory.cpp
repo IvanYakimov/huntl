@@ -4,15 +4,13 @@ using solver::SharedExprPtr;
 
 void LocalMemory::Alloca() {
 	//TODO
-	//dummy
+	//just do nothing?
 }
 
 void LocalMemory::Store(ConstInstPtr address, SharedExprPtr value) {
-	//TODO
-
+	memory_.insert(std::make_pair(address, value));
 }
 
 SharedExprPtr LocalMemory::Load(ConstInstPtr address) {
-	//TODO
-	return NULL;
+	return memory_[address];
 }
