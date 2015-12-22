@@ -1,31 +1,42 @@
 # include "interpreter.hpp"
 
 using namespace llvm;
+using namespace solver;
 
 //TODO interruption handling
+void Interpreter::DebugExprInfo(SharedExprPtr expr) {
+# ifdef DBG
+	if (expr)
+		errs() << "> " << expr->ToString() << "\n";
+	else
+		errs() << "> void" << "\n";
+# endif
+}
 
 // Return
 void Interpreter::HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst) {
 	auto expr = memory_.Load(ret_inst);
-	errs() << "> " << expr->ToString() << "\n";
+
+	DebugExprInfo(expr);
 }
 
 void Interpreter::HandleReturnInst (const llvm::Instruction &inst, const llvm::Constant *ret_const) {
 	if (ret_const->getType()->isIntegerTy()) {
 		auto constant_int = dyn_cast<ConstantInt>(ret_const);
 		auto expr = expr_factory_.ProduceConstantI32(constant_int->getSExtValue());
-		errs() << "> " << expr->ToString() << "\n";
+
+		DebugExprInfo(expr);
 	}
 	else
 		InterruptionHandler::Do(new InterpretationFailure(inst));
 }
 
 void Interpreter::HandleReturnInst (const llvm::Instruction &inst, const llvm::Value *ret_val) {
-	errs() << "> void" << "\n";
+
 }
 
 void Interpreter::HandleReturnInst (const llvm::Instruction &inst) {
-
+	DebugExprInfo(NULL);
 }
 
 // Branch
@@ -50,7 +61,8 @@ void Interpreter::HandleICmpInst (const llvm::Instruction &inst, const llvm::Val
 	auto left = memory_.Load(lhs);
 	auto right = memory_.Load(rhs);
 	auto expr = expr_factory_.ProduceBinaryOperation(left, right, get_op(inst));
-	errs() << "> " << expr->ToString() << "\n";
+
+	DebugExprInfo(expr);
 }
 
 // Alloca

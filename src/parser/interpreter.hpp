@@ -41,23 +41,25 @@ private:
 	virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Value *ret_val);
 	virtual void HandleReturnInst (const llvm::Instruction &inst);
 
-  // Branch
-  virtual void HandleBranchInst (const llvm::Instruction &inst, const llvm::Value *cond, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse);
-  virtual void HandleBranchInst (const llvm::Instruction &inst, const llvm::BasicBlock *jump);
+	// Branch
+	virtual void HandleBranchInst (const llvm::Instruction &inst, const llvm::Value *cond, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse);
+	virtual void HandleBranchInst (const llvm::Instruction &inst, const llvm::BasicBlock *jump);
 
-  // Cmp
-  virtual void HandleICmpInst (const llvm::Instruction &inst, const llvm::Value *lhs, const llvm::Value *rhs);
+	// Cmp
+	virtual void HandleICmpInst (const llvm::Instruction &inst, const llvm::Value *lhs, const llvm::Value *rhs);
 
-  // Alloca
-  virtual void HandleAllocaInst (const llvm::Instruction &inst, const llvm::Value *allocated);
+	// Alloca
+	virtual void HandleAllocaInst (const llvm::Instruction &inst, const llvm::Value *allocated);
 
-  // Load
-  virtual void HandleLoadInst (const llvm::Instruction &inst, const llvm::Value *ptr);
+	// Load
+	virtual void HandleLoadInst (const llvm::Instruction &inst, const llvm::Value *ptr);
 
-  // Store
-  virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Value *val, const llvm::Value *ptr);
-  virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Instruction *instruction, const llvm::Value *ptr);
-  virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Constant *constant, const llvm::Value *ptr);
+	// Store
+	virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Value *val, const llvm::Value *ptr);
+	virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Instruction *instruction, const llvm::Value *ptr);
+	virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Constant *constant, const llvm::Value *ptr);
+
+	static inline void DebugExprInfo(solver::SharedExprPtr expr);
 };
 
 # endif /* __INTERPRETER_HPP__ */
