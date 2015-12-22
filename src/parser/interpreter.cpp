@@ -10,8 +10,18 @@ void Interpreter::HandleReturnInst (const llvm::Instruction &inst, const llvm::I
 	errs() << "> " << expr->ToString() << "\n";
 }
 
-void Interpreter::HandleReturnInst (const llvm::Instruction &inst, const llvm::Value *ret_val) {
+void Interpreter::HandleReturnInst (const llvm::Instruction &inst, const llvm::Constant *ret_const) {
+	if (ret_const->getType()->isIntegerTy()) {
+		auto constant_int = dyn_cast<ConstantInt>(ret_const);
+		auto expr = expr_factory_.ProduceConstantI32(constant_int->getSExtValue());
+		errs() << "> " << expr->ToString() << "\n";
+	}
+	else
+		InterruptionHandler::Do(new InterpretationFailure(inst));
+}
 
+void Interpreter::HandleReturnInst (const llvm::Instruction &inst, const llvm::Value *ret_val) {
+	errs() << "> void" << "\n";
 }
 
 void Interpreter::HandleReturnInst (const llvm::Instruction &inst) {
@@ -56,6 +66,7 @@ void Interpreter::HandleLoadInst (const llvm::Instruction &inst, const llvm::Val
 
 // Store
 void Interpreter::HandleStoreInst (const llvm::Instruction &inst, const llvm::Value *val, const llvm::Value *ptr) {
+	//TODO move to pattern-matcher (?)
 	auto name = val->getName();
 	if (!name.empty())
 		memory_.Store(ptr, expr_factory_.ProduceVariable(name.str()));

@@ -36,9 +36,10 @@ private:
 	solver::ExprFactory expr_factory_;
 
 	// Return
-  virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Value *ret_val);
-  virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst);
-  virtual void HandleReturnInst (const llvm::Instruction &inst);
+	virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst);
+	virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Constant *ret_const);
+	virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Value *ret_val);
+	virtual void HandleReturnInst (const llvm::Instruction &inst);
 
   // Branch
   virtual void HandleBranchInst (const llvm::Instruction &inst, const llvm::Value *cond, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse);

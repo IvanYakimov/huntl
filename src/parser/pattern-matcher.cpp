@@ -33,9 +33,12 @@ void PatternMatcher::visitReturnInst (const ReturnInst &inst) {
 
 	Value *ret_val = NULL;
 	Instruction *ret_inst = NULL;
+	Constant *ret_const = NULL;
 
 	if (Case (inst, 0, &ret_inst))
 		HandleReturnInst(inst, ret_inst);
+	else if (Case (inst, 0, &ret_const))
+		HandleReturnInst(inst, ret_const);
 	else if (Case (inst, 0, &ret_val))
 		HandleReturnInst(inst, ret_val);
 	else if (Case (inst, 0))
