@@ -13,7 +13,7 @@
 # include <iostream>
 
 namespace {
-class PrintExprTest : public ::testing::Test {
+class ExprTest : public ::testing::Test {
 public:
 	std::shared_ptr<solver::Variable> MakeVar(std::string name) {
 		return std::make_shared<solver::Variable>(name);
@@ -21,23 +21,30 @@ public:
 };
 }
 
-TEST_F(PrintExprTest, Variable) {
+TEST_F(ExprTest, Variable_ToString) {
 	solver::Variable v("x");
-	//TODO: check operands order
 	EXPECT_EQ("x", v.ToString());
 }
 
-TEST_F(PrintExprTest, Constant) {
+TEST_F(ExprTest, Constant_ToString) {
 	solver::ConstantI32 c(28);
-	//TODO: check operands order
 	EXPECT_EQ("28", c.ToString());
 }
 
-TEST_F(PrintExprTest, BinaryOp) {
+TEST_F(ExprTest, BinryOp_GetOpCode) {
+	solver::BinaryOperation op(NULL, NULL, solver::BinaryOperation::kAdd);
+	EXPECT_EQ(solver::BinaryOperation::kAdd, op.GetOpCode());
+}
+
+TEST_F(ExprTest, BinaryOp_GetOpCodeName) {
+	solver::BinaryOperation op(NULL, NULL, solver::BinaryOperation::kAdd);
+	EXPECT_EQ("add", op.GetOpCodeName());
+}
+
+TEST_F(ExprTest, BinaryOp_ToString) {
 	auto l = MakeVar("x");
 	auto r = MakeVar("y");
 	solver::BinaryOperation add(l, r, solver::BinaryOperation::OpCode::kAdd);
-	//TODO: check operands order
 	EXPECT_EQ("add x y", add.ToString());
 }
 

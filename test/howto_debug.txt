@@ -1,0 +1,24 @@
+Source: https://groups.google.com/forum/#!topic/googletestframework/IquQaDMLJjY
+Thanks for Qingpeng Niu
+
+Suppose in YourLiteralTest you have two unit tests
+TestStringConstructor
+TestBlobConstructor
+
+When your run the binary, it will show:
+[==========] Running 2 tests from 1 test cases.
+[----------] Global test environment set-up.
+[----------] 2 tests from YourLiteralTest
+[ RUN      ] YourLiteralTest.TestStringConstructor
+[       OK ] YourLiteralTest.TestStringConstructor (0 ms)
+[ RUN      ] YourLiteralTest.TestBlobConstructor
+[       OK ] YourLiteralTest.TestBlobConstructor (0 ms)
+
+The original question is how to setup break point or what is the function name for break point setup? Not how to use GDB. There are a bunch of tutorials about GDB. If they ask how to use gdb, he will not ask here. 
+
+The answer should be 
+
+"gdb ./helloword.x
+break YourLiteralTest_TestStringConstructor_Test::TestBody" 
+
+Not how to use GDB.  

@@ -15,7 +15,7 @@ namespace solver
 		SharedExprPtr ProduceConstant (unsigned int val);
 		SharedExprPtr ProduceConstantI32 (I32 val);
 		SharedExprPtr ProduceVariable (std::string name);
-		SharedExprPtr ProduceBinaryOperation (SharedExprPtr a, SharedExprPtr b, Operation::OpCode op_code);
+		SharedExprPtr ProduceBinaryOperation (SharedExprPtr a, SharedExprPtr b, BinaryOperation::OpCode op_code);
 	};
 }
 

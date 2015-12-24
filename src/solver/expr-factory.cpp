@@ -15,7 +15,7 @@ namespace solver
     return std::make_shared <Variable>(name);
   }
 
-  SharedExprPtr ExprFactory :: ProduceBinaryOperation (SharedExprPtr a, SharedExprPtr b, Operation::OpCode op_code) {
+  SharedExprPtr ExprFactory :: ProduceBinaryOperation (SharedExprPtr a, SharedExprPtr b, BinaryOperation::OpCode op_code) {
     return std::make_shared <BinaryOperation>(a, b, op_code);
   }
 }
