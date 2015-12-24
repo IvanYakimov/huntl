@@ -7,21 +7,25 @@ namespace solver
  * @author Ivan Yakimov, e-mail: ivan.yakimov.research@yandex.ru
  * @date 14.09.2015
  */
-  class ISmtEngine
-  {
-    /** 
-     * Add a new expression to the assertion stack.
-     */
-    virtual void AssertExpr (SharedExprPtr expr) = 0;
+	typedef enum {
+		  UNSAT,
+		  SAT,
+		  UNKNOWN
+	}Sat;
 
-    /**
-     * Create a new scope on top of the assertion stack.
-     */
-    virtual void Push () = 0;
+	class Value {
+		//TODO
+	};
 
-    /**
-     * Remove a scope from top of the assertion stack.
-     */
-    virtual void Pop () = 0;
-  };
+	class ISmtEngine
+	{
+	public:
+		virtual ~ISmtEngine() {}
+
+		virtual void AssertExpr (SharedExprPtr expr) = 0;
+
+		virtual Sat CheckSat() = 0;
+
+		virtual Value GetValue(SharedVariablePtr varible) = 0;
+	};
 }

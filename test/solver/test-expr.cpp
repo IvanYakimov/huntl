@@ -47,8 +47,3 @@ TEST_F(ExprTest, BinaryOp_ToString) {
 	solver::BinaryOperation add(l, r, solver::BinaryOperation::OpCode::kAdd);
 	EXPECT_EQ("add x y", add.ToString());
 }
-
-int main (int argc, char *argv[]) {
-	::testing::InitGoogleTest(&argc, argv);
-	return RUN_ALL_TESTS();
-}

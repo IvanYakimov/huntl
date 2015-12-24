@@ -15,6 +15,10 @@ namespace solver
 typedef signed int I32;
 const int kAlign_4 = 32;
 
+class Expr;
+class Variable;
+class BinaryOperation;
+
   class Expr : public std::enable_shared_from_this <Expr> {
   public:
     virtual ~Expr() {}
@@ -22,6 +26,7 @@ const int kAlign_4 = 32;
   };
   
   typedef std::shared_ptr <Expr> SharedExprPtr;
+  typedef std::shared_ptr <Variable> SharedVariablePtr;
 
   template <size_t W> /** width (alignment) */
   class Constant : public Expr {

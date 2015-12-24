@@ -1,9 +1,9 @@
 SHELL = /bin/sh
 
-SOLVER_TEST = test-expr.o test-expr-factory.o 
-SOLVER = expr.o expr-factory.o
-PARSER_TEST = 
+SOLVER = expr.o expr-factory.o cvc4-engine.o
+SOLVER_TEST = solvertest.o test-expr.o test-expr-factory.o 
 PARSER = parser.o pattern-matcher.o interpreter.o local-memory.o
+PARSER_TEST = 
 UTILS = interruption.o
 OBJ_TEST = $(SOLVER_TEST) $(PARSER_TEST)
 OBJ = $(SOLVER) $(PARSER) $(UTILS)
