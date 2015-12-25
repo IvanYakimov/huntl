@@ -32,18 +32,18 @@ TEST_F(ExprTest, Constant_ToString) {
 }
 
 TEST_F(ExprTest, BinryOp_GetOpCode) {
-	solver::BinaryOperation op(NULL, NULL, solver::BinaryOperation::kAdd);
-	EXPECT_EQ(solver::BinaryOperation::kAdd, op.GetOpCode());
+	solver::BinaryOperation op(NULL, NULL, solver::BinaryOperation::ADD);
+	EXPECT_EQ(solver::BinaryOperation::ADD, op.GetOpCode());
 }
 
 TEST_F(ExprTest, BinaryOp_GetOpCodeName) {
-	solver::BinaryOperation op(NULL, NULL, solver::BinaryOperation::kAdd);
+	solver::BinaryOperation op(NULL, NULL, solver::BinaryOperation::ADD);
 	EXPECT_EQ("add", op.GetOpCodeName());
 }
 
 TEST_F(ExprTest, BinaryOp_ToString) {
 	auto l = MakeVar("x");
 	auto r = MakeVar("y");
-	solver::BinaryOperation add(l, r, solver::BinaryOperation::OpCode::kAdd);
+	solver::BinaryOperation add(l, r, solver::BinaryOperation::OpCode::ADD);
 	EXPECT_EQ("add x y", add.ToString());
 }

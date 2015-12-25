@@ -71,30 +71,30 @@ class BinaryOperation;
   public:
 	enum OpCode{
 		  /* arithmetical */
-		  kAdd,
-		  kSub,
-		  kMul,
-		  kSignDev,
-		  kSignRem,
+		  ADD,
+		  SUB,
+		  MUL,
+		  SIGN_DEV,
+		  SING_REM,
 		  /* vector */
-		  kShiftLeft,
-		  kLogicalShiftRight,
-		  kArithShiftRight,
+		  SHIFT_LEFT,
+		  LOGICAL_SHIFT_RIGHT,
+		  ARIRH_SHIFT_RIGHT,
 		  /* logical */
-		  kAnd,
-		  kOr,
-		  kXor,
+		  AND,
+		  OR,
+		  XOR,
 		  /* comparisons */
-		  kEqual,
-		  kNotEqual,
-		  kUnsignedGreaterThan,
-		  kUnsignedGreaterOrEqual,
-		  kUnsignedLessThan,
-		  kUnsignedLessOrEqual,
-		  kSignedGreaterThan,
-		  kSignedGreaterOrEqual,
-		  kSignedLessThan,
-		  kSignedLessOrEqual
+		  EQUAL,
+		  NOT_EQUAL,
+		  UNSIGNED_GREATER_THAN,
+		  UNSIGNED_GREATER_OR_EQUAL,
+		  UNSIGNED_LESS_THAN,
+		  UNSIGNED_LESS_OR_EQUAL,
+		  SIGNED_GREATER_THAN,
+		  SIGNED_GREATER_OR_EQUAL,
+		  SIGNED_LESS_THAN,
+		  SIGNED_LESS_OR_EQUAL
 	};
 
 	BinaryOperation(SharedExprPtr left_child, SharedExprPtr right_child, OpCode op_code) :
@@ -115,28 +115,64 @@ class BinaryOperation;
 
     OpCode op_code_;
 
+	  /* arithmetical */
+	  const std::string add_str = "add";
+	  const std::string sub_str = "sub";
+	  const std::string mul_str = "mul";
+	  const std::string sign_dev_str = "sdev";
+	  const std::string sign_rem_str = "srem";
+
+	  /* vector */
+	  const std::string shift_left_str = "shl";
+	  const std::string logical_shift_right_str = "lshr";
+	  const std::string arith_shift_right_str = "ashr";
+
+	  /* logical */
+	  const std::string and_str = "and";
+	  const std::string or_str = "or";
+	  const std::string xor_str = "xor";
+
+	  /* comparisons */
+	  const std::string equal_str = "eq";
+	  const std::string not_equal_str = "ne";
+	  const std::string unsigned_greater_than_str = "ugt";
+	  const std::string unsigned_greater_or_equal_str = "uge";
+	  const std::string unsigned_less_than_str = "ult";
+	  const std::string unsigned_less_or_equal_str = "ule";
+	  const std::string signed_greater_than_str = "sgt";
+	  const std::string signed_greater_or_equal_str = "sge";
+	  const std::string signed_less_than_str = "slt";
+	  const std::string signed_less_or_equal_str = "sle";
+
 	std::map <unsigned, std::string> op_code_map_ = {
-		  {kAdd, "add"},
-		  {kSub, "sub"},
-		  {kMul, "mul"},
-		  {kSignDev, "sdev"},
-		  {kSignRem, "srem"},
-		  {kShiftLeft, "shl"},
-		  {kLogicalShiftRight, "lshr"},
-		  {kArithShiftRight, "ashr"},
-		  {kAnd, "and"},
-		  {kOr, "or"},
-		  {kXor, "xor"},
-		  {kEqual, "eq"},
-		  {kNotEqual, "ne"},
-		  {kUnsignedGreaterThan, "ugt"},
-		  {kUnsignedGreaterOrEqual, "uge"},
-		  {kUnsignedLessThan, "ult"},
-		  {kUnsignedLessOrEqual, "ule"},
-		  {kSignedGreaterThan, "sgt"},
-		  {kSignedGreaterOrEqual, "sge"},
-		  {kSignedLessThan, "slt"},
-		  {kSignedLessOrEqual, "sle"}
+			/* arithmetical */
+			{ADD, add_str},
+			{SUB, sub_str},
+			{MUL, mul_str},
+			{SIGN_DEV, sign_dev_str},
+			{SING_REM, sign_rem_str},
+
+			/* vector */
+			{SHIFT_LEFT, shift_left_str},
+			{LOGICAL_SHIFT_RIGHT, logical_shift_right_str},
+			{ARIRH_SHIFT_RIGHT, arith_shift_right_str},
+
+			/* logical */
+			{AND, and_str},
+			{OR, or_str},
+			{XOR, xor_str},
+
+			/* comparisons */
+			{EQUAL, equal_str},
+			{NOT_EQUAL, not_equal_str},
+			{UNSIGNED_GREATER_THAN, unsigned_greater_than_str},
+			{UNSIGNED_GREATER_OR_EQUAL, unsigned_greater_or_equal_str},
+			{UNSIGNED_LESS_THAN, unsigned_less_than_str},
+			{UNSIGNED_LESS_OR_EQUAL, unsigned_less_or_equal_str},
+			{SIGNED_GREATER_THAN, signed_greater_than_str},
+			{SIGNED_GREATER_OR_EQUAL, signed_greater_or_equal_str},
+			{SIGNED_LESS_THAN, signed_less_than_str},
+			{SIGNED_LESS_OR_EQUAL,  signed_less_or_equal_str}
 	  };
   };
 }
