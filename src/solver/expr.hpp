@@ -32,6 +32,7 @@ class BinaryOperation;
   class Constant : public Expr {
   public:
 	  Constant (unsigned int value) {value_ = make_unique <std::bitset <W>> (value);}
+	  virtual ~Constant() {}
 	  virtual std::string ToString () final;
   private:
 	  std::unique_ptr <std::bitset <W>> value_;
@@ -39,15 +40,16 @@ class BinaryOperation;
 
   // ConstantI32 Instance
   template class Constant<kAlign_4>;
-  class ConstantI32 : public Constant<kAlign_4> {
+  class ConstantI32 final : public Constant<kAlign_4> {
 	  public: ConstantI32(I32 value) : Constant(value) {}
   };
 
   class Variable : public Expr {
   public:
 	  Variable (std::string name) : name_(name) {}
-	  std::string ToString() final;
 	  virtual ~Variable() final {}
+	  std::string ToString() final;
+
   private:
 	  std::string name_;
 	  std::string GetName() {return name_;}
@@ -57,8 +59,10 @@ class BinaryOperation;
   public:
 	  UnaryOperation(SharedExprPtr child) :
 		  child_(child) {}
+	  ~UnaryOperation() {}
 	  SharedExprPtr GetChild() {return child_;}
 	  std::string ToString() final;
+
   private:
 	  SharedExprPtr child_;
   };
@@ -93,8 +97,9 @@ class BinaryOperation;
 		  kSignedLessOrEqual
 	};
 
-	BinaryOperation (SharedExprPtr left_child, SharedExprPtr right_child, OpCode op_code) :
+	BinaryOperation(SharedExprPtr left_child, SharedExprPtr right_child, OpCode op_code) :
 	    	op_code_(op_code), left_child_(left_child), right_child_(right_child) {}
+	~BinaryOperation() {}
 
 	SharedExprPtr GetLeftChild() {return left_child_;}
 	SharedExprPtr GetRightChild() {return right_child_;}
