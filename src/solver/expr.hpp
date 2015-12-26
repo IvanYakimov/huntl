@@ -46,12 +46,14 @@ class BinaryOperation;
 	  public: ConstantI32(I32 value) : Constant(value) {}
   };
 
-  class Variable : public Expr {
+  //TODO implementation
+  class Variable final : public Expr {
   public:
 	  Variable (std::string name) : name_(name) {}
 	  virtual ~Variable() final {}
 	  std::string ToString() final;
-
+	  friend bool operator==(const Variable &lhs, const Variable &rhs);
+	  friend bool operator!=(const Variable &lhs, const Variable &rhs);
   private:
 	  std::string name_;
 	  std::string GetName() {return name_;}

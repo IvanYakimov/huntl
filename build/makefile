@@ -8,9 +8,10 @@ UTILS = interruption.o
 OBJ_TEST = $(SOLVER_TEST) $(PARSER_TEST)
 OBJ = $(SOLVER) $(PARSER) $(UTILS)
 CXX = g++ 
-CXXFLAGS = -fdiagnostics-color=always -ggdb -std=c++14 -fpic -rdynamic $(LLVMFLAGS)
+CXXFLAGS = -fdiagnostics-color=always -ggdb -std=c++14 -fpic -rdynamic $(LLVMFLAGS) $(DBGFLAGS)
 LDFLAGS = 
 LLVMFLAGS = `llvm-config --cxxflags`
+DBGFLAGS = -D DBG
 SRC = ../src
 TST = ../test
 
@@ -21,11 +22,7 @@ vpath %.hpp $(SRC)/solver $(TST)/solver/
 vpath %.hpp $(SRC)/parser
 vpath %.hpp $(SRC)/utils
 vpath %.c 	$(SRC)/parser
-
-all: program.so
-debug: CXXFLAGS += -D DBG
-debug: program.so
-
+		
 program.so: shared.o 
 	$(CXX) -shared $< -o $@ $(CXXFLAGS) 
 
@@ -58,7 +55,7 @@ test.ll: test.c
 api-pattern.cpp: test.ll
 	llc -march=cpp $< -o api-pattern.cpp
 
-.PHONY: run debug
+.PHONY: run
 run:	program.so test.ll
 	opt -load=./program.so < test.ll > /dev/null -Parser
 
