@@ -12,7 +12,9 @@
 
 namespace solver
 {
-typedef signed int I32;
+//TODO redefine
+typedef int32_t I32;
+//TODO rename
 const int kAlign_4 = 32;
 
 class Expr;
@@ -144,7 +146,8 @@ class BinaryOperation;
 	  const std::string signed_less_than_str = "slt";
 	  const std::string signed_less_or_equal_str = "sle";
 
-	std::map <unsigned, std::string> op_code_map_ = {
+	  // TODO check map type
+	std::map <OpCode, std::string> op_code_map_ = {
 			/* arithmetical */
 			{ADD, add_str},
 			{SUB, sub_str},
