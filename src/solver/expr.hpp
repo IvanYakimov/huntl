@@ -10,6 +10,9 @@
 // Project
 # include "../utils/memory.hpp"
 
+//TOOOODOOOOOOOOOOOOOOOOOOOOOOO
+//TODO
+
 namespace solver
 {
 //TODO redefine
@@ -17,20 +20,40 @@ typedef int32_t I32;
 //TODO rename
 const int kAlign_4 = 32;
 
-class Expr;
-class Variable;
-class BinaryOperation;
-
-  class Expr : public std::enable_shared_from_this <Expr> {
+/* Expr class implements the Barton-Nackman trick,
+ * see: https://en.wikipedia.org/wiki/Barton%E2%80%93Nackman_trick
+ * and: https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern
+ * for details.
+ */
+  class Expr /*: public std::enable_shared_from_this <Expr>*/ {
   public:
     virtual ~Expr() {}
-    virtual std::string ToString() = 0;
+    virtual const std::string ToString() = 0;
   };
   
-  typedef std::shared_ptr <Expr> SharedExprPtr;
-  typedef std::shared_ptr <Variable> SharedVariablePtr;
+  template <typename T> class Expr_CRTP : Expr {
+  public:
+	  friend bool operator==(T const &a, T const &b) { return a.Equals(b); }
+	  friend bool operator!=(T const &a, T const &b) { return !a.Equals(b); }
+  };
 
-  template <size_t W> /** width (alignment) */
+  typedef std::shared_ptr <Expr> SharedExprPtr;
+  //typedef std::shared_ptr <Variable> SharedVariablePtr;
+
+  class Variable final : public Expr_CRTP <Variable> {
+  public:
+	  Variable (std::string name) : name_(name) {}
+	  virtual ~Variable() final {}
+	  virtual const std::string ToString() final;
+  protected:
+	  virtual bool Equals(Variable const &rhs) const final;
+  private:
+	  std::string name_;
+	  std::string GetName() {return name_;}
+  };
+
+# ifdef UNDEFINED
+  template <size_t W>
   class Constant : public Expr {
   public:
 	  Constant (unsigned int value) {value_ = make_unique <std::bitset <W>> (value);}
@@ -44,31 +67,6 @@ class BinaryOperation;
   template class Constant<kAlign_4>;
   class ConstantI32 final : public Constant<kAlign_4> {
 	  public: ConstantI32(I32 value) : Constant(value) {}
-  };
-
-  //TODO implementation
-  class Variable final : public Expr {
-  public:
-	  Variable (std::string name) : name_(name) {}
-	  virtual ~Variable() final {}
-	  std::string ToString() final;
-	  friend bool operator==(const Variable &lhs, const Variable &rhs);
-	  friend bool operator!=(const Variable &lhs, const Variable &rhs);
-  private:
-	  std::string name_;
-	  std::string GetName() {return name_;}
-  };
-
-  class UnaryOperation : public Expr {
-  public:
-	  UnaryOperation(SharedExprPtr child) :
-		  child_(child) {}
-	  ~UnaryOperation() {}
-	  SharedExprPtr GetChild() {return child_;}
-	  std::string ToString() final;
-
-  private:
-	  SharedExprPtr child_;
   };
 
   class BinaryOperation : public Expr {
@@ -180,6 +178,7 @@ class BinaryOperation;
 			{SIGNED_LESS_OR_EQUAL,  signed_less_or_equal_str}
 	  };
   };
+# endif
 }
 
 # endif /* __EXPR_HPP__ */

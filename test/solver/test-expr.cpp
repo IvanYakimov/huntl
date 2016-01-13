@@ -13,57 +13,51 @@
 # include <iostream>
 # include <map>
 
-using namespace solver;
-
 namespace solver {
-class ExprTest : public ::testing::Test {
-public:
-	solver::SharedVariablePtr MakeVar(std::string name) {
-		return std::make_shared<solver::Variable>(name);
+	class ExprTest : public ::testing::Test {
+	};
+
+	//TODO eq relation for constanti32 & binaryoperation
+
+	TEST_F(ExprTest, Variable_ToString) {
+		solver::Variable v("x");
+		EXPECT_EQ("x", v.ToString());
 	}
-};
-}
 
-//TODO eq relation for constanti32 & binaryoperation
+	TEST_F(ExprTest, Variable_EQ_Reflexivity) {
+		solver::Variable v("x");
+		EXPECT_EQ(v, v);
+	}
 
-TEST_F(ExprTest, Variable_ToString) {
-	solver::Variable v("x");
-	EXPECT_EQ("x", v.ToString());
-}
+	TEST_F(ExprTest, Variable_EQ_Simmetric) {
+		solver::Variable x1("x");
+		solver::Variable x2("x");
+		EXPECT_EQ(x1, x2);
+		EXPECT_EQ(x2, x1);
+	}
 
-TEST_F(ExprTest, Variable_EQ_Reflexivity) {
-	solver::Variable v("x");
-	EXPECT_EQ(v, v);
-}
+	TEST_F(ExprTest, Variable_EQ_Transitivity) {
+		Variable x1("x"),
+				x2("x"),
+				x3("x");
+		EXPECT_EQ(x1, x2);
+		EXPECT_EQ(x2, x3);
+		EXPECT_EQ(x1, x3);
+	}
 
-TEST_F(ExprTest, Variable_EQ_Simmetric) {
-	solver::Variable x1("x");
-	solver::Variable x2("x");
-	EXPECT_EQ(x1, x2);
-	EXPECT_EQ(x2, x1);
-}
+	TEST_F(ExprTest, Variable_NE) {
+		Variable x("x");
+		Variable y("y");
+		EXPECT_NE(x, y);
+	}
 
-TEST_F(ExprTest, Variable_EQ_Transitivity) {
-	Variable x1("x"),
-			x2("x"),
-			x3("x");
-	EXPECT_EQ(x1, x2);
-	EXPECT_EQ(x2, x3);
-	EXPECT_EQ(x1, x3);
-}
+	TEST_F(ExprTest, Variable_NE_NullPtr) {
+		Variable *x = new Variable("x");
+		EXPECT_NE(nullptr, x);
+		delete x;
+	}
 
-TEST_F(ExprTest, Variable_NE) {
-	Variable x("x");
-	Variable y("y");
-	EXPECT_NE(x, y);
-}
-
-TEST_F(ExprTest, Variable_NE_NullPtr) {
-	Variable *x = new Variable("x");
-	EXPECT_NE(nullptr, x);
-	delete x;
-}
-
+# ifdef NODEF
 TEST_F(ExprTest, Constant_ToString) {
 	solver::ConstantI32 c(28);
 	EXPECT_EQ("28", c.ToString());
@@ -125,4 +119,8 @@ TEST_F(ExprTest, BinaryOp_ToString) {
 	auto r = MakeVar("y");
 	solver::BinaryOperation add(l, r, solver::BinaryOperation::OpCode::ADD);
 	EXPECT_EQ("add x y", add.ToString());
+}
+
+# endif
+
 }

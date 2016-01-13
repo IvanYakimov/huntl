@@ -12,6 +12,8 @@
 using std::make_shared;
 using std::string;
 
+# ifdef NODEF
+
 namespace solver {
 	class ExprFactoryTest : public ::testing::Test {
 	public:
@@ -50,7 +52,7 @@ namespace solver {
 	}
 }
 
-
+# endif
 
 
 

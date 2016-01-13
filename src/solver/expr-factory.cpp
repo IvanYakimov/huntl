@@ -2,21 +2,25 @@
 
 namespace solver
 {
-  template <size_t W>
-  SharedExprPtr ExprFactory :: ProduceConstant (unsigned int val) {
+	SharedExprPtr ExprFactory :: ProduceVariable (std::string name) {
+		return std::make_shared <Variable>(name);
+	}
+
+#ifdef NODEF
+
+	SharedExprPtr ExprFactory :: ProduceConstantI32 (I32 val) {
+		return std::make_shared <ConstantI32>(val);
+	}
+
+	template <size_t W>
+	SharedExprPtr ExprFactory :: ProduceConstant (unsigned int val) {
 	  return std::make_shared <Constant<W>>>(val);
-  }
+	}
 
-  SharedExprPtr ExprFactory :: ProduceConstantI32 (I32 val) {
-	  return std::make_shared <ConstantI32>(val);
-  }
+	SharedExprPtr ExprFactory :: ProduceBinaryOperation (SharedExprPtr a, SharedExprPtr b, BinaryOperation::OpCode op_code) {
+	return std::make_shared <BinaryOperation>(a, b, op_code);
+	}
 
-  SharedExprPtr ExprFactory :: ProduceVariable (std::string name) {
-    return std::make_shared <Variable>(name);
-  }
-
-  SharedExprPtr ExprFactory :: ProduceBinaryOperation (SharedExprPtr a, SharedExprPtr b, BinaryOperation::OpCode op_code) {
-    return std::make_shared <BinaryOperation>(a, b, op_code);
-  }
+#endif
 }
 

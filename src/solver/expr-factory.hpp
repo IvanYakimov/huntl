@@ -11,12 +11,15 @@ namespace solver
 	class ExprFactory
 	{
 	public:
-		SharedExprPtr ProduceConstantI32 (I32 val);
 		SharedExprPtr ProduceVariable (std::string name);
+#ifdef NODEF
+		SharedExprPtr ProduceConstantI32 (I32 val);
 		SharedExprPtr ProduceBinaryOperation (SharedExprPtr a, SharedExprPtr b, BinaryOperation::OpCode op_code);
 	private:
 		template <size_t W>
 		SharedExprPtr ProduceConstant (unsigned int val);
+
+#endif
 	};
 }
 
