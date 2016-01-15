@@ -61,7 +61,7 @@ class Variable;
 
 
   template <size_t W>
-  class Constant : public Expr {
+  class Constant : public Expr_CRTP<Constant<W>> {
   public:
 	  Constant (unsigned int value) {value_ = make_unique <std::bitset <W>> (value);}
 	  virtual ~Constant() {}
@@ -78,7 +78,7 @@ class Variable;
 	  public: ConstantI32(I32 value) : Constant(value) {}
   };
 
-# ifdef UNDEFINED
+#ifdef UNDEF
   class BinaryOperation : public Expr {
   public:
 	enum OpCode{
@@ -188,7 +188,8 @@ class Variable;
 			{SIGNED_LESS_OR_EQUAL,  signed_less_or_equal_str}
 	  };
   };
-# endif
+#endif
+
 }
 
 # endif /* __EXPR_HPP__ */
