@@ -26,37 +26,32 @@ namespace solver {
 	};
 
 	TEST_F(ExprFactoryTest, ProduceVariable) {
-		const string name = "var_name";
-		Variable var1 (name),
-				var2 (name);
-		ASSERT_EQ(var1, var2);
+		std::string name = "var";
 		std::shared_ptr <Expr> exp (new Variable(name));
 		auto act = Factory()->ProduceVariable(name);
 		ASSERT_TRUE(*exp == *act);
 	}
 
-# ifdef NODEF
 
 	TEST_F(ExprFactoryTest, ProduceConstantI32) {
 		const I32 val = 28;
-		auto exp = make_shared<ConstantI32>(val);
+		std::shared_ptr<Expr> exp (new ConstantI32(val));
 		auto act = Factory()->ProduceConstantI32(val);
-		//TODO comparison ASSERT_EQ(exp, act);
+		ASSERT_EQ(*exp, *act);
 	}
 
-	TEST_F(ExprFactoryTest, ProduceBinaryOperation) {
+	/*TEST_F(ExprFactoryTest, ProduceBinaryOperation) {
 		auto make_var = [](std::string name) {
-			return make_shared<Variable>(name);
+			return std::shared_ptr<Variable>(new Variable(name));
 		};
 
 		auto x = make_var("x"),
 				y = make_var("y");
 
-		auto exp = std::make_shared<BinaryOperation> (x, y, BinaryOperation::ADD);
+		std::shared_ptr<BinaryOperation> exp (new BinaryOperation(x, y, BinaryOperation::ADD));
 		auto act = Factory()->ProduceBinaryOperation(x, y, BinaryOperation::ADD);
-		//TODO comparison ASSERT_EQ(exp, act);
-	}
-# endif
+		ASSERT_EQ(*exp, *act);
+	}*/
 }
 
 

@@ -59,14 +59,16 @@ class Variable;
 	  std::string GetName() {return name_;}
   };
 
-# ifdef UNDEFINED
+
   template <size_t W>
   class Constant : public Expr {
   public:
 	  Constant (unsigned int value) {value_ = make_unique <std::bitset <W>> (value);}
 	  virtual ~Constant() {}
-	  virtual std::string ToString () final;
+	  virtual const std::string ToString ();
+	  virtual bool Equals(Expr const &rhs) const;
   private:
+	  //TODO re-implement without unique_ptr
 	  std::unique_ptr <std::bitset <W>> value_;
   };
 
@@ -76,6 +78,7 @@ class Variable;
 	  public: ConstantI32(I32 value) : Constant(value) {}
   };
 
+# ifdef UNDEFINED
   class BinaryOperation : public Expr {
   public:
 	enum OpCode{
