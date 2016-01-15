@@ -21,7 +21,11 @@ typedef int32_t I32;
 //TODO rename
 const int kAlign_4 = 32;
 
+template <typename P, typename T> class CRTP;
+
+class Expr;
 class Variable;
+template <size_t W> class Constant;
 
 /* Expr class implements the Barton-Nackman trick,
  * see: https://en.wikipedia.org/wiki/Barton%E2%80%93Nackman_trick
@@ -38,7 +42,7 @@ class Variable;
     friend bool operator!=(const Expr &a, const Expr &b) { return !a.Equals(b); }
   };
   
-  template <typename T> class Expr_CRTP : public Expr {
+  template <typename P, typename T> class CRTP : public P {
   public:
 	  friend bool operator==(T const &a, T const &b) { return a.Equals(b); }
 	  friend bool operator!=(T const &a, T const &b) { return !a.Equals(b); }
@@ -47,7 +51,7 @@ class Variable;
   typedef std::shared_ptr <Expr> SharedExprPtr;
   typedef std::shared_ptr <Variable> SharedVariablePtr;
 
-  class Variable final : public Expr_CRTP <Variable> {
+  class Variable final : public CRTP <Expr, Variable> {
   public:
 	  Variable (std::string name) : name_(name) {}
 	  virtual ~Variable() final {}
@@ -61,7 +65,7 @@ class Variable;
 
 
   template <size_t W>
-  class Constant : public Expr_CRTP<Constant<W>> {
+  class Constant : public CRTP<Expr, Constant<W>> {
   public:
 	  Constant (unsigned int value) {value_ = make_unique <std::bitset <W>> (value);}
 	  virtual ~Constant() {}
