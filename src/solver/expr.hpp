@@ -6,6 +6,7 @@
 # include <map>
 # include <string>
 # include <bitset>
+# include <iostream>
 
 // Project
 # include "../utils/memory.hpp"
@@ -20,33 +21,39 @@ typedef int32_t I32;
 //TODO rename
 const int kAlign_4 = 32;
 
+class Variable;
+
 /* Expr class implements the Barton-Nackman trick,
  * see: https://en.wikipedia.org/wiki/Barton%E2%80%93Nackman_trick
  * and: https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern
+ * also: http://stackoverflow.com/questions/1691007/whats-the-right-way-to-overload-operator-for-a-class-hierarchy
  * for details.
  */
-  class Expr /*: public std::enable_shared_from_this <Expr>*/ {
+  class Expr : public std::enable_shared_from_this <Expr> {
   public:
     virtual ~Expr() {}
     virtual const std::string ToString() = 0;
+    virtual bool Equals (const Expr &rhs) const = 0;
+    friend bool operator==(const Expr &a, const Expr &b) { return a.Equals(b); }
+    friend bool operator!=(const Expr &a, const Expr &b) { return !a.Equals(b); }
   };
   
-  template <typename T> class Expr_CRTP : Expr {
+  template <typename T> class Expr_CRTP : public Expr {
   public:
 	  friend bool operator==(T const &a, T const &b) { return a.Equals(b); }
 	  friend bool operator!=(T const &a, T const &b) { return !a.Equals(b); }
   };
 
   typedef std::shared_ptr <Expr> SharedExprPtr;
-  //typedef std::shared_ptr <Variable> SharedVariablePtr;
+  typedef std::shared_ptr <Variable> SharedVariablePtr;
 
   class Variable final : public Expr_CRTP <Variable> {
   public:
 	  Variable (std::string name) : name_(name) {}
 	  virtual ~Variable() final {}
 	  virtual const std::string ToString() final;
-  protected:
-	  virtual bool Equals(Variable const &rhs) const final;
+//  protected:
+	  virtual bool Equals(Expr const &rhs) const final;
   private:
 	  std::string name_;
 	  std::string GetName() {return name_;}

@@ -9,8 +9,9 @@ namespace solver
 		return GetName();
 	}
 
-	bool Variable::Equals(Variable const &rhs) const {
-		return true;
+	bool Variable::Equals(const Expr &rhs) const {
+		std::cout << "Variable::Equals\n";
+		return &rhs != nullptr && name_ == dynamic_cast<const Variable*>(&rhs)->name_;
 	}
 
 # ifdef UNDEF

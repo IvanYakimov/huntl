@@ -19,6 +19,8 @@ namespace solver {
 
 	//TODO eq relation for constanti32 & binaryoperation
 
+# ifdef NODEF
+
 	TEST_F(ExprTest, Variable_ToString) {
 		solver::Variable v("x");
 		EXPECT_EQ("x", v.ToString());
@@ -57,7 +59,9 @@ namespace solver {
 		delete x;
 	}
 
-# ifdef NODEF
+# endif
+
+# ifdef NODEF_2
 TEST_F(ExprTest, Constant_ToString) {
 	solver::ConstantI32 c(28);
 	EXPECT_EQ("28", c.ToString());
