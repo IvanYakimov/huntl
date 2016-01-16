@@ -37,8 +37,10 @@ class BinaryOperation;
  */
 template <typename T, typename B> class CRTP : public B {
 public:
-	  friend bool operator==(T const &a, T const &b) { return a.Equals(b); }
-	  friend bool operator!=(T const &a, T const &b) { return !a.Equals(b); }
+	  friend bool operator==(const T& a, const T& b) { return a.Equals(b); }
+	  friend bool operator!=(const T& a, const T& b) { return !a.Equals(b); }
+	  bool operator==(const T& b) { return this->Equals(b); }
+	  bool operator!=(const T& b) { return !this->Equals(b); }
 };
 
 typedef std::shared_ptr <Expr> SharedExprPtr;

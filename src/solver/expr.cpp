@@ -5,7 +5,6 @@
 
 namespace solver
 {
-
 	const std::string Variable::ToString() {
 		return GetName();
 	}
@@ -37,7 +36,6 @@ namespace solver
 				left_child_ == other->left_child_ &&
 				right_child_ == other->right_child_;
 	}
-
 }
 
 
