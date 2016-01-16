@@ -21,14 +21,32 @@ namespace solver
 
 	template <size_t W>
 	bool Constant<W>::Equals(const Expr& rhs) const {
-		std::cout << "Constant<W>::Equals\n";
 		return &rhs != nullptr && *value_ == *dynamic_cast<const Constant<W>*>(&rhs)->value_;
 	}
 
-#ifdef NODEF
-	string BinaryOperation::ToString() {
+	const std::string BinaryOperation::ToString() {
 		//TODO: use foldr instead of "whitespacing" (?)
 		return GetOpCodeName() + " " + GetLeftChild()->ToString() + " " + GetRightChild()->ToString();
 	}
-# endif
+
+	bool BinaryOperation::Equals(const Expr& rhs) const {
+		auto other = dynamic_cast<const BinaryOperation*> (&rhs);
+		return &rhs != nullptr &&
+				op_code_ == other->op_code_ &&
+				left_child_ == other->left_child_ &&
+				right_child_ == other->right_child_;
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

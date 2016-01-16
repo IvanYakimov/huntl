@@ -82,8 +82,7 @@ template <size_t W> class Constant;
 	  public: ConstantI32(I32 value) : Constant(value) {}
   };
 
-#ifdef UNDEF
-  class BinaryOperation : public Expr {
+  class BinaryOperation : public CRTP<Expr, BinaryOperation>{
   public:
 	enum OpCode{
 		  /* arithmetical */
@@ -123,7 +122,8 @@ template <size_t W> class Constant;
 	OpCode GetOpCode() {return op_code_;}
 	std::string GetOpCodeName() {return op_code_map_[op_code_];}
 
-    std::string ToString() final;
+    const std::string ToString() final;
+    bool Equals(const Expr &rhs) const;
 
   private:
     SharedExprPtr left_child_;
@@ -192,7 +192,6 @@ template <size_t W> class Constant;
 			{SIGNED_LESS_OR_EQUAL,  signed_less_or_equal_str}
 	  };
   };
-#endif
 
 }
 

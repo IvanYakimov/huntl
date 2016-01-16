@@ -15,10 +15,8 @@ namespace solver
 	  return std::make_shared <Constant<W>>>(val);
 	}
 
-#ifdef NODEF
 	SharedExprPtr ExprFactory :: ProduceBinaryOperation (SharedExprPtr a, SharedExprPtr b, BinaryOperation::OpCode op_code) {
 	return std::make_shared <BinaryOperation>(a, b, op_code);
 	}
-#endif
 }
 

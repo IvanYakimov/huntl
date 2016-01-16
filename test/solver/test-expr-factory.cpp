@@ -40,7 +40,7 @@ namespace solver {
 		ASSERT_EQ(*exp, *act);
 	}
 
-	/*TEST_F(ExprFactoryTest, ProduceBinaryOperation) {
+	TEST_F(ExprFactoryTest, ProduceBinaryOperation) {
 		auto make_var = [](std::string name) {
 			return std::shared_ptr<Variable>(new Variable(name));
 		};
@@ -51,7 +51,7 @@ namespace solver {
 		std::shared_ptr<BinaryOperation> exp (new BinaryOperation(x, y, BinaryOperation::ADD));
 		auto act = Factory()->ProduceBinaryOperation(x, y, BinaryOperation::ADD);
 		ASSERT_EQ(*exp, *act);
-	}*/
+	}
 }
 
 
