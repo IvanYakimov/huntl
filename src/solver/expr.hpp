@@ -26,13 +26,23 @@ template <typename P, typename T> class CRTP;
 class Expr;
 class Variable;
 template <size_t W> class Constant;
+class BinaryOperation;
 
-/* Expr class implements the Barton-Nackman trick,
+/* Barton-Nackman trick,
  * see: https://en.wikipedia.org/wiki/Barton%E2%80%93Nackman_trick
  * and: https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern
  * also: http://stackoverflow.com/questions/1691007/whats-the-right-way-to-overload-operator-for-a-class-hierarchy
  * for details.
  */
+template <typename P, typename T> class CRTP : public P {
+public:
+	  friend bool operator==(T const &a, T const &b) { return a.Equals(b); }
+	  friend bool operator!=(T const &a, T const &b) { return !a.Equals(b); }
+};
+
+typedef std::shared_ptr <Expr> SharedExprPtr;
+typedef std::shared_ptr <Variable> SharedVariablePtr;
+
   class Expr : public std::enable_shared_from_this <Expr> {
   public:
     virtual ~Expr() {}
@@ -41,15 +51,6 @@ template <size_t W> class Constant;
     friend bool operator==(const Expr &a, const Expr &b) { return a.Equals(b); }
     friend bool operator!=(const Expr &a, const Expr &b) { return !a.Equals(b); }
   };
-  
-  template <typename P, typename T> class CRTP : public P {
-  public:
-	  friend bool operator==(T const &a, T const &b) { return a.Equals(b); }
-	  friend bool operator!=(T const &a, T const &b) { return !a.Equals(b); }
-  };
-
-  typedef std::shared_ptr <Expr> SharedExprPtr;
-  typedef std::shared_ptr <Variable> SharedVariablePtr;
 
   class Variable final : public CRTP <Expr, Variable> {
   public:
