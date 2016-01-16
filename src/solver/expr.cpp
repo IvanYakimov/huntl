@@ -10,7 +10,11 @@ namespace solver
 	}
 
 	bool Variable::Equals(const Object& rhs) const {
-		return &rhs != nullptr && name_ == dynamic_cast<const Variable*>(&rhs)->name_;
+		auto other = dynamic_cast<const Variable*>(&rhs);
+		if (!other)
+			return false;
+		else
+			return &rhs != nullptr && name_ == other->name_;
 	}
 
 	template <size_t W>
@@ -20,18 +24,32 @@ namespace solver
 	}
 
 	template <size_t W>
+	long Constant<W>::GetValue() {
+		signed long result = 0;
+		unsigned long from = value_->to_ulong();
+		std::memcpy(&result, &from, sizeof(signed long));
+		return result;
+	}
+
+	template <size_t W>
 	bool Constant<W>::Equals(const Object& rhs) const {
-		return &rhs != nullptr && *value_ == *dynamic_cast<const Constant<W>*>(&rhs)->value_;
+		auto other = dynamic_cast<const Constant<W>*>(&rhs);
+		if (!other)
+			return false;
+		else
+			return &rhs != nullptr && *value_ == *(other->value_);
 	}
 
 	const std::string BinaryOperation::ToString() {
-		//TODO: use foldr instead of "whitespacing" (?)
 		return GetOpCodeName() + " " + GetLeftChild()->ToString() + " " + GetRightChild()->ToString();
 	}
 
 	bool BinaryOperation::Equals(const Object& rhs) const {
 		auto other = dynamic_cast<const BinaryOperation*> (&rhs);
-		return &rhs != nullptr &&
+		if (!other)
+			return false;
+		else
+			return &rhs != nullptr &&
 				op_code_ == other->op_code_ &&
 				left_child_ == other->left_child_ &&
 				right_child_ == other->right_child_;

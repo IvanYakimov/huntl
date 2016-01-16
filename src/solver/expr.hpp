@@ -7,6 +7,7 @@
 # include <string>
 # include <bitset>
 # include <iostream>
+# include <cstring>
 
 // Project
 # include "../utils/memory.hpp"
@@ -19,7 +20,7 @@ namespace solver
 //TODO redefine
 typedef int32_t I32;
 //TODO rename
-const int kAlign_4 = 32;
+const int w32 = 32;
 
 template <typename P, typename T> class CRTP;
 
@@ -79,14 +80,15 @@ public:
 	  virtual ~Constant() {}
 	  virtual const std::string ToString ();
 	  virtual bool Equals(const Object& rhs) const;
+	  long GetValue();
   private:
-	  //TODO re-implement without unique_ptr
+	  //TODO re-implement without unique_ptr (is it possible?)
 	  std::unique_ptr <std::bitset <W>> value_;
   };
 
   // ConstantI32 Instance
-  template class Constant<kAlign_4>;
-  class ConstantI32 final : public Constant<kAlign_4> {
+  template class Constant<w32>;
+  class ConstantI32 final : public Constant<w32> {
 	  public: ConstantI32(I32 value) : Constant(value) {}
   };
 
