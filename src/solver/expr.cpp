@@ -5,11 +5,12 @@
 
 namespace solver
 {
+
 	const std::string Variable::ToString() {
 		return GetName();
 	}
 
-	bool Variable::Equals(const Expr &rhs) const {
+	bool Variable::Equals(const Object& rhs) const {
 		return &rhs != nullptr && name_ == dynamic_cast<const Variable*>(&rhs)->name_;
 	}
 
@@ -20,7 +21,7 @@ namespace solver
 	}
 
 	template <size_t W>
-	bool Constant<W>::Equals(const Expr& rhs) const {
+	bool Constant<W>::Equals(const Object& rhs) const {
 		return &rhs != nullptr && *value_ == *dynamic_cast<const Constant<W>*>(&rhs)->value_;
 	}
 
@@ -29,13 +30,14 @@ namespace solver
 		return GetOpCodeName() + " " + GetLeftChild()->ToString() + " " + GetRightChild()->ToString();
 	}
 
-	bool BinaryOperation::Equals(const Expr& rhs) const {
+	bool BinaryOperation::Equals(const Object& rhs) const {
 		auto other = dynamic_cast<const BinaryOperation*> (&rhs);
 		return &rhs != nullptr &&
 				op_code_ == other->op_code_ &&
 				left_child_ == other->left_child_ &&
 				right_child_ == other->right_child_;
 	}
+
 }
 
 

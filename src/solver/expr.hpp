@@ -23,6 +23,7 @@ const int kAlign_4 = 32;
 
 template <typename P, typename T> class CRTP;
 
+class Object;
 class Expr;
 class Variable;
 template <size_t W> class Constant;
@@ -34,7 +35,7 @@ class BinaryOperation;
  * also: http://stackoverflow.com/questions/1691007/whats-the-right-way-to-overload-operator-for-a-class-hierarchy
  * for details.
  */
-template <typename P, typename T> class CRTP : public P {
+template <typename T, typename B> class CRTP : public B {
 public:
 	  friend bool operator==(T const &a, T const &b) { return a.Equals(b); }
 	  friend bool operator!=(T const &a, T const &b) { return !a.Equals(b); }
@@ -43,22 +44,26 @@ public:
 typedef std::shared_ptr <Expr> SharedExprPtr;
 typedef std::shared_ptr <Variable> SharedVariablePtr;
 
-  class Expr : public std::enable_shared_from_this <Expr> {
+class Object : public std::enable_shared_from_this<Object> {
+public:
+	virtual ~Object() {}
+	virtual const std::string ToString() = 0;
+	virtual bool Equals (const Object& rhs) const = 0;
+};
+
+  class Expr : public CRTP<Expr, Object> {
   public:
     virtual ~Expr() {}
     virtual const std::string ToString() = 0;
-    virtual bool Equals (const Expr &rhs) const = 0;
-    friend bool operator==(const Expr &a, const Expr &b) { return a.Equals(b); }
-    friend bool operator!=(const Expr &a, const Expr &b) { return !a.Equals(b); }
+    virtual bool Equals (const Object& rhs) const = 0;
   };
 
-  class Variable final : public CRTP <Expr, Variable> {
+  class Variable final : public CRTP <Variable, Expr> {
   public:
 	  Variable (std::string name) : name_(name) {}
 	  virtual ~Variable() final {}
 	  virtual const std::string ToString() final;
-//  protected:
-	  virtual bool Equals(Expr const &rhs) const final;
+	  virtual bool Equals(const Object& rhs) const final;
   private:
 	  std::string name_;
 	  std::string GetName() {return name_;}
@@ -66,12 +71,12 @@ typedef std::shared_ptr <Variable> SharedVariablePtr;
 
 
   template <size_t W>
-  class Constant : public CRTP<Expr, Constant<W>> {
+  class Constant : public CRTP<Constant<W>, Expr> {
   public:
 	  Constant (unsigned int value) {value_ = make_unique <std::bitset <W>> (value);}
 	  virtual ~Constant() {}
 	  virtual const std::string ToString ();
-	  virtual bool Equals(Expr const &rhs) const;
+	  virtual bool Equals(const Object& rhs) const;
   private:
 	  //TODO re-implement without unique_ptr
 	  std::unique_ptr <std::bitset <W>> value_;
@@ -83,7 +88,7 @@ typedef std::shared_ptr <Variable> SharedVariablePtr;
 	  public: ConstantI32(I32 value) : Constant(value) {}
   };
 
-  class BinaryOperation : public CRTP<Expr, BinaryOperation>{
+  class BinaryOperation : public CRTP<BinaryOperation, Expr>{
   public:
 	enum OpCode{
 		  /* arithmetical */
@@ -124,7 +129,7 @@ typedef std::shared_ptr <Variable> SharedVariablePtr;
 	std::string GetOpCodeName() {return op_code_map_[op_code_];}
 
     const std::string ToString() final;
-    bool Equals(const Expr &rhs) const;
+    bool Equals(const Object &rhs) const;
 
   private:
     SharedExprPtr left_child_;
@@ -193,7 +198,6 @@ typedef std::shared_ptr <Variable> SharedVariablePtr;
 			{SIGNED_LESS_OR_EQUAL,  signed_less_or_equal_str}
 	  };
   };
-
 }
 
 # endif /* __EXPR_HPP__ */
