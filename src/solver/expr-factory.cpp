@@ -6,13 +6,13 @@ namespace solver
 		return std::make_shared <Variable>(name);
 	}
 
-	SharedExprPtr ExprFactory :: ProduceConstantI32 (I32 val) {
+	SharedExprPtr ExprFactory :: ProduceConstantI32 (std::int32_t val) {
 		return std::make_shared <ConstantI32>(val);
 	}
 
-	template <size_t W>
-	SharedExprPtr ExprFactory :: ProduceConstant (unsigned int val) {
-	  return std::make_shared <Constant<W>>>(val);
+	template <typename T>
+	SharedExprPtr ExprFactory :: ProduceConstant (T val) {
+	  return std::make_shared <Constant<T>>>(val);
 	}
 
 	SharedExprPtr ExprFactory :: ProduceBinaryOperation (SharedExprPtr a, SharedExprPtr b, BinaryOperation::OpCode op_code) {

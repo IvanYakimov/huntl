@@ -12,22 +12,14 @@
 // Project
 # include "../utils/memory.hpp"
 
-//TOOOODOOOOOOOOOOOOOOOOOOOOOOO
-//TODO
-
 namespace solver
 {
-//TODO redefine
-typedef int32_t I32;
-//TODO rename
-const int w32 = 32;
-
 template <typename P, typename T> class CRTP;
 
 class Object;
 class Expr;
 class Variable;
-template <size_t W> class Constant;
+template <typename T> class Constant;
 class BinaryOperation;
 
 /* Barton-Nackman trick,
@@ -67,29 +59,27 @@ public:
 	  virtual ~Variable() final {}
 	  virtual const std::string ToString() final;
 	  virtual bool Equals(const Object& rhs) const final;
+	  const std::string GetName() const {return name_;}
   private:
 	  std::string name_;
-	  std::string GetName() {return name_;}
   };
 
-
-  template <size_t W>
-  class Constant : public CRTP<Constant<W>, Expr> {
+  template <typename T>
+  class Constant : public CRTP<Constant<T>, Expr> {
   public:
-	  Constant (unsigned int value) {value_ = make_unique <std::bitset <W>> (value);}
+	  Constant (T value) {value_ = value;}
 	  virtual ~Constant() {}
 	  virtual const std::string ToString ();
 	  virtual bool Equals(const Object& rhs) const;
-	  long GetValue();
+	  T GetValue();
   private:
-	  //TODO re-implement without unique_ptr (is it possible?)
-	  std::unique_ptr <std::bitset <W>> value_;
+	  T value_;
   };
 
   // ConstantI32 Instance
-  template class Constant<w32>;
-  class ConstantI32 final : public Constant<w32> {
-	  public: ConstantI32(I32 value) : Constant(value) {}
+  template class Constant<std::int32_t>;
+  class ConstantI32 final : public Constant<std::int32_t> {
+	  public: ConstantI32(std::int32_t value) : Constant(value) {}
   };
 
   class BinaryOperation : public CRTP<BinaryOperation, Expr>{

@@ -17,27 +17,23 @@ namespace solver
 			return &rhs != nullptr && name_ == other->name_;
 	}
 
-	template <size_t W>
-	const std::string Constant<W>::ToString() {
-		auto int_val = value_->to_ulong();
-		return std::to_string(int_val);
+	template <typename T>
+	const std::string Constant<T>::ToString() {
+		return std::to_string(value_);
 	}
 
-	template <size_t W>
-	long Constant<W>::GetValue() {
-		signed long result = 0;
-		unsigned long from = value_->to_ulong();
-		std::memcpy(&result, &from, sizeof(signed long));
-		return result;
+	template <typename T>
+	T Constant<T>::GetValue() {
+		return value_;
 	}
 
-	template <size_t W>
-	bool Constant<W>::Equals(const Object& rhs) const {
-		auto other = dynamic_cast<const Constant<W>*>(&rhs);
+	template <typename T>
+	bool Constant<T>::Equals(const Object& rhs) const {
+		auto other = dynamic_cast<const Constant<T>*>(&rhs);
 		if (!other)
 			return false;
 		else
-			return &rhs != nullptr && *value_ == *(other->value_);
+			return &rhs != nullptr && value_ == other->value_;
 	}
 
 	const std::string BinaryOperation::ToString() {

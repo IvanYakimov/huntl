@@ -31,7 +31,7 @@ namespace solver {
 	}
 
 	TEST_F(ExprFactoryTest, ProduceConstantI32) {
-		const I32 val = 28;
+		std::int32_t val = 28;
 		std::shared_ptr<Expr> exp (new ConstantI32(val));
 		auto act = Factory()->ProduceConstantI32(val);
 		ASSERT_EQ(*exp, *act);

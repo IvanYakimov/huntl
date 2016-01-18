@@ -12,11 +12,11 @@ namespace solver
 	{
 	public:
 		SharedExprPtr ProduceVariable (std::string name);
-		SharedExprPtr ProduceConstantI32 (I32 val);
+		SharedExprPtr ProduceConstantI32 (std::int32_t val);
 		SharedExprPtr ProduceBinaryOperation (SharedExprPtr a, SharedExprPtr b, BinaryOperation::OpCode op_code);
 	private:
-		template <size_t W>
-		SharedExprPtr ProduceConstant (unsigned int val);
+		template <typename T>
+		SharedExprPtr ProduceConstant (T val);
 	};
 }
 

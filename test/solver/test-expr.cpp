@@ -26,101 +26,89 @@ public:
 //-------------------------------------------------------------------
 // Variable
 
-TEST_F(ExprTest, Variable_ToString) {
+TEST_F(ExprTest, Variable_Accessors) {
 	Variable v("x");
 	EXPECT_EQ("x", v.ToString());
+	EXPECT_EQ("x", v.GetName());
 }
 
-TEST_F(ExprTest, Variable_EQ_Reflexivity) {
-	Variable v("x");
-	EXPECT_EQ(v, v);
-}
-
-TEST_F(ExprTest, Variable_EQ_Simmetric) {
-	solver::Variable x1("x");
-	solver::Variable x2("x");
-	EXPECT_EQ(x1, x2);
-	EXPECT_EQ(x2, x1);
-}
-
-TEST_F(ExprTest, Variable_EQ_Transitivity) {
+TEST_F(ExprTest, Variable_Comparison) {
 	Variable x1("x"),
-			x2("x"),
-			x3("x");
-	EXPECT_EQ(x1, x2);
-	EXPECT_EQ(x2, x3);
-	EXPECT_EQ(x1, x3);
-}
-
-TEST_F(ExprTest, Variable_NE) {
-	Variable x("x");
-	Variable y("y");
-	EXPECT_NE(x, y);
-}
-
-TEST_F(ExprTest, Variable_NE_NullPtr) {
-	Variable *x = new Variable("x");
-	EXPECT_NE(nullptr, x);
-	delete x;
+				x2("x"),
+				x3("x"),
+				y("y");
+	EXPECT_EQ(x1, x1); // reflexivity
+	EXPECT_EQ(x1, x2); EXPECT_EQ(x2, x1); // symmetry
+	EXPECT_EQ(x1, x2); EXPECT_EQ(x2, x3); EXPECT_EQ(x1, x3); // transitivity
+	EXPECT_NE(x1, y);
+	EXPECT_NE(&x1, nullptr);
 }
 
 //-------------------------------------------------------------------
-// Cross-testing
-TEST_F(ExprTest, SmartPointer_Comparison_CrossTest) {
-	shared_ptr<Expr> var (new Variable("var"));
-	shared_ptr<Expr> c1 (new ConstantI32(28));
-	shared_ptr<Expr> c2 (new ConstantI32(99));
-	shared_ptr<Expr> op (new BinaryOperation(c1, c2, BinaryOperation::ADD));
-	EXPECT_NE(*var, *c1);
-	EXPECT_NE(*c1, *var);
-	EXPECT_NE(*var, *op);
-	EXPECT_NE(*op, *var);
-	EXPECT_NE(*c1, *op);
-	EXPECT_NE(*op, *c1);
-}
+// Constant<T>
 
-//-------------------------------------------------------------------
-// Constant<W>
-
-TEST_F(ExprTest, Constant_ToString) {
-	solver::ConstantI32 c(28);
-	EXPECT_EQ("28", c.ToString());
-}
-
-TEST_F(ExprTest, Constant_GetPositiveValue) {
-	long val = 28;
-	ConstantI32 x(val);
+TEST_F(ExprTest, ConstantI32_Accessors) {
+	std::int32_t val = 28,
+			nval = -28;
+	solver::ConstantI32 x(val),
+			nx(nval);
 	EXPECT_EQ(val, x.GetValue());
+	EXPECT_EQ(nval, nx.GetValue());
+	EXPECT_EQ("28", x.ToString());
+	EXPECT_EQ("-28", nx.ToString());
 }
 
-TEST_F(ExprTest, Constant_GetNegativeValue) {
-	long val = -28;
-	ConstantI32 x(val);
-	EXPECT_EQ(val, x.GetValue());
-}
-
-TEST_F(ExprTest, Constant_EQ_Reflexivity) {
-	ConstantI32 x(28);
-	EXPECT_EQ(x, x);
+TEST_F(ExprTest, ConstantI32_Comparison) {
+	std::int32_t val1 = 28, val2 = 99;
+	ConstantI32 x1(val1),
+			x2(val1), x3(val1),
+			y(val2);
+	EXPECT_EQ(x1, x1);
+	EXPECT_EQ(x1, x2); EXPECT_EQ(x2, x1);
+	EXPECT_EQ(x1, x2); EXPECT_EQ(x2, x3); EXPECT_EQ(x1, x3);
+	EXPECT_NE(x1, y);
+	EXPECT_NE(&x1, nullptr);
 }
 
 //-------------------------------------------------------------------
 // BinaryOpration
-TEST_F(ExprTest, BinOp_GetOpCode) {
-	// single test is enough
-	solver::BinaryOperation op(NULL, NULL, solver::BinaryOperation::ADD);
-	EXPECT_EQ(solver::BinaryOperation::ADD, op.GetOpCode());
-}
-
-TEST_F(ExprTest, BinaryOp_GetChildren) {
+TEST_F(ExprTest, BinOp_Accessors) {
 	auto left = make_var("x");
 	auto right = make_var("y");
 	BinaryOperation bin_op(left, right, solver::BinaryOperation::ADD);
+
 	EXPECT_EQ(left, bin_op.GetLeftChild());
 	EXPECT_EQ(right, bin_op.GetRightChild());
+	EXPECT_EQ(BinaryOperation::ADD, bin_op.GetOpCode());
+	EXPECT_EQ("add x y", bin_op.ToString());
 }
 
-TEST_F(ExprTest, BinaryOp_GetOpCodeName) {
+TEST_F(ExprTest, BinaryOp_Comparison_Basic) {
+	BinaryOperation x1(nullptr, nullptr, BinaryOperation::ADD),
+			x2(nullptr, nullptr, BinaryOperation::ADD),
+			x3(nullptr, nullptr, BinaryOperation::ADD),
+			y(nullptr, nullptr, BinaryOperation::SUB);
+	EXPECT_EQ(x1, x1);
+	EXPECT_EQ(x1, x2); EXPECT_EQ(x2, x1);
+	EXPECT_EQ(x1, x2); EXPECT_EQ(x2, x3); EXPECT_EQ(x1, x3);
+	EXPECT_NE(x1, y);
+	EXPECT_NE(&x1, nullptr);
+}
+
+TEST_F(ExprTest, BinaryOp_Comparison_Deep) {
+	auto v1 = make_var ("x"),
+			v2 = make_var("y"),
+			v3 = make_var("z");
+	BinaryOperation x(v1, v2, BinaryOperation::ADD),
+			y(v2, v3, BinaryOperation::ADD),
+			z(v1, v3, BinaryOperation::ADD);
+	EXPECT_NE(x, y);
+	EXPECT_NE(y, z);
+	EXPECT_NE(x, z);
+
+}
+
+TEST_F(ExprTest, BinaryOp_OpCodes) {
 	typedef std::map <BinaryOperation::OpCode, std::string> map_type;
 	typedef map_type::iterator it_type;
 
@@ -157,11 +145,62 @@ TEST_F(ExprTest, BinaryOp_GetOpCodeName) {
 	}
 }
 
-TEST_F(ExprTest, BinaryOp_ToString) {
-	auto l = make_var("x");
-	auto r = make_var("y");
-	solver::BinaryOperation add(l, r, solver::BinaryOperation::OpCode::ADD);
-	EXPECT_EQ("add x y", add.ToString());
+//-------------------------------------------------------------------
+// SmartPointers and polymorphism testing
+TEST_F(ExprTest, SmartPointer_Comparison_Variable) {
+	shared_ptr<Expr> x1 (new Variable("x")),
+			x2 (new Variable("x")),
+			x3 (new Variable("x")),
+			y (new Variable("y"));
+	EXPECT_EQ(*x1, *x1);	// reflexivity
+	EXPECT_EQ(*x1, *x2); EXPECT_EQ(*x2, *x1); // symmetric
+	EXPECT_EQ(*x1, *x2); EXPECT_EQ(*x2, *x3); EXPECT_EQ(*x1, *x3); // transivity
+	EXPECT_NE(*x1, *y);
+	EXPECT_NE(x1, nullptr);
+}
+
+TEST_F(ExprTest, SmartPointer_Comparison_ConstantI32) {
+	std::int32_t val1 = 28, val2 = 99;
+	shared_ptr<Expr> x1 (new ConstantI32(val1)),
+			x2 (new ConstantI32(val1)),
+			x3 (new ConstantI32(val1)),
+			y (new ConstantI32(val2));
+	EXPECT_EQ(*x1, *x1);	// reflexivity
+	EXPECT_EQ(*x1, *x2); EXPECT_EQ(*x2, *x1); // symmetric
+	EXPECT_EQ(*x1, *x2); EXPECT_EQ(*x2, *x3); EXPECT_EQ(*x1, *x3); // transivity
+	EXPECT_NE(*x1, *y);
+	EXPECT_NE(x1, nullptr);
+}
+
+TEST_F(ExprTest, SmartPointer_Comparison_BinaryOperation) {
+	shared_ptr<Expr> x1 (new BinaryOperation (nullptr, nullptr, BinaryOperation::ADD)),
+			x2 (new BinaryOperation (nullptr, nullptr, BinaryOperation::ADD)),
+			x3 (new BinaryOperation (nullptr, nullptr, BinaryOperation::ADD)),
+			y (new BinaryOperation (nullptr, nullptr, BinaryOperation::SUB));
+	EXPECT_EQ(*x1, *x1);	// reflexivity
+	EXPECT_EQ(*x1, *x2); EXPECT_EQ(*x2, *x1); // symmetric
+	EXPECT_EQ(*x1, *x2); EXPECT_EQ(*x2, *x3); EXPECT_EQ(*x1, *x3); // transivity
+	EXPECT_NE(*x1, *y);
+	EXPECT_NE(x1, nullptr);
+}
+
+TEST_F(ExprTest, SmartPointer_Comparison_CrossTest) {
+	shared_ptr<Expr> var (new Variable("var"));
+	shared_ptr<Expr> c1 (new ConstantI32(28));
+	shared_ptr<Expr> c2 (new ConstantI32(99));
+	shared_ptr<Expr> op (new BinaryOperation(c1, c2, BinaryOperation::ADD));
+	EXPECT_NE(*var, *c1);
+	EXPECT_NE(*c1, *var);
+	EXPECT_NE(*var, *op);
+	EXPECT_NE(*op, *var);
+	EXPECT_NE(*c1, *op);
+	EXPECT_NE(*op, *c1);
 }
 
 }
+
+
+
+
+
+
