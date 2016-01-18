@@ -11,40 +11,17 @@
 
 // Project
 # include "../utils/memory.hpp"
+# include "../utils/object.hpp"
 
 namespace solver
 {
-template <typename P, typename T> class CRTP;
-
-class Object;
 class Expr;
 class Variable;
 template <typename T> class Constant;
 class BinaryOperation;
 
-/* Barton-Nackman trick,
- * see: https://en.wikipedia.org/wiki/Barton%E2%80%93Nackman_trick
- * and: https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern
- * also: http://stackoverflow.com/questions/1691007/whats-the-right-way-to-overload-operator-for-a-class-hierarchy
- * for details.
- */
-template <typename T, typename B> class CRTP : public B {
-public:
-	  friend bool operator==(const T& a, const T& b) { return a.Equals(b); }
-	  friend bool operator!=(const T& a, const T& b) { return !a.Equals(b); }
-	  bool operator==(const T& b) { return this->Equals(b); }
-	  bool operator!=(const T& b) { return !this->Equals(b); }
-};
-
 typedef std::shared_ptr <Expr> SharedExprPtr;
 typedef std::shared_ptr <Variable> SharedVariablePtr;
-
-class Object : public std::enable_shared_from_this<Object> {
-public:
-	virtual ~Object() {}
-	virtual const std::string ToString() = 0;
-	virtual bool Equals (const Object& rhs) const = 0;
-};
 
   class Expr : public CRTP<Expr, Object> {
   public:
