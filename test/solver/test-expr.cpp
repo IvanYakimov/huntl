@@ -3,6 +3,7 @@
 
 // Project
 # include "../../src/solver/expr.hpp"
+# include "../../src/utils/object.hpp"
 
 // Google Test
 # include "gtest/gtest.h"
@@ -42,6 +43,7 @@ TEST_F(ExprTest, Variable_Comparison) {
 	EXPECT_EQ(x1, x2); EXPECT_EQ(x2, x3); EXPECT_EQ(x1, x3); // transitivity
 	EXPECT_NE(x1, y);
 	EXPECT_NE(&x1, nullptr);
+	EXPECT_NE(nullptr, &x1);
 }
 
 //-------------------------------------------------------------------
@@ -68,6 +70,7 @@ TEST_F(ExprTest, ConstantI32_Comparison) {
 	EXPECT_EQ(x1, x2); EXPECT_EQ(x2, x3); EXPECT_EQ(x1, x3);
 	EXPECT_NE(x1, y);
 	EXPECT_NE(&x1, nullptr);
+	EXPECT_NE(nullptr, &x1);
 }
 
 //-------------------------------------------------------------------
@@ -93,6 +96,7 @@ TEST_F(ExprTest, BinaryOp_Comparison_Basic) {
 	EXPECT_EQ(x1, x2); EXPECT_EQ(x2, x3); EXPECT_EQ(x1, x3);
 	EXPECT_NE(x1, y);
 	EXPECT_NE(&x1, nullptr);
+	EXPECT_NE(nullptr, &x1);
 }
 
 TEST_F(ExprTest, BinaryOp_Comparison_Deep) {
@@ -105,7 +109,6 @@ TEST_F(ExprTest, BinaryOp_Comparison_Deep) {
 	EXPECT_NE(x, y);
 	EXPECT_NE(y, z);
 	EXPECT_NE(x, z);
-
 }
 
 TEST_F(ExprTest, BinaryOp_OpCodes) {
@@ -157,9 +160,10 @@ TEST_F(ExprTest, SmartPointer_Comparison_Variable) {
 	EXPECT_EQ(*x1, *x2); EXPECT_EQ(*x2, *x3); EXPECT_EQ(*x1, *x3); // transivity
 	EXPECT_NE(*x1, *y);
 	EXPECT_NE(x1, nullptr);
+	EXPECT_NE(nullptr, x1);
 }
 
-TEST_F(ExprTest, SmartPointer_Comparison_ConstantI32) {
+TEST_F(ExprTest, SmartPointer_Comparison_Constant) {
 	std::int32_t val1 = 28, val2 = 99;
 	shared_ptr<Expr> x1 (new ConstantI32(val1)),
 			x2 (new ConstantI32(val1)),
@@ -170,6 +174,7 @@ TEST_F(ExprTest, SmartPointer_Comparison_ConstantI32) {
 	EXPECT_EQ(*x1, *x2); EXPECT_EQ(*x2, *x3); EXPECT_EQ(*x1, *x3); // transivity
 	EXPECT_NE(*x1, *y);
 	EXPECT_NE(x1, nullptr);
+	EXPECT_NE(nullptr, x1);
 }
 
 TEST_F(ExprTest, SmartPointer_Comparison_BinaryOperation) {
@@ -182,6 +187,7 @@ TEST_F(ExprTest, SmartPointer_Comparison_BinaryOperation) {
 	EXPECT_EQ(*x1, *x2); EXPECT_EQ(*x2, *x3); EXPECT_EQ(*x1, *x3); // transivity
 	EXPECT_NE(*x1, *y);
 	EXPECT_NE(x1, nullptr);
+	EXPECT_NE(nullptr, x1);
 }
 
 TEST_F(ExprTest, SmartPointer_Comparison_CrossTest) {

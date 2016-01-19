@@ -1,17 +1,25 @@
 # include "expr.hpp"
 
+using std::function;
+
 namespace solver
 {
+
+template <class T>
+static bool EqualsHelper(const T& lhs, const Object& rhs, function<bool(const T&, const T&)> cmp) {
+	auto other = dynamic_cast<const T*>(&rhs);
+	return other == nullptr ? false : cmp(lhs, *other);
+}
+
 	const std::string Variable::ToString() {
 		return GetName();
 	}
 
 	bool Variable::Equals(const Object& rhs) const {
-		auto other = dynamic_cast<const Variable*>(&rhs);
-		if (!other)
-			return false;
-		else
-			return &rhs != nullptr && name_ == other->name_;
+		auto cmp = [] (auto lhs, auto rhs) -> bool {
+			return lhs.name_ == rhs.name_;
+		};
+		return EqualsHelper<Variable>(*this, rhs, cmp);
 	}
 
 	template <typename T>
