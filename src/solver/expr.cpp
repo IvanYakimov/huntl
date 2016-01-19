@@ -4,13 +4,6 @@ using std::function;
 
 namespace solver
 {
-
-template <class T>
-static bool EqualsHelper(const T& lhs, const Object& rhs, function<bool(const T&, const T&)> cmp) {
-	auto other = dynamic_cast<const T*>(&rhs);
-	return other == nullptr ? false : cmp(lhs, *other);
-}
-
 	const std::string Variable::ToString() {
 		return GetName();
 	}
@@ -34,11 +27,10 @@ static bool EqualsHelper(const T& lhs, const Object& rhs, function<bool(const T&
 
 	template <typename T>
 	bool Constant<T>::Equals(const Object& rhs) const {
-		auto other = dynamic_cast<const Constant<T>*>(&rhs);
-		if (!other)
-			return false;
-		else
-			return &rhs != nullptr && value_ == other->value_;
+		auto cmp = [] (auto lhs, auto rhs) -> bool {
+			return lhs.value_ == rhs.value_;
+		};
+		return EqualsHelper<Constant<T>>(*this, rhs, cmp);
 	}
 
 	const std::string BinaryOperation::ToString() {
@@ -46,14 +38,12 @@ static bool EqualsHelper(const T& lhs, const Object& rhs, function<bool(const T&
 	}
 
 	bool BinaryOperation::Equals(const Object& rhs) const {
-		auto other = dynamic_cast<const BinaryOperation*> (&rhs);
-		if (!other)
-			return false;
-		else
-			return &rhs != nullptr &&
-				op_code_ == other->op_code_ &&
-				left_child_ == other->left_child_ &&
-				right_child_ == other->right_child_;
+		auto cmp = [] (auto lhs, auto rhs) -> bool {
+			return lhs.op_code_ == rhs.op_code_ &&
+					lhs.left_child_ == rhs.left_child_ &&
+					lhs.right_child_ == rhs.right_child_;
+		};
+		return EqualsHelper<BinaryOperation>(*this, rhs, cmp);
 	}
 }
 

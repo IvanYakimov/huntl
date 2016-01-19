@@ -8,7 +8,7 @@ UTILS = interruption.o
 OBJ_TEST = $(SOLVER_TEST) $(PARSER_TEST)
 OBJ = $(SOLVER) $(PARSER) $(UTILS)
 CXX = g++ 
-CXXFLAGS = -fdiagnostics-color=always -g -std=c++14 -fpic -rdynamic $(LLVMFLAGS) $(DBGFLAGS)
+CXXFLAGS = -fdiagnostics-color=always -g -std=c++1y -fpic -rdynamic $(LLVMFLAGS) $(DBGFLAGS)
 LDFLAGS = 
 LLVMFLAGS = `llvm-config --cxxflags`
 DBGFLAGS = -D DBG

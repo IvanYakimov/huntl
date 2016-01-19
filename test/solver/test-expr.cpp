@@ -99,16 +99,20 @@ TEST_F(ExprTest, BinaryOp_Comparison_Basic) {
 	EXPECT_NE(nullptr, &x1);
 }
 
+//TODO all combinations
 TEST_F(ExprTest, BinaryOp_Comparison_Deep) {
-	auto v1 = make_var ("x"),
-			v2 = make_var("y"),
-			v3 = make_var("z");
-	BinaryOperation x(v1, v2, BinaryOperation::ADD),
-			y(v2, v3, BinaryOperation::ADD),
-			z(v1, v3, BinaryOperation::ADD);
-	EXPECT_NE(x, y);
-	EXPECT_NE(y, z);
-	EXPECT_NE(x, z);
+	auto x = make_var ("x"),
+			y = make_var("y"),
+			z = make_var("z");
+	BinaryOperation a(x, x, BinaryOperation::ADD),
+			b(x, y, BinaryOperation::ADD),
+			c(y, x, BinaryOperation::ADD),
+			d(y, y, BinaryOperation::ADD);
+	EXPECT_NE(a, b);
+	EXPECT_NE(b, a);
+	EXPECT_NE(c, d);
+	EXPECT_NE(d, c);
+
 }
 
 TEST_F(ExprTest, BinaryOp_OpCodes) {
