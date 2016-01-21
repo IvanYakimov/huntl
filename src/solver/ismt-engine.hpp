@@ -1,3 +1,6 @@
+#ifndef __ISMT_ENGINE_HPP__
+#define __ISMT_ENGINE_HPP__
+
 # include "expr.hpp"
 
 namespace solver
@@ -13,19 +16,14 @@ namespace solver
 		  UNKNOWN
 	}Sat;
 
-	class Value {
-		//TODO
-	};
-
-	class ISmtEngine
+	class ISMTEngine
 	{
 	public:
-		virtual ~ISmtEngine() {}
-
-		virtual void AssertExpr (SharedExprPtr expr) = 0;
-
+		virtual ~ISMTEngine() {}
+		virtual void Assert (SharedExprPtr expr) = 0;
 		virtual Sat CheckSat() = 0;
-
-		virtual Value GetValue(SharedVariablePtr varible) = 0;
+		virtual std::int32_t GetValue(SharedExprPtr varible) = 0;
 	};
 }
+
+#endif

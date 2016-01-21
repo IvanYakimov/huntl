@@ -8,8 +8,8 @@ UTILS = interruption.o
 OBJ_TEST = $(SOLVER_TEST) $(PARSER_TEST)
 OBJ = $(SOLVER) $(PARSER) $(UTILS)
 CXX = g++ 
-CXXFLAGS = -fdiagnostics-color=always -g -std=c++1y -fpic -rdynamic $(LLVMFLAGS:fno-exceptions=fexceptions) $(DBGFLAGS)
-LDFLAGS = -lcvc4
+CXXFLAGS = -fdiagnostics-color=always -g -std=c++1y -fpic -rdynamic $(filter-out -g -fno-exceptions -O2 -std=c++11, $(LLVMFLAGS)) $(DBGFLAGS)
+LDFLAGS = -lcvc4 -lgmp
 LLVMFLAGS = $(shell llvm-config --cxxflags)
 DBGFLAGS = -D DBG
 SRC = ../src
@@ -29,7 +29,7 @@ program.so: shared.o
 shared.o: $(PARSER) $(SOLVER) $(UTILS)
 	ld -r $^ -o $@
 
-solvertest.out: $(SOLVER_TEST) $(SOLVER)
+solvertest.out: $(SOLVER_TEST) $(SOLVER) $(LDFLAGS)
 	$(CXX) $^ -o $@ -lgtest -pthread $(CXXFLAGS)
 	
 #parsertest.out

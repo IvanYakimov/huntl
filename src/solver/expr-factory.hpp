@@ -7,7 +7,6 @@
 
 namespace solver
 {
-// NOTE: this factory produces only signed i32 expressions (temporary)
 	class ExprFactory
 	{
 	public:
