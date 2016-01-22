@@ -31,14 +31,12 @@ typedef std::shared_ptr <Variable> SharedVariablePtr;
 
   class Variable final : public CRTP <Variable, Expr> {
   public:
-	  Variable (std::string name) : name_(name) {}
-	  virtual ~Variable() final {}
+	  Variable (std::string name);
+	  virtual ~Variable() final;
 	  virtual const std::string ToString() final;
 	  virtual bool Equals(const Object& rhs) const final;
-	  static SharedExprPtr Create(std::string name) {
-		  return std::make_shared<Variable>(name);
-	  }
-	  const std::string GetName() const {return name_;}
+	  static SharedExprPtr Create(std::string name);
+	  const std::string GetName() const;
   private:
 	  std::string name_;
   };
@@ -46,13 +44,11 @@ typedef std::shared_ptr <Variable> SharedVariablePtr;
   template <typename T>
   class Constant : public CRTP<Constant<T>, Expr> {
   public:
-	  Constant (T value) {value_ = value;}
-	  virtual ~Constant() {}
+	  Constant (T value);
+	  virtual ~Constant();
 	  virtual const std::string ToString ();
 	  virtual bool Equals(const Object& rhs) const;
-	  static SharedExprPtr Create(T value) {
-		  return std::make_shared<Constant<T>>(value);
-	  }
+	  static SharedExprPtr Create(T value);
 	  T GetValue();
   private:
 	  T value_;
