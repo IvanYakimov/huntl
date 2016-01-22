@@ -1,16 +1,16 @@
 SHELL = /bin/sh
 
-SOLVER = expr.o kind.o
-#expr-factory.o cvc4-engine.o
-SOLVER_TEST = test-runner.o test-expr.o 
-#test-expr-factory.o test-cvc4-engine.o
+SOLVER = expr.o kind.o expr-factory.o cvc4-engine.o
+SOLVER_TEST = test-runner.o test-expr.o test-expr-factory.o test-cvc4-engine.o
 PARSER = parser.o pattern-matcher.o interpreter.o local-memory.o
 PARSER_TEST = 
 UTILS = interruption.o
 OBJ_TEST = $(SOLVER_TEST) $(PARSER_TEST)
 OBJ = $(SOLVER) $(PARSER) $(UTILS)
 CXX = g++
-CXXFLAGS = -fdiagnostics-color=always -g -std=c++14 -fpic -rdynamic $(filter-out -g -fno-exceptions -O2 -std=c++11, $(LLVMFLAGS)) $(DBGFLAGS)
+CXXFLAGS = -fdiagnostics-color=always -g -std=c++14 -fpic -rdynamic \
+	$(filter-out -g -fno-exceptions -O2 -std=c++11, $(LLVMFLAGS)) $(DBGFLAGS) \
+	-Wno-deprecated
 LDFLAGS = -lcvc4 -lgmp
 LLVMFLAGS = $(shell llvm-config --cxxflags)
 DBGFLAGS = -D DBG

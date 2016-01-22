@@ -1,6 +1,5 @@
 // Project
 # include "../../src/solver/expr.hpp"
-# include "../../src/solver/expr-factory.hpp"
 # include "../../src/solver/ismt-engine.hpp"
 # include "../../src/solver/cvc4-engine.hpp"
 
@@ -14,25 +13,18 @@
 namespace solver {
 class CVC4EngineTest : public ::testing::Test {
 public:
-	void SetUp() {
-		factory_ = new ExprFactory();
-		engine_ = new CVC4Engine();
-	}
-	void TearDown() {
-		delete factory_;
-		delete engine_;
-	}
-	ExprFactory *Factory() const { return factory_ ; }
+	SharedExprPtr mkvar(std::string name) {ExprFactory::ProduceVariable(name);}
+	void SetUp() {engine_ = new CVC4Engine();}
+	void TearDown() {delete engine_;}
 	ISMTEngine *Engine() const { return engine_; }
 private:
-	ExprFactory *factory_ = nullptr;
 	ISMTEngine *engine_ = nullptr;
 };
 
 TEST_F(CVC4EngineTest, INT_LT) {
-	auto x = Factory()->ProduceVariable("x"),
-			y = Factory()->ProduceVariable("y");
-	auto lt = Factory()->ProduceBinaryOperation(x, y, BinaryOperation::LESS_THAN);
+	auto x = mkvar("x"),
+			y = mkvar("y");
+	auto lt = x < y;
 	Engine()->Assert(lt);
 	auto status = Engine()->CheckSat();
 	ASSERT_EQ(status, SAT);

@@ -5,13 +5,30 @@ using std::function;
 namespace solver
 {
 //-------------------------------------------------------------------
+// Factory
+SharedExprPtr ExprFactory :: ProduceVariable (std::string name) {
+	return std::make_shared <Variable>(name);
+}
+
+SharedExprPtr ExprFactory :: ProduceConstantI32 (std::int32_t val) {
+	return std::make_shared <ConstantI32>(val);
+}
+
+template <typename T>
+SharedExprPtr ExprFactory :: ProduceConstant (T val) {
+  return std::make_shared <Constant<T>>>(val);
+}
+
+SharedExprPtr ExprFactory :: ProduceBinaryOperation (SharedExprPtr a, SharedExprPtr b, Kind op_code) {
+return std::make_shared <BinaryOperation>(a, b, op_code);
+}
+
+//-------------------------------------------------------------------
 // Variable
 Variable::Variable (std::string name) {name_ = name;}
 Variable::~Variable() {}
 
 const std::string Variable::ToString() {return GetName();}
-
-SharedExprPtr Variable::Create(std::string name) {return std::make_shared<Variable>(name);}
 
 bool Variable::Equals(const Object& rhs) const {
 	auto cmp = [] (auto lhs, auto rhs) -> bool {
@@ -31,9 +48,6 @@ Constant<T>::~Constant() {}
 
 template <typename T>
 const std::string Constant<T>::ToString() {return std::to_string(value_);}
-
-template <typename T>
-SharedExprPtr Constant<T>::Create(T value) {return std::make_shared<Constant<T>>(value);}
 
 template <typename T>
 bool Constant<T>::Equals(const Object& rhs) const {
@@ -58,10 +72,6 @@ BinaryOperation::~BinaryOperation() {}
 
 const std::string BinaryOperation::ToString(){
 	return GetOpCodeName() + " " + GetLeftChild()->ToString() + " " + GetRightChild()->ToString();
-}
-
-SharedExprPtr BinaryOperation::Create(SharedExprPtr left_child, SharedExprPtr right_child, Kind op_code) {
-	return std::make_shared<BinaryOperation>(left_child, right_child, op_code);
 }
 
 bool BinaryOperation::Equals(const Object& rhs) const {

@@ -20,14 +20,14 @@ namespace solver {
 class ExprTest : public ::testing::Test {
 public:
 	SharedExprPtr mkvar (std::string name) {
-					return Variable::Create(name);
-				};
+		return std::make_shared<Variable>(name);
+	}
 	SharedExprPtr mkconst(std::int32_t value) {
-		return ConstantI32::Create(value);
+		return std::make_shared<ConstantI32>(value);
 	}
 
 	SharedExprPtr mkbinop(SharedExprPtr left, SharedExprPtr right, Kind opcode) {
-		return BinaryOperation::Create(left, right, opcode);
+		return std::make_shared<BinaryOperation>(left, right, opcode);
 	}
 };
 
@@ -153,6 +153,17 @@ TEST_F(ExprTest, BinaryOp_OpCodes) {
 		solver::BinaryOperation op(NULL, NULL, it->first);
 		EXPECT_EQ(it->second, op.GetOpCodeName());
 	}
+}
+//------------------------------------------------------------------
+// Operators
+TEST_F(ExprTest, Operators) {
+	auto x = mkvar("x");
+	auto y = mkvar("y");
+	auto e = x < y;
+	auto binop = dynamic_cast<BinaryOperation&>(*e);
+	EXPECT_EQ(x, binop.GetLeftChild());
+	EXPECT_EQ(y, binop.GetRightChild());
+	EXPECT_EQ(Kind::LESS_THAN, binop.GetOpCode());
 }
 
 //-------------------------------------------------------------------

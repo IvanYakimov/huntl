@@ -17,9 +17,11 @@ namespace solver {
 	public:
 		CVC4Engine();
 		virtual ~CVC4Engine();
-		virtual void Assert(SharedExprPtr expr);
-		virtual Sat CheckSat();
-		virtual std::int32_t GetValue(SharedExprPtr varible);
+		virtual void Assert(SharedExprPtr expr) final;
+		virtual Sat CheckSat() final;
+		virtual std::int32_t GetValue(SharedExprPtr varible) final;
+		virtual void Push() final;
+		virtual void Pop() final;
 	private:
 		CVC4::Expr Prism(SharedExprPtr expr);
 		CVC4::ExprManager expr_manager_;

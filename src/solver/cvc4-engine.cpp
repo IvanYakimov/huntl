@@ -1,19 +1,25 @@
 # include "cvc4-engine.hpp"
 
-using namespace CVC4;
-
 namespace solver {
 	CVC4Engine::CVC4Engine() {
-		smt_engine_ = make_unique<SmtEngine>(&expr_manager_);
+		smt_engine_ = make_unique<CVC4::SmtEngine>(&expr_manager_);
 		 // ??? Set "Non-linear integer arithmetic with uninterpreted sort and function symbols." logic:
 		// This line causes the bug:
 		// "SmtEngine: turning off produce-models because unsupported for nonlinear arith
 		// Cannot get value when produce-models options is off.Cannot get value when produce-models options is off.f:"
 		// smtEngine->setLogic("UFNIA");
-		smt_engine_->setOption("incremental", SExpr("true"));
-		smt_engine_->setOption("produce-models", SExpr("true"));
-		smt_engine_->setOption("rewrite-divk", SExpr("true"));
+		smt_engine_->setOption("incremental", CVC4::SExpr("true"));
+		smt_engine_->setOption("produce-models", CVC4::SExpr("true"));
+		smt_engine_->setOption("rewrite-divk", CVC4::SExpr("true"));
 		symbol_table_.pushScope();
+	}
+
+	void CVC4Engine::Push() {
+		symbol_table_.pushScope();
+	}
+
+	void CVC4Engine::Pop() {
+		symbol_table_.popScope();
 	}
 
 	CVC4Engine::~CVC4Engine() {
@@ -27,9 +33,9 @@ namespace solver {
 	Sat CVC4Engine::CheckSat() {
 		auto result = smt_engine_->checkSat().isSat();
 		switch (result) {
-		case Result::SAT: return Sat::SAT;
-		case Result::UNSAT: return Sat::UNSAT;
-		case Result::SAT_UNKNOWN: return Sat::UNKNOWN;
+		case CVC4::Result::SAT: return Sat::SAT;
+		case CVC4::Result::UNSAT: return Sat::UNSAT;
+		case CVC4::Result::SAT_UNKNOWN: return Sat::UNKNOWN;
 		}
 	}
 
@@ -64,9 +70,9 @@ namespace solver {
 		//TODO: extract pattern into function
 		else if (binop != nullptr) {
 			switch (binop->GetOpCode()) {
-			case BinaryOperation::Kind::EQUAL:
-				return expr_manager_.mkExpr(CVC4::Kind::EQUAL, Prism(binop->GetLeftChild(), Prism(binop->GetRightChild())));
-			case BinaryOperation::Kind::LESS_THAN:
+			case solver::Kind::EQUAL:
+				return expr_manager_.mkExpr(CVC4::Kind::EQUAL, Prism(binop->GetLeftChild()), Prism(binop->GetRightChild()));
+			case solver::Kind::LESS_THAN:
 				return expr_manager_.mkExpr(CVC4::Kind::LT, Prism(binop->GetLeftChild()), Prism(binop->GetRightChild()));
 				//TODO:
 			}
