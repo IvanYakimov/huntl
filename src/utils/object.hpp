@@ -15,8 +15,14 @@ public:
  * see: https://en.wikipedia.org/wiki/Barton%E2%80%93Nackman_trick
  * and: https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern
  */
+/*
+ * T = type of the class
+ * B = type of the parent class
+ */
 template <class T, class B>
 class CRTP : public B {
+protected:
+	struct guard {explicit guard(){}};
 public:
 	  friend bool operator==(const T& a, const T& b) { return a.Equals(b); }
 	  friend bool operator!=(const T& a, const T& b) { return !a.Equals(b); }
@@ -25,7 +31,7 @@ public:
 };
 
 template <class T>
-static bool EqualsHelper(const T& lhs, const Object& rhs, std::function<bool(const T&, const T&)> cmp) {
+static inline bool EqualsHelper(const T& lhs, const Object& rhs, std::function<bool(const T&, const T&)> cmp) {
 	auto right = dynamic_cast<const T*>(&rhs);
 	return right == nullptr ? false : cmp(lhs, *right);
 }

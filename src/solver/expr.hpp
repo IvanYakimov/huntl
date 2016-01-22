@@ -35,6 +35,9 @@ typedef std::shared_ptr <Variable> SharedVariablePtr;
 	  virtual ~Variable() final {}
 	  virtual const std::string ToString() final;
 	  virtual bool Equals(const Object& rhs) const final;
+	  static SharedExprPtr Create(std::string name) {
+		  return std::make_shared<Variable>(name);
+	  }
 	  const std::string GetName() const {return name_;}
   private:
 	  std::string name_;
@@ -47,6 +50,9 @@ typedef std::shared_ptr <Variable> SharedVariablePtr;
 	  virtual ~Constant() {}
 	  virtual const std::string ToString ();
 	  virtual bool Equals(const Object& rhs) const;
+	  static SharedExprPtr Create(T value) {
+		  return std::make_shared<Constant<T>>(value);
+	  }
 	  T GetValue();
   private:
 	  T value_;
@@ -91,6 +97,11 @@ typedef std::shared_ptr <Variable> SharedVariablePtr;
 	BinaryOperation(SharedExprPtr left_child, SharedExprPtr right_child, OpCode op_code) :
 	    	op_code_(op_code), left_child_(left_child), right_child_(right_child) {}
 	~BinaryOperation() {}
+	const std::string ToString() final;
+	bool Equals(const Object &rhs) const;
+	static SharedExprPtr Create(SharedExprPtr left_child, SharedExprPtr right_child, OpCode op_code) {
+		return std::make_shared<BinaryOperation>(left_child, right_child, op_code);
+	}
 
 	SharedExprPtr GetLeftChild() {return left_child_;}
 	SharedExprPtr GetRightChild() {return right_child_;}
@@ -98,8 +109,7 @@ typedef std::shared_ptr <Variable> SharedVariablePtr;
 	OpCode GetOpCode() {return op_code_;}
 	std::string GetOpCodeName() {return op_code_map_[op_code_];}
 
-    const std::string ToString() final;
-    bool Equals(const Object &rhs) const;
+
 
   private:
     SharedExprPtr left_child_;
