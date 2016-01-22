@@ -26,7 +26,7 @@ public:
 		return ConstantI32::Create(value);
 	}
 
-	SharedExprPtr mkbinop(SharedExprPtr left, SharedExprPtr right, BinaryOperation::OpCode opcode) {
+	SharedExprPtr mkbinop(SharedExprPtr left, SharedExprPtr right, Kind opcode) {
 		return BinaryOperation::Create(left, right, opcode);
 	}
 };
@@ -85,19 +85,19 @@ TEST_F(ExprTest, ConstantI32_Comparison) {
 TEST_F(ExprTest, BinOp_Accessors) {
 	auto left = mkvar("x");
 	auto right = mkvar("y");
-	BinaryOperation bin_op(left, right, solver::BinaryOperation::ADD);
+	BinaryOperation bin_op(left, right, solver::Kind::ADD);
 
 	EXPECT_EQ(left, bin_op.GetLeftChild());
 	EXPECT_EQ(right, bin_op.GetRightChild());
-	EXPECT_EQ(BinaryOperation::ADD, bin_op.GetOpCode());
+	EXPECT_EQ(Kind::ADD, bin_op.GetOpCode());
 	EXPECT_EQ("add x y", bin_op.ToString());
 }
 
 TEST_F(ExprTest, BinaryOp_Comparison_Basic) {
-	BinaryOperation x1(nullptr, nullptr, BinaryOperation::ADD),
-			x2(nullptr, nullptr, BinaryOperation::ADD),
-			x3(nullptr, nullptr, BinaryOperation::ADD),
-			y(nullptr, nullptr, BinaryOperation::SUB);
+	BinaryOperation x1(nullptr, nullptr, Kind::ADD),
+			x2(nullptr, nullptr, Kind::ADD),
+			x3(nullptr, nullptr, Kind::ADD),
+			y(nullptr, nullptr, Kind::SUB);
 	EXPECT_EQ(x1, x1);
 	EXPECT_EQ(x1, x2); EXPECT_EQ(x2, x1);
 	EXPECT_EQ(x1, x2); EXPECT_EQ(x2, x3); EXPECT_EQ(x1, x3);
@@ -111,10 +111,10 @@ TEST_F(ExprTest, BinaryOp_Comparison_Deep) {
 	auto x = mkvar ("x"),
 			y = mkvar("y"),
 			z = mkvar("z");
-	BinaryOperation a(x, x, BinaryOperation::ADD),
-			b(x, y, BinaryOperation::ADD),
-			c(y, x, BinaryOperation::ADD),
-			d(y, y, BinaryOperation::ADD);
+	BinaryOperation a(x, x, Kind::ADD),
+			b(x, y, Kind::ADD),
+			c(y, x, Kind::ADD),
+			d(y, y, Kind::ADD);
 	EXPECT_NE(a, b);
 	EXPECT_NE(b, a);
 	EXPECT_NE(c, d);
@@ -123,34 +123,34 @@ TEST_F(ExprTest, BinaryOp_Comparison_Deep) {
 }
 
 TEST_F(ExprTest, BinaryOp_OpCodes) {
-	typedef std::map <BinaryOperation::OpCode, std::string> map_type;
+	typedef std::map <Kind, std::string> map_type;
 	typedef map_type::iterator it_type;
 
 	map_type m = {
 			/* arithmetical */
-			{BinaryOperation::ADD, "add"},
-			{BinaryOperation::SUB, "sub"},
-			{BinaryOperation::MUL, "mul"},
-			{BinaryOperation::SHIFT_LEFT, "shl"},
-			{BinaryOperation::LOGICAL_SHIFT_RIGHT, "lshr"},
-			{BinaryOperation::ARIRH_SHIFT_RIGHT, "ashr"},
+			{Kind::ADD, "add"},
+			{Kind::SUB, "sub"},
+			{Kind::MUL, "mul"},
+			{Kind::SHIFT_LEFT, "shl"},
+			{Kind::LOGICAL_SHIFT_RIGHT, "lshr"},
+			{Kind::ARIRH_SHIFT_RIGHT, "ashr"},
 
 			/* logical */
-			{BinaryOperation::AND, "and"},
-			{BinaryOperation::OR, "or"},
-			{BinaryOperation::XOR, "xor"},
+			{Kind::AND, "and"},
+			{Kind::OR, "or"},
+			{Kind::XOR, "xor"},
 
 			/* Comparisons */
-			{BinaryOperation::EQUAL, "eq"},
-			{BinaryOperation::NOT_EQUAL, "ne"},
-			{BinaryOperation::UNSIGNED_GREATER_THAN, "ugt"},
-			{BinaryOperation::UNSIGNED_GREATER_OR_EQUAL, "uge"},
-			{BinaryOperation::UNSIGNED_LESS_THAN, "ult"},
-			{BinaryOperation::UNSIGNED_LESS_OR_EQUAL, "ule"},
-			{BinaryOperation::GREATER_THAN, "sgt"},
-			{BinaryOperation::GREATER_OR_EQUAL, "sge"},
-			{BinaryOperation::LESS_THAN, "slt"},
-			{BinaryOperation::LESS_OR_EQUAL, "sle"}
+			{Kind::EQUAL, "eq"},
+			{Kind::NOT_EQUAL, "ne"},
+			{Kind::UNSIGNED_GREATER_THAN, "ugt"},
+			{Kind::UNSIGNED_GREATER_OR_EQUAL, "uge"},
+			{Kind::UNSIGNED_LESS_THAN, "ult"},
+			{Kind::UNSIGNED_LESS_OR_EQUAL, "ule"},
+			{Kind::GREATER_THAN, "sgt"},
+			{Kind::GREATER_OR_EQUAL, "sge"},
+			{Kind::LESS_THAN, "slt"},
+			{Kind::LESS_OR_EQUAL, "sle"}
 	};
 
 	for (it_type it = m.begin(); it != m.end(); it++) {
@@ -189,10 +189,10 @@ TEST_F(ExprTest, SmartPointer_Comparison_Constant) {
 }
 
 TEST_F(ExprTest, SmartPointer_Comparison_BinaryOperation) {
-	auto x1  = mkbinop(nullptr, nullptr, BinaryOperation::ADD),
-			x2 = mkbinop(nullptr, nullptr, BinaryOperation::ADD),
-			x3 = mkbinop(nullptr, nullptr, BinaryOperation::ADD),
-			y = mkbinop(nullptr, nullptr, BinaryOperation::SUB);
+	auto x1  = mkbinop(nullptr, nullptr, Kind::ADD),
+			x2 = mkbinop(nullptr, nullptr, Kind::ADD),
+			x3 = mkbinop(nullptr, nullptr, Kind::ADD),
+			y = mkbinop(nullptr, nullptr, Kind::SUB);
 	EXPECT_EQ(*x1, *x1);	// reflexivity
 	EXPECT_EQ(*x1, *x2); EXPECT_EQ(*x2, *x1); // symmetric
 	EXPECT_EQ(*x1, *x2); EXPECT_EQ(*x2, *x3); EXPECT_EQ(*x1, *x3); // transivity
@@ -205,7 +205,7 @@ TEST_F(ExprTest, SmartPointer_Comparison_CrossTest) {
 	auto var = mkvar("var");
 	auto c1 = mkconst(28);
 	auto c2 = mkconst(99);
-	auto op = mkbinop(c1, c2, BinaryOperation::ADD);
+	auto op = mkbinop(c1, c2, Kind::ADD);
 	EXPECT_NE(*var, *c1);
 	EXPECT_NE(*c1, *var);
 	EXPECT_NE(*var, *op);

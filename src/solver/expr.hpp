@@ -64,90 +64,87 @@ typedef std::shared_ptr <Variable> SharedVariablePtr;
 	  public: ConstantI32(std::int32_t value) : Constant(value) {}
   };
 
+  enum Kind{
+  		  /* arithmetical */
+  		  ADD,
+  		  SUB,
+  		  MUL,
+  		  SIGN_DEV,
+  		  SING_REM,
+  		  /* vector */
+  		  SHIFT_LEFT,
+  		  LOGICAL_SHIFT_RIGHT,
+  		  ARIRH_SHIFT_RIGHT,
+  		  /* logical */
+  		  AND,
+  		  OR,
+  		  XOR,
+  		  /* comparisons */
+  		  EQUAL,
+  		  NOT_EQUAL,
+  		  UNSIGNED_GREATER_THAN,		// useless
+  		  UNSIGNED_GREATER_OR_EQUAL,	// useless
+  		  UNSIGNED_LESS_THAN,			// useless
+  		  UNSIGNED_LESS_OR_EQUAL,		// useless
+  		  GREATER_THAN,
+  		  GREATER_OR_EQUAL,
+  		  LESS_THAN,
+  		  LESS_OR_EQUAL
+  	};
+
   class BinaryOperation : public CRTP<BinaryOperation, Expr>{
   public:
-	enum OpCode{
-		  /* arithmetical */
-		  ADD,
-		  SUB,
-		  MUL,
-		  SIGN_DEV,
-		  SING_REM,
-		  /* vector */
-		  SHIFT_LEFT,
-		  LOGICAL_SHIFT_RIGHT,
-		  ARIRH_SHIFT_RIGHT,
-		  /* logical */
-		  AND,
-		  OR,
-		  XOR,
-		  /* comparisons */
-		  EQUAL,
-		  NOT_EQUAL,
-		  UNSIGNED_GREATER_THAN,		// useless
-		  UNSIGNED_GREATER_OR_EQUAL,	// useless
-		  UNSIGNED_LESS_THAN,			// useless
-		  UNSIGNED_LESS_OR_EQUAL,		// useless
-		  GREATER_THAN,
-		  GREATER_OR_EQUAL,
-		  LESS_THAN,
-		  LESS_OR_EQUAL
-	};
-
-	BinaryOperation(SharedExprPtr left_child, SharedExprPtr right_child, OpCode op_code) :
+	BinaryOperation(SharedExprPtr left_child, SharedExprPtr right_child, Kind op_code) :
 	    	op_code_(op_code), left_child_(left_child), right_child_(right_child) {}
 	~BinaryOperation() {}
 	const std::string ToString() final;
 	bool Equals(const Object &rhs) const;
-	static SharedExprPtr Create(SharedExprPtr left_child, SharedExprPtr right_child, OpCode op_code) {
+	static SharedExprPtr Create(SharedExprPtr left_child, SharedExprPtr right_child, Kind op_code) {
 		return std::make_shared<BinaryOperation>(left_child, right_child, op_code);
 	}
 
 	SharedExprPtr GetLeftChild() {return left_child_;}
 	SharedExprPtr GetRightChild() {return right_child_;}
 
-	OpCode GetOpCode() {return op_code_;}
+	Kind GetOpCode() {return op_code_;}
 	std::string GetOpCodeName() {return op_code_map_[op_code_];}
-
-
 
   private:
     SharedExprPtr left_child_;
     SharedExprPtr right_child_;
+    Kind op_code_;
 
-    OpCode op_code_;
+    /* arithmetical */
+      	  const std::string add_str = "add";
+      	  const std::string sub_str = "sub";
+      	  const std::string mul_str = "mul";
+      	  const std::string sign_dev_str = "sdev";
+      	  const std::string sign_rem_str = "srem";
 
-	  /* arithmetical */
-	  const std::string add_str = "add";
-	  const std::string sub_str = "sub";
-	  const std::string mul_str = "mul";
-	  const std::string sign_dev_str = "sdev";
-	  const std::string sign_rem_str = "srem";
+      	  /* vector */
+      	  const std::string shift_left_str = "shl";
+      	  const std::string logical_shift_right_str = "lshr";
+      	  const std::string arith_shift_right_str = "ashr";
 
-	  /* vector */
-	  const std::string shift_left_str = "shl";
-	  const std::string logical_shift_right_str = "lshr";
-	  const std::string arith_shift_right_str = "ashr";
+      	  /* logical */
+      	  const std::string and_str = "and";
+      	  const std::string or_str = "or";
+      	  const std::string xor_str = "xor";
 
-	  /* logical */
-	  const std::string and_str = "and";
-	  const std::string or_str = "or";
-	  const std::string xor_str = "xor";
-
-	  /* comparisons */
-	  const std::string equal_str = "eq";
-	  const std::string not_equal_str = "ne";
-	  const std::string unsigned_greater_than_str = "ugt";
-	  const std::string unsigned_greater_or_equal_str = "uge";
-	  const std::string unsigned_less_than_str = "ult";
-	  const std::string unsigned_less_or_equal_str = "ule";
-	  const std::string signed_greater_than_str = "sgt";
-	  const std::string signed_greater_or_equal_str = "sge";
-	  const std::string signed_less_than_str = "slt";
-	  const std::string signed_less_or_equal_str = "sle";
+      	  /* comparisons */
+      	  const std::string equal_str = "eq";
+      	  const std::string not_equal_str = "ne";
+      	  const std::string unsigned_greater_than_str = "ugt";
+      	  const std::string unsigned_greater_or_equal_str = "uge";
+      	  const std::string unsigned_less_than_str = "ult";
+      	  const std::string unsigned_less_or_equal_str = "ule";
+      	  const std::string signed_greater_than_str = "sgt";
+      	  const std::string signed_greater_or_equal_str = "sge";
+      	  const std::string signed_less_than_str = "slt";
+      	  const std::string signed_less_or_equal_str = "sle";
 
 	  // TODO check map type
-	std::map <OpCode, std::string> op_code_map_ = {
+	std::map <Kind, std::string> op_code_map_ = {
 			/* arithmetical */
 			{ADD, add_str},
 			{SUB, sub_str},
