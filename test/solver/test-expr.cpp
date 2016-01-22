@@ -143,10 +143,6 @@ TEST_F(ExprTest, BinaryOp_OpCodes) {
 			/* Comparisons */
 			{Kind::EQUAL, "eq"},
 			{Kind::NOT_EQUAL, "ne"},
-			{Kind::UNSIGNED_GREATER_THAN, "ugt"},
-			{Kind::UNSIGNED_GREATER_OR_EQUAL, "uge"},
-			{Kind::UNSIGNED_LESS_THAN, "ult"},
-			{Kind::UNSIGNED_LESS_OR_EQUAL, "ule"},
 			{Kind::GREATER_THAN, "sgt"},
 			{Kind::GREATER_OR_EQUAL, "sge"},
 			{Kind::LESS_THAN, "slt"},

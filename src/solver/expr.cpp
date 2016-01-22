@@ -48,17 +48,36 @@ T Constant<T>::GetValue() {return value_;}
 
 //-------------------------------------------------------------------
 // BinaryOperation
-const std::string BinaryOperation::ToString()
-{return GetOpCodeName() + " " + GetLeftChild()->ToString() + " " + GetRightChild()->ToString();}
+BinaryOperation::BinaryOperation(SharedExprPtr left_child, SharedExprPtr right_child, Kind kind){
+	    	kind_ = kind;
+	    	left_child_ = left_child;
+	    	right_child_ = right_child;
+}
+
+BinaryOperation::~BinaryOperation() {}
+
+const std::string BinaryOperation::ToString(){
+	return GetOpCodeName() + " " + GetLeftChild()->ToString() + " " + GetRightChild()->ToString();
+}
+
+SharedExprPtr BinaryOperation::Create(SharedExprPtr left_child, SharedExprPtr right_child, Kind op_code) {
+	return std::make_shared<BinaryOperation>(left_child, right_child, op_code);
+}
 
 bool BinaryOperation::Equals(const Object& rhs) const {
 	auto cmp = [] (auto lhs, auto rhs) -> bool {
-		return lhs.op_code_ == rhs.op_code_ &&
+		return lhs.kind_ == rhs.kind_ &&
 				lhs.left_child_ == rhs.left_child_ &&
 				lhs.right_child_ == rhs.right_child_;
 	};
 	return EqualsHelper<BinaryOperation>(*this, rhs, cmp);
 }
+
+SharedExprPtr BinaryOperation::GetLeftChild() {return left_child_;}
+SharedExprPtr BinaryOperation::GetRightChild() {return right_child_;}
+
+Kind BinaryOperation::GetOpCode() {return kind_;}
+std::string BinaryOperation::GetOpCodeName() {return KindToString(kind_);}
 
 }
 

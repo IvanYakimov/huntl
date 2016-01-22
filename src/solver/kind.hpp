@@ -1,8 +1,12 @@
 #ifndef __KIND_HPP__
 #define __KIND_HPP__
 
+//STL
+#include <string>
+#include <map>
+
 namespace solver {
-enum Kind{
+enum class Kind{
   		  /* arithmetical */
   		  ADD,
   		  SUB,
@@ -20,15 +24,12 @@ enum Kind{
   		  /* comparisons */
   		  EQUAL,
   		  NOT_EQUAL,
-  		  UNSIGNED_GREATER_THAN,		// useless
-  		  UNSIGNED_GREATER_OR_EQUAL,	// useless
-  		  UNSIGNED_LESS_THAN,			// useless
-  		  UNSIGNED_LESS_OR_EQUAL,		// useless
   		  GREATER_THAN,
   		  GREATER_OR_EQUAL,
   		  LESS_THAN,
   		  LESS_OR_EQUAL
   	};
+std::string KindToString(Kind kind);
 }
 
 #endif
