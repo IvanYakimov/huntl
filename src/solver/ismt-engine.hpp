@@ -23,6 +23,8 @@ namespace solver
 		virtual void Assert (SharedExprPtr expr) = 0;
 		virtual Sat CheckSat() = 0;
 		virtual std::int32_t GetValue(SharedExprPtr varible) = 0;
+		virtual void Push() = 0;
+		virtual void Pop() = 0;
 	};
 }
 

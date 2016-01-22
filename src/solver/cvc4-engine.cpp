@@ -61,9 +61,12 @@ namespace solver {
 			}
 			return var_expr;
 		}
+		//TODO: extract pattern into function
 		else if (binop != nullptr) {
 			switch (binop->GetOpCode()) {
-			case BinaryOperation::OpCode::SIGNED_LESS_THAN:
+			case BinaryOperation::OpCode::EQUAL:
+				return expr_manager_.mkExpr(CVC4::Kind::EQUAL, Prism(binop->GetLeftChild(), Prism(binop->GetRightChild())));
+			case BinaryOperation::OpCode::LESS_THAN:
 				return expr_manager_.mkExpr(CVC4::Kind::LT, Prism(binop->GetLeftChild()), Prism(binop->GetRightChild()));
 				//TODO:
 			}

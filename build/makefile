@@ -7,8 +7,8 @@ PARSER_TEST =
 UTILS = interruption.o
 OBJ_TEST = $(SOLVER_TEST) $(PARSER_TEST)
 OBJ = $(SOLVER) $(PARSER) $(UTILS)
-CXX = g++ 
-CXXFLAGS = -fdiagnostics-color=always -g -std=c++1y -fpic -rdynamic $(filter-out -g -fno-exceptions -O2 -std=c++11, $(LLVMFLAGS)) $(DBGFLAGS)
+CXX = g++
+CXXFLAGS = -fdiagnostics-color=always -g -std=c++14 -fpic -rdynamic $(filter-out -g -fno-exceptions -O2 -std=c++11, $(LLVMFLAGS)) $(DBGFLAGS)
 LDFLAGS = -lcvc4 -lgmp
 LLVMFLAGS = $(shell llvm-config --cxxflags)
 DBGFLAGS = -D DBG

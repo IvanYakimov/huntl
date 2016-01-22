@@ -32,12 +32,12 @@ private:
 TEST_F(CVC4EngineTest, INT_LT) {
 	auto x = Factory()->ProduceVariable("x"),
 			y = Factory()->ProduceVariable("y");
-	auto lt = Factory()->ProduceBinaryOperation(x, y, BinaryOperation::SIGNED_LESS_THAN);
+	auto lt = Factory()->ProduceBinaryOperation(x, y, BinaryOperation::LESS_THAN);
 	Engine()->Assert(lt);
 	auto status = Engine()->CheckSat();
 	ASSERT_EQ(status, SAT);
-	std::int32_t x_val = Engine()->GetValue(x);
-	std::int32_t y_val = Engine()->GetValue(y);
+	auto x_val = Engine()->GetValue(x);
+	auto y_val = Engine()->GetValue(y);
 	ASSERT_TRUE(x < y);
 }
 

@@ -8,7 +8,6 @@
 # include <bitset>
 # include <iostream>
 # include <cstring>
-
 // Project
 # include "../utils/memory.hpp"
 # include "../utils/object.hpp"
@@ -79,14 +78,14 @@ typedef std::shared_ptr <Variable> SharedVariablePtr;
 		  /* comparisons */
 		  EQUAL,
 		  NOT_EQUAL,
-		  UNSIGNED_GREATER_THAN,
-		  UNSIGNED_GREATER_OR_EQUAL,
-		  UNSIGNED_LESS_THAN,
-		  UNSIGNED_LESS_OR_EQUAL,
-		  SIGNED_GREATER_THAN,
-		  SIGNED_GREATER_OR_EQUAL,
-		  SIGNED_LESS_THAN,
-		  SIGNED_LESS_OR_EQUAL
+		  UNSIGNED_GREATER_THAN,		// useless
+		  UNSIGNED_GREATER_OR_EQUAL,	// useless
+		  UNSIGNED_LESS_THAN,			// useless
+		  UNSIGNED_LESS_OR_EQUAL,		// useless
+		  GREATER_THAN,
+		  GREATER_OR_EQUAL,
+		  LESS_THAN,
+		  LESS_OR_EQUAL
 	};
 
 	BinaryOperation(SharedExprPtr left_child, SharedExprPtr right_child, OpCode op_code) :
@@ -163,10 +162,10 @@ typedef std::shared_ptr <Variable> SharedVariablePtr;
 			{UNSIGNED_GREATER_OR_EQUAL, unsigned_greater_or_equal_str},
 			{UNSIGNED_LESS_THAN, unsigned_less_than_str},
 			{UNSIGNED_LESS_OR_EQUAL, unsigned_less_or_equal_str},
-			{SIGNED_GREATER_THAN, signed_greater_than_str},
-			{SIGNED_GREATER_OR_EQUAL, signed_greater_or_equal_str},
-			{SIGNED_LESS_THAN, signed_less_than_str},
-			{SIGNED_LESS_OR_EQUAL,  signed_less_or_equal_str}
+			{GREATER_THAN, signed_greater_than_str},
+			{GREATER_OR_EQUAL, signed_greater_or_equal_str},
+			{LESS_THAN, signed_less_than_str},
+			{LESS_OR_EQUAL,  signed_less_or_equal_str}
 	  };
   };
 }

@@ -140,10 +140,10 @@ TEST_F(ExprTest, BinaryOp_OpCodes) {
 			{BinaryOperation::UNSIGNED_GREATER_OR_EQUAL, "uge"},
 			{BinaryOperation::UNSIGNED_LESS_THAN, "ult"},
 			{BinaryOperation::UNSIGNED_LESS_OR_EQUAL, "ule"},
-			{BinaryOperation::SIGNED_GREATER_THAN, "sgt"},
-			{BinaryOperation::SIGNED_GREATER_OR_EQUAL, "sge"},
-			{BinaryOperation::SIGNED_LESS_THAN, "slt"},
-			{BinaryOperation::SIGNED_LESS_OR_EQUAL, "sle"}
+			{BinaryOperation::GREATER_THAN, "sgt"},
+			{BinaryOperation::GREATER_OR_EQUAL, "sge"},
+			{BinaryOperation::LESS_THAN, "slt"},
+			{BinaryOperation::LESS_OR_EQUAL, "sle"}
 	};
 
 	for (it_type it = m.begin(); it != m.end(); it++) {
