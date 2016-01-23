@@ -24,8 +24,8 @@ private:
 TEST_F(CVC4EngineTest, INT_LT) {
 	auto x = mkvar("x"),
 			y = mkvar("y");
-	auto lt = x < y;
-	Engine()->Assert(lt);
+	auto e = lt(x, y);
+	Engine()->Assert(e);
 	auto status = Engine()->CheckSat();
 	ASSERT_EQ(status, SAT);
 	auto x_val = Engine()->GetValue(x);

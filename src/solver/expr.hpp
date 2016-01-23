@@ -44,8 +44,11 @@ class ExprFactory
     virtual ~Expr() {}
     virtual const std::string ToString() = 0;
     virtual bool Equals (const Object& rhs) const = 0;
-    friend SharedExprPtr operator<(SharedExprPtr l, SharedExprPtr r) {
-    	return ExprFactory::ProduceBinaryOperation(l, r, Kind::LESS_THAN);
+    friend SharedExprPtr lt(SharedExprPtr l, SharedExprPtr r) {
+    	return ExprFactory::ProduceBinaryOperation(l, r, Kind::LT);
+    }
+    friend SharedExprPtr eq(SharedExprPtr l, SharedExprPtr r) {
+    	return ExprFactory::ProduceBinaryOperation(l, r, Kind::EQ);
     }
   };
 

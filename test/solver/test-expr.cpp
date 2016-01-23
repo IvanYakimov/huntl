@@ -141,29 +141,18 @@ TEST_F(ExprTest, BinaryOp_OpCodes) {
 			{Kind::XOR, "xor"},
 
 			/* Comparisons */
-			{Kind::EQUAL, "eq"},
-			{Kind::NOT_EQUAL, "ne"},
-			{Kind::GREATER_THAN, "sgt"},
-			{Kind::GREATER_OR_EQUAL, "sge"},
-			{Kind::LESS_THAN, "slt"},
-			{Kind::LESS_OR_EQUAL, "sle"}
+			{Kind::EQ, "eq"},
+			{Kind::NE, "ne"},
+			{Kind::GT, "sgt"},
+			{Kind::GEQ, "sge"},
+			{Kind::LT, "slt"},
+			{Kind::LEQ, "sle"}
 	};
 
 	for (it_type it = m.begin(); it != m.end(); it++) {
 		solver::BinaryOperation op(NULL, NULL, it->first);
 		EXPECT_EQ(it->second, op.GetOpCodeName());
 	}
-}
-//------------------------------------------------------------------
-// Operators
-TEST_F(ExprTest, Operators) {
-	auto x = mkvar("x");
-	auto y = mkvar("y");
-	auto e = x < y;
-	auto binop = dynamic_cast<BinaryOperation&>(*e);
-	EXPECT_EQ(x, binop.GetLeftChild());
-	EXPECT_EQ(y, binop.GetRightChild());
-	EXPECT_EQ(Kind::LESS_THAN, binop.GetOpCode());
 }
 
 //-------------------------------------------------------------------
@@ -219,6 +208,21 @@ TEST_F(ExprTest, SmartPointer_Comparison_CrossTest) {
 	EXPECT_NE(*op, *var);
 	EXPECT_NE(*c1, *op);
 	EXPECT_NE(*op, *c1);
+}
+
+//------------------------------------------------------------------
+// Operators
+TEST_F(ExprTest, Operators) {
+	auto bop = [] (SharedExprPtr e) -> BinaryOperation {
+		return dynamic_cast<BinaryOperation&>(*e);
+	};
+	auto x = mkvar("x");
+	auto y = mkvar("y");
+	auto e = lt(x, y);
+	auto b_lt = bop(e);
+	EXPECT_EQ(x, b_lt.GetLeftChild());
+	EXPECT_EQ(y, b_lt.GetRightChild());
+	EXPECT_EQ(Kind::LT, b_lt.GetOpCode());
 }
 
 }

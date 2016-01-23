@@ -46,12 +46,12 @@ namespace solver{
 			{Kind::XOR, xor_str},
 
 			/* comparisons */
-			{Kind::EQUAL, equal_str},
-			{Kind::NOT_EQUAL, not_equal_str},
-			{Kind::GREATER_THAN, signed_greater_than_str},
-			{Kind::GREATER_OR_EQUAL, signed_greater_or_equal_str},
-			{Kind::LESS_THAN, signed_less_than_str},
-			{Kind::LESS_OR_EQUAL,  signed_less_or_equal_str}
+			{Kind::EQ, equal_str},
+			{Kind::NE, not_equal_str},
+			{Kind::GT, signed_greater_than_str},
+			{Kind::GEQ, signed_greater_or_equal_str},
+			{Kind::LT, signed_less_than_str},
+			{Kind::LEQ,  signed_less_or_equal_str}
 	  };
 
 	std::string KindToString(Kind kind) {

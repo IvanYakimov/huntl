@@ -22,12 +22,12 @@ enum class Kind{
   		  OR,
   		  XOR,
   		  /* comparisons */
-  		  EQUAL,
-  		  NOT_EQUAL,
-  		  GREATER_THAN,
-  		  GREATER_OR_EQUAL,
-  		  LESS_THAN,
-  		  LESS_OR_EQUAL
+  		  EQ,
+  		  NE,
+  		  GT,
+  		  GEQ,
+  		  LT,
+  		  LEQ
   	};
 std::string KindToString(Kind kind);
 }
