@@ -24,6 +24,39 @@ return std::make_shared <BinaryOperation>(a, b, op_code);
 }
 
 //-------------------------------------------------------------------
+// Expr
+
+//TODO: refactoring - extract pattern code
+
+SharedExprPtr lt(SharedExprPtr l, SharedExprPtr r){
+	return ExprFactory::ProduceBinaryOperation(l, r, Kind::LT);
+}
+
+SharedExprPtr lt(SharedExprPtr l, std::int32_t r) {
+	auto other = ExprFactory::ProduceConstantI32(r);
+	return lt(l, other);
+}
+
+SharedExprPtr lt(std::int32_t l, SharedExprPtr r) {
+	auto other = ExprFactory::ProduceConstantI32(l);
+	return lt(other, r);
+}
+
+SharedExprPtr eq(SharedExprPtr l, SharedExprPtr r) {
+	return ExprFactory::ProduceBinaryOperation(l, r, Kind::EQ);
+}
+
+SharedExprPtr eq(SharedExprPtr l, std::int32_t r) {
+	auto other = ExprFactory::ProduceConstantI32(r);
+	return eq(l, other);
+}
+
+SharedExprPtr eq(std::int32_t l, SharedExprPtr r) {
+	auto other = ExprFactory::ProduceConstantI32(l);
+	return eq(other, r);
+}
+
+//-------------------------------------------------------------------
 // Variable
 Variable::Variable (std::string name) {name_ = name;}
 Variable::~Variable() {}

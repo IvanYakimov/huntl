@@ -44,12 +44,12 @@ class ExprFactory
     virtual ~Expr() {}
     virtual const std::string ToString() = 0;
     virtual bool Equals (const Object& rhs) const = 0;
-    friend SharedExprPtr lt(SharedExprPtr l, SharedExprPtr r) {
-    	return ExprFactory::ProduceBinaryOperation(l, r, Kind::LT);
-    }
-    friend SharedExprPtr eq(SharedExprPtr l, SharedExprPtr r) {
-    	return ExprFactory::ProduceBinaryOperation(l, r, Kind::EQ);
-    }
+    friend SharedExprPtr eq(SharedExprPtr l, SharedExprPtr r);
+    friend SharedExprPtr eq(SharedExprPtr l, std::int32_t r);
+    friend SharedExprPtr eq(std::int32_t l, SharedExprPtr r);
+    friend SharedExprPtr lt(SharedExprPtr l, SharedExprPtr r);
+    friend SharedExprPtr lt(SharedExprPtr l, std::int32_t r);
+    friend SharedExprPtr lt(std::int32_t l, SharedExprPtr r);
   };
 
   class BinaryOperation : public CRTP<BinaryOperation, Expr>{

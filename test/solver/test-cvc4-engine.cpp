@@ -21,6 +21,22 @@ private:
 	ISMTEngine *engine_ = nullptr;
 };
 
+#ifdef NODEF
+TEST_F(CVC4EngineTest, Scopes) {
+	auto x = mkvar("x");
+	auto e1 = eq(x, 1);
+	Engine()->Assert(e1);
+	Engine()->Push();
+	{
+
+	}
+	Engine()->Pop();
+	auto s = Engine()->CheckSat();
+	ASSERT_EQ(s, SAT);
+	auto x_val = Engine()->GetValue(x);
+	ASSERT_EQ(x_val, 1);
+}
+#endif
 TEST_F(CVC4EngineTest, INT_LT) {
 	auto x = mkvar("x"),
 			y = mkvar("y");
@@ -30,9 +46,24 @@ TEST_F(CVC4EngineTest, INT_LT) {
 	ASSERT_EQ(status, SAT);
 	auto x_val = Engine()->GetValue(x);
 	auto y_val = Engine()->GetValue(y);
-	ASSERT_TRUE(x < y);
+	ASSERT_TRUE(x_val < y_val);
 }
-
+#ifdef NODEF
+TEST_F(CVC4EngineTest, INT_EQ) {
+	auto x = mkvar("x");
+	auto y = mkvar("y");
+	auto e = eq(x, 100);
+	auto w = eq(y, -100);
+	Engine()->Assert(e);
+	Engine()->Assert(w);
+	auto status = Engine()->CheckSat();
+	ASSERT_EQ(status, SAT);
+	auto x_val = Engine()->GetValue(x);
+	ASSERT_TRUE(x_val == 100);
+	auto y_val = Engine()->GetValue(y);
+	ASSERT_TRUE(y_val == -100);
+}
+#endif
 }
 
 

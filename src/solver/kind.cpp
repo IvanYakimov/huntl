@@ -32,13 +32,13 @@ namespace solver{
 			{Kind::ADD, add_str},
 			{Kind::SUB, sub_str},
 			{Kind::MUL, mul_str},
-			{Kind::SIGN_DEV, sign_dev_str},
-			{Kind::SING_REM, sign_rem_str},
+			{Kind::DEV, sign_dev_str},
+			{Kind::REM, sign_rem_str},
 
 			/* vector */
-			{Kind::SHIFT_LEFT, shift_left_str},
-			{Kind::LOGICAL_SHIFT_RIGHT, logical_shift_right_str},
-			{Kind::ARIRH_SHIFT_RIGHT, arith_shift_right_str},
+			{Kind::SHl, shift_left_str},
+			{Kind::LSHR, logical_shift_right_str},
+			{Kind::ASHR, arith_shift_right_str},
 
 			/* logical */
 			{Kind::AND, and_str},

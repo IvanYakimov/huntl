@@ -11,12 +11,12 @@ enum class Kind{
   		  ADD,
   		  SUB,
   		  MUL,
-  		  SIGN_DEV,
-  		  SING_REM,
+  		  DEV,
+  		  REM,
   		  /* vector */
-  		  SHIFT_LEFT,
-  		  LOGICAL_SHIFT_RIGHT,
-  		  ARIRH_SHIFT_RIGHT,
+  		  SHl,
+  		  LSHR,
+  		  ASHR,
   		  /* logical */
   		  AND,
   		  OR,

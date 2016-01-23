@@ -131,9 +131,9 @@ TEST_F(ExprTest, BinaryOp_OpCodes) {
 			{Kind::ADD, "add"},
 			{Kind::SUB, "sub"},
 			{Kind::MUL, "mul"},
-			{Kind::SHIFT_LEFT, "shl"},
-			{Kind::LOGICAL_SHIFT_RIGHT, "lshr"},
-			{Kind::ARIRH_SHIFT_RIGHT, "ashr"},
+			{Kind::SHl, "shl"},
+			{Kind::LSHR, "lshr"},
+			{Kind::ASHR, "ashr"},
 
 			/* logical */
 			{Kind::AND, "and"},

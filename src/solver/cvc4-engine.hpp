@@ -4,6 +4,9 @@
 // cvc4
 # include <cvc4/cvc4.h>
 
+// STL
+# include <exception>
+
 // Project
 # include "ismt-engine.hpp"
 # include "expr.hpp"

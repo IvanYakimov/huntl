@@ -50,7 +50,7 @@ namespace solver {
 	}
 
 	// private things
-	// TODO: extract a template:
+	// TODO: refactoring - extract pattern code
 	CVC4::Expr CVC4Engine::Prism(SharedExprPtr expr) {
 		auto var = dynamic_cast<Variable*>(&*expr);
 		auto binop = dynamic_cast<BinaryOperation*>(&*expr);
@@ -67,7 +67,6 @@ namespace solver {
 			}
 			return var_expr;
 		}
-		//TODO: extract pattern into function
 		else if (binop != nullptr) {
 			//TODO: refactoring
 			switch (binop->GetOpCode()) {
@@ -86,6 +85,14 @@ namespace solver {
 				//TODO:
 			}
 		}
+		else if (cnst != nullptr) {
+			auto val = cnst->GetValue();
+			unsigned long place;
+			memcpy(&place, &val, sizeof(unsigned long));
+			expr_manager_.mkConst(CVC4::BitVector(sizeof(val), place));
+		}
+		// default:
+		throw std::bad_cast();
 	}
 }
 
