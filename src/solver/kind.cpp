@@ -52,6 +52,10 @@ namespace solver{
 			/* comparisons */
 			{Kind::EQUAL, equal_str},
 			{Kind::NOT_EQUAL, not_equal_str},
+			{Kind::UNSIGNED_GREATER_OR_EQUAL, unsigned_greater_or_equal_str},
+			{Kind::UNSIGNED_GREATER_THAN, unsigned_greater_than_str},
+			{Kind::UNSIGNED_LESS_OR_EQUAL, unsigned_less_or_equal_str},
+			{Kind::UNSIGNED_LESS_THAN, unsigned_less_than_str},
 			{Kind::SIGNED_GREATER_THAN, signed_greater_than_str},
 			{Kind::SIGNED_GREATER_OR_EQUAL, signed_greater_or_equal_str},
 			{Kind::SIGNED_LESS_THAN, signed_less_than_str},

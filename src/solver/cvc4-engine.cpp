@@ -43,7 +43,7 @@ namespace solver {
 		//TODO:
 		// comment: at the moment the implementation of the
 		// getConst<CVC4::Integer> function hasn't been found
-		auto var = dynamic_cast<Variable*>(&*expr);
+		auto var = dynamic_cast<Var*>(&*expr);
 		auto name = symbol_table_.lookup(var->GetName());
 		auto value = smt_engine_->getValue(name).getConst<CVC4::Rational>();
 		return static_cast<std::int32_t>(value.getNumerator().getLong());
@@ -52,9 +52,9 @@ namespace solver {
 	// private things
 	// TODO: refactoring - extract pattern code
 	CVC4::Expr CVC4Engine::Prism(SharedExprPtr expr) {
-		auto var = dynamic_cast<Variable*>(&*expr);
-		auto binop = dynamic_cast<BinaryOperation*>(&*expr);
-		auto cnst = dynamic_cast<ConstantI32*>(&*expr);
+		auto var = dynamic_cast<Var*>(&*expr);
+		auto binop = dynamic_cast<BinOp*>(&*expr);
+		auto cnst = dynamic_cast<ConstI32*>(&*expr);
 		if (var != nullptr) {
 			CVC4::Expr var_expr;
 			auto var_name = var->GetName();

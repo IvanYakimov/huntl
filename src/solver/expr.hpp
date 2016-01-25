@@ -16,15 +16,15 @@
 namespace solver
 {
 class Expr;
-class Variable;
+class Var;
 template <typename T> class Constant;
-class BinaryOperation;
+class BinOp;
 
 class ExprFactory;
 
 typedef std::shared_ptr <Expr> SharedExprPtr;
-typedef std::shared_ptr <Variable> SharedVariablePtr;
-typedef std::shared_ptr <BinaryOperation> SharedBinaryOperationPtr;
+typedef std::shared_ptr <Var> SharedVariablePtr;
+typedef std::shared_ptr <BinOp> SharedBinaryOperationPtr;
 
 class ExprFactory
   {
@@ -48,10 +48,10 @@ class ExprFactory
     friend SharedExprPtr slt(std::int32_t l, SharedExprPtr r);
   };
 
-  class BinaryOperation : public CRTP<BinaryOperation, Expr>{
+  class BinOp : public CRTP<BinOp, Expr>{
     public:
-  	BinaryOperation(SharedExprPtr left_child, SharedExprPtr right_child, Kind kind);
-  	~BinaryOperation();
+  	BinOp(SharedExprPtr left_child, SharedExprPtr right_child, Kind kind);
+  	~BinOp();
   	const std::string ToString() final;
   	bool Equals(const Object &rhs) const;
   	SharedExprPtr GetLeftChild();
@@ -65,10 +65,10 @@ class ExprFactory
       Kind kind_;
     };
 
-  class Variable final : public CRTP <Variable, Expr> {
+  class Var final : public CRTP <Var, Expr> {
   public:
-	  Variable (std::string name);
-	  virtual ~Variable() final;
+	  Var (std::string name);
+	  virtual ~Var() final;
 	  virtual const std::string ToString() final;
 	  virtual bool Equals(const Object& rhs) const final;
 	  const std::string GetName() const;
@@ -76,10 +76,10 @@ class ExprFactory
 	  std::string name_;
   };
 
-  class ConstantI32 : public CRTP<ConstantI32, Expr> {
+  class ConstI32 : public CRTP<ConstI32, Expr> {
   public:
-	  ConstantI32 (std::int32_t value);
-	  virtual ~ConstantI32();
+	  ConstI32 (std::int32_t value);
+	  virtual ~ConstI32();
 	  virtual const std::string ToString ();
 	  virtual bool Equals(const Object& rhs) const;
 	  std::int32_t GetValue();

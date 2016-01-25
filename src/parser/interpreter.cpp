@@ -53,7 +53,7 @@ void Interpreter::HandleICmpInst (const llvm::Instruction &inst, const llvm::Val
 	auto get_op = [](const llvm::Instruction &inst) {
 		auto icmp_inst = dyn_cast<ICmpInst>(&inst);
 		switch (icmp_inst->getPredicate()) {
-			case CmpInst::Predicate::ICMP_SLT: return solver::BinaryOperation::LESS_THAN;
+			case CmpInst::Predicate::ICMP_SLT: return solver::BinOp::LESS_THAN;
 			default: InterruptionHandler::Do(new InterpretationFailure(inst));
 		};
 	};

@@ -20,14 +20,14 @@ namespace solver {
 class ExprTest : public ::testing::Test {
 public:
 	SharedExprPtr mkvar (std::string name) {
-		return std::make_shared<Variable>(name);
+		return std::make_shared<Var>(name);
 	}
 	SharedExprPtr mkconst(std::int32_t value) {
-		return std::make_shared<ConstantI32>(value);
+		return std::make_shared<ConstI32>(value);
 	}
 
 	SharedExprPtr mkbinop(SharedExprPtr left, SharedExprPtr right, Kind opcode) {
-		return std::make_shared<BinaryOperation>(left, right, opcode);
+		return std::make_shared<BinOp>(left, right, opcode);
 	}
 };
 
@@ -35,13 +35,13 @@ public:
 // Variable
 
 TEST_F(ExprTest, Variable_Accessors) {
-	Variable v("x");
+	Var v("x");
 	EXPECT_EQ("x", v.ToString());
 	EXPECT_EQ("x", v.GetName());
 }
 
 TEST_F(ExprTest, Variable_Comparison) {
-	Variable x1("x"),
+	Var x1("x"),
 				x2("x"),
 				x3("x"),
 				y("y");
@@ -59,7 +59,7 @@ TEST_F(ExprTest, Variable_Comparison) {
 TEST_F(ExprTest, ConstantI32_Accessors) {
 	std::int32_t val = 28,
 			nval = -28;
-	solver::ConstantI32 x(val),
+	solver::ConstI32 x(val),
 			nx(nval);
 	EXPECT_EQ(val, x.GetValue());
 	EXPECT_EQ(nval, nx.GetValue());
@@ -69,7 +69,7 @@ TEST_F(ExprTest, ConstantI32_Accessors) {
 
 TEST_F(ExprTest, ConstantI32_Comparison) {
 	std::int32_t val1 = 28, val2 = 99;
-	ConstantI32 x1(val1),
+	ConstI32 x1(val1),
 			x2(val1), x3(val1),
 			y(val2);
 	EXPECT_EQ(x1, x1);
@@ -85,7 +85,7 @@ TEST_F(ExprTest, ConstantI32_Comparison) {
 TEST_F(ExprTest, BinOp_Accessors) {
 	auto left = mkvar("x");
 	auto right = mkvar("y");
-	BinaryOperation bin_op(left, right, solver::Kind::ADD);
+	BinOp bin_op(left, right, solver::Kind::ADD);
 
 	EXPECT_EQ(left, bin_op.GetLeftChild());
 	EXPECT_EQ(right, bin_op.GetRightChild());
@@ -94,7 +94,7 @@ TEST_F(ExprTest, BinOp_Accessors) {
 }
 
 TEST_F(ExprTest, BinaryOp_Comparison_Basic) {
-	BinaryOperation x1(nullptr, nullptr, Kind::ADD),
+	BinOp x1(nullptr, nullptr, Kind::ADD),
 			x2(nullptr, nullptr, Kind::ADD),
 			x3(nullptr, nullptr, Kind::ADD),
 			y(nullptr, nullptr, Kind::SUB);
@@ -111,7 +111,7 @@ TEST_F(ExprTest, BinaryOp_Comparison_Deep) {
 	auto x = mkvar ("x"),
 			y = mkvar("y"),
 			z = mkvar("z");
-	BinaryOperation a(x, x, Kind::ADD),
+	BinOp a(x, x, Kind::ADD),
 			b(x, y, Kind::ADD),
 			c(y, x, Kind::ADD),
 			d(y, y, Kind::ADD);
@@ -144,7 +144,7 @@ TEST_F(ExprTest, BinaryOp_OpCodes) {
 			{Kind::EQUAL, "eq"},
 			{Kind::NOT_EQUAL, "ne"},
 			{Kind::UNSIGNED_GREATER_OR_EQUAL, "uge"},
-			{Kind::UNSIGNED_GREATER_THAN, "uge"},
+			{Kind::UNSIGNED_GREATER_THAN, "ugt"},
 			{Kind::UNSIGNED_LESS_OR_EQUAL, "ule"},
 			{Kind::UNSIGNED_LESS_THAN, "ult"},
 			{Kind::SIGNED_GREATER_THAN, "sgt"},
@@ -154,7 +154,7 @@ TEST_F(ExprTest, BinaryOp_OpCodes) {
 	};
 
 	for (it_type it = m.begin(); it != m.end(); it++) {
-		solver::BinaryOperation op(NULL, NULL, it->first);
+		solver::BinOp op(NULL, NULL, it->first);
 		EXPECT_EQ(it->second, op.GetOpCodeName());
 	}
 }
@@ -217,8 +217,8 @@ TEST_F(ExprTest, SmartPointer_Comparison_CrossTest) {
 //------------------------------------------------------------------
 
 TEST_F(ExprTest, Operators) {
-	auto bop = [] (SharedExprPtr e) -> BinaryOperation {
-		return dynamic_cast<BinaryOperation&>(*e);
+	auto bop = [] (SharedExprPtr e) -> BinOp {
+		return dynamic_cast<BinOp&>(*e);
 	};
 	auto x = mkvar("x");
 	auto y = mkvar("y");
