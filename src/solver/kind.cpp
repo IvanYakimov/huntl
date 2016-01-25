@@ -21,6 +21,10 @@ namespace solver{
     	  /* comparisons */
     	  const std::string equal_str = "eq";
     	  const std::string not_equal_str = "ne";
+    	  const std::string unsigned_greater_than_str = "ugt";
+		  const std::string unsigned_greater_or_equal_str = "uge";
+		  const std::string unsigned_less_than_str = "ult";
+		  const std::string unsigned_less_or_equal_str = "ule";
     	  const std::string signed_greater_than_str = "sgt";
     	  const std::string signed_greater_or_equal_str = "sge";
     	  const std::string signed_less_than_str = "slt";
@@ -32,13 +36,13 @@ namespace solver{
 			{Kind::ADD, add_str},
 			{Kind::SUB, sub_str},
 			{Kind::MUL, mul_str},
-			{Kind::DEV, sign_dev_str},
-			{Kind::REM, sign_rem_str},
+			{Kind::SIGN_DEV, sign_dev_str},
+			{Kind::SING_REM, sign_rem_str},
 
 			/* vector */
-			{Kind::SHl, shift_left_str},
-			{Kind::LSHR, logical_shift_right_str},
-			{Kind::ASHR, arith_shift_right_str},
+			{Kind::SHIFT_LEFT, shift_left_str},
+			{Kind::LOGICAL_SHIFT_RIGHT, logical_shift_right_str},
+			{Kind::ARIRH_SHIFT_RIGHT, arith_shift_right_str},
 
 			/* logical */
 			{Kind::AND, and_str},
@@ -46,12 +50,12 @@ namespace solver{
 			{Kind::XOR, xor_str},
 
 			/* comparisons */
-			{Kind::EQ, equal_str},
-			{Kind::NE, not_equal_str},
-			{Kind::GT, signed_greater_than_str},
-			{Kind::GEQ, signed_greater_or_equal_str},
-			{Kind::LT, signed_less_than_str},
-			{Kind::LEQ,  signed_less_or_equal_str}
+			{Kind::EQUAL, equal_str},
+			{Kind::NOT_EQUAL, not_equal_str},
+			{Kind::SIGNED_GREATER_THAN, signed_greater_than_str},
+			{Kind::SIGNED_GREATER_OR_EQUAL, signed_greater_or_equal_str},
+			{Kind::SIGNED_LESS_THAN, signed_less_than_str},
+			{Kind::SIGNED_LESS_OR_EQUAL,  signed_less_or_equal_str}
 	  };
 
 	std::string KindToString(Kind kind) {

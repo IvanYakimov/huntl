@@ -36,7 +36,7 @@ TEST_F(CVC4EngineTest, Scopes) {
 	auto x_val = Engine()->GetValue(x);
 	ASSERT_EQ(x_val, 1);
 }
-#endif
+
 TEST_F(CVC4EngineTest, INT_LT) {
 	auto x = mkvar("x"),
 			y = mkvar("y");
@@ -48,7 +48,7 @@ TEST_F(CVC4EngineTest, INT_LT) {
 	auto y_val = Engine()->GetValue(y);
 	ASSERT_TRUE(x_val < y_val);
 }
-#ifdef NODEF
+
 TEST_F(CVC4EngineTest, INT_EQ) {
 	auto x = mkvar("x");
 	auto y = mkvar("y");

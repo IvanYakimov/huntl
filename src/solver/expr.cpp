@@ -14,11 +14,6 @@ SharedExprPtr ExprFactory :: ProduceConstantI32 (std::int32_t val) {
 	return std::make_shared <ConstantI32>(val);
 }
 
-template <typename T>
-SharedExprPtr ExprFactory :: ProduceConstant (T val) {
-  return std::make_shared <Constant<T>>>(val);
-}
-
 SharedExprPtr ExprFactory :: ProduceBinaryOperation (SharedExprPtr a, SharedExprPtr b, Kind op_code) {
 return std::make_shared <BinaryOperation>(a, b, op_code);
 }
@@ -28,22 +23,22 @@ return std::make_shared <BinaryOperation>(a, b, op_code);
 
 //TODO: refactoring - extract pattern code
 
-SharedExprPtr lt(SharedExprPtr l, SharedExprPtr r){
-	return ExprFactory::ProduceBinaryOperation(l, r, Kind::LT);
+SharedExprPtr slt(SharedExprPtr l, SharedExprPtr r){
+	return ExprFactory::ProduceBinaryOperation(l, r, Kind::SIGNED_LESS_THAN);
 }
 
-SharedExprPtr lt(SharedExprPtr l, std::int32_t r) {
+SharedExprPtr slt(SharedExprPtr l, std::int32_t r) {
 	auto other = ExprFactory::ProduceConstantI32(r);
-	return lt(l, other);
+	return slt(l, other);
 }
 
-SharedExprPtr lt(std::int32_t l, SharedExprPtr r) {
+SharedExprPtr slt(std::int32_t l, SharedExprPtr r) {
 	auto other = ExprFactory::ProduceConstantI32(l);
-	return lt(other, r);
+	return slt(other, r);
 }
 
 SharedExprPtr eq(SharedExprPtr l, SharedExprPtr r) {
-	return ExprFactory::ProduceBinaryOperation(l, r, Kind::EQ);
+	return ExprFactory::ProduceBinaryOperation(l, r, Kind::EQUAL);
 }
 
 SharedExprPtr eq(SharedExprPtr l, std::int32_t r) {
@@ -74,24 +69,24 @@ const std::string Variable::GetName() const {return name_;}
 
 //-------------------------------------------------------------------
 // Constant
-template <typename T>
-Constant<T>::Constant(T value) {value_ = value;}
-template <typename T>
-Constant<T>::~Constant() {}
 
-template <typename T>
-const std::string Constant<T>::ToString() {return std::to_string(value_);}
+ConstantI32::ConstantI32(std::int32_t value) : value_(value) {}
+ConstantI32::~ConstantI32() {}
 
-template <typename T>
-bool Constant<T>::Equals(const Object& rhs) const {
-	auto cmp = [] (auto lhs, auto rhs) -> bool {
-		return lhs.value_ == rhs.value_;
-	};
-	return EqualsHelper<Constant<T>>(*this, rhs, cmp);
+const std::string ConstantI32::ToString() {
+	return std::to_string(GetValue());
 }
 
-template <typename T>
-T Constant<T>::GetValue() {return value_;}
+bool ConstantI32::Equals(const Object& rhs) const {
+	auto cmp = [] (auto lhs, auto rhs) -> bool {
+		return lhs.GetValue() == rhs.GetValue();
+	};
+	return EqualsHelper<ConstantI32>(*this, rhs, cmp);
+}
+
+std::int32_t ConstantI32::GetValue() {
+	return value_;
+}
 
 //-------------------------------------------------------------------
 // BinaryOperation

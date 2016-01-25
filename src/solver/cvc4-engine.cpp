@@ -71,18 +71,13 @@ namespace solver {
 			//TODO: refactoring
 			switch (binop->GetOpCode()) {
 			case solver::Kind::ADD:
-				return expr_manager_.mkExpr(CVC4::Kind::PLUS, Prism(binop->GetLeftChild()), Prism(binop->GetRightChild()));
+				return expr_manager_.mkExpr(CVC4::Kind::BITVECTOR_PLUS, Prism(binop->GetLeftChild()), Prism(binop->GetRightChild()));
 			case solver::Kind::SUB:
-				return expr_manager_.mkExpr(CVC4::Kind::MINUS, Prism(binop->GetLeftChild()), Prism(binop->GetRightChild()));
+				return expr_manager_.mkExpr(CVC4::Kind::BITVECTOR_SUB, Prism(binop->GetLeftChild()), Prism(binop->GetRightChild()));
 			case solver::Kind::MUL:
-				return expr_manager_.mkExpr(CVC4::Kind::MULT, Prism(binop->GetLeftChild()), Prism(binop->GetRightChild()));
-			case solver::Kind::EQ:
+				return expr_manager_.mkExpr(CVC4::Kind::BITVECTOR_MULT, Prism(binop->GetLeftChild()), Prism(binop->GetRightChild()));
+			case solver::Kind::EQUAL:
 				return expr_manager_.mkExpr(CVC4::Kind::EQUAL, Prism(binop->GetLeftChild()), Prism(binop->GetRightChild()));
-			case solver::Kind::LT:
-				return expr_manager_.mkExpr(CVC4::Kind::LT, Prism(binop->GetLeftChild()), Prism(binop->GetRightChild()));
-			case solver::Kind::GT:
-				return expr_manager_.mkExpr(CVC4::Kind::GT, Prism(binop->GetLeftChild()), Prism(binop->GetRightChild()));
-				//TODO:
 			}
 		}
 		else if (cnst != nullptr) {

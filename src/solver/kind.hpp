@@ -2,33 +2,37 @@
 #define __KIND_HPP__
 
 //STL
-#include <string>
 #include <map>
 
 namespace solver {
-enum class Kind{
+enum Kind{
   		  /* arithmetical */
   		  ADD,
   		  SUB,
   		  MUL,
-  		  DEV,
-  		  REM,
+  		  SIGN_DEV,
+  		  SING_REM,
   		  /* vector */
-  		  SHl,
-  		  LSHR,
-  		  ASHR,
+  		  SHIFT_LEFT,
+  		  LOGICAL_SHIFT_RIGHT,
+  		  ARIRH_SHIFT_RIGHT,
   		  /* logical */
   		  AND,
   		  OR,
   		  XOR,
   		  /* comparisons */
-  		  EQ,
-  		  NE,
-  		  GT,
-  		  GEQ,
-  		  LT,
-  		  LEQ
+  		  EQUAL,
+  		  NOT_EQUAL,
+  		  UNSIGNED_GREATER_THAN,
+  		  UNSIGNED_GREATER_OR_EQUAL,
+  		  UNSIGNED_LESS_THAN,
+  		  UNSIGNED_LESS_OR_EQUAL,
+  		  SIGNED_GREATER_THAN,
+  		  SIGNED_GREATER_OR_EQUAL,
+  		  SIGNED_LESS_THAN,
+  		  SIGNED_LESS_OR_EQUAL
   	};
+
 std::string KindToString(Kind kind);
 }
 

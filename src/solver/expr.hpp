@@ -9,7 +9,6 @@
 # include <iostream>
 # include <cstring>
 // Project
-# include "expr-factory.hpp"
 # include "../utils/memory.hpp"
 # include "../utils/object.hpp"
 # include "kind.hpp"
@@ -27,16 +26,12 @@ typedef std::shared_ptr <Expr> SharedExprPtr;
 typedef std::shared_ptr <Variable> SharedVariablePtr;
 typedef std::shared_ptr <BinaryOperation> SharedBinaryOperationPtr;
 
-
 class ExprFactory
   {
   public:
   	static SharedExprPtr ProduceVariable (std::string name);
   	static SharedExprPtr ProduceConstantI32 (std::int32_t val);
   	static SharedExprPtr ProduceBinaryOperation (SharedExprPtr a, SharedExprPtr b, Kind op_code);
-  private:
-  	template <typename T>
-  	static SharedExprPtr ProduceConstant (T val);
   };
 
   class Expr : public CRTP<Expr, Object> {
@@ -44,12 +39,13 @@ class ExprFactory
     virtual ~Expr() {}
     virtual const std::string ToString() = 0;
     virtual bool Equals (const Object& rhs) const = 0;
+    //TODO: refactoring
     friend SharedExprPtr eq(SharedExprPtr l, SharedExprPtr r);
     friend SharedExprPtr eq(SharedExprPtr l, std::int32_t r);
     friend SharedExprPtr eq(std::int32_t l, SharedExprPtr r);
-    friend SharedExprPtr lt(SharedExprPtr l, SharedExprPtr r);
-    friend SharedExprPtr lt(SharedExprPtr l, std::int32_t r);
-    friend SharedExprPtr lt(std::int32_t l, SharedExprPtr r);
+    friend SharedExprPtr slt(SharedExprPtr l, SharedExprPtr r);
+    friend SharedExprPtr slt(SharedExprPtr l, std::int32_t r);
+    friend SharedExprPtr slt(std::int32_t l, SharedExprPtr r);
   };
 
   class BinaryOperation : public CRTP<BinaryOperation, Expr>{
@@ -69,7 +65,6 @@ class ExprFactory
       Kind kind_;
     };
 
-
   class Variable final : public CRTP <Variable, Expr> {
   public:
 	  Variable (std::string name);
@@ -81,23 +76,34 @@ class ExprFactory
 	  std::string name_;
   };
 
-  template <typename T>
-  class Constant : public CRTP<Constant<T>, Expr> {
+  class ConstantI32 : public CRTP<ConstantI32, Expr> {
   public:
-	  Constant (T value);
-	  virtual ~Constant();
+	  ConstantI32 (std::int32_t value);
+	  virtual ~ConstantI32();
 	  virtual const std::string ToString ();
 	  virtual bool Equals(const Object& rhs) const;
-	  T GetValue();
+	  std::int32_t GetValue();
   private:
-	  T value_;
+	  const std::int32_t value_;
   };
 
-  // ConstantI32 Instance
-  template class Constant<std::int32_t>;
-  class ConstantI32 final : public Constant<std::int32_t> {
-	  public: ConstantI32(std::int32_t value) : Constant(value) {}
-  };
+  // Unsigned Integer Constant
 }
 
 # endif /* __EXPR_HPP__ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

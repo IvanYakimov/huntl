@@ -131,9 +131,9 @@ TEST_F(ExprTest, BinaryOp_OpCodes) {
 			{Kind::ADD, "add"},
 			{Kind::SUB, "sub"},
 			{Kind::MUL, "mul"},
-			{Kind::SHl, "shl"},
-			{Kind::LSHR, "lshr"},
-			{Kind::ASHR, "ashr"},
+			{Kind::SHIFT_LEFT, "shl"},
+			{Kind::LOGICAL_SHIFT_RIGHT, "lshr"},
+			{Kind::ARIRH_SHIFT_RIGHT, "ashr"},
 
 			/* logical */
 			{Kind::AND, "and"},
@@ -141,12 +141,16 @@ TEST_F(ExprTest, BinaryOp_OpCodes) {
 			{Kind::XOR, "xor"},
 
 			/* Comparisons */
-			{Kind::EQ, "eq"},
-			{Kind::NE, "ne"},
-			{Kind::GT, "sgt"},
-			{Kind::GEQ, "sge"},
-			{Kind::LT, "slt"},
-			{Kind::LEQ, "sle"}
+			{Kind::EQUAL, "eq"},
+			{Kind::NOT_EQUAL, "ne"},
+			{Kind::UNSIGNED_GREATER_OR_EQUAL, "uge"},
+			{Kind::UNSIGNED_GREATER_THAN, "uge"},
+			{Kind::UNSIGNED_LESS_OR_EQUAL, "ule"},
+			{Kind::UNSIGNED_LESS_THAN, "ult"},
+			{Kind::SIGNED_GREATER_THAN, "sgt"},
+			{Kind::SIGNED_GREATER_OR_EQUAL, "sge"},
+			{Kind::SIGNED_LESS_THAN, "slt"},
+			{Kind::SIGNED_LESS_OR_EQUAL, "sle"}
 	};
 
 	for (it_type it = m.begin(); it != m.end(); it++) {
@@ -211,18 +215,18 @@ TEST_F(ExprTest, SmartPointer_Comparison_CrossTest) {
 }
 
 //------------------------------------------------------------------
-// Operators
+
 TEST_F(ExprTest, Operators) {
 	auto bop = [] (SharedExprPtr e) -> BinaryOperation {
 		return dynamic_cast<BinaryOperation&>(*e);
 	};
 	auto x = mkvar("x");
 	auto y = mkvar("y");
-	auto e = lt(x, y);
+	auto e = slt(x, y);
 	auto b_lt = bop(e);
 	EXPECT_EQ(x, b_lt.GetLeftChild());
 	EXPECT_EQ(y, b_lt.GetRightChild());
-	EXPECT_EQ(Kind::LT, b_lt.GetOpCode());
+	EXPECT_EQ(Kind::SIGNED_LESS_THAN, b_lt.GetOpCode());
 }
 
 }
