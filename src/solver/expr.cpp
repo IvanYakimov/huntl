@@ -6,48 +6,47 @@ namespace solver
 {
 //-------------------------------------------------------------------
 // Factory
-SharedExprPtr ExprFactory :: ProduceVariable (std::string name) {
+SharedExprPtr ExprFactory :: MkVar (std::string name) {
 	return std::make_shared <Var>(name);
 }
 
-SharedExprPtr ExprFactory :: ProduceConstantI32 (std::int32_t val) {
+SharedExprPtr ExprFactory :: MkConstI32 (std::int32_t val) {
 	return std::make_shared <ConstI32>(val);
 }
 
-SharedExprPtr ExprFactory :: ProduceBinaryOperation (SharedExprPtr a, SharedExprPtr b, Kind op_code) {
+SharedExprPtr ExprFactory :: MkBinOp (SharedExprPtr a, SharedExprPtr b, Kind op_code) {
 return std::make_shared <BinOp>(a, b, op_code);
 }
 
 //-------------------------------------------------------------------
 // Expr
 
-//TODO: refactoring - extract pattern code
-
+//TODO: refactoring
 SharedExprPtr slt(SharedExprPtr l, SharedExprPtr r){
-	return ExprFactory::ProduceBinaryOperation(l, r, Kind::SIGNED_LESS_THAN);
+	return ExprFactory::MkBinOp(l, r, Kind::SIGNED_LESS_THAN);
 }
 
 SharedExprPtr slt(SharedExprPtr l, std::int32_t r) {
-	auto other = ExprFactory::ProduceConstantI32(r);
+	auto other = ExprFactory::MkConstI32(r);
 	return slt(l, other);
 }
 
 SharedExprPtr slt(std::int32_t l, SharedExprPtr r) {
-	auto other = ExprFactory::ProduceConstantI32(l);
+	auto other = ExprFactory::MkConstI32(l);
 	return slt(other, r);
 }
 
 SharedExprPtr eq(SharedExprPtr l, SharedExprPtr r) {
-	return ExprFactory::ProduceBinaryOperation(l, r, Kind::EQUAL);
+	return ExprFactory::MkBinOp(l, r, Kind::EQUAL);
 }
 
 SharedExprPtr eq(SharedExprPtr l, std::int32_t r) {
-	auto other = ExprFactory::ProduceConstantI32(r);
+	auto other = ExprFactory::MkConstI32(r);
 	return eq(l, other);
 }
 
 SharedExprPtr eq(std::int32_t l, SharedExprPtr r) {
-	auto other = ExprFactory::ProduceConstantI32(l);
+	auto other = ExprFactory::MkConstI32(l);
 	return eq(other, r);
 }
 
@@ -99,7 +98,7 @@ BinOp::BinOp(SharedExprPtr left_child, SharedExprPtr right_child, Kind kind){
 BinOp::~BinOp() {}
 
 const std::string BinOp::ToString(){
-	return GetOpCodeName() + " " + GetLeftChild()->ToString() + " " + GetRightChild()->ToString();
+	return GetKindName() + " " + GetLeftChild()->ToString() + " " + GetRightChild()->ToString();
 }
 
 bool BinOp::Equals(const Object& rhs) const {
@@ -114,8 +113,8 @@ bool BinOp::Equals(const Object& rhs) const {
 SharedExprPtr BinOp::GetLeftChild() {return left_child_;}
 SharedExprPtr BinOp::GetRightChild() {return right_child_;}
 
-Kind BinOp::GetOpCode() {return kind_;}
-std::string BinOp::GetOpCodeName() {return KindToString(kind_);}
+Kind BinOp::GetKind() {return kind_;}
+std::string BinOp::GetKindName() {return KindToString(kind_);}
 
 }
 

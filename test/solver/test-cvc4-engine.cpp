@@ -13,7 +13,7 @@
 namespace solver {
 class CVC4EngineTest : public ::testing::Test {
 public:
-	SharedExprPtr mkvar(std::string name) {ExprFactory::ProduceVariable(name);}
+	SharedExprPtr mkvar(std::string name) {ExprFactory::MkVar(name);}
 	void SetUp() {engine_ = new CVC4Engine();}
 	void TearDown() {delete engine_;}
 	ISMTEngine *Engine() const { return engine_; }

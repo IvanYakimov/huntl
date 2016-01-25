@@ -29,9 +29,9 @@ typedef std::shared_ptr <BinOp> SharedBinaryOperationPtr;
 class ExprFactory
   {
   public:
-  	static SharedExprPtr ProduceVariable (std::string name);
-  	static SharedExprPtr ProduceConstantI32 (std::int32_t val);
-  	static SharedExprPtr ProduceBinaryOperation (SharedExprPtr a, SharedExprPtr b, Kind op_code);
+  	static SharedExprPtr MkVar (std::string name);
+  	static SharedExprPtr MkConstI32 (std::int32_t val);
+  	static SharedExprPtr MkBinOp (SharedExprPtr a, SharedExprPtr b, Kind op_code);
   };
 
   class Expr : public CRTP<Expr, Object> {
@@ -56,8 +56,8 @@ class ExprFactory
   	bool Equals(const Object &rhs) const;
   	SharedExprPtr GetLeftChild();
   	SharedExprPtr GetRightChild();
-  	Kind GetOpCode();
-  	std::string GetOpCodeName();
+  	Kind GetKind();
+  	std::string GetKindName();
 
     private:
       SharedExprPtr left_child_;

@@ -89,7 +89,7 @@ TEST_F(ExprTest, BinOp_Accessors) {
 
 	EXPECT_EQ(left, bin_op.GetLeftChild());
 	EXPECT_EQ(right, bin_op.GetRightChild());
-	EXPECT_EQ(Kind::ADD, bin_op.GetOpCode());
+	EXPECT_EQ(Kind::ADD, bin_op.GetKind());
 	EXPECT_EQ("add x y", bin_op.ToString());
 }
 
@@ -155,7 +155,7 @@ TEST_F(ExprTest, BinaryOp_OpCodes) {
 
 	for (it_type it = m.begin(); it != m.end(); it++) {
 		solver::BinOp op(NULL, NULL, it->first);
-		EXPECT_EQ(it->second, op.GetOpCodeName());
+		EXPECT_EQ(it->second, op.GetKindName());
 	}
 }
 
@@ -226,7 +226,7 @@ TEST_F(ExprTest, Operators) {
 	auto b_lt = bop(e);
 	EXPECT_EQ(x, b_lt.GetLeftChild());
 	EXPECT_EQ(y, b_lt.GetRightChild());
-	EXPECT_EQ(Kind::SIGNED_LESS_THAN, b_lt.GetOpCode());
+	EXPECT_EQ(Kind::SIGNED_LESS_THAN, b_lt.GetKind());
 }
 
 }

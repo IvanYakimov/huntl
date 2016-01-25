@@ -69,7 +69,7 @@ namespace solver {
 		}
 		else if (binop != nullptr) {
 			//TODO: refactoring
-			switch (binop->GetOpCode()) {
+			switch (binop->GetKind()) {
 			case solver::Kind::ADD:
 				return expr_manager_.mkExpr(CVC4::Kind::BITVECTOR_PLUS, Prism(binop->GetLeftChild()), Prism(binop->GetRightChild()));
 			case solver::Kind::SUB:

@@ -17,10 +17,10 @@ namespace solver {
 	class ExprExprFactoryTest : public ::testing::Test {
 	};
 
-	TEST_F(ExprExprFactoryTest, ProduceVariable) {
+	TEST_F(ExprExprFactoryTest, MkVar) {
 		std::string name = "var";
 		std::shared_ptr <Expr> exp (new Var(name));
-		auto act = ExprFactory::ProduceVariable(name);
+		auto act = ExprFactory::MkVar(name);
 		ASSERT_TRUE(*exp == *act);
 	}
 

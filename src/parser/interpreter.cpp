@@ -81,7 +81,7 @@ void Interpreter::HandleStoreInst (const llvm::Instruction &inst, const llvm::Va
 	//TODO move to pattern-matcher (?)
 	auto name = val->getName();
 	if (!name.empty())
-		memory_.Store(ptr, expr_factory_.ProduceVariable(name.str()));
+		memory_.Store(ptr, expr_factory_.MkVar(name.str()));
 	else
 		InterruptionHandler::Do(new InterpretationFailure(inst));
 }
