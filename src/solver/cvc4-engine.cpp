@@ -53,10 +53,9 @@ namespace solver {
 	// private things
 	// TODO: refactoring - extract pattern code
 	CVC4::Expr CVC4Engine::Prism(SharedExprPtr expr) {
-		// TODO: replace by std::dynamic_pointer_cast!!!
-		auto var = dynamic_cast<Var*>(&*expr);
-		auto binop = dynamic_cast<BinOp*>(&*expr);
-		auto cnst = dynamic_cast<ConstI32*>(&*expr);
+		auto var = std::dynamic_pointer_cast<Var>(expr);
+		auto binop = std::dynamic_pointer_cast<BinOp>(expr);
+		auto cnst = std::dynamic_pointer_cast<ConstI32>(expr);
 		if (var != nullptr) {
 			CVC4::Expr var_expr;
 			auto var_name = var->GetName();
@@ -72,21 +71,13 @@ namespace solver {
 		else if (binop != nullptr) {
 			//TODO: refactoring
 			switch (binop->GetKind()) {
-			case solver::Kind::ADD:
-				return expr_manager_.mkExpr(CVC4::Kind::BITVECTOR_PLUS, Prism(binop->GetLeftChild()), Prism(binop->GetRightChild()));
-			case solver::Kind::SUB:
-				return expr_manager_.mkExpr(CVC4::Kind::BITVECTOR_SUB, Prism(binop->GetLeftChild()), Prism(binop->GetRightChild()));
-			case solver::Kind::MUL:
-				return expr_manager_.mkExpr(CVC4::Kind::BITVECTOR_MULT, Prism(binop->GetLeftChild()), Prism(binop->GetRightChild()));
 			case solver::Kind::EQ:
 				return expr_manager_.mkExpr(CVC4::Kind::EQUAL, Prism(binop->GetLeftChild()), Prism(binop->GetRightChild()));
 			}
 		}
 		else if (cnst != nullptr) {
 			auto val = cnst->GetValue();
-			unsigned long place;
-			memcpy(&place, &val, sizeof(unsigned long));
-			expr_manager_.mkConst(CVC4::BitVector(sizeof(val), place));
+			expr_manager_.mkConst(CVC4::BitVector(sizeof(val), val));
 		}
 		// default:
 		throw std::bad_cast();

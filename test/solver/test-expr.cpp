@@ -125,7 +125,7 @@ TEST_F(ExprTest, BinaryOp_Comparison_Deep) {
 
 }
 
-TEST_F(ExprTest, BinaryOp_OpCodes) {
+TEST_F(ExprTest, Kind) {
 	typedef std::map <Kind, std::string> map_type;
 	typedef map_type::iterator it_type;
 

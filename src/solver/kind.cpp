@@ -62,11 +62,6 @@ namespace solver{
 			{Kind::SLE,  signed_less_or_equal_str}
 	  };
 
-	std::ostream& operator<<(std::ostream& os, const Kind& obj){
-		os << KindToString(obj);
-		return os;
-	}
-
 	std::string KindToString(Kind kind) {
 		return op_code_map_[kind];
 	}

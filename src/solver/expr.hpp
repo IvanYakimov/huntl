@@ -21,6 +21,7 @@ template <typename T> class Constant;
 class BinOp;
 class ExprFactory;
 
+// replace by alias?
 typedef std::shared_ptr <Expr> SharedExprPtr;
 typedef std::shared_ptr <Var> SharedVariablePtr;
 typedef std::shared_ptr <BinOp> SharedBinaryOperationPtr;

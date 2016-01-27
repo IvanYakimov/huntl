@@ -25,7 +25,9 @@ namespace solver {
 		virtual std::int32_t GetValue(SharedExprPtr varible) final;
 		virtual void Push() final;
 		virtual void Pop() final;
+#ifndef DBG
 	private:
+#endif
 		CVC4::Expr Prism(SharedExprPtr expr);
 		CVC4::ExprManager expr_manager_;
 		std::unique_ptr<CVC4::SmtEngine> smt_engine_;

@@ -35,8 +35,6 @@ enum Kind{
   		  SLE
   	};
 
-std::ostream& operator<<(std::ostream& os, const Kind& obj);
-
 std::string KindToString(Kind kind);
 }
 

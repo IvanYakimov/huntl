@@ -16,55 +16,33 @@ public:
 	SharedExprPtr mkvar(std::string name) {ExprFactory::MkVar(name);}
 	void SetUp() {engine_ = new CVC4Engine();}
 	void TearDown() {delete engine_;}
-	ISMTEngine *Engine() const { return engine_; }
+	CVC4Engine *Engine() const { return engine_; }
 private:
-	ISMTEngine *engine_ = nullptr;
+	CVC4Engine *engine_ = nullptr;
 };
 
-#ifdef NODEF
-TEST_F(CVC4EngineTest, Scopes) {
-	auto x = mkvar("x");
-	auto e1 = eq(x, 1);
-	Engine()->Assert(e1);
-	Engine()->Push();
-	{
-
-	}
-	Engine()->Pop();
-	auto s = Engine()->CheckSat();
-	ASSERT_EQ(s, SAT);
-	auto x_val = Engine()->GetValue(x);
-	ASSERT_EQ(x_val, 1);
+TEST_F(CVC4EngineTest, Prism_Var) {
+	auto name = "x";
+	auto x = V(name);
+	CVC4::Expr expr = Engine()->Prism(x);
+	ASSERT_EQ(name, expr.toString());
 }
 
-TEST_F(CVC4EngineTest, INT_LT) {
-	auto x = mkvar("x"),
-			y = mkvar("y");
-	auto e = lt(x, y);
-	Engine()->Assert(e);
-	auto status = Engine()->CheckSat();
-	ASSERT_EQ(status, SAT);
-	auto x_val = Engine()->GetValue(x);
-	auto y_val = Engine()->GetValue(y);
-	ASSERT_TRUE(x_val < y_val);
+TEST_F(CVC4EngineTest, Prism_Const) {
+	std::int32_t val = 28;
+	auto x = C(28);
+	//CVC4::Expr expr = Engine()->Prism(x);
+	//std::cout << x;
+}
 }
 
-TEST_F(CVC4EngineTest, INT_EQ) {
-	auto x = mkvar("x");
-	auto y = mkvar("y");
-	auto e = eq(x, 100);
-	auto w = eq(y, -100);
-	Engine()->Assert(e);
-	Engine()->Assert(w);
-	auto status = Engine()->CheckSat();
-	ASSERT_EQ(status, SAT);
-	auto x_val = Engine()->GetValue(x);
-	ASSERT_TRUE(x_val == 100);
-	auto y_val = Engine()->GetValue(y);
-	ASSERT_TRUE(y_val == -100);
-}
-#endif
-}
+
+
+
+
+
+
+
 
 
 
