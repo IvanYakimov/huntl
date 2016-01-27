@@ -43,6 +43,7 @@ namespace solver {
 		//TODO:
 		// comment: at the moment the implementation of the
 		// getConst<CVC4::Integer> function hasn't been found
+		// TODO: replace by std::dynamic_pointer_cast!!!
 		auto var = dynamic_cast<Var*>(&*expr);
 		auto name = symbol_table_.lookup(var->GetName());
 		auto value = smt_engine_->getValue(name).getConst<CVC4::Rational>();
@@ -52,6 +53,7 @@ namespace solver {
 	// private things
 	// TODO: refactoring - extract pattern code
 	CVC4::Expr CVC4Engine::Prism(SharedExprPtr expr) {
+		// TODO: replace by std::dynamic_pointer_cast!!!
 		auto var = dynamic_cast<Var*>(&*expr);
 		auto binop = dynamic_cast<BinOp*>(&*expr);
 		auto cnst = dynamic_cast<ConstI32*>(&*expr);
@@ -76,7 +78,7 @@ namespace solver {
 				return expr_manager_.mkExpr(CVC4::Kind::BITVECTOR_SUB, Prism(binop->GetLeftChild()), Prism(binop->GetRightChild()));
 			case solver::Kind::MUL:
 				return expr_manager_.mkExpr(CVC4::Kind::BITVECTOR_MULT, Prism(binop->GetLeftChild()), Prism(binop->GetRightChild()));
-			case solver::Kind::EQUAL:
+			case solver::Kind::EQ:
 				return expr_manager_.mkExpr(CVC4::Kind::EQUAL, Prism(binop->GetLeftChild()), Prism(binop->GetRightChild()));
 			}
 		}

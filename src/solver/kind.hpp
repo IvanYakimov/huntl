@@ -10,30 +10,44 @@ enum Kind{
   		  ADD,
   		  SUB,
   		  MUL,
-  		  SIGN_DEV,
-  		  SING_REM,
+  		  SDIV,
+  		  SREM,
+		  UDIV,
+		  UREM,
   		  /* vector */
-  		  SHIFT_LEFT,
-  		  LOGICAL_SHIFT_RIGHT,
-  		  ARIRH_SHIFT_RIGHT,
+  		  SHL,
+  		  LSHR,
+  		  ASHR,
   		  /* logical */
   		  AND,
   		  OR,
   		  XOR,
   		  /* comparisons */
-  		  EQUAL,
-  		  NOT_EQUAL,
-  		  UNSIGNED_GREATER_THAN,
-  		  UNSIGNED_GREATER_OR_EQUAL,
-  		  UNSIGNED_LESS_THAN,
-  		  UNSIGNED_LESS_OR_EQUAL,
-  		  SIGNED_GREATER_THAN,
-  		  SIGNED_GREATER_OR_EQUAL,
-  		  SIGNED_LESS_THAN,
-  		  SIGNED_LESS_OR_EQUAL
+  		  EQ,
+  		  NE,
+  		  UGT,
+  		  UGE,
+  		  ULT,
+  		  ULE,
+  		  SGT,
+  		  SGE,
+  		  SLT,
+  		  SLE
   	};
+
+std::ostream& operator<<(std::ostream& os, const Kind& obj);
 
 std::string KindToString(Kind kind);
 }
 
 #endif
+
+
+
+
+
+
+
+
+
+

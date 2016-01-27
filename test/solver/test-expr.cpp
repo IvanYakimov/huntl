@@ -13,6 +13,9 @@
 # include <string>
 # include <iostream>
 # include <map>
+# include <list>
+# include <tuple>
+# include <functional>
 
 using std::shared_ptr;
 
@@ -131,9 +134,9 @@ TEST_F(ExprTest, BinaryOp_OpCodes) {
 			{Kind::ADD, "add"},
 			{Kind::SUB, "sub"},
 			{Kind::MUL, "mul"},
-			{Kind::SHIFT_LEFT, "shl"},
-			{Kind::LOGICAL_SHIFT_RIGHT, "lshr"},
-			{Kind::ARIRH_SHIFT_RIGHT, "ashr"},
+			{Kind::SHL, "shl"},
+			{Kind::LSHR, "lshr"},
+			{Kind::ASHR, "ashr"},
 
 			/* logical */
 			{Kind::AND, "and"},
@@ -141,16 +144,16 @@ TEST_F(ExprTest, BinaryOp_OpCodes) {
 			{Kind::XOR, "xor"},
 
 			/* Comparisons */
-			{Kind::EQUAL, "eq"},
-			{Kind::NOT_EQUAL, "ne"},
-			{Kind::UNSIGNED_GREATER_OR_EQUAL, "uge"},
-			{Kind::UNSIGNED_GREATER_THAN, "ugt"},
-			{Kind::UNSIGNED_LESS_OR_EQUAL, "ule"},
-			{Kind::UNSIGNED_LESS_THAN, "ult"},
-			{Kind::SIGNED_GREATER_THAN, "sgt"},
-			{Kind::SIGNED_GREATER_OR_EQUAL, "sge"},
-			{Kind::SIGNED_LESS_THAN, "slt"},
-			{Kind::SIGNED_LESS_OR_EQUAL, "sle"}
+			{Kind::EQ, "eq"},
+			{Kind::NE, "ne"},
+			{Kind::UGE, "uge"},
+			{Kind::UGT, "ugt"},
+			{Kind::ULE, "ule"},
+			{Kind::ULT, "ult"},
+			{Kind::SGT, "sgt"},
+			{Kind::SGE, "sge"},
+			{Kind::SLT, "slt"},
+			{Kind::SLE, "sle"}
 	};
 
 	for (it_type it = m.begin(); it != m.end(); it++) {
@@ -215,21 +218,58 @@ TEST_F(ExprTest, SmartPointer_Comparison_CrossTest) {
 }
 
 //------------------------------------------------------------------
-
-TEST_F(ExprTest, Operators) {
-	auto bop = [] (SharedExprPtr e) -> BinOp {
-		return dynamic_cast<BinOp&>(*e);
+TEST_F(ExprTest, HelperOperators) {
+	typedef std::function<SharedExprPtr(SharedExprPtr, SharedExprPtr)> oper;
+	typedef std::tuple<Kind, oper> kind_to_op;
+	using std::make_tuple;
+	std::list<kind_to_op> l = {
+			make_tuple(Kind::ADD, Add),
+			make_tuple(Kind::SUB, Sub),
+			make_tuple(Kind::MUL, Mul),
+			make_tuple(Kind::SDIV, Sdiv),
+			make_tuple(Kind::SREM, Srem),
+			make_tuple(Kind::UDIV, Udiv),
+			make_tuple(Kind::UREM, Urem),
+			make_tuple(Kind::SHL, Shl),
+			make_tuple(Kind::LSHR, Lshr),
+			make_tuple(Kind::ASHR, Ashr),
+			make_tuple(Kind::AND, And),
+			make_tuple(Kind::OR, Or),
+			make_tuple(Kind::XOR, Xor),
+			make_tuple(Kind::EQ, Eq),
+			make_tuple(Kind::NE, Ne),
+			make_tuple(Kind::SGE, Sge),
+			make_tuple(Kind::SGT, Sgt),
+			make_tuple(Kind::SLE, Sle),
+			make_tuple(Kind::SLT, Slt),
+			make_tuple(Kind::UGE, Uge),
+			make_tuple(Kind::UGT, Ugt),
+			make_tuple(Kind::ULE, Ule),
+			make_tuple(Kind::ULT, Ult)
 	};
-	auto x = mkvar("x");
-	auto y = mkvar("y");
-	auto e = slt(x, y);
-	auto b_lt = bop(e);
-	EXPECT_EQ(x, b_lt.GetLeftChild());
-	EXPECT_EQ(y, b_lt.GetRightChild());
-	EXPECT_EQ(Kind::SIGNED_LESS_THAN, b_lt.GetKind());
+
+	auto checker = [] (kind_to_op t) {
+		static auto l = V("l");
+		static auto r = V("r");
+		Kind kind = std::get<0>(t);
+		oper op = std::get<1>(t);
+		SharedExprPtr expr = op(l, r);
+		auto binop = std::dynamic_pointer_cast<BinOp>(expr);
+		ASSERT_EQ(binop->GetKind(), kind);
+		ASSERT_EQ(binop->GetLeftChild(), l);
+		ASSERT_EQ(binop->GetRightChild(), r);
+	};
+
+	std::for_each(l.begin(), l.end(), checker);
 }
 
 }
+
+
+
+
+
+
 
 
 

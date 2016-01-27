@@ -36,13 +36,13 @@ namespace solver{
 			{Kind::ADD, add_str},
 			{Kind::SUB, sub_str},
 			{Kind::MUL, mul_str},
-			{Kind::SIGN_DEV, sign_dev_str},
-			{Kind::SING_REM, sign_rem_str},
+			{Kind::SDIV, sign_dev_str},
+			{Kind::SREM, sign_rem_str},
 
 			/* vector */
-			{Kind::SHIFT_LEFT, shift_left_str},
-			{Kind::LOGICAL_SHIFT_RIGHT, logical_shift_right_str},
-			{Kind::ARIRH_SHIFT_RIGHT, arith_shift_right_str},
+			{Kind::SHL, shift_left_str},
+			{Kind::LSHR, logical_shift_right_str},
+			{Kind::ASHR, arith_shift_right_str},
 
 			/* logical */
 			{Kind::AND, and_str},
@@ -50,17 +50,22 @@ namespace solver{
 			{Kind::XOR, xor_str},
 
 			/* comparisons */
-			{Kind::EQUAL, equal_str},
-			{Kind::NOT_EQUAL, not_equal_str},
-			{Kind::UNSIGNED_GREATER_OR_EQUAL, unsigned_greater_or_equal_str},
-			{Kind::UNSIGNED_GREATER_THAN, unsigned_greater_than_str},
-			{Kind::UNSIGNED_LESS_OR_EQUAL, unsigned_less_or_equal_str},
-			{Kind::UNSIGNED_LESS_THAN, unsigned_less_than_str},
-			{Kind::SIGNED_GREATER_THAN, signed_greater_than_str},
-			{Kind::SIGNED_GREATER_OR_EQUAL, signed_greater_or_equal_str},
-			{Kind::SIGNED_LESS_THAN, signed_less_than_str},
-			{Kind::SIGNED_LESS_OR_EQUAL,  signed_less_or_equal_str}
+			{Kind::EQ, equal_str},
+			{Kind::NE, not_equal_str},
+			{Kind::UGE, unsigned_greater_or_equal_str},
+			{Kind::UGT, unsigned_greater_than_str},
+			{Kind::ULE, unsigned_less_or_equal_str},
+			{Kind::ULT, unsigned_less_than_str},
+			{Kind::SGT, signed_greater_than_str},
+			{Kind::SGE, signed_greater_or_equal_str},
+			{Kind::SLT, signed_less_than_str},
+			{Kind::SLE,  signed_less_or_equal_str}
 	  };
+
+	std::ostream& operator<<(std::ostream& os, const Kind& obj){
+		os << KindToString(obj);
+		return os;
+	}
 
 	std::string KindToString(Kind kind) {
 		return op_code_map_[kind];

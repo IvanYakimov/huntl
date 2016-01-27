@@ -20,35 +20,41 @@ return std::make_shared <BinOp>(a, b, op_code);
 
 //-------------------------------------------------------------------
 // Expr
-
-//TODO: refactoring
-SharedExprPtr slt(SharedExprPtr l, SharedExprPtr r){
-	return ExprFactory::MkBinOp(l, r, Kind::SIGNED_LESS_THAN);
+SharedExprPtr C(std::int32_t val) {
+	return ExprFactory::MkConstI32(val);
 }
 
-SharedExprPtr slt(SharedExprPtr l, std::int32_t r) {
-	auto other = ExprFactory::MkConstI32(r);
-	return slt(l, other);
+SharedExprPtr V(std::string name) {
+	return ExprFactory::MkVar(name);
 }
 
-SharedExprPtr slt(std::int32_t l, SharedExprPtr r) {
-	auto other = ExprFactory::MkConstI32(l);
-	return slt(other, r);
+SharedExprPtr Apply(SharedExprPtr l, SharedExprPtr r, Kind k) {
+	return ExprFactory::MkBinOp(l, r, k);
 }
 
-SharedExprPtr eq(SharedExprPtr l, SharedExprPtr r) {
-	return ExprFactory::MkBinOp(l, r, Kind::EQUAL);
-}
-
-SharedExprPtr eq(SharedExprPtr l, std::int32_t r) {
-	auto other = ExprFactory::MkConstI32(r);
-	return eq(l, other);
-}
-
-SharedExprPtr eq(std::int32_t l, SharedExprPtr r) {
-	auto other = ExprFactory::MkConstI32(l);
-	return eq(other, r);
-}
+SharedExprPtr Add(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::ADD); }
+SharedExprPtr Sub(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::SUB); }
+SharedExprPtr Mul(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::MUL); }
+SharedExprPtr Sdiv(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::SDIV); }
+SharedExprPtr Srem(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::SREM); }
+SharedExprPtr Udiv(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::UDIV); }
+SharedExprPtr Urem(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::UREM); }
+SharedExprPtr Shl(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::SHL); }
+SharedExprPtr Ashr(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::ASHR); }
+SharedExprPtr Lshr(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::LSHR); }
+SharedExprPtr And(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::AND); }
+SharedExprPtr Or(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::OR); }
+SharedExprPtr Xor(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::XOR); }
+SharedExprPtr Eq(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::EQ); }
+SharedExprPtr Ne(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::NE); }
+SharedExprPtr Sge(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::SGE); }
+SharedExprPtr Sgt(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::SGT); }
+SharedExprPtr Sle(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::SLE); }
+SharedExprPtr Slt(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::SLT); }
+SharedExprPtr Uge(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::UGE); }
+SharedExprPtr Ugt(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::UGT); }
+SharedExprPtr Ule(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::ULE); }
+SharedExprPtr Ult(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::ULT); }
 
 //-------------------------------------------------------------------
 // Variable
