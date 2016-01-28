@@ -1,16 +1,16 @@
 # include "cvc4-engine.hpp"
 
 namespace solver {
-	CVC4Engine::CVC4Engine() {
-		smt_engine_ = make_unique<CVC4::SmtEngine>(&expr_manager_);
+	CVC4Engine::CVC4Engine() : smt_engine_(&expr_manager_) {
 		 // ??? Set "Non-linear integer arithmetic with uninterpreted sort and function symbols." logic:
 		// This line causes the bug:
 		// "SmtEngine: turning off produce-models because unsupported for nonlinear arith
 		// Cannot get value when produce-models options is off.Cannot get value when produce-models options is off.f:"
 		// smtEngine->setLogic("UFNIA");
-		smt_engine_->setOption("incremental", CVC4::SExpr("true"));
-		smt_engine_->setOption("produce-models", CVC4::SExpr("true"));
-		smt_engine_->setOption("rewrite-divk", CVC4::SExpr("true"));
+		smt_engine_.setOption("incremental", CVC4::SExpr("true"));
+		smt_engine_.setOption("produce-models", CVC4::SExpr("true"));
+		smt_engine_.setOption("rewrite-divk", CVC4::SExpr("true"));
+		btv32_ = expr_manager_.mkBitVectorType(32);
 		symbol_table_.pushScope();
 	}
 
@@ -27,11 +27,11 @@ namespace solver {
 	}
 
 	void CVC4Engine::Assert(SharedExprPtr expr) {
-		smt_engine_->assertFormula(Prism(expr));
+		smt_engine_.assertFormula(Prism(expr));
 	}
 
 	Sat CVC4Engine::CheckSat() {
-		auto result = smt_engine_->checkSat().isSat();
+		auto result = smt_engine_.checkSat().isSat();
 		switch (result) {
 		case CVC4::Result::SAT: return Sat::SAT;
 		case CVC4::Result::UNSAT: return Sat::UNSAT;
@@ -40,18 +40,23 @@ namespace solver {
 	}
 
 	std::int32_t CVC4Engine::GetValue(SharedExprPtr expr) {
-		//TODO:
-		// comment: at the moment the implementation of the
-		// getConst<CVC4::Integer> function hasn't been found
-		// TODO: replace by std::dynamic_pointer_cast!!!
-		auto var = dynamic_cast<Var*>(&*expr);
-		auto name = symbol_table_.lookup(var->GetName());
-		auto value = smt_engine_->getValue(name).getConst<CVC4::Rational>();
-		return static_cast<std::int32_t>(value.getNumerator().getLong());
+		auto var = std::dynamic_pointer_cast<Var>(expr);
+		if (!var)
+			throw std::bad_cast();
+		auto cvcexpr = symbol_table_.lookup(var->GetName());
+		auto btv_const = cvcexpr.getConst<CVC4::BitVector>();
+		return GetValue(btv_const);
+	}
+
+	std::int32_t CVC4Engine::GetValue(CVC4::BitVector btv_const) {
+		auto integer_const = btv_const.toInteger();
+		auto long_val = integer_const.getLong();
+		std::int32_t int_val = long_val bitand (compl 0);
+		return int_val;
 	}
 
 	// private things
-	// TODO: refactoring - extract pattern code
+	// TODO: refactoring - extract pattern (helper) code
 	CVC4::Expr CVC4Engine::Prism(SharedExprPtr expr) {
 		auto var = std::dynamic_pointer_cast<Var>(expr);
 		auto binop = std::dynamic_pointer_cast<BinOp>(expr);
@@ -78,11 +83,13 @@ namespace solver {
 		}
 		else if (cnst != nullptr) {
 			auto val = cnst->GetValue();
-			//TODO: reimplement casting
-			return expr_manager_.mkConst(CVC4::BitVector(32, CVC4::Integer(val)));
+			//TODO verify bitwise operation usage
+			unsigned int uval = val bitand (compl 0);
+			return expr_manager_.mkConst(CVC4::BitVector(32, uval));
 		}
-		// default:
-		throw std::bad_cast();
+
+		// Expression casting failure
+		throw std::invalid_argument("shared expression casting failure");
 	}
 }
 

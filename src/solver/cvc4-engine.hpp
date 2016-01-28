@@ -29,9 +29,11 @@ namespace solver {
 	private:
 #endif
 		CVC4::Expr Prism(SharedExprPtr expr);
+		std::int32_t GetValue(CVC4::BitVector btv_const);
 		CVC4::ExprManager expr_manager_;
-		std::unique_ptr<CVC4::SmtEngine> smt_engine_;
+		CVC4::SmtEngine smt_engine_;
 		CVC4::SymbolTable symbol_table_;
+		//TODO: add usage in the source file
 		CVC4::Type btv32_;
 	};
 }

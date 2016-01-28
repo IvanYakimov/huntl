@@ -30,7 +30,6 @@ namespace solver{
     	  const std::string signed_less_than_str = "slt";
     	  const std::string signed_less_or_equal_str = "sle";
 
-	  // TODO check map type
 	std::map <Kind, std::string> op_code_map_ = {
 			/* arithmetical */
 			{Kind::ADD, add_str},

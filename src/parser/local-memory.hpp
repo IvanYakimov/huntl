@@ -1,7 +1,7 @@
 # ifndef __LOCAL_MEMORY_HPP__
 # define __LOCAL_MEMORY_HPP__
 
-//TODO interruption handling
+//TODO interruption handling (replace interruptions by exceptions)
 
 // LLVM
 # include "llvm/IR/Instruction.h"

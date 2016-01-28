@@ -58,7 +58,14 @@ SharedExprPtr Ult(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::U
 
 //-------------------------------------------------------------------
 // Variable
-Var::Var (std::string name) {name_ = name;}
+//TODO: solver compilation problem
+
+Var::Var (std::string name) {
+	if (not name.empty())
+		name_ = name;
+	else
+		throw std::invalid_argument("empty string not valid");
+}
 Var::~Var() {}
 
 const std::string Var::ToString() {return GetName();}

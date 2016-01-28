@@ -37,6 +37,26 @@ public:
 //-------------------------------------------------------------------
 // Variable
 
+TEST_F(ExprTest, Variable_Creation) {
+	bool status = false;
+	try {
+		Var v(nullptr);
+	}
+	catch (std::exception e) {
+		status = true;
+	}
+	ASSERT_TRUE(status);
+
+	status = false;
+	try {
+		Var v("");
+	}
+	catch (std::exception e) {
+		status = true;
+	}
+	ASSERT_TRUE(status);
+}
+
 TEST_F(ExprTest, Variable_Accessors) {
 	Var v("x");
 	EXPECT_EQ("x", v.ToString());
@@ -68,8 +88,9 @@ TEST_F(ExprTest, ConstantI32_Accessors) {
 
 	std::list<std::int32_t> val_list = {
 			0,
-			28,
-			-28,
+			42,
+			214,
+			-42,
 			INT32_MIN,
 			INT32_MAX
 	};
@@ -116,7 +137,7 @@ TEST_F(ExprTest, BinaryOp_Comparison_Basic) {
 	EXPECT_NE(nullptr, &x1);
 }
 
-//TODO all combinations
+//TODO all combinations (how one can do it?)
 TEST_F(ExprTest, BinaryOp_Comparison_Deep) {
 	auto x = mkvar ("x"),
 			y = mkvar("y"),

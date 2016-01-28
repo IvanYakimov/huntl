@@ -34,6 +34,8 @@ class ExprFactory
   	static SharedExprPtr MkBinOp (SharedExprPtr a, SharedExprPtr b, Kind op_code);
   };
 
+//TODO replace to helper (or tester) class
+// do not use these methods within the main program!
 SharedExprPtr C(std::int32_t val);
 SharedExprPtr V(std::string name);
 SharedExprPtr Apply(SharedExprPtr l, SharedExprPtr r, Kind k);

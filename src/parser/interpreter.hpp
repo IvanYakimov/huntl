@@ -10,7 +10,7 @@
 # include "../solver/expr.hpp"
 # include "../solver/expr-factory.hpp"
 # include "../utils/interruption.hpp"
-//TODO: use -I option to perform headers search instead of ../
+//TODO: use -I option to perform headers search instead of ../ (?)
 //# include "../solver/expr.hpp"
 
 class InterpretationFailure final : public Interruption {

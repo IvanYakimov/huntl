@@ -36,13 +36,14 @@ public:
 	virtual ~MatchingFailure() {/*nothing to free*/}
 
 	void Print() {
-		//TODO std::function<> instead of errs()
+		//TODO std::function<> instead of errs() (or create function llvm::raw_ostream& -> &std::ostream)
 		llvm::errs() << "\nPattern Matching failed on: " << *inst_ << "\n";
 	}
 private:
 	std::unique_ptr<llvm::Instruction> inst_ = NULL;
 };
 
+//TODO: refactoring
 class PatternMatcher : public llvm::InstVisitor <PatternMatcher>
 {
 public:
@@ -79,7 +80,6 @@ protected:
   virtual void HandleAllocaInst (const llvm::Instruction &inst, const llvm::Value *allocated) = 0;
 
   // Load
-  // TODO
   virtual void HandleLoadInst (const llvm::Instruction &inst, const llvm::Value *ptr) = 0;
 
   // Store
