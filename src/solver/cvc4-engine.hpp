@@ -32,6 +32,7 @@ namespace solver {
 		CVC4::ExprManager expr_manager_;
 		std::unique_ptr<CVC4::SmtEngine> smt_engine_;
 		CVC4::SymbolTable symbol_table_;
+		CVC4::Type btv32_;
 	};
 }
 

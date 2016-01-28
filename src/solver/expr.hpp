@@ -96,6 +96,7 @@ SharedExprPtr Ult(SharedExprPtr l, SharedExprPtr r);
 	  std::string name_;
   };
 
+  //TODO: expand hierarchy
   class ConstI32 : public CRTP<ConstI32, Expr> {
   public:
 	  ConstI32 (std::int32_t value);

@@ -60,14 +60,21 @@ TEST_F(ExprTest, Variable_Comparison) {
 // Constant<T>
 
 TEST_F(ExprTest, ConstantI32_Accessors) {
-	std::int32_t val = 28,
-			nval = -28;
-	solver::ConstI32 x(val),
-			nx(nval);
-	EXPECT_EQ(val, x.GetValue());
-	EXPECT_EQ(nval, nx.GetValue());
-	EXPECT_EQ("28", x.ToString());
-	EXPECT_EQ("-28", nx.ToString());
+	auto f = [] (std::int32_t val) {
+		ConstI32 x(val);
+		EXPECT_EQ(val, x.GetValue());
+		EXPECT_EQ(std::to_string(val), x.ToString());
+	};
+
+	std::list<std::int32_t> val_list = {
+			0,
+			28,
+			-28,
+			INT32_MIN,
+			INT32_MAX
+	};
+
+	for_each(val_list.begin(), val_list.end(), f);
 }
 
 TEST_F(ExprTest, ConstantI32_Comparison) {
@@ -261,6 +268,51 @@ TEST_F(ExprTest, HelperOperators) {
 	};
 
 	std::for_each(l.begin(), l.end(), checker);
+}
+
+//-------------------------------------------------------------------
+// Casting
+TEST_F(ExprTest, Cast) {
+	Expr *v = new Var("x"),
+			*c = new ConstI32(28);
+	auto p1 = dynamic_cast<ConstI32*>(v);
+	auto p2 = dynamic_cast<Var*>(c);
+	ASSERT_EQ(nullptr, p1);
+	ASSERT_EQ(nullptr, p2);
+}
+
+TEST_F(ExprTest, PointerCast) {
+	SharedExprPtr v = V("x"),
+			c = C(28),
+			b = Eq(v, c);
+
+	auto pvv = std::dynamic_pointer_cast<Var>(v);
+	auto pvc = std::dynamic_pointer_cast<ConstI32>(v);
+	auto pvb = std::dynamic_pointer_cast<BinOp>(v);
+
+	auto pcv = std::dynamic_pointer_cast<Var>(c);
+	auto pcc = std::dynamic_pointer_cast<ConstI32>(c);
+	auto pcb = std::dynamic_pointer_cast<BinOp>(c);
+
+	auto pbv = std::dynamic_pointer_cast<Var>(b);
+	auto pbc = std::dynamic_pointer_cast<ConstI32>(b);
+	auto pbb = std::dynamic_pointer_cast<BinOp>(b);
+
+	ASSERT_NE(nullptr, pvv);
+	ASSERT_NE(nullptr, pcc);
+	ASSERT_NE(nullptr, pbb);
+
+	ASSERT_EQ(*v, *pvv);
+	ASSERT_EQ(nullptr, pvc);
+	ASSERT_EQ(nullptr, pvb);
+
+	ASSERT_EQ(nullptr, pcv);
+	ASSERT_EQ(*c, *pcc);
+	ASSERT_EQ(nullptr, pcb);
+
+	ASSERT_EQ(nullptr, pbv);
+	ASSERT_EQ(nullptr, pbc);
+	ASSERT_EQ(*b, *pbb);
 }
 
 }

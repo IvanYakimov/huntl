@@ -56,6 +56,7 @@ namespace solver {
 		auto var = std::dynamic_pointer_cast<Var>(expr);
 		auto binop = std::dynamic_pointer_cast<BinOp>(expr);
 		auto cnst = std::dynamic_pointer_cast<ConstI32>(expr);
+		// side effect here:
 		if (var != nullptr) {
 			CVC4::Expr var_expr;
 			auto var_name = var->GetName();
@@ -77,7 +78,8 @@ namespace solver {
 		}
 		else if (cnst != nullptr) {
 			auto val = cnst->GetValue();
-			expr_manager_.mkConst(CVC4::BitVector(sizeof(val), val));
+			//TODO: reimplement casting
+			return expr_manager_.mkConst(CVC4::BitVector(32, CVC4::Integer(val)));
 		}
 		// default:
 		throw std::bad_cast();
