@@ -1,14 +1,14 @@
 # include "local-memory.hpp"
 
-using solver::SharedExprPtr;
+using solver::SharedExpr;
 
 void LocalMemory::Alloca(ConstValPtr allocated) {
 }
 
-void LocalMemory::Store(ConstValPtr address, SharedExprPtr value) {
+void LocalMemory::Store(ConstValPtr address, SharedExpr value) {
 	memory_[address] = value;
 }
 
-SharedExprPtr LocalMemory::Load(ConstValPtr address) {
+SharedExpr LocalMemory::Load(ConstValPtr address) {
 	return memory_[address];
 }

@@ -6,55 +6,55 @@ namespace solver
 {
 //-------------------------------------------------------------------
 // Factory
-SharedExprPtr ExprFactory :: MkVar (std::string name) {
+SharedExpr ExprFactory :: MkVar (std::string name) {
 	return std::make_shared <Var>(name);
 }
 
-SharedExprPtr ExprFactory :: MkConstI32 (std::int32_t val) {
+SharedExpr ExprFactory :: MkConstI32 (std::int32_t val) {
 	return std::make_shared <ConstI32>(val);
 }
 
-SharedExprPtr ExprFactory :: MkBinOp (SharedExprPtr a, SharedExprPtr b, Kind op_code) {
+SharedExpr ExprFactory :: MkBinOp (SharedExpr a, SharedExpr b, Kind op_code) {
 return std::make_shared <BinOp>(a, b, op_code);
 }
 
 //-------------------------------------------------------------------
 // Expr
-SharedExprPtr C(std::int32_t val) {
+SharedExpr C(std::int32_t val) {
 	return ExprFactory::MkConstI32(val);
 }
 
-SharedExprPtr V(std::string name) {
+SharedExpr V(std::string name) {
 	return ExprFactory::MkVar(name);
 }
 
-SharedExprPtr Apply(SharedExprPtr l, SharedExprPtr r, Kind k) {
+SharedExpr Apply(SharedExpr l, SharedExpr r, Kind k) {
 	return ExprFactory::MkBinOp(l, r, k);
 }
 
-SharedExprPtr Add(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::ADD); }
-SharedExprPtr Sub(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::SUB); }
-SharedExprPtr Mul(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::MUL); }
-SharedExprPtr Sdiv(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::SDIV); }
-SharedExprPtr Srem(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::SREM); }
-SharedExprPtr Udiv(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::UDIV); }
-SharedExprPtr Urem(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::UREM); }
-SharedExprPtr Shl(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::SHL); }
-SharedExprPtr Ashr(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::ASHR); }
-SharedExprPtr Lshr(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::LSHR); }
-SharedExprPtr And(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::AND); }
-SharedExprPtr Or(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::OR); }
-SharedExprPtr Xor(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::XOR); }
-SharedExprPtr Eq(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::EQ); }
-SharedExprPtr Ne(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::NE); }
-SharedExprPtr Sge(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::SGE); }
-SharedExprPtr Sgt(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::SGT); }
-SharedExprPtr Sle(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::SLE); }
-SharedExprPtr Slt(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::SLT); }
-SharedExprPtr Uge(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::UGE); }
-SharedExprPtr Ugt(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::UGT); }
-SharedExprPtr Ule(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::ULE); }
-SharedExprPtr Ult(SharedExprPtr l, SharedExprPtr r) { return Apply(l, r, Kind::ULT); }
+SharedExpr Add(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::ADD); }
+SharedExpr Sub(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::SUB); }
+SharedExpr Mul(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::MUL); }
+SharedExpr Sdiv(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::SDIV); }
+SharedExpr Srem(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::SREM); }
+SharedExpr Udiv(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::UDIV); }
+SharedExpr Urem(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::UREM); }
+SharedExpr Shl(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::SHL); }
+SharedExpr Ashr(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::ASHR); }
+SharedExpr Lshr(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::LSHR); }
+SharedExpr And(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::AND); }
+SharedExpr Or(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::OR); }
+SharedExpr Xor(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::XOR); }
+SharedExpr Eq(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::EQ); }
+SharedExpr Ne(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::NE); }
+SharedExpr Sge(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::SGE); }
+SharedExpr Sgt(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::SGT); }
+SharedExpr Sle(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::SLE); }
+SharedExpr Slt(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::SLT); }
+SharedExpr Uge(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::UGE); }
+SharedExpr Ugt(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::UGT); }
+SharedExpr Ule(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::ULE); }
+SharedExpr Ult(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::ULT); }
 
 //-------------------------------------------------------------------
 // Variable
@@ -102,7 +102,7 @@ std::int32_t ConstI32::GetValue() {
 
 //-------------------------------------------------------------------
 // BinaryOperation
-BinOp::BinOp(SharedExprPtr l, SharedExprPtr r, Kind k){
+BinOp::BinOp(SharedExpr l, SharedExpr r, Kind k){
 	if (l == nullptr or r == nullptr)
 		throw std::logic_error("null not valid");
 	kind_ = k;
@@ -125,8 +125,8 @@ bool BinOp::Equals(const Object& rhs) const {
 	return EqualsHelper<BinOp>(*this, rhs, cmp);
 }
 
-SharedExprPtr BinOp::GetLeftChild() {return left_child_;}
-SharedExprPtr BinOp::GetRightChild() {return right_child_;}
+SharedExpr BinOp::GetLeftChild() {return left_child_;}
+SharedExpr BinOp::GetRightChild() {return right_child_;}
 
 Kind BinOp::GetKind() {return kind_;}
 std::string BinOp::GetKindName() {return KindToString(kind_);}

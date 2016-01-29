@@ -4,7 +4,7 @@ using namespace llvm;
 using namespace solver;
 
 //TODO interruption handling (replace interruptions by exceptions)
-void Interpreter::DebugExprInfo(SharedExprPtr expr) {
+void Interpreter::DebugExprInfo(SharedExpr expr) {
 # ifdef DBG
 	if (expr)
 		errs() << "> " << expr->ToString() << "\n";

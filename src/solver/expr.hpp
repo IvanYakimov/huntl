@@ -23,48 +23,47 @@ class ExprFactory;
 
 //TODO replace by alias?
 //TODO rename
-typedef std::shared_ptr <Expr> SharedExprPtr;
-typedef std::shared_ptr <Var> SharedVariablePtr;
-typedef std::shared_ptr <BinOp> SharedBinaryOperationPtr;
+typedef std::shared_ptr <Expr> SharedExpr;
+typedef std::shared_ptr <Var> SharedVar;
+typedef std::shared_ptr <BinOp> SharedBinOp;
 
 class ExprFactory
   {
   public:
-  	static SharedExprPtr MkVar (std::string name);
-  	static SharedExprPtr MkConstI32 (std::int32_t val);
-  	static SharedExprPtr MkBinOp (SharedExprPtr a, SharedExprPtr b, Kind op_code);
+  	static SharedExpr MkVar (std::string name);
+  	static SharedExpr MkConstI32 (std::int32_t val);
+  	static SharedExpr MkBinOp (SharedExpr a, SharedExpr b, Kind op_code);
   };
 
 //TODO replace to helper (or tester) class
 // do not use these methods within the main program!
 //TODO rename this short-named functions
-SharedExprPtr C(std::int32_t val);
-SharedExprPtr V(std::string name);
-//TODO: test l-r usage correctness
-SharedExprPtr Apply(SharedExprPtr l, SharedExprPtr r, Kind k);
-SharedExprPtr Add(SharedExprPtr l, SharedExprPtr r);
-SharedExprPtr Sub(SharedExprPtr l, SharedExprPtr r);
-SharedExprPtr Mul(SharedExprPtr l, SharedExprPtr r);
-SharedExprPtr Sdiv(SharedExprPtr l, SharedExprPtr r);
-SharedExprPtr Srem(SharedExprPtr l, SharedExprPtr r);
-SharedExprPtr Udiv(SharedExprPtr l, SharedExprPtr r);
-SharedExprPtr Urem(SharedExprPtr l, SharedExprPtr r);
-SharedExprPtr Shl(SharedExprPtr l, SharedExprPtr r);
-SharedExprPtr Ashr(SharedExprPtr l, SharedExprPtr r);
-SharedExprPtr Lshr(SharedExprPtr l, SharedExprPtr r);
-SharedExprPtr And(SharedExprPtr l, SharedExprPtr r);
-SharedExprPtr Or(SharedExprPtr l, SharedExprPtr r);
-SharedExprPtr Xor(SharedExprPtr l, SharedExprPtr r);
-SharedExprPtr Eq(SharedExprPtr l, SharedExprPtr r);
-SharedExprPtr Ne(SharedExprPtr l, SharedExprPtr r);
-SharedExprPtr Sge(SharedExprPtr l, SharedExprPtr r);
-SharedExprPtr Sgt(SharedExprPtr l, SharedExprPtr r);
-SharedExprPtr Sle(SharedExprPtr l, SharedExprPtr r);
-SharedExprPtr Slt(SharedExprPtr l, SharedExprPtr r);
-SharedExprPtr Uge(SharedExprPtr l, SharedExprPtr r);
-SharedExprPtr Ugt(SharedExprPtr l, SharedExprPtr r);
-SharedExprPtr Ule(SharedExprPtr l, SharedExprPtr r);
-SharedExprPtr Ult(SharedExprPtr l, SharedExprPtr r);
+SharedExpr C(std::int32_t val);
+SharedExpr V(std::string name);
+SharedExpr Apply(SharedExpr l, SharedExpr r, Kind k);
+SharedExpr Add(SharedExpr l, SharedExpr r);
+SharedExpr Sub(SharedExpr l, SharedExpr r);
+SharedExpr Mul(SharedExpr l, SharedExpr r);
+SharedExpr Sdiv(SharedExpr l, SharedExpr r);
+SharedExpr Srem(SharedExpr l, SharedExpr r);
+SharedExpr Udiv(SharedExpr l, SharedExpr r);
+SharedExpr Urem(SharedExpr l, SharedExpr r);
+SharedExpr Shl(SharedExpr l, SharedExpr r);
+SharedExpr Ashr(SharedExpr l, SharedExpr r);
+SharedExpr Lshr(SharedExpr l, SharedExpr r);
+SharedExpr And(SharedExpr l, SharedExpr r);
+SharedExpr Or(SharedExpr l, SharedExpr r);
+SharedExpr Xor(SharedExpr l, SharedExpr r);
+SharedExpr Eq(SharedExpr l, SharedExpr r);
+SharedExpr Ne(SharedExpr l, SharedExpr r);
+SharedExpr Sge(SharedExpr l, SharedExpr r);
+SharedExpr Sgt(SharedExpr l, SharedExpr r);
+SharedExpr Sle(SharedExpr l, SharedExpr r);
+SharedExpr Slt(SharedExpr l, SharedExpr r);
+SharedExpr Uge(SharedExpr l, SharedExpr r);
+SharedExpr Ugt(SharedExpr l, SharedExpr r);
+SharedExpr Ule(SharedExpr l, SharedExpr r);
+SharedExpr Ult(SharedExpr l, SharedExpr r);
 
   class Expr : public CRTP<Expr, Object> {
   public:
@@ -75,18 +74,18 @@ SharedExprPtr Ult(SharedExprPtr l, SharedExprPtr r);
 
   class BinOp : public CRTP<BinOp, Expr>{
     public:
-  	BinOp(SharedExprPtr left_child, SharedExprPtr right_child, Kind kind);
+  	BinOp(SharedExpr left_child, SharedExpr right_child, Kind kind);
   	~BinOp();
   	const std::string ToString() final;
   	bool Equals(const Object &rhs) const;
-  	SharedExprPtr GetLeftChild();
-  	SharedExprPtr GetRightChild();
+  	SharedExpr GetLeftChild();
+  	SharedExpr GetRightChild();
   	Kind GetKind();
   	std::string GetKindName();
 
     private:
-      SharedExprPtr left_child_;
-      SharedExprPtr right_child_;
+      SharedExpr left_child_;
+      SharedExpr right_child_;
       Kind kind_;
     };
 
@@ -101,7 +100,7 @@ SharedExprPtr Ult(SharedExprPtr l, SharedExprPtr r);
 	  std::string name_;
   };
 
-  //TODO: expand hierarchy
+  //TODO: add support for 8, 16, and 64-bit constants
   class ConstI32 : public CRTP<ConstI32, Expr> {
   public:
 	  ConstI32 (std::int32_t value);

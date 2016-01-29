@@ -15,7 +15,7 @@ namespace solver {
 //TODO: global refactoring - make a template class
 class CVC4EngineTest : public ::testing::Test {
 public:
-	SharedExprPtr mkvar(std::string name) {ExprFactory::MkVar(name);}
+	SharedExpr mkvar(std::string name) {ExprFactory::MkVar(name);}
 	void SetUp() {engine_ = new CVC4Engine();}
 	void TearDown() {delete engine_;}
 	CVC4Engine *Engine() const { return engine_; }
@@ -26,7 +26,7 @@ private:
 TEST_F(CVC4EngineTest, Prism_nullptr) {
 	bool nlp_ex = false;
 	try {
-		SharedExprPtr nlp = nullptr;
+		SharedExpr nlp = nullptr;
 		Engine()->Prism(nlp);
 	}
 	catch (std::logic_error &e) {
@@ -37,7 +37,7 @@ TEST_F(CVC4EngineTest, Prism_nullptr) {
 
 TEST_F(CVC4EngineTest, Prism_Var) {
 	// (declare-const NAME (_ BitVec 32))
-	SharedExprPtr x = V("x");
+	SharedExpr x = V("x");
 	CVC4::Expr x_expr = Engine()->Prism(x);
 	ASSERT_EQ("x", x_expr.toString());
 }
@@ -49,7 +49,7 @@ TEST_F(CVC4EngineTest, Prism_Const) {
 		engine->Push();
 		CVC4::Expr expr = engine->Prism(x);
 		CVC4::BitVector btv_const = expr.getConst<CVC4::BitVector>();
-		auto int_val = engine->GetValue(btv_const);
+		auto int_val = engine->FromBitVector(btv_const);
 		ASSERT_EQ(val, int_val);
 		engine->Pop();
 	};
@@ -73,6 +73,13 @@ TEST_F(CVC4EngineTest, GetValue) {
 	// (assert (= x VAL))
 	// (check-sat)
 	// (get-value (x))
+	auto c = C(42);
+	auto x = V("x");
+	auto e = Eq(x, c);
+	Engine()->Assert(e);
+	Engine()->CheckSat();
+	std::int32_t val = Engine()->GetValue(x);
+	//ASSERT_EQ(42, val);
 }
 }
 

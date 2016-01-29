@@ -59,7 +59,7 @@ private:
 	virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Instruction *instruction, const llvm::Value *ptr);
 	virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Constant *constant, const llvm::Value *ptr);
 
-	static inline void DebugExprInfo(solver::SharedExprPtr expr);
+	static inline void DebugExprInfo(solver::SharedExpr expr);
 };
 
 # endif /* __INTERPRETER_HPP__ */

@@ -26,7 +26,7 @@ namespace solver {
 		symbol_table_.popScope();
 	}
 
-	void CVC4Engine::Assert(SharedExprPtr expr) {
+	void CVC4Engine::Assert(SharedExpr expr) {
 		smt_engine_.assertFormula(Prism(expr));
 	}
 
@@ -39,16 +39,16 @@ namespace solver {
 		}
 	}
 
-	std::int32_t CVC4Engine::GetValue(SharedExprPtr expr) {
+	std::int32_t CVC4Engine::GetValue(SharedExpr expr) {
 		auto var = std::dynamic_pointer_cast<Var>(expr);
 		if (!var)
 			throw std::bad_cast();
 		auto cvcexpr = symbol_table_.lookup(var->GetName());
 		auto btv_const = cvcexpr.getConst<CVC4::BitVector>();
-		return GetValue(btv_const);
+		return FromBitVector(btv_const);
 	}
 
-	std::int32_t CVC4Engine::GetValue(CVC4::BitVector btv_const) {
+	std::int32_t CVC4Engine::FromBitVector(CVC4::BitVector btv_const) {
 		auto integer_const = btv_const.toInteger();
 		auto long_val = integer_const.getLong();
 		std::int32_t int_val = long_val bitand (compl 0);
@@ -57,7 +57,7 @@ namespace solver {
 
 	// private things
 	// TODO: refactoring - extract pattern (helper) code
-	CVC4::Expr CVC4Engine::Prism(SharedExprPtr expr) {
+	CVC4::Expr CVC4Engine::Prism(SharedExpr expr) {
 		if (expr == nullptr)
 			throw std::logic_error("null not valid");
 
