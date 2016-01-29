@@ -29,7 +29,7 @@ TEST_F(CVC4EngineTest, Prism_nullptr) {
 		SharedExprPtr nlp = nullptr;
 		Engine()->Prism(nlp);
 	}
-	catch (std::invalid_argument e) {
+	catch (std::logic_error &e) {
 		nlp_ex = true;
 	}
 	ASSERT_TRUE(nlp_ex);

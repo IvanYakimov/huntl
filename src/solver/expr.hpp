@@ -21,7 +21,8 @@ template <typename T> class Constant;
 class BinOp;
 class ExprFactory;
 
-// replace by alias?
+//TODO replace by alias?
+//TODO rename
 typedef std::shared_ptr <Expr> SharedExprPtr;
 typedef std::shared_ptr <Var> SharedVariablePtr;
 typedef std::shared_ptr <BinOp> SharedBinaryOperationPtr;
@@ -36,8 +37,10 @@ class ExprFactory
 
 //TODO replace to helper (or tester) class
 // do not use these methods within the main program!
+//TODO rename this short-named functions
 SharedExprPtr C(std::int32_t val);
 SharedExprPtr V(std::string name);
+//TODO: test l-r usage correctness
 SharedExprPtr Apply(SharedExprPtr l, SharedExprPtr r, Kind k);
 SharedExprPtr Add(SharedExprPtr l, SharedExprPtr r);
 SharedExprPtr Sub(SharedExprPtr l, SharedExprPtr r);

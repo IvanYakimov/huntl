@@ -64,7 +64,7 @@ Var::Var (std::string name) {
 	if (not name.empty())
 		name_ = name;
 	else
-		throw std::invalid_argument("empty string not valid");
+		throw std::logic_error("empty string not valid");
 }
 Var::~Var() {}
 
@@ -102,10 +102,12 @@ std::int32_t ConstI32::GetValue() {
 
 //-------------------------------------------------------------------
 // BinaryOperation
-BinOp::BinOp(SharedExprPtr left_child, SharedExprPtr right_child, Kind kind){
-	    	kind_ = kind;
-	    	left_child_ = left_child;
-	    	right_child_ = right_child;
+BinOp::BinOp(SharedExprPtr l, SharedExprPtr r, Kind k){
+	if (l == nullptr or r == nullptr)
+		throw std::logic_error("null not valid");
+	kind_ = k;
+	left_child_ = l;
+	right_child_ = r;
 }
 
 BinOp::~BinOp() {}

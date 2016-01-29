@@ -42,7 +42,7 @@ TEST_F(ExprTest, Variable_Creation) {
 	try {
 		Var v(nullptr);
 	}
-	catch (std::exception e) {
+	catch (std::logic_error &e) {
 		status = true;
 	}
 	ASSERT_TRUE(status);
@@ -51,7 +51,7 @@ TEST_F(ExprTest, Variable_Creation) {
 	try {
 		Var v("");
 	}
-	catch (std::exception e) {
+	catch (std::logic_error &e) {
 		status = true;
 	}
 	ASSERT_TRUE(status);
@@ -113,6 +113,47 @@ TEST_F(ExprTest, ConstantI32_Comparison) {
 
 //-------------------------------------------------------------------
 // BinaryOpration
+TEST_F(ExprTest, BinOp_Creation) {
+	auto v = V("x");
+	bool s1 = false,
+			s2 = false,
+			s3 = false,
+			s4 = false;
+	try {
+		BinOp b(nullptr, v, Kind::ADD);
+	}
+	catch (std::logic_error &e) {
+		s1 = true;
+	}
+
+	try {
+		BinOp b(v, nullptr, Kind::ADD);
+	}
+	catch (std::logic_error &e) {
+		s2 = true;
+	}
+
+	try {
+		BinOp b(nullptr, nullptr, Kind::ADD);
+	}
+	catch (std::logic_error &e) {
+		s3 = true;
+	}
+
+	try {
+		BinOp b(v, v, Kind::ADD);
+		s4 = true;
+	}
+	catch (std::logic_error &e) {
+		s4 = false;
+	}
+
+	ASSERT_TRUE(s1);
+	ASSERT_TRUE(s2);
+	ASSERT_TRUE(s3);
+	ASSERT_TRUE(s4);
+}
+
 TEST_F(ExprTest, BinOp_Accessors) {
 	auto left = mkvar("x");
 	auto right = mkvar("y");
@@ -125,10 +166,11 @@ TEST_F(ExprTest, BinOp_Accessors) {
 }
 
 TEST_F(ExprTest, BinaryOp_Comparison_Basic) {
-	BinOp x1(nullptr, nullptr, Kind::ADD),
-			x2(nullptr, nullptr, Kind::ADD),
-			x3(nullptr, nullptr, Kind::ADD),
-			y(nullptr, nullptr, Kind::SUB);
+	auto v = V("x");
+	BinOp x1(v, v, Kind::ADD),
+			x2(v, v, Kind::ADD),
+			x3(v, v, Kind::ADD),
+			y(v, v, Kind::SUB);
 	EXPECT_EQ(x1, x1);
 	EXPECT_EQ(x1, x2); EXPECT_EQ(x2, x1);
 	EXPECT_EQ(x1, x2); EXPECT_EQ(x2, x3); EXPECT_EQ(x1, x3);
@@ -137,20 +179,45 @@ TEST_F(ExprTest, BinaryOp_Comparison_Basic) {
 	EXPECT_NE(nullptr, &x1);
 }
 
-//TODO all combinations (how one can do it?)
 TEST_F(ExprTest, BinaryOp_Comparison_Deep) {
-	auto x = mkvar ("x"),
-			y = mkvar("y"),
-			z = mkvar("z");
-	BinOp a(x, x, Kind::ADD),
-			b(x, y, Kind::ADD),
-			c(y, x, Kind::ADD),
-			d(y, y, Kind::ADD);
-	EXPECT_NE(a, b);
-	EXPECT_NE(b, a);
-	EXPECT_NE(c, d);
-	EXPECT_NE(d, c);
+	auto x = V("x"),
+			y = V("y");
 
+	BinOp 	a1(x, x, Kind::ADD),
+			a2(x, x, Kind::ADD),
+			b1(x, y, Kind::ADD),
+			b2(x, y, Kind::ADD),
+			c1(y, x, Kind::ADD),
+			c2(y, x, Kind::ADD),
+			d1(y, y, Kind::ADD),
+			d2(y, y, Kind::ADD);
+
+	typedef std::tuple<BinOp, BinOp, bool> test_data;
+	using std::make_tuple;
+	std::list<test_data> l = {
+			make_tuple(a1, a2, true),
+			make_tuple(a1, b1, false),
+			make_tuple(a1, c1, false),
+			make_tuple(a1, d1, false),
+			make_tuple(b1, b2, true),
+			make_tuple(b1, c1, false),
+			make_tuple(b1, d1, false),
+			make_tuple(c1, c2, true),
+			make_tuple(c1, d1, false),
+			make_tuple(d1, d2, true)
+	};
+
+	auto checker = [] (test_data d) {
+		auto l = std::get<0>(d);
+		auto r = std::get<1>(d);
+		auto equality = std::get<2>(d);
+		if (equality == true)
+			ASSERT_EQ(l, r);
+		else
+			ASSERT_NE(l, r);
+	};
+
+	std::for_each(l.begin(), l.end(), checker);
 }
 
 TEST_F(ExprTest, Kind) {
@@ -184,8 +251,9 @@ TEST_F(ExprTest, Kind) {
 			{Kind::SLE, "sle"}
 	};
 
+	auto v = V("x");
 	for (it_type it = m.begin(); it != m.end(); it++) {
-		solver::BinOp op(NULL, NULL, it->first);
+		solver::BinOp op(v, v, it->first);
 		EXPECT_EQ(it->second, op.GetKindName());
 	}
 }
@@ -193,10 +261,10 @@ TEST_F(ExprTest, Kind) {
 //-------------------------------------------------------------------
 // SmartPointers and polymorphism testing
 TEST_F(ExprTest, SmartPointer_Comparison_Variable) {
-	auto x1 = mkvar("x"),
-			x2 = mkvar("x"),
-			x3 = mkvar("x"),
-			y = mkvar("y");
+	auto x1 = V("x"),
+			x2 = V("x"),
+			x3 = V("x"),
+			y = V("y");
 	EXPECT_EQ(*x1, *x1);	// reflexivity
 	EXPECT_EQ(*x1, *x2); EXPECT_EQ(*x2, *x1); // symmetric
 	EXPECT_EQ(*x1, *x2); EXPECT_EQ(*x2, *x3); EXPECT_EQ(*x1, *x3); // transivity
@@ -207,10 +275,10 @@ TEST_F(ExprTest, SmartPointer_Comparison_Variable) {
 
 TEST_F(ExprTest, SmartPointer_Comparison_Constant) {
 	std::int32_t val1 = 28, val2 = 99;
-	auto x1 = mkconst(val1),
-			x2 = mkconst(val1),
-			x3 = mkconst(val1),
-			y = mkconst(val2);
+	auto x1 = C(val1),
+			x2 = C(val1),
+			x3 = C(val1),
+			y = C(val2);
 	EXPECT_EQ(*x1, *x1);	// reflexivity
 	EXPECT_EQ(*x1, *x2); EXPECT_EQ(*x2, *x1); // symmetric
 	EXPECT_EQ(*x1, *x2); EXPECT_EQ(*x2, *x3); EXPECT_EQ(*x1, *x3); // transivity
@@ -220,10 +288,11 @@ TEST_F(ExprTest, SmartPointer_Comparison_Constant) {
 }
 
 TEST_F(ExprTest, SmartPointer_Comparison_BinaryOperation) {
-	auto x1  = mkbinop(nullptr, nullptr, Kind::ADD),
-			x2 = mkbinop(nullptr, nullptr, Kind::ADD),
-			x3 = mkbinop(nullptr, nullptr, Kind::ADD),
-			y = mkbinop(nullptr, nullptr, Kind::SUB);
+	auto v = V("x");
+	auto x1  = Apply(v, v, Kind::ADD),
+			x2 = Apply(v, v, Kind::ADD),
+			x3 = Apply(v, v, Kind::ADD),
+			y = Apply(v, v, Kind::SUB);
 	EXPECT_EQ(*x1, *x1);	// reflexivity
 	EXPECT_EQ(*x1, *x2); EXPECT_EQ(*x2, *x1); // symmetric
 	EXPECT_EQ(*x1, *x2); EXPECT_EQ(*x2, *x3); EXPECT_EQ(*x1, *x3); // transivity
@@ -233,10 +302,10 @@ TEST_F(ExprTest, SmartPointer_Comparison_BinaryOperation) {
 }
 
 TEST_F(ExprTest, SmartPointer_Comparison_CrossTest) {
-	auto var = mkvar("var");
-	auto c1 = mkconst(28);
-	auto c2 = mkconst(99);
-	auto op = mkbinop(c1, c2, Kind::ADD);
+	auto var = V("var");
+	auto c1 = C(28),
+			c2 = C(99);
+	auto op = Apply(c1, c2, Kind::ADD);
 	EXPECT_NE(*var, *c1);
 	EXPECT_NE(*c1, *var);
 	EXPECT_NE(*var, *op);
@@ -300,6 +369,7 @@ TEST_F(ExprTest, Cast) {
 	auto p2 = dynamic_cast<Var*>(c);
 	ASSERT_EQ(nullptr, p1);
 	ASSERT_EQ(nullptr, p2);
+	delete v, c;
 }
 
 TEST_F(ExprTest, PointerCast) {

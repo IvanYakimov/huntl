@@ -58,6 +58,9 @@ namespace solver {
 	// private things
 	// TODO: refactoring - extract pattern (helper) code
 	CVC4::Expr CVC4Engine::Prism(SharedExprPtr expr) {
+		if (expr == nullptr)
+			throw std::logic_error("null not valid");
+
 		auto var = std::dynamic_pointer_cast<Var>(expr);
 		auto binop = std::dynamic_pointer_cast<BinOp>(expr);
 		auto cnst = std::dynamic_pointer_cast<ConstI32>(expr);
@@ -89,7 +92,7 @@ namespace solver {
 		}
 
 		// Expression casting failure
-		throw std::invalid_argument("shared expression casting failure");
+		throw std::logic_error("incompatible type of expression");
 	}
 }
 
