@@ -65,6 +65,7 @@ SharedExpr Ugt(SharedExpr l, SharedExpr r);
 SharedExpr Ule(SharedExpr l, SharedExpr r);
 SharedExpr Ult(SharedExpr l, SharedExpr r);
 
+//TODO: total refactoring
   class Expr : public CRTP<Expr, Object> {
   public:
     virtual ~Expr() {}
@@ -89,6 +90,7 @@ SharedExpr Ult(SharedExpr l, SharedExpr r);
       Kind kind_;
     };
 
+  //TODO: add variable type
   class Var final : public CRTP <Var, Expr> {
   public:
 	  Var (std::string name);
@@ -101,6 +103,7 @@ SharedExpr Ult(SharedExpr l, SharedExpr r);
   };
 
   //TODO: add support for 8, 16, and 64-bit constants
+  //TODO: extract type and value to separate class
   class ConstI32 : public CRTP<ConstI32, Expr> {
   public:
 	  ConstI32 (std::int32_t value);
