@@ -38,8 +38,9 @@ unsigned long transform (T val) {
 	return bv.getConst<BitVector>().toInteger().getUnsignedLong();
 };
 
+namespace ability_test{
 template<typename T>
-void ability_test(std::function<unsigned long(T)> tr) {
+void helper(std::function<unsigned long(T)> tr) {
 	using namespace ::CVC4;
 	using Expr = ::CVC4::Expr;
 	using std::cout;
@@ -77,15 +78,20 @@ void ability_test(std::function<unsigned long(T)> tr) {
 	}
 }
 
+void body() {
+	helper<std::int8_t>(transform<std::int8_t>);
+	helper<std::int16_t>(transform<std::int16_t>);
+	helper<std::int32_t>(transform<std::int32_t>);
+	helper<std::int64_t>(transform<std::int64_t>);
+	helper<std::uint8_t>(transform<std::uint8_t>);
+	helper<std::uint16_t>(transform<std::uint16_t>);
+	helper<std::uint32_t>(transform<std::uint32_t>);
+	helper<std::uint64_t>(transform<std::uint64_t>);
+};
+}
+
 TEST_F(CVC4EngineTest, Ability) {
-	ability_test<std::int8_t>(transform<std::int8_t>);
-	ability_test<std::int16_t>(transform<std::int16_t>);
-	ability_test<std::int32_t>(transform<std::int32_t>);
-	ability_test<std::int64_t>(transform<std::int64_t>);
-	ability_test<std::uint8_t>(transform<std::uint8_t>);
-	ability_test<std::uint16_t>(transform<std::uint16_t>);
-	ability_test<std::uint32_t>(transform<std::uint32_t>);
-	ability_test<std::uint64_t>(transform<std::uint64_t>);
+	ability_test::body();
 }
 
 TEST_F(CVC4EngineTest, Prism_nullptr) {
