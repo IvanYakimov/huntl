@@ -29,7 +29,6 @@ void ability_test() {
 	using Expr = ::CVC4::Expr;
 	using std::cout;
 	using std::endl;
-	unsigned int width = 8 * sizeof(T);
 	//std::cout << "T: " << typeid(T).name() << " width = " << width << endl;
 	ExprManager em;
 	SmtEngine smt(&em);
@@ -37,7 +36,8 @@ void ability_test() {
 	Type bitvector32 = em.mkBitVectorType(32);
 	auto min = std::numeric_limits<T>::min();
 	auto max = std::numeric_limits<T>::max();
-	auto proc = [] (T val, std::size_t width, ExprManager &em, SmtEngine &smt, auto conv) -> void {
+	auto proc = [] (T val, ExprManager &em, SmtEngine &smt, auto conv) -> void {
+		unsigned int width = 8 * sizeof(T);
 		Expr bv = em.mkConst(BitVector(width, Integer(val)));
 		//cout << bv << endl;
 		auto ulc = bv.getConst<BitVector>().toInteger().getUnsignedLong();
@@ -63,7 +63,7 @@ void ability_test() {
 		val_list.push_back(-42);
 
 	for (auto i = val_list.begin(); i != val_list.end(); i++) {
-		proc(T(*i), width, em, smt, conv);
+		proc(T(*i), em, smt, conv);
 	}
 }
 
@@ -129,13 +129,7 @@ TEST_F(CVC4EngineTest, GetValue) {
 	// (assert (= x VAL))
 	// (check-sat)
 	// (get-value (x))
-	auto c = C(42);
-	auto x = V("x");
-	auto e = Eq(x, c);
-	Engine()->Assert(e);
-	Engine()->CheckSat();
-	std::int32_t val = Engine()->GetValue(x);
-	//ASSERT_EQ(42, val);
+	//TODO:
 }
 }
 
