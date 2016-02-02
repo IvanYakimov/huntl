@@ -24,25 +24,35 @@ private:
 };
 
 template<typename T>
-void ability_test() {
+unsigned long transform (T val) {
 	using namespace ::CVC4;
 	using Expr = ::CVC4::Expr;
 	using std::cout;
 	using std::endl;
-	//std::cout << "T: " << typeid(T).name() << " width = " << width << endl;
-	ExprManager em;
-	SmtEngine smt(&em);
+	static ExprManager em;
+	static SmtEngine smt(&em);
 	smt.setLogic("QF_BV"); // quantifier free bitvector logic
-	Type bitvector32 = em.mkBitVectorType(32);
+	std::size_t width = 8*sizeof(T);
+	Expr bv = em.mkConst(BitVector(width, Integer(val)));
+	cout << bv << endl;
+	return bv.getConst<BitVector>().toInteger().getUnsignedLong();
+};
+
+template<typename T>
+void ability_test(std::function<unsigned long(T)> tr) {
+	using namespace ::CVC4;
+	using Expr = ::CVC4::Expr;
+	using std::cout;
+	using std::endl;
+	using std::function;
+	std::cout << "T: " << typeid(T).name() << " width = " << 8 * sizeof(T) << endl;
 	auto min = std::numeric_limits<T>::min();
 	auto max = std::numeric_limits<T>::max();
-	auto proc = [] (T val, ExprManager &em, SmtEngine &smt, auto conv) -> void {
-		unsigned int width = 8 * sizeof(T);
-		Expr bv = em.mkConst(BitVector(width, Integer(val)));
-		//cout << bv << endl;
-		auto ulc = bv.getConst<BitVector>().toInteger().getUnsignedLong();
-		//cout << val << " = " << conv(ulc) << endl;
-		auto res = conv(ulc);
+
+	auto proc = [] (T val, function<unsigned long(T)> trans, auto conv) -> void {
+		unsigned long ulc = trans(val);
+		cout << val << " = " << conv(ulc) << endl;
+		T res = conv(ulc);
 		ASSERT_EQ(val, res);
 		ASSERT_EQ(sizeof(T), sizeof(res));
 		ASSERT_EQ(typeid(T), typeid(res));
@@ -63,19 +73,19 @@ void ability_test() {
 		val_list.push_back(-42);
 
 	for (auto i = val_list.begin(); i != val_list.end(); i++) {
-		proc(T(*i), em, smt, conv);
+		proc(T(*i), tr, conv);
 	}
 }
 
 TEST_F(CVC4EngineTest, Ability) {
-	ability_test<std::int8_t>();
-	ability_test<std::int16_t>();
-	ability_test<std::int32_t>();
-	ability_test<std::int64_t>();
-	ability_test<std::uint8_t>();
-	ability_test<std::uint16_t>();
-	ability_test<std::uint32_t>();
-	ability_test<std::uint64_t>();
+	ability_test<std::int8_t>(transform<std::int8_t>);
+	ability_test<std::int16_t>(transform<std::int16_t>);
+	ability_test<std::int32_t>(transform<std::int32_t>);
+	ability_test<std::int64_t>(transform<std::int64_t>);
+	ability_test<std::uint8_t>(transform<std::uint8_t>);
+	ability_test<std::uint16_t>(transform<std::uint16_t>);
+	ability_test<std::uint32_t>(transform<std::uint32_t>);
+	ability_test<std::uint64_t>(transform<std::uint64_t>);
 }
 
 TEST_F(CVC4EngineTest, Prism_nullptr) {
