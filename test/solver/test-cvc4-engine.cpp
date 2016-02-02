@@ -23,6 +23,83 @@ private:
 	CVC4Engine *engine_ = nullptr;
 };
 
+template<std::size_t size, typename T>
+void ability_test() {
+	using namespace ::CVC4;
+	using Expr = ::CVC4::Expr;
+	using std::cout;
+	using std::endl;
+	ExprManager em;
+	SmtEngine smt(&em);
+	smt.setLogic("QF_BV"); // quantifier free bitvector logic
+	Type bitvector32 = em.mkBitVectorType(32);
+	Expr x = em.mkVar("x", bitvector32),
+			y = em.mkVar("y", bitvector32);
+	auto min = std::numeric_limits<std::int32_t>::min();
+	auto max = std::numeric_limits<std::int32_t>::max();
+	Expr c0 = em.mkConst(BitVector(32, Integer(0)));
+	Expr c42 = em.mkConst(BitVector(32, Integer(42)));
+	Expr cn42 = em.mkConst(BitVector(32, Integer(-42)));
+	Expr cmax = em.mkConst(BitVector(32, Integer(max)));
+	Expr cmin = em.mkConst(BitVector(32, Integer(min)));
+	cout << c0 << endl;
+	cout << c42 << endl;
+	cout << cn42 << endl;
+	cout << cmax << endl;
+	cout << cmin << endl;
+	auto c0_L = c0.getConst<BitVector>().toInteger().getUnsignedLong();
+	auto c42_L = c42.getConst<BitVector>().toInteger().getUnsignedLong();
+	auto cn42_L = cn42.getConst<BitVector>().toInteger().getUnsignedLong();
+	auto cmax_L = cmax.getConst<BitVector>().toInteger().getUnsignedLong();
+	auto cmin_L = cmin.getConst<BitVector>().toInteger().getUnsignedLong();
+	auto conv = [] (unsigned long long_val) -> std::int32_t {
+		return long_val bitand (compl 0);
+	};
+	cout << 0 << " = " << conv(c0_L) << endl;
+	cout << 42 << " = " << conv(c42_L) << endl;
+	cout << -42 << " = " << conv(cn42_L) << endl;
+	cout << max << " = " << conv(cmax_L) << endl;
+	cout << min << " = " << conv(cmin_L) << endl;
+}
+
+TEST_F(CVC4EngineTest, Ability) {
+	using namespace ::CVC4;
+	using Expr = ::CVC4::Expr;
+	using std::cout;
+	using std::endl;
+	ExprManager em;
+	SmtEngine smt(&em);
+	smt.setLogic("QF_BV"); // quantifier free bitvector logic
+	Type bitvector32 = em.mkBitVectorType(32);
+	Expr x = em.mkVar("x", bitvector32),
+			y = em.mkVar("y", bitvector32);
+	auto min = std::numeric_limits<std::int32_t>::min();
+	auto max = std::numeric_limits<std::int32_t>::max();
+	Expr c0 = em.mkConst(BitVector(32, Integer(0)));
+	Expr c42 = em.mkConst(BitVector(32, Integer(42)));
+	Expr cn42 = em.mkConst(BitVector(32, Integer(-42)));
+	Expr cmax = em.mkConst(BitVector(32, Integer(max)));
+	Expr cmin = em.mkConst(BitVector(32, Integer(min)));
+	cout << c0 << endl;
+	cout << c42 << endl;
+	cout << cn42 << endl;
+	cout << cmax << endl;
+	cout << cmin << endl;
+	auto c0_L = c0.getConst<BitVector>().toInteger().getUnsignedLong();
+	auto c42_L = c42.getConst<BitVector>().toInteger().getUnsignedLong();
+	auto cn42_L = cn42.getConst<BitVector>().toInteger().getUnsignedLong();
+	auto cmax_L = cmax.getConst<BitVector>().toInteger().getUnsignedLong();
+	auto cmin_L = cmin.getConst<BitVector>().toInteger().getUnsignedLong();
+	auto conv = [] (unsigned long long_val) -> std::int32_t {
+		return long_val bitand (compl 0);
+	};
+	cout << 0 << " = " << conv(c0_L) << endl;
+	cout << 42 << " = " << conv(c42_L) << endl;
+	cout << -42 << " = " << conv(cn42_L) << endl;
+	cout << max << " = " << conv(cmax_L) << endl;
+	cout << min << " = " << conv(cmin_L) << endl;
+}
+
 TEST_F(CVC4EngineTest, Prism_nullptr) {
 	bool nlp_ex = false;
 	try {

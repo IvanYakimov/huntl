@@ -5,6 +5,7 @@
 #include <map>
 
 namespace solver {
+
 enum Kind{
   		  /* arithmetical */
   		  ADD,
