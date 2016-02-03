@@ -7,7 +7,8 @@
 class Object : public std::enable_shared_from_this<Object> {
 public:
 	virtual ~Object() {}
-	virtual const std::string ToString() = 0;
+	//TODO: declare as a const method
+	virtual const std::string ToString() /* const */ = 0;
 	virtual bool Equals (const Object& rhs) const = 0;
 };
 
@@ -21,8 +22,6 @@ public:
  */
 template <class T, class B>
 class CRTP : public B {
-protected:
-	struct guard {explicit guard(){}};
 public:
 	  friend bool operator==(const T& a, const T& b) { return a.Equals(b); }
 	  friend bool operator!=(const T& a, const T& b) { return !a.Equals(b); }
