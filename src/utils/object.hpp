@@ -31,6 +31,7 @@ public:
 
 template <class T>
 static inline bool EqualsHelper(const T& lhs, const Object& rhs, std::function<bool(const T&, const T&)> cmp) {
+	//TODO: check correctness of this method
 	auto right = dynamic_cast<const T*>(&rhs);
 	return right == nullptr ? false : cmp(lhs, *right);
 }

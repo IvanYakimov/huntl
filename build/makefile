@@ -1,14 +1,17 @@
 SHELL = /bin/sh
 
-SOLVER = expr.o kind.o cvc4-engine.o type.o
-#expr-factory.o 
-SOLVER_TEST = test-runner.o test-expr.o test-cvc4-engine.o test-z3-engine.o 
-#test-expr-factory.o 
+SOLVER = expr.o kind.o cvc4-engine.o type.o value.o
+SOLVER_TEST = 	test-runner.o test-expr.o test-cvc4-engine.o test-z3-engine.o \
+				test-value.o test-type.o 
+
 PARSER = parser.o pattern-matcher.o interpreter.o local-memory.o
 PARSER_TEST = 
+
 UTILS = interruption.o
+
 OBJ_TEST = $(SOLVER_TEST) $(PARSER_TEST)
 OBJ = $(SOLVER) $(PARSER) $(UTILS)
+
 CXX = g++
 CXXFLAGS = -fdiagnostics-color=always -g -std=c++14 -fpic -rdynamic \
 	$(filter-out -g -fno-exceptions -O2 -std=c++11, $(LLVMFLAGS)) $(DBGFLAGS) \
@@ -18,6 +21,7 @@ CVC4FLAGS = -lcvc4 -lgmp
 Z3FLAGS = /usr/lib/libz3.so
 LLVMFLAGS = $(shell llvm-config --cxxflags)
 DBGFLAGS = -D DBG
+
 SRC = ../src
 TST = ../test
 

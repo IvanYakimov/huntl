@@ -60,11 +60,13 @@ SharedExpr Ult(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::ULT); }
 // Variable
 //TODO: solver compilation problem
 
-Var::Var (std::string name) {
-	if (not name.empty())
+Var::Var (std::string name, SharedType type) {
+	if (not name.empty() and type != nullptr) {
 		name_ = name;
+		type_ = type;
+	}
 	else
-		throw std::logic_error("empty string not valid");
+		throw std::logic_error("invalid arguments");
 }
 Var::~Var() {}
 
