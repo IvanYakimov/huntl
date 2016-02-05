@@ -3,6 +3,7 @@
 
 // PROJECT
 #include "../utils/object.hpp"
+#include "../utils/common-types.hpp"
 
 // SLT
 #include <limits>
@@ -17,9 +18,6 @@ namespace solver {
 	using SharedBaseRawInt = std::shared_ptr<BaseRawInt>;
 	template<typename T>
 	using SharedRawInt = std::shared_ptr<RawInt<T>>;
-
-	using Alignment = std::size_t;
-	using Width = unsigned short;
 
 	class Value : public CRTP <Value, Object> {
 	public:

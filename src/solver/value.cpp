@@ -17,7 +17,7 @@ namespace solver {
 
 	template<typename T>
 	std::string RawInt<T>::ToString() const {
-		return "i" + std::to_string(GetWidth()) + " " + std::to_string(GetValue());
+		return (IsSigned()?"i":"u") + std::to_string(GetWidth()) + " " + std::to_string(GetValue());
 	}
 
 	template<typename T>
