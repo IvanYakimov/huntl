@@ -1,8 +1,12 @@
 SHELL = /bin/sh
 
-SOLVER = expr.o kind.o cvc4-engine.o type.o value.o
-SOLVER_TEST = 	test-runner.o test-expr.o test-cvc4-engine.o test-z3-engine.o \
-				test-value.o test-type.o 
+SOLVER = kind.o value.o 
+#type.o 
+#expr.o cvc4-engine.o 
+SOLVER_TEST = 	test-runner.o test-value.o 
+#test-type.o 
+#test-expr.o test-cvc4-engine.o 
+#test-z3-engine.o
 
 PARSER = parser.o pattern-matcher.o interpreter.o local-memory.o
 PARSER_TEST = 

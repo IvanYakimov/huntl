@@ -8,11 +8,13 @@
 # include <bitset>
 # include <iostream>
 # include <cstring>
+
 // Project
 # include "../utils/memory.hpp"
 # include "../utils/object.hpp"
 # include "kind.hpp"
-# include "type.hpp"
+#include "type.hpp"
+# include "value.hpp"
 
 namespace solver
 {
@@ -29,7 +31,7 @@ namespace solver
 	{
 	public:
 		static SharedExpr MkVar (std::string name);
-		static SharedExpr MkConstI32 (std::int32_t val);
+		static SharedExpr MkConst (SharedValue val);
 		static SharedExpr MkBinOp (SharedExpr a, SharedExpr b, Kind op_code);
 	};
 
@@ -101,17 +103,15 @@ namespace solver
 		SharedType type_;
 	};
 
-	//TODO: add support for 8, 16, and 64-bit constants
-	//TODO: extract type and value to separate class
-	class ConstI32 : public CRTP<ConstI32, Expr> {
+	class Const : public CRTP<Const, Expr> {
 	public:
-		ConstI32 (std::int32_t value);
-		virtual ~ConstI32();
+		Const (SharedValue val);
+		virtual ~Const();
 		virtual const std::string ToString ();
 		virtual bool Equals(const Object& rhs) const;
-		std::int32_t GetValue();
+		SharedValue GetValue();
 	private:
-		const std::int32_t value_;
+		const SharedValue value_;
 	};
 	// Unsigned Integer Constant
 }

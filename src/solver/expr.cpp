@@ -10,8 +10,8 @@ SharedExpr ExprFactory :: MkVar (std::string name) {
 	return std::make_shared <Var>(name);
 }
 
-SharedExpr ExprFactory :: MkConstI32 (std::int32_t val) {
-	return std::make_shared <ConstI32>(val);
+SharedExpr ExprFactory :: MkConst (SharedValue val) {
+	//return std::make_shared <ConstI32>(val);
 }
 
 SharedExpr ExprFactory :: MkBinOp (SharedExpr a, SharedExpr b, Kind op_code) {

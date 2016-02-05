@@ -15,7 +15,6 @@ namespace solver {
 //TODO: global refactoring - make a template class
 class CVC4EngineTest : public ::testing::Test {
 public:
-	SharedExpr mkvar(std::string name) {ExprFactory::MkVar(name);}
 	void SetUp() {engine_ = new CVC4Engine();}
 	void TearDown() {delete engine_;}
 	CVC4Engine *Engine() const { return engine_; }

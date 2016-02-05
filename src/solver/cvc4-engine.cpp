@@ -39,20 +39,13 @@ namespace solver {
 		}
 	}
 
-	std::int32_t CVC4Engine::GetValue(SharedExpr expr) {
+	SharedValue CVC4Engine::GetValue(SharedExpr expr) {
 		auto var = std::dynamic_pointer_cast<Var>(expr);
 		if (!var)
 			throw std::bad_cast();
 		auto cvcexpr = symbol_table_.lookup(var->GetName());
 		auto btv_const = cvcexpr.getConst<CVC4::BitVector>();
 		return FromBitVector(btv_const);
-	}
-
-	std::int32_t CVC4Engine::FromBitVector(CVC4::BitVector btv_const) {
-		auto integer_const = btv_const.toInteger();
-		auto long_val = integer_const.getLong();
-		std::int32_t int_val = long_val bitand (compl 0);
-		return int_val;
 	}
 
 	// private things

@@ -7,29 +7,45 @@
 #include <memory>
 
 namespace solver {
-	class Type;
-	class BtvType;
-
-	using SharedType = std::shared_ptr<Type>;
-	using SharedBtvType = std::shared_ptr<BtvType>;
-
 	class Type : public CRTP <Type, Object> {
 	public:
 		virtual ~Type() {}
-		virtual const std::string ToString() = 0;
-		virtual bool Equals (const Object& rhs) const = 0;
+		virtual bool IsRawIntTy() { return false; }
 	};
 
-	using BTVWidth = std::uint16_t;
-	class BtvType : public CRTP<BtvType, Type> {
-		BtvType(BTVWidth width);
-		BTVWidth GetBitWidth();
-		std::size_t GetAlignment();
-		const std::string ToString() final;
-		bool Equals (const Object& rhs) const final;
+	class GenericRawIntType : public CRTP <GenericRawIntType, Type> {
+	public:
+		virtual ~GenericRawIntType() {}
+		virtual unsigned int Width() = 0;
+		virtual std::size_t Alignment() = 0;
+		virtual bool IsRawIntTy() final { return true; }
+	};
+
+	template<typename T>
+	class RawIntType : public CRTP <RawIntType<T>, GenericRawIntType> {
+	public:
+		virtual ~RawIntType() {}
+		RawIntType ();
+		virtual const std::string ToString() final;
+		virtual bool Equals (const Object& rhs) final;
+		virtual unsigned int Width() final;
+		virtual std::size_t Alignment() final;
+		virtual bool IsSigned() final;
 	private:
-		const BTVWidth width_;
 	};
 }
 
 #endif /* __TYPE_HPP__ */
+
+
+
+
+
+
+
+
+
+
+
+
+
