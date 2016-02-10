@@ -9,7 +9,7 @@ namespace solver {
 	template<typename T>
 	bool RawIntType<T>::Equals (const Object& rhs) const {
 		auto f = [] (auto l, auto r) -> bool {return true;};
-		return EqualsHelper<T>(*this, rhs, f);
+		return EqualsHelper<RawIntType<T>>(*this, rhs, f);
 	}
 
 	template<typename T>

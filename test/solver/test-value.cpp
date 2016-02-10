@@ -53,25 +53,29 @@ namespace solver {
 		using std::make_tuple;
 		using std::dynamic_pointer_cast;
 		using std::get;
-		using the_tuple = std::tuple<SharedValue, bool>;
+		using the_tuple = std::tuple<SharedValue, bool, Alignment, Width>;
 		using the_list = std::list<the_tuple>;
 
 		auto checker = [] (the_tuple t) -> void {
 			auto val = dynamic_pointer_cast<BaseRawInt>(get<0>(t));
 			auto is_sign = get<1>(t);
+			auto align = get<2>(t);
+			auto width = get<3>(t);
 			ASSERT_EQ(is_sign, val->IsSigned());
+			ASSERT_EQ(align, val->GetAlignment());
+			ASSERT_EQ(width, val->GetWidth());
 		};
 
 		the_list val_list = {
-				make_tuple(MkRawInt<std::int8_t>(0), true),
-				make_tuple(MkRawInt<std::int16_t>(0), true),
-				make_tuple(MkRawInt<std::int32_t>(0), true),
-				make_tuple(MkRawInt<std::int64_t>(0), true),
+				make_tuple(MkRawInt<std::int8_t>(0), true, 1, 8),
+				make_tuple(MkRawInt<std::int16_t>(0), true, 2, 16),
+				make_tuple(MkRawInt<std::int32_t>(0), true, 4, 32),
+				make_tuple(MkRawInt<std::int64_t>(0), true, 8, 64),
 
-				make_tuple(MkRawInt<std::uint8_t>(0), false),
-				make_tuple(MkRawInt<std::uint16_t>(0), false),
-				make_tuple(MkRawInt<std::uint32_t>(0), false),
-				make_tuple(MkRawInt<std::uint64_t>(0), false)
+				make_tuple(MkRawInt<std::uint8_t>(0), false, 1, 8),
+				make_tuple(MkRawInt<std::uint16_t>(0), false, 2, 16),
+				make_tuple(MkRawInt<std::uint32_t>(0), false, 4, 32),
+				make_tuple(MkRawInt<std::uint64_t>(0), false, 8, 64)
 		};
 
 		for_each(val_list.begin(), val_list.end(), checker);

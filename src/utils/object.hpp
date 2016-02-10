@@ -35,7 +35,7 @@ public:
 };
 
 template <class T>
-//TODO: static?
+//TODO: static? - create .o file for object
 static inline bool EqualsHelper(const T& lhs, const Object& rhs, std::function<bool(const T&, const T&)> cmp) {
 	//TODO: check correctness of this method
 	auto right = dynamic_cast<const T*>(&rhs);
