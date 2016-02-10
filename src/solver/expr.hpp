@@ -2,20 +2,21 @@
 # define __EXPR_HPP__
 
 // STL
-# include <memory>
-# include <map>
-# include <list>
-# include <string>
-# include <bitset>
-# include <iostream>
-# include <cstring>
+#include <memory>
+#include <map>
+#include <list>
+#include <string>
+#include <bitset>
+#include <iostream>
+#include <cstring>
 
 // Project
-# include "../utils/memory.hpp"
-# include "../utils/object.hpp"
-# include "kind.hpp"
+#include "../utils/memory.hpp"
+#include "../utils/object.hpp"
+#include "kind.hpp"
 #include "type.hpp"
-# include "value.hpp"
+#include "value.hpp"
+
 
 namespace solver
 {
@@ -27,21 +28,6 @@ namespace solver
 	using ExprPtr = std::shared_ptr<Expr>;
 	using VarPtr = std::shared_ptr<Var>;
 	using BinOpPtr = std::shared_ptr<BinOp>;
-
-	class ExprManager
-	{
-	public:
-		ExprManager();
-		~ExprManager();
-		ExprPtr MkVar(std::string name, TypePtr type);
-		ExprPtr MkBinOp (ExprPtr a, ExprPtr b, Kind kind);
-		ExprPtr MkConst(ValuePtr val);
-		template<typename T> ValuePtr ProduceInt(T val);
-		template<typename T> TypePtr GetIntTy();
-
-	private:
-		std::list<TypePtr> type_table_;
-	};
 
 	//TODO: total refactoring
 	class Expr : public CRTP<Expr, Object> {

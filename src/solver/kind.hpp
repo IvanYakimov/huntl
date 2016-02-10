@@ -4,9 +4,11 @@
 //STL
 #include <map>
 
-namespace solver {
+#include "../utils/common-types.hpp"
 
-enum Kind{
+namespace solver {
+	enum class Kind;
+	enum class Kind{
   		  /* arithmetical */
   		  ADD,
   		  SUB,

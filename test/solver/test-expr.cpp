@@ -2,61 +2,63 @@
 // https://github.com/google/googletest/blob/master/googletest/docs/Primer.mdy
 
 // Project
-# include "../../src/solver/expr.hpp"
-# include "../../src/utils/object.hpp"
+#include "../../src/solver/expr.hpp"
+#include "../../src/solver/expr-manager.hpp"
+#include "../../src/utils/object.hpp"
 
 // Google Test
-# include "gtest/gtest.h"
+#include "gtest/gtest.h"
 
 // STL
-# include <memory>
-# include <string>
-# include <iostream>
-# include <map>
-# include <list>
-# include <tuple>
-# include <functional>
+#include <memory>
+#include <string>
+#include <iostream>
+#include <map>
+#include <list>
+#include <tuple>
+#include <functional>
 
 using std::shared_ptr;
 
 namespace solver {
 class ExprTest : public ::testing::Test {
-public:
-	ExprPtr mkvar (std::string name) {
-		return std::make_shared<Var>(name);
-	}
-	ExprPtr mkconst(std::int32_t value) {
-		return std::make_shared<ConstI32>(value);
-	}
-
-	ExprPtr mkbinop(ExprPtr left, ExprPtr right, Kind opcode) {
-		return std::make_shared<BinOp>(left, right, opcode);
-	}
+	public:
+		ExprManager em;
 };
 
 //-------------------------------------------------------------------
 // Variable
 
 TEST_F(ExprTest, Variable_Creation) {
-	bool status = false;
-	try {
-		Var v(nullptr);
-	}
-	catch (std::logic_error &e) {
-		status = true;
-	}
-	ASSERT_TRUE(status);
+	using namespace std;
+	using the_tuple = tuple<string, TypePtr, bool>;
+	using the_list = list<the_tuple>;
 
-	status = false;
-	try {
-		Var v("");
-	}
-	catch (std::logic_error &e) {
-		status = true;
-	}
-	ASSERT_TRUE(status);
+	the_list val_list = {
+			//make_tuple(nullptr, nullptr, true),
+			make_tuple("", nullptr, true),
+			make_tuple("x", nullptr, true),
+			make_tuple("x", em.GetIntTy<int32_t>(), false)
+	};
+
+	auto checker = [] (the_tuple tpl) {
+		string name = get<0>(tpl);
+		TypePtr ty = get<1>(tpl);
+		bool throws_exception = get<2>(tpl);
+		bool thrown = false;
+		try {
+			Var v(name, ty);
+		}
+		catch (exception &ex) {
+			thrown = true;
+		}
+		ASSERT_EQ(throws_exception, thrown);
+	};
+
+	for_each(val_list.begin(), val_list.end(), checker);
 }
 
+/*
 TEST_F(ExprTest, Variable_Accessors) {
 	Var v("x");
 	EXPECT_EQ("x", v.ToString());
@@ -225,7 +227,7 @@ TEST_F(ExprTest, Kind) {
 	typedef map_type::iterator it_type;
 
 	map_type m = {
-			/* arithmetical */
+			// arithmetical
 			{Kind::ADD, "add"},
 			{Kind::SUB, "sub"},
 			{Kind::MUL, "mul"},
@@ -233,12 +235,12 @@ TEST_F(ExprTest, Kind) {
 			{Kind::LSHR, "lshr"},
 			{Kind::ASHR, "ashr"},
 
-			/* logical */
+			// logical
 			{Kind::AND, "and"},
 			{Kind::OR, "or"},
 			{Kind::XOR, "xor"},
 
-			/* Comparisons */
+			// Comparisons
 			{Kind::EQ, "eq"},
 			{Kind::NE, "ne"},
 			{Kind::UGE, "uge"},
@@ -405,7 +407,7 @@ TEST_F(ExprTest, PointerCast) {
 	ASSERT_EQ(nullptr, pbc);
 	ASSERT_EQ(*b, *pbb);
 }
-
+*/
 }
 
 

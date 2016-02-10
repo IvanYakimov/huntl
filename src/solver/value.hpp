@@ -9,15 +9,16 @@
 #include <limits>
 
 namespace solver {
+	using Alignment = std::size_t;
+	using Width = unsigned short;
+
 	class Value;
 	class BasicInt;
-	template<typename T>
-	class Int;
+	template<typename T> class Int;
 
 	using ValuePtr = std::shared_ptr<Value>;
 	using BasicIntPtr = std::shared_ptr<BasicInt>;
-	template<typename T>
-	using IntPtr = std::shared_ptr<Int<T>>;
+	template<typename T> using IntPtr = std::shared_ptr<Int<T>>;
 
 	class Value : public CRTP <Value, Object> {
 	public:

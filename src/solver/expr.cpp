@@ -4,57 +4,6 @@ using std::function;
 
 namespace solver
 {//-------------------------------------------------------------------
-	ExprManager::ExprManager() : type_table_ {
-		std::make_shared<SInt8Ty>(),
-		std::make_shared<SInt16Ty>(),
-		std::make_shared<SInt32Ty>(),
-		std::make_shared<SInt64Ty>(),
-		std::make_shared<UInt8Ty>(),
-		std::make_shared<UInt16Ty>(),
-		std::make_shared<UInt32Ty>(),
-		std::make_shared<UInt64Ty>()} {
-	}
-
-	ExprManager::~ExprManager() {
-
-	}
-
-	ExprPtr ExprManager::MkVar(std::string name, TypePtr type) {
-		return std::make_shared<Var>(name, type);
-	}
-
-	ExprPtr ExprManager::MkConst (ValuePtr val) {
-		return std::make_shared<Const>(val);
-	}
-
-	ExprPtr ExprManager :: MkBinOp (ExprPtr a, ExprPtr b, Kind op_code) {
-		return std::make_shared <BinOp>(a, b, op_code);
-	}
-
-	template<typename T> ValuePtr ProduceInt(T val) {
-		return std::make_shared<Int<T>>(val);
-	}
-
-	//TODO: testing
-	template<typename T> TypePtr ExprManager::GetIntTy() {
-		auto check_ty = [] (TypePtr ty) -> bool {
-			if (instanceof<BasicIntTy>(ty)) {
-				auto int_ty = std::dynamic_pointer_cast<BasicIntTy>(ty);
-				if (int_ty->IsSigned == std::numeric_limits<T>::is_signed
-						and int_ty->GetWidth() == sizeof(T)*8
-						and int_ty->GetAlignment() == sizeof(T))
-					return true;
-			}
-		};
-
-		for (auto i = type_table_.begin(); i != type_table_.end(); i++) {
-			if (check_ty(*i) == true)
-				return *i;
-		}
-		/* type not found */
-		return nullptr;
-	}
-
 	//-------------------------------------------------------------------
 	// Variable
 	//TODO: solver compilation problem
