@@ -10,7 +10,7 @@ SharedExpr ExprFactory :: MkVar (std::string name) {
 	return std::make_shared <Var>(name);
 }
 
-SharedExpr ExprFactory :: MkConst (SharedValue val) {
+SharedExpr ExprFactory :: MkConst (ValuePtr val) {
 	//return std::make_shared <ConstI32>(val);
 }
 

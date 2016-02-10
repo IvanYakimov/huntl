@@ -13,14 +13,14 @@ namespace solver {
 	class ValueTest : public ::testing::Test {
 	public:
 		template<typename T>
-		SharedValue MkRawInt(T val) {return std::make_shared<RawInt<T>>(val);}
+		ValuePtr MkRawInt(T val) {return std::make_shared<Int<T>>(val);}
 	};
 
 	TEST_F(ValueTest, Comparison) {
 		int c = 42,
 				c2 = 170;
 
-		SharedValue x1 = MkRawInt<std::int32_t>(c),
+		ValuePtr x1 = MkRawInt<std::int32_t>(c),
 				x2 = MkRawInt<std::int32_t>(c),
 				x3 = MkRawInt<std::int32_t>(c),
 				y = MkRawInt<std::int32_t>(c2),	// c2!
@@ -38,26 +38,26 @@ namespace solver {
 
 	//TODO: parametrized combinatorial testing
 	TEST_F(ValueTest, Cast) {
-		SharedValue val1 = MkRawInt<std::int32_t>(42);
+		ValuePtr val1 = MkRawInt<std::int32_t>(42);
 
 		ASSERT_TRUE(instanceof<Value>(val1));
-		ASSERT_TRUE(instanceof<BaseRawInt>(val1));
-		ASSERT_TRUE(instanceof<RawInt32>(val1));
+		ASSERT_TRUE(instanceof<BasicInt>(val1));
+		ASSERT_TRUE(instanceof<SInt32>(val1));
 
-		ASSERT_FALSE(instanceof<RawInt8>(val1));
-		ASSERT_FALSE(instanceof<RawInt16>(val1));
-		ASSERT_FALSE(instanceof<RawInt64>(val1));
+		ASSERT_FALSE(instanceof<SInt8>(val1));
+		ASSERT_FALSE(instanceof<SInt16>(val1));
+		ASSERT_FALSE(instanceof<SInt64>(val1));
 	}
 
 	TEST_F(ValueTest, IsSigned) {
 		using std::make_tuple;
 		using std::dynamic_pointer_cast;
 		using std::get;
-		using the_tuple = std::tuple<SharedValue, bool, Alignment, Width>;
+		using the_tuple = std::tuple<ValuePtr, bool, Alignment, Width>;
 		using the_list = std::list<the_tuple>;
 
 		auto checker = [] (the_tuple t) -> void {
-			auto val = dynamic_pointer_cast<BaseRawInt>(get<0>(t));
+			auto val = dynamic_pointer_cast<BasicInt>(get<0>(t));
 			auto is_sign = get<1>(t);
 			auto align = get<2>(t);
 			auto width = get<3>(t);

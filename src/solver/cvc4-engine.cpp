@@ -39,7 +39,7 @@ namespace solver {
 		}
 	}
 
-	SharedValue CVC4Engine::GetValue(SharedExpr expr) {
+	ValuePtr CVC4Engine::GetValue(SharedExpr expr) {
 		auto var = std::dynamic_pointer_cast<Var>(expr);
 		if (!var)
 			throw std::bad_cast();

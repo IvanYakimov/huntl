@@ -10,21 +10,21 @@
 
 namespace solver {
 	class Value;
-	class BaseRawInt;
+	class BasicInt;
 	template<typename T>
-	class RawInt;
+	class Int;
 
-	using SharedValue = std::shared_ptr<Value>;
-	using SharedBaseRawInt = std::shared_ptr<BaseRawInt>;
+	using ValuePtr = std::shared_ptr<Value>;
+	using BasicIntPtr = std::shared_ptr<BasicInt>;
 	template<typename T>
-	using SharedRawInt = std::shared_ptr<RawInt<T>>;
+	using IntPtr = std::shared_ptr<Int<T>>;
 
 	class Value : public CRTP <Value, Object> {
 	public:
 		virtual ~Value() {}
 	};
 
-	class BaseRawInt : public CRTP <BaseRawInt, Value> {
+	class BasicInt : public CRTP <BasicInt, Value> {
 	public:
 		virtual Width GetWidth() const = 0;
 		virtual Alignment GetAlignment() const = 0;
@@ -32,10 +32,10 @@ namespace solver {
 	};
 
 	template<typename T>
-	class RawInt : public CRTP <RawInt<T>, BaseRawInt> {
+	class Int : public CRTP <Int<T>, BasicInt> {
 	public:
-		virtual ~RawInt();
-		RawInt(T value);
+		virtual ~Int();
+		Int(T value);
 		virtual std::string ToString() const final;
 		virtual bool Equals (const Object& rhs) const final;
 		T GetValue() const;
@@ -46,29 +46,29 @@ namespace solver {
 		T value_;
 	};
 
-	using RawInt8 = RawInt<std::int8_t>;
-	template class RawInt<std::int8_t>;
+	using SInt8 = Int<std::int8_t>;
+	template class Int<std::int8_t>;
 
-	using RawInt16 = RawInt<std::int16_t>;
-	template class RawInt<std::int16_t>;
+	using SInt16 = Int<std::int16_t>;
+	template class Int<std::int16_t>;
 
-	using RawInt32 = RawInt<std::int32_t>;
-	template class RawInt<std::int32_t>;
+	using SInt32 = Int<std::int32_t>;
+	template class Int<std::int32_t>;
 
-	using RawInt64 = RawInt<std::int64_t>;
-	template class RawInt<std::int64_t>;
+	using SInt64 = Int<std::int64_t>;
+	template class Int<std::int64_t>;
 
-	using RawUInt8 = RawInt<std::uint8_t>;
-	template class RawInt<std::uint8_t>;
+	using UInt8 = Int<std::uint8_t>;
+	template class Int<std::uint8_t>;
 
-	using RawUInt16 = RawInt<std::uint16_t>;
-	template class RawInt<std::uint16_t>;
+	using UInt16 = Int<std::uint16_t>;
+	template class Int<std::uint16_t>;
 
-	using RawUInt32 = RawInt<std::uint32_t>;
-	template class RawInt<std::uint32_t>;
+	using UInt32 = Int<std::uint32_t>;
+	template class Int<std::uint32_t>;
 
-	using RawUInt64 = RawInt<std::uint64_t>;
-	template class RawInt<std::uint64_t>;
+	using UInt64 = Int<std::uint64_t>;
+	template class Int<std::uint64_t>;
 }
 
 #endif /* __VALUE_HPP__ */

@@ -23,7 +23,7 @@ namespace solver {
 		virtual ~CVC4Engine();
 		virtual void Assert(SharedExpr expr) final;
 		virtual Sat CheckSat() final;
-		virtual SharedValue GetValue(SharedExpr varible) final;
+		virtual ValuePtr GetValue(SharedExpr varible) final;
 		virtual void Push() final;
 		virtual void Pop() final;
 #ifndef DBG

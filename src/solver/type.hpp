@@ -11,30 +11,30 @@
 
 namespace solver {
 	class Type;
-	class BaseRawIntType;
+	class BasicIntTy;
 	template<typename T>
-	class RawIntType;
+	class IntTy;
 
-	using SharedType = std::shared_ptr<Type>;
+	using TypePtr = std::shared_ptr<Type>;
 
 	class Type : public CRTP <Type, Object> {
 	public:
 		virtual ~Type() {}
 	};
 
-	class BaseRawIntType : public CRTP <BaseRawIntType, Type> {
+	class BasicIntTy : public CRTP <BasicIntTy, Type> {
 	public:
-		virtual ~BaseRawIntType() {}
+		virtual ~BasicIntTy() {}
 		virtual Width GetWidth() const = 0;
 		virtual Alignment GetAlignment() const = 0;
 		virtual bool IsSigned() const = 0;
 	};
 
 	template<typename T>
-	class RawIntType : public CRTP <RawIntType<T>, BaseRawIntType> {
+	class IntTy : public CRTP <IntTy<T>, BasicIntTy> {
 	public:
-		virtual ~RawIntType() {}
-		RawIntType () {}
+		virtual ~IntTy() {}
+		IntTy () {}
 		virtual std::string ToString() const final;
 		virtual bool Equals (const Object& rhs) const final;
 		virtual Width GetWidth() const final;
@@ -42,29 +42,29 @@ namespace solver {
 		virtual bool IsSigned() const final;
 	};
 
-	template class RawIntType<std::int8_t>;
-	using RawInt8Ty = RawIntType<std::int8_t>;
+	template class IntTy<std::int8_t>;
+	using SInt8Ty = IntTy<std::int8_t>;
 
-	template class RawIntType<std::int16_t>;
-	using RawInt16Ty = RawIntType<std::int16_t>;
+	template class IntTy<std::int16_t>;
+	using SInt16Ty = IntTy<std::int16_t>;
 
-	template class RawIntType<std::int32_t>;
-	using RawInt32Ty = RawIntType<std::int32_t>;
+	template class IntTy<std::int32_t>;
+	using SInt32Ty = IntTy<std::int32_t>;
 
-	template class RawIntType<std::int64_t>;
-	using RawInt64Ty = RawIntType<std::int64_t>;
+	template class IntTy<std::int64_t>;
+	using SInt64Ty = IntTy<std::int64_t>;
 
-	template class RawIntType<std::uint8_t>;
-	using RawUInt8Ty = RawIntType<std::uint8_t>;
+	template class IntTy<std::uint8_t>;
+	using UInt8Ty = IntTy<std::uint8_t>;
 
-	template class RawIntType<std::uint16_t>;
-	using RawUInt16Ty = RawIntType<std::uint16_t>;
+	template class IntTy<std::uint16_t>;
+	using UInt16Ty = IntTy<std::uint16_t>;
 
-	template class RawIntType<std::uint32_t>;
-	using RawUInt32Ty = RawIntType<std::uint32_t>;
+	template class IntTy<std::uint32_t>;
+	using UInt32Ty = IntTy<std::uint32_t>;
 
-	template class RawIntType<std::uint64_t>;
-	using RawUInt64Ty = RawIntType<std::uint64_t>;
+	template class IntTy<std::uint64_t>;
+	using UInt64Ty = IntTy<std::uint64_t>;
 }
 
 #endif /* __TYPE_HPP__ */

@@ -31,7 +31,7 @@ namespace solver
 	{
 	public:
 		static SharedExpr MkVar (std::string name);
-		static SharedExpr MkConst (SharedValue val);
+		static SharedExpr MkConst (ValuePtr val);
 		static SharedExpr MkBinOp (SharedExpr a, SharedExpr b, Kind op_code);
 	};
 
@@ -105,13 +105,13 @@ namespace solver
 
 	class Const : public CRTP<Const, Expr> {
 	public:
-		Const (SharedValue val);
+		Const (ValuePtr val);
 		virtual ~Const();
 		virtual const std::string ToString ();
 		virtual bool Equals(const Object& rhs) const;
-		SharedValue GetValue();
+		ValuePtr GetValue();
 	private:
-		const SharedValue value_;
+		const ValuePtr value_;
 	};
 	// Unsigned Integer Constant
 }

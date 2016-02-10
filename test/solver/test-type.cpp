@@ -13,12 +13,12 @@ namespace solver {
 	class TypeTest : public ::testing::Test {
 	public:
 		template<typename T>
-		SharedType MkTy() { return std::make_shared<RawIntType<T>>(); }
+		TypePtr MkTy() { return std::make_shared<IntTy<T>>(); }
 	};
 
 	TEST_F(TypeTest, Comparison) {
 		using namespace std;
-		SharedType x1 = MkTy<int32_t>(),
+		TypePtr x1 = MkTy<int32_t>(),
 				x2 = MkTy<int32_t>(),
 				x3 = MkTy<int32_t>(),
 				y = MkTy<int16_t>();
@@ -34,12 +34,11 @@ namespace solver {
 
 	TEST_F(TypeTest, Validity) {
 		using namespace std;
-		using the_tuple = std::tuple<SharedType, bool, Alignment, Width>;
+		using the_tuple = std::tuple<TypePtr, bool, Alignment, Width>;
 		using the_list = std::list<the_tuple>;
 
 		auto checker = [] (the_tuple tpl) -> bool{
 				auto ty = get<0>(tpl);
-
 		};
 
 		the_list val_list = {
