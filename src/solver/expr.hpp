@@ -4,6 +4,7 @@
 // STL
 # include <memory>
 # include <map>
+# include <list>
 # include <string>
 # include <bitset>
 # include <iostream>
@@ -21,95 +22,70 @@ namespace solver
 	class Expr;
 	class Var;
 	class BinOp;
-	class ExprFactory;
+	class ExprManager;
 
-	using SharedExpr = std::shared_ptr<Expr>;
-	using SharedVar = std::shared_ptr<Var>;
-	using SharedBinOp = std::shared_ptr<BinOp>;
+	using ExprPtr = std::shared_ptr<Expr>;
+	using VarPtr = std::shared_ptr<Var>;
+	using BinOpPtr = std::shared_ptr<BinOp>;
 
-	class ExprFactory
+	class ExprManager
 	{
 	public:
-		static SharedExpr MkVar (std::string name);
-		static SharedExpr MkConst (ValuePtr val);
-		static SharedExpr MkBinOp (SharedExpr a, SharedExpr b, Kind op_code);
-	};
+		ExprManager();
+		~ExprManager();
+		ExprPtr MkVar(std::string name, TypePtr type);
+		ExprPtr MkBinOp (ExprPtr a, ExprPtr b, Kind kind);
+		ExprPtr MkConst(ValuePtr val);
+		template<typename T> ValuePtr ProduceInt(T val);
+		template<typename T> TypePtr GetIntTy();
 
-	//TODO replace to helper (or tester) class
-	// do not use these methods within the main program!
-	//TODO rename this short-named functions
-	SharedExpr C(std::int32_t val);
-	SharedExpr V(std::string name);
-	SharedExpr Apply(SharedExpr l, SharedExpr r, Kind k);
-	SharedExpr Add(SharedExpr l, SharedExpr r);
-	SharedExpr Sub(SharedExpr l, SharedExpr r);
-	SharedExpr Mul(SharedExpr l, SharedExpr r);
-	SharedExpr Sdiv(SharedExpr l, SharedExpr r);
-	SharedExpr Srem(SharedExpr l, SharedExpr r);
-	SharedExpr Udiv(SharedExpr l, SharedExpr r);
-	SharedExpr Urem(SharedExpr l, SharedExpr r);
-	SharedExpr Shl(SharedExpr l, SharedExpr r);
-	SharedExpr Ashr(SharedExpr l, SharedExpr r);
-	SharedExpr Lshr(SharedExpr l, SharedExpr r);
-	SharedExpr And(SharedExpr l, SharedExpr r);
-	SharedExpr Or(SharedExpr l, SharedExpr r);
-	SharedExpr Xor(SharedExpr l, SharedExpr r);
-	SharedExpr Eq(SharedExpr l, SharedExpr r);
-	SharedExpr Ne(SharedExpr l, SharedExpr r);
-	SharedExpr Sge(SharedExpr l, SharedExpr r);
-	SharedExpr Sgt(SharedExpr l, SharedExpr r);
-	SharedExpr Sle(SharedExpr l, SharedExpr r);
-	SharedExpr Slt(SharedExpr l, SharedExpr r);
-	SharedExpr Uge(SharedExpr l, SharedExpr r);
-	SharedExpr Ugt(SharedExpr l, SharedExpr r);
-	SharedExpr Ule(SharedExpr l, SharedExpr r);
-	SharedExpr Ult(SharedExpr l, SharedExpr r);
+	private:
+		std::list<TypePtr> type_table_;
+	};
 
 	//TODO: total refactoring
 	class Expr : public CRTP<Expr, Object> {
 	public:
 		virtual ~Expr() {}
-		virtual const std::string ToString() = 0;
-		virtual bool Equals (const Object& rhs) const = 0;
 	};
 
 	class BinOp : public CRTP<BinOp, Expr>{
 	public:
-		BinOp(SharedExpr left_child, SharedExpr right_child, Kind kind);
+		BinOp(ExprPtr left_child, ExprPtr right_child, Kind kind);
 		~BinOp();
-		const std::string ToString() final;
-		bool Equals(const Object &rhs) const;
-		SharedExpr GetLeftChild();
-		SharedExpr GetRightChild();
-		Kind GetKind();
-		std::string GetKindName();
-
+		std::string ToString() const final;
+		bool Equals(const Object &rhs) const final;
+		ExprPtr GetLeftChild() const;
+		ExprPtr GetRightChild() const;
+		Kind GetKind() const;
+		std::string GetKindName() const;
 	private:
-		SharedExpr left_child_;
-		SharedExpr right_child_;
+		ExprPtr left_child_;
+		ExprPtr right_child_;
 		Kind kind_;
 	};
 
 	//TODO: add variable type
 	class Var final : public CRTP <Var, Expr> {
 	public:
-		Var (std::string name, SharedType type);
+		Var (std::string name, TypePtr type); //TODO: throw
 		virtual ~Var() final;
-		virtual const std::string ToString() final;
+		virtual std::string ToString() const final;
 		virtual bool Equals(const Object& rhs) const final;
-		const std::string GetName() const;
+		std::string GetName() const;
+		TypePtr GetType() const;
 	private:
 		std::string name_;
-		SharedType type_;
+		TypePtr type_;
 	};
 
 	class Const : public CRTP<Const, Expr> {
 	public:
 		Const (ValuePtr val);
 		virtual ~Const();
-		virtual const std::string ToString ();
-		virtual bool Equals(const Object& rhs) const;
-		ValuePtr GetValue();
+		virtual std::string ToString() const final;
+		virtual bool Equals(const Object& rhs) const final;
+		ValuePtr GetValue() const;
 	private:
 		const ValuePtr value_;
 	};

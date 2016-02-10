@@ -20,9 +20,9 @@ namespace solver
 	{
 	public:
 		virtual ~ISMTEngine() {}
-		virtual void Assert (SharedExpr expr) = 0;
+		virtual void Assert (ExprPtr expr) = 0;
 		virtual Sat CheckSat() = 0;
-		virtual std::int32_t GetValue(SharedExpr varible) = 0;
+		virtual std::int32_t GetValue(ExprPtr varible) = 0;
 		virtual void Push() = 0;
 		virtual void Pop() = 0;
 	};

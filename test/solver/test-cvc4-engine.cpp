@@ -96,7 +96,7 @@ TEST_F(CVC4EngineTest, Ability) {
 TEST_F(CVC4EngineTest, Prism_nullptr) {
 	bool nlp_ex = false;
 	try {
-		SharedExpr nlp = nullptr;
+		ExprPtr nlp = nullptr;
 		Engine()->Prism(nlp);
 	}
 	catch (std::logic_error &e) {
@@ -107,7 +107,7 @@ TEST_F(CVC4EngineTest, Prism_nullptr) {
 
 TEST_F(CVC4EngineTest, Prism_Var) {
 	// (declare-const NAME (_ BitVec 32))
-	SharedExpr x = V("x");
+	ExprPtr x = V("x");
 	CVC4::Expr x_expr = Engine()->Prism(x);
 	ASSERT_EQ("x", x_expr.toString());
 }

@@ -22,14 +22,14 @@ using std::shared_ptr;
 namespace solver {
 class ExprTest : public ::testing::Test {
 public:
-	SharedExpr mkvar (std::string name) {
+	ExprPtr mkvar (std::string name) {
 		return std::make_shared<Var>(name);
 	}
-	SharedExpr mkconst(std::int32_t value) {
+	ExprPtr mkconst(std::int32_t value) {
 		return std::make_shared<ConstI32>(value);
 	}
 
-	SharedExpr mkbinop(SharedExpr left, SharedExpr right, Kind opcode) {
+	ExprPtr mkbinop(ExprPtr left, ExprPtr right, Kind opcode) {
 		return std::make_shared<BinOp>(left, right, opcode);
 	}
 };
@@ -316,7 +316,7 @@ TEST_F(ExprTest, SmartPointer_Comparison_CrossTest) {
 
 //------------------------------------------------------------------
 TEST_F(ExprTest, HelperOperators) {
-	typedef std::function<SharedExpr(SharedExpr, SharedExpr)> oper;
+	typedef std::function<ExprPtr(ExprPtr, ExprPtr)> oper;
 	typedef std::tuple<Kind, oper> kind_to_op;
 	using std::make_tuple;
 	std::list<kind_to_op> l = {
@@ -350,7 +350,7 @@ TEST_F(ExprTest, HelperOperators) {
 		static auto r = V("r");
 		Kind kind = std::get<0>(t);
 		oper op = std::get<1>(t);
-		SharedExpr expr = op(l, r);
+		ExprPtr expr = op(l, r);
 		auto binop = std::dynamic_pointer_cast<BinOp>(expr);
 		ASSERT_EQ(binop->GetKind(), kind);
 		ASSERT_EQ(binop->GetLeftChild(), l);
@@ -373,7 +373,7 @@ TEST_F(ExprTest, Cast) {
 }
 
 TEST_F(ExprTest, PointerCast) {
-	SharedExpr v = V("x"),
+	ExprPtr v = V("x"),
 			c = C(28),
 			b = Eq(v, c);
 

@@ -3,135 +3,136 @@
 using std::function;
 
 namespace solver
-{
-//-------------------------------------------------------------------
-// Factory
-SharedExpr ExprFactory :: MkVar (std::string name) {
-	return std::make_shared <Var>(name);
-}
-
-SharedExpr ExprFactory :: MkConst (ValuePtr val) {
-	//return std::make_shared <ConstI32>(val);
-}
-
-SharedExpr ExprFactory :: MkBinOp (SharedExpr a, SharedExpr b, Kind op_code) {
-return std::make_shared <BinOp>(a, b, op_code);
-}
-
-//-------------------------------------------------------------------
-// Expr
-SharedExpr C(std::int32_t val) {
-	return ExprFactory::MkConstI32(val);
-}
-
-SharedExpr V(std::string name) {
-	return ExprFactory::MkVar(name);
-}
-
-SharedExpr Apply(SharedExpr l, SharedExpr r, Kind k) {
-	return ExprFactory::MkBinOp(l, r, k);
-}
-
-SharedExpr Add(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::ADD); }
-SharedExpr Sub(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::SUB); }
-SharedExpr Mul(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::MUL); }
-SharedExpr Sdiv(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::SDIV); }
-SharedExpr Srem(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::SREM); }
-SharedExpr Udiv(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::UDIV); }
-SharedExpr Urem(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::UREM); }
-SharedExpr Shl(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::SHL); }
-SharedExpr Ashr(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::ASHR); }
-SharedExpr Lshr(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::LSHR); }
-SharedExpr And(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::AND); }
-SharedExpr Or(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::OR); }
-SharedExpr Xor(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::XOR); }
-SharedExpr Eq(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::EQ); }
-SharedExpr Ne(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::NE); }
-SharedExpr Sge(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::SGE); }
-SharedExpr Sgt(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::SGT); }
-SharedExpr Sle(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::SLE); }
-SharedExpr Slt(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::SLT); }
-SharedExpr Uge(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::UGE); }
-SharedExpr Ugt(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::UGT); }
-SharedExpr Ule(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::ULE); }
-SharedExpr Ult(SharedExpr l, SharedExpr r) { return Apply(l, r, Kind::ULT); }
-
-//-------------------------------------------------------------------
-// Variable
-//TODO: solver compilation problem
-
-Var::Var (std::string name, SharedType type) {
-	if (not name.empty() and type != nullptr) {
-		name_ = name;
-		type_ = type;
+{//-------------------------------------------------------------------
+	ExprManager::ExprManager() : type_table_ {
+		std::make_shared<SInt8Ty>(),
+		std::make_shared<SInt16Ty>(),
+		std::make_shared<SInt32Ty>(),
+		std::make_shared<SInt64Ty>(),
+		std::make_shared<UInt8Ty>(),
+		std::make_shared<UInt16Ty>(),
+		std::make_shared<UInt32Ty>(),
+		std::make_shared<UInt64Ty>()} {
 	}
-	else
-		throw std::logic_error("invalid arguments");
-}
-Var::~Var() {}
 
-const std::string Var::ToString() {return GetName();}
+	ExprManager::~ExprManager() {
 
-bool Var::Equals(const Object& rhs) const {
-	auto cmp = [] (auto lhs, auto rhs) -> bool {
-		return lhs.name_ == rhs.name_;
-	};
-	return EqualsHelper<Var>(*this, rhs, cmp);
-}
+	}
 
-const std::string Var::GetName() const {return name_;}
+	ExprPtr ExprManager::MkVar(std::string name, TypePtr type) {
+		return std::make_shared<Var>(name, type);
+	}
 
-//-------------------------------------------------------------------
-// Constant
+	ExprPtr ExprManager::MkConst (ValuePtr val) {
+		return std::make_shared<Const>(val);
+	}
 
-ConstI32::ConstI32(std::int32_t value) : value_(value) {}
-ConstI32::~ConstI32() {}
+	ExprPtr ExprManager :: MkBinOp (ExprPtr a, ExprPtr b, Kind op_code) {
+		return std::make_shared <BinOp>(a, b, op_code);
+	}
 
-const std::string ConstI32::ToString() {
-	return std::to_string(GetValue());
-}
+	template<typename T> ValuePtr ProduceInt(T val) {
+		return std::make_shared<Int<T>>(val);
+	}
 
-bool ConstI32::Equals(const Object& rhs) const {
-	auto cmp = [] (auto lhs, auto rhs) -> bool {
-		return lhs.GetValue() == rhs.GetValue();
-	};
-	return EqualsHelper<ConstI32>(*this, rhs, cmp);
-}
+	//TODO: testing
+	template<typename T> TypePtr ExprManager::GetIntTy() {
+		auto check_ty = [] (TypePtr ty) -> bool {
+			if (instanceof<BasicIntTy>(ty)) {
+				auto int_ty = std::dynamic_pointer_cast<BasicIntTy>(ty);
+				if (int_ty->IsSigned == std::numeric_limits<T>::is_signed
+						and int_ty->GetWidth() == sizeof(T)*8
+						and int_ty->GetAlignment() == sizeof(T))
+					return true;
+			}
+		};
 
-std::int32_t ConstI32::GetValue() {
-	return value_;
-}
+		for (auto i = type_table_.begin(); i != type_table_.end(); i++) {
+			if (check_ty(*i) == true)
+				return *i;
+		}
+		/* type not found */
+		return nullptr;
+	}
 
-//-------------------------------------------------------------------
-// BinaryOperation
-BinOp::BinOp(SharedExpr l, SharedExpr r, Kind k){
-	if (l == nullptr or r == nullptr)
-		throw std::logic_error("null not valid");
-	kind_ = k;
-	left_child_ = l;
-	right_child_ = r;
-}
+	//-------------------------------------------------------------------
+	// Variable
+	//TODO: solver compilation problem
 
-BinOp::~BinOp() {}
+	Var::Var (std::string name, TypePtr type) {
+		if (not name.empty() and type != nullptr) {
+			name_ = name;
+			type_ = type;
+		}
+		else
+			throw std::logic_error("invalid arguments");
+	}
 
-const std::string BinOp::ToString(){
-	return GetKindName() + " " + GetLeftChild()->ToString() + " " + GetRightChild()->ToString();
-}
+	Var::~Var() {}
 
-bool BinOp::Equals(const Object& rhs) const {
-	auto cmp = [] (auto lhs, auto rhs) -> bool {
-		return lhs.kind_ == rhs.kind_ &&
-				lhs.left_child_ == rhs.left_child_ &&
-				lhs.right_child_ == rhs.right_child_;
-	};
-	return EqualsHelper<BinOp>(*this, rhs, cmp);
-}
+	std::string Var::ToString() const {return GetName();}
 
-SharedExpr BinOp::GetLeftChild() {return left_child_;}
-SharedExpr BinOp::GetRightChild() {return right_child_;}
+	bool Var::Equals(const Object& rhs) const {
+		auto cmp = [] (auto lhs, auto rhs) -> bool {
+			return lhs.name_ == rhs.name_;
+		};
+		return EqualsHelper<Var>(*this, rhs, cmp);
+	}
 
-Kind BinOp::GetKind() {return kind_;}
-std::string BinOp::GetKindName() {return KindToString(kind_);}
+	std::string Var::GetName() const {return name_;}
+	TypePtr Var::GetType() const {return type_;}
+
+	//-------------------------------------------------------------------
+	// Constant
+
+	Const::Const(ValuePtr val) : value_(val) {}
+	Const::~Const() {}
+
+	std::string Const::ToString() const {
+		return GetValue()->ToString();
+	}
+
+	bool Const::Equals(const Object& rhs) const {
+		auto cmp = [] (auto lhs, auto rhs) -> bool {
+			return lhs.GetValue() == rhs.GetValue();
+		};
+		return EqualsHelper<Const>(*this, rhs, cmp);
+	}
+
+	ValuePtr Const::GetValue() const {
+		return value_;
+	}
+
+	//-------------------------------------------------------------------
+	// BinaryOperation
+	BinOp::BinOp(ExprPtr l, ExprPtr r, Kind k){
+		if (l == nullptr or r == nullptr)
+			throw std::logic_error("null not valid");
+		kind_ = k;
+		left_child_ = l;
+		right_child_ = r;
+	}
+
+	BinOp::~BinOp() {}
+
+	std::string BinOp::ToString() const {
+		return GetKindName() + " " + GetLeftChild()->ToString() + " " + GetRightChild()->ToString();
+	}
+
+	bool BinOp::Equals(const Object& rhs) const {
+		auto cmp = [] (auto lhs, auto rhs) -> bool {
+			return lhs.kind_ == rhs.kind_ &&
+					lhs.left_child_ == rhs.left_child_ &&
+					lhs.right_child_ == rhs.right_child_;
+		};
+		return EqualsHelper<BinOp>(*this, rhs, cmp);
+	}
+
+	ExprPtr BinOp::GetLeftChild() const {return left_child_;}
+	ExprPtr BinOp::GetRightChild() const {return right_child_;}
+
+	Kind BinOp::GetKind() const {return kind_;}
+	std::string BinOp::GetKindName() const {return KindToString(kind_);}
 
 }
 

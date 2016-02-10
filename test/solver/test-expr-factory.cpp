@@ -20,14 +20,14 @@ namespace solver {
 	TEST_F(ExprExprFactoryTest, MkVar) {
 		std::string name = "var";
 		std::shared_ptr <Expr> exp (new Var(name));
-		auto act = ExprFactory::MkVar(name);
+		auto act = ExprManager::MkVar(name);
 		ASSERT_TRUE(*exp == *act);
 	}
 
 	TEST_F(ExprExprFactoryTest, ProduceConstantI32) {
 		std::int32_t val = 28;
 		std::shared_ptr<Expr> exp (new ConstI32(val));
-		auto act = ExprFactory::ProduceConstantI32(val);
+		auto act = ExprManager::ProduceConstantI32(val);
 		ASSERT_EQ(*exp, *act);
 	}
 
@@ -38,7 +38,7 @@ namespace solver {
 		auto x = make_var("x"),
 				y = make_var("y");
 		std::shared_ptr<BinOp> exp (new BinOp(x, y, Kind::ADD));
-		auto act = ExprFactory::ProduceBinaryOperation(x, y, Kind::ADD);
+		auto act = ExprManager::ProduceBinaryOperation(x, y, Kind::ADD);
 		ASSERT_EQ(*exp, *act);
 	}
 }

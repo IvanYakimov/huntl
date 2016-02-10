@@ -26,7 +26,7 @@ namespace solver {
 		symbol_table_.popScope();
 	}
 
-	void CVC4Engine::Assert(SharedExpr expr) {
+	void CVC4Engine::Assert(ExprPtr expr) {
 		smt_engine_.assertFormula(Prism(expr));
 	}
 
@@ -39,7 +39,7 @@ namespace solver {
 		}
 	}
 
-	ValuePtr CVC4Engine::GetValue(SharedExpr expr) {
+	ValuePtr CVC4Engine::GetValue(ExprPtr expr) {
 		auto var = std::dynamic_pointer_cast<Var>(expr);
 		if (!var)
 			throw std::bad_cast();
@@ -50,7 +50,7 @@ namespace solver {
 
 	// private things
 	// TODO: refactoring - extract pattern (helper) code
-	CVC4::Expr CVC4Engine::Prism(SharedExpr expr) {
+	CVC4::Expr CVC4Engine::Prism(ExprPtr expr) {
 		if (expr == nullptr)
 			throw std::logic_error("null not valid");
 

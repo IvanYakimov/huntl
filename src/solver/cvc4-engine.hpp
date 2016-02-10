@@ -21,15 +21,15 @@ namespace solver {
 	public:
 		CVC4Engine();
 		virtual ~CVC4Engine();
-		virtual void Assert(SharedExpr expr) final;
+		virtual void Assert(ExprPtr expr) final;
 		virtual Sat CheckSat() final;
-		virtual ValuePtr GetValue(SharedExpr varible) final;
+		virtual ValuePtr GetValue(ExprPtr varible) final;
 		virtual void Push() final;
 		virtual void Pop() final;
 #ifndef DBG
 	private:
 #endif
-		CVC4::Expr Prism(SharedExpr expr);
+		CVC4::Expr Prism(ExprPtr expr);
 		CVC4::ExprManager expr_manager_;
 		CVC4::SmtEngine smt_engine_;
 		CVC4::SymbolTable symbol_table_;

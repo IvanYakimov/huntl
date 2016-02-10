@@ -35,10 +35,10 @@ private:
 class LocalMemory {
 public:
 	void Alloca(ConstValPtr allocated);
-	solver::SharedExpr Load(ConstValPtr address);
-	void Store(ConstValPtr address, solver::SharedExpr value);
+	solver::ExprPtr Load(ConstValPtr address);
+	void Store(ConstValPtr address, solver::ExprPtr value);
 private:
-	std::map<ConstValPtr, solver::SharedExpr> memory_;
+	std::map<ConstValPtr, solver::ExprPtr> memory_;
 };
 
 # endif /* __LOCAL_MEMORY_HPP__ */

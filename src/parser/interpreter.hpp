@@ -33,7 +33,7 @@ class Interpreter final : public PatternMatcher
 {
 private:
 	LocalMemory memory_;
-	solver::ExprFactory expr_factory_;
+	solver::ExprManager expr_factory_;
 
 	// Return
 	virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst);
@@ -59,7 +59,7 @@ private:
 	virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Instruction *instruction, const llvm::Value *ptr);
 	virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Constant *constant, const llvm::Value *ptr);
 
-	static inline void DebugExprInfo(solver::SharedExpr expr);
+	static inline void DebugExprInfo(solver::ExprPtr expr);
 };
 
 # endif /* __INTERPRETER_HPP__ */
