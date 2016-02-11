@@ -1,6 +1,6 @@
 SHELL = /bin/sh
 
-SOLVER = kind.o value.o type.o expr.o expr-manager.o
+SOLVER = kind.o  type.o expr.o expr-manager.o value.o
 # cvc4-engine.o 
 SOLVER_TEST = 	test-runner.o test-value.o test-type.o test-expr.o 
 # test-cvc4-engine.o 

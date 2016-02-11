@@ -20,6 +20,15 @@ namespace solver {
 	using BasicIntPtr = std::shared_ptr<BasicInt>;
 	template<typename T> using IntPtr = std::shared_ptr<Int<T>>;
 
+	using SInt8 = Int<std::int8_t>;
+	using SInt16 = Int<std::int16_t>;
+	using SInt32 = Int<std::int32_t>;
+	using SInt64 = Int<std::int64_t>;
+	using UInt8 = Int<std::uint8_t>;
+	using UInt16 = Int<std::uint16_t>;
+	using UInt32 = Int<std::uint32_t>;
+	using UInt64 = Int<std::uint64_t>;
+
 	class Value : public CRTP <Value, Object> {
 	public:
 		virtual ~Value() {}
@@ -47,32 +56,21 @@ namespace solver {
 		T value_;
 	};
 
-	using SInt8 = Int<std::int8_t>;
-	template class Int<std::int8_t>;
-
-	using SInt16 = Int<std::int16_t>;
-	template class Int<std::int16_t>;
-
-	using SInt32 = Int<std::int32_t>;
-	template class Int<std::int32_t>;
-
-	using SInt64 = Int<std::int64_t>;
-	template class Int<std::int64_t>;
-
-	using UInt8 = Int<std::uint8_t>;
-	template class Int<std::uint8_t>;
-
-	using UInt16 = Int<std::uint16_t>;
-	template class Int<std::uint16_t>;
-
-	using UInt32 = Int<std::uint32_t>;
-	template class Int<std::uint32_t>;
-
-	using UInt64 = Int<std::uint64_t>;
-	template class Int<std::uint64_t>;
+	template class Int<int8_t>;
+	template class Int<int16_t>;
+	template class Int<int32_t>;
+	template class Int<int64_t>;
+	template class Int<uint8_t>;
+	template class Int<uint16_t>;
+	template class Int<uint32_t>;
+	template class Int<uint64_t>;
 }
 
 #endif /* __VALUE_HPP__ */
+
+
+
+
 
 
 

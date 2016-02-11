@@ -45,28 +45,13 @@ namespace solver {
 	};
 
 	template class IntTy<std::int8_t>;
-	using SInt8Ty = IntTy<std::int8_t>;
-
 	template class IntTy<std::int16_t>;
-	using SInt16Ty = IntTy<std::int16_t>;
-
 	template class IntTy<std::int32_t>;
-	using SInt32Ty = IntTy<std::int32_t>;
-
 	template class IntTy<std::int64_t>;
-	using SInt64Ty = IntTy<std::int64_t>;
-
 	template class IntTy<std::uint8_t>;
-	using UInt8Ty = IntTy<std::uint8_t>;
-
 	template class IntTy<std::uint16_t>;
-	using UInt16Ty = IntTy<std::uint16_t>;
-
 	template class IntTy<std::uint32_t>;
-	using UInt32Ty = IntTy<std::uint32_t>;
-
 	template class IntTy<std::uint64_t>;
-	using UInt64Ty = IntTy<std::uint64_t>;
 }
 
 #endif /* __TYPE_HPP__ */

@@ -7,6 +7,7 @@ namespace solver {
 	template<typename T>
 	Int<T>::Int(T value) : value_(value) {}
 
+
 	template<typename T>
 	bool Int<T>::Equals (const Object& rhs) const {
 		auto cmp = [] (auto lhs, auto rhs) -> bool {
