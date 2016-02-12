@@ -4,6 +4,7 @@
 #pragma once
 
 #include "expr.hpp"
+#include <algorithm>
 
 namespace solver {
 	class ExprManager
@@ -15,27 +16,20 @@ namespace solver {
 		ExprPtr MkBinOp (ExprPtr a, ExprPtr b, Kind kind);
 		ExprPtr MkConst(ValuePtr val);
 
-		template<typename T> ValuePtr ProduceInt(T val) {
-			return std::make_shared<Int<T>>(val);
+		template<class T, typename... Args>
+		ValuePtr MkVal(Args... args) {
+			return std::make_shared<T>(std::forward<Args>(args)...);
 		}
 
-		template<typename T> TypePtr GetIntTy() {
-			auto check_ty = [] (TypePtr ty) -> bool {
-				if (instanceof<BasicIntTy>(ty)) {
-					auto int_ty = std::dynamic_pointer_cast<BasicIntTy>(ty);
-					if (int_ty->IsSigned() == std::numeric_limits<T>::is_signed
-							and int_ty->GetWidth() == sizeof(T)*8
-							and int_ty->GetAlignment() == sizeof(T))
-						return true;
-				}
-			};
-
-			for (auto i = type_table_.begin(); i != type_table_.end(); i++) {
-				if (check_ty(*i) == true)
-					return *i;
-			}
-			// type not found
-			return nullptr;
+		//TODO: testing
+		template<class T, typename... Args>
+		TypePtr MkTy(Args... args) {
+			const T tmp(std::forward<Args>(args)...);
+			auto it = std::find_if(type_table_.begin(), type_table_.end(), [&tmp] (const TypePtr &item) {return *item == tmp;});
+			if (it != type_table_.end())
+				return *it;
+			else
+				throw std::logic_error("type not found");
 		}
 
 	private:

@@ -38,7 +38,7 @@ TEST_F(ExprTest, Variable_Creation) {
 			//make_tuple(nullptr, nullptr, true),
 			make_tuple("", nullptr, true),
 			make_tuple("x", nullptr, true),
-			make_tuple("x", em.GetIntTy<int32_t>(), false)
+			make_tuple("x", em.MkTy<SInt32Ty>(), false)
 	};
 
 	auto checker = [] (the_tuple tpl) {
@@ -58,26 +58,32 @@ TEST_F(ExprTest, Variable_Creation) {
 	for_each(val_list.begin(), val_list.end(), checker);
 }
 
-/*
+
 TEST_F(ExprTest, Variable_Accessors) {
-	Var v("x");
+	using namespace std;
+	Var v("x", em.MkTy<SInt32Ty>());
 	EXPECT_EQ("x", v.ToString());
 	EXPECT_EQ("x", v.GetName());
 }
 
+
 TEST_F(ExprTest, Variable_Comparison) {
-	Var x1("x"),
-				x2("x"),
-				x3("x"),
-				y("y");
+	auto i32ty = em.MkTy<SInt32Ty>();
+	auto i16ty = em.MkTy<SInt16Ty>();
+	Var x1("x", i32ty),
+				x2("x", i32ty),
+				x3("x", i32ty),
+				y("y", i32ty),
+				x_16("x",i16ty);
 	EXPECT_EQ(x1, x1); // reflexivity
 	EXPECT_EQ(x1, x2); EXPECT_EQ(x2, x1); // symmetry
 	EXPECT_EQ(x1, x2); EXPECT_EQ(x2, x3); EXPECT_EQ(x1, x3); // transitivity
 	EXPECT_NE(x1, y);
+	EXPECT_NE(x1, x_16);
 	EXPECT_NE(&x1, nullptr);
 	EXPECT_NE(nullptr, &x1);
 }
-
+/*
 //-------------------------------------------------------------------
 // Constant<T>
 

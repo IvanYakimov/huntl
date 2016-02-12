@@ -23,7 +23,8 @@ namespace solver
 
 	bool Var::Equals(const Object& rhs) const {
 		auto cmp = [] (auto lhs, auto rhs) -> bool {
-			return lhs.name_ == rhs.name_;
+			return lhs.name_ == rhs.name_
+					and lhs.type_ == rhs.type_;
 		};
 		return EqualsHelper<Var>(*this, rhs, cmp);
 	}
