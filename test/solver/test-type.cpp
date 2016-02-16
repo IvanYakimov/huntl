@@ -8,6 +8,7 @@
 #include <memory>
 #include <iostream>
 #include <list>
+#include <array>
 
 namespace solver {
 	class TypeTest : public ::testing::Test {
@@ -16,6 +17,7 @@ namespace solver {
 		TypePtr MkTy() { return std::make_shared<IntTy<T>>(); }
 	};
 
+	//TODO: combinatorial testing
 	TEST_F(TypeTest, Comparison) {
 		using namespace std;
 		TypePtr x1 = MkTy<int32_t>(),
@@ -30,6 +32,28 @@ namespace solver {
 		EXPECT_NE(*x1, *y);
 		EXPECT_NE(x1, nullptr);
 		EXPECT_NE(nullptr, x1);
+	}
+
+	TEST_F(TypeTest, Comb_Comparison) {
+		using namespace std;
+		array<TypePtr, 8> val_list = {
+				MkTy<int8_t>(),
+				MkTy<int16_t>(),
+				MkTy<int32_t>(),
+				MkTy<int64_t>(),
+				MkTy<uint8_t>(),
+				MkTy<uint16_t>(),
+				MkTy<uint32_t>(),
+				MkTy<uint64_t>()
+		};
+
+		int l = val_list.size();
+		for (auto i = 0; i != l; i++)
+			for (auto j = 0; j != l; j++)
+				if (i == j)
+					ASSERT_EQ(val_list[i], val_list[j]);
+				else
+					ASSERT_NE(val_list[i], val_list[j]);
 	}
 
 	TEST_F(TypeTest, Validity) {

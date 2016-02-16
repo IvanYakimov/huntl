@@ -37,6 +37,7 @@ namespace solver
 
 	class BinOp : public CRTP<BinOp, Expr>{
 	public:
+		//TODO: place Kind at first position
 		BinOp(ExprPtr left_child, ExprPtr right_child, Kind kind);
 		~BinOp();
 		std::string ToString() const final;
@@ -54,7 +55,7 @@ namespace solver
 	//TODO: add variable type
 	class Var final : public CRTP <Var, Expr> {
 	public:
-		Var (std::string name, TypePtr type); //TODO: throw
+		Var (std::string name, TypePtr type) throw(std::logic_error); //TODO: throw
 		virtual ~Var() final;
 		virtual std::string ToString() const final;
 		virtual bool Equals(const Object& rhs) const final;
@@ -67,13 +68,13 @@ namespace solver
 
 	class Const : public CRTP<Const, Expr> {
 	public:
-		Const (ValuePtr val);
+		Const (ValuePtr val) throw(std::logic_error);
 		virtual ~Const();
 		virtual std::string ToString() const final;
 		virtual bool Equals(const Object& rhs) const final;
 		ValuePtr GetValue() const;
 	private:
-		const ValuePtr value_;
+		ValuePtr value_;
 	};
 	// Unsigned Integer Constant
 }

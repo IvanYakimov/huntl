@@ -8,7 +8,7 @@ namespace solver
 	// Variable
 	//TODO: solver compilation problem
 
-	Var::Var (std::string name, TypePtr type) {
+	Var::Var (std::string name, TypePtr type) throw(std::logic_error) {
 		if (not name.empty() and type != nullptr) {
 			name_ = name;
 			type_ = type;
@@ -35,7 +35,13 @@ namespace solver
 	//-------------------------------------------------------------------
 	// Constant
 
-	Const::Const(ValuePtr val) : value_(val) {}
+	Const::Const(ValuePtr val) throw(std::logic_error) {
+		if (val != nullptr)
+			value_ = val;
+		else
+			throw std::logic_error("null not available");
+	}
+
 	Const::~Const() {}
 
 	std::string Const::ToString() const {

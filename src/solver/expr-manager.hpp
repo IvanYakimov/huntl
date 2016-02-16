@@ -16,15 +16,15 @@ namespace solver {
 		ExprPtr MkBinOp (ExprPtr a, ExprPtr b, Kind kind);
 		ExprPtr MkConst(ValuePtr val);
 
-		template<class T, typename... Args>
-		ValuePtr MkVal(Args... args) {
-			return std::make_shared<T>(std::forward<Args>(args)...);
+		template<typename T, typename... Args>
+		ValuePtr MkIntVal(Args... args) {
+			return std::make_shared<Int<T>>(std::forward<Args>(args)...);
 		}
 
 		//TODO: testing
 		template<class T, typename... Args>
-		TypePtr MkTy(Args... args) {
-			const T tmp(std::forward<Args>(args)...);
+		TypePtr MkIntTy(Args... args) {
+			const IntTy<T> tmp(std::forward<Args>(args)...);
 			auto it = std::find_if(type_table_.begin(), type_table_.end(), [&tmp] (const TypePtr &item) {return *item == tmp;});
 			if (it != type_table_.end())
 				return *it;
@@ -36,7 +36,7 @@ namespace solver {
 		std::list<TypePtr> type_table_;
 	};
 
-	//TODO: explicit template class member function specialization
+	//TODO: explicit template class member specialization
 	/*
 	template ValuePtr ExprManager::ProduceInt<int8_t>(int8_t val);
 	template ValuePtr ExprManager::ProduceInt<int16_t>(int16_t val);

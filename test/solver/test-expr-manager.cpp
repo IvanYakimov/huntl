@@ -7,8 +7,18 @@ namespace solver {
 		ExprManager em;
 	};
 
+	TEST_F(ExprManagerTest, MkVal) {
+		int val = 42;
+		auto produced_item = em.MkIntVal<int8_t>(val);
+		auto item = std::make_shared<Int<int8_t>>(val);
+		ASSERT_EQ(*item, *produced_item);
+	}
+
+
 	TEST_F(ExprManagerTest, MkTy) {
+		//TODO: this kind of testing is redundant (in current implementation of ExprManager)
 		using namespace std;
+
 		auto i8ty = make_shared<IntTy<int8_t>>();
 		auto i16ty = make_shared<IntTy<int16_t>>();
 		auto i32ty = make_shared<IntTy<int32_t>>();
@@ -22,15 +32,15 @@ namespace solver {
 		using the_list = list<the_tuple>;
 
 		the_list val_list = {
-				make_tuple(i8ty, em.MkTy<SInt8Ty>(), true),
-				make_tuple(i16ty, em.MkTy<SInt16Ty>(), true),
-				make_tuple(i32ty, em.MkTy<SInt32Ty>(), true),
-				make_tuple(i64ty, em.MkTy<SInt64Ty>(), true),
-				make_tuple(ui8ty, em.MkTy<UInt8Ty>(), true),
-				make_tuple(ui16ty, em.MkTy<UInt16Ty>(), true),
-				make_tuple(ui32ty, em.MkTy<UInt32Ty>(), true),
-				make_tuple(ui64ty, em.MkTy<UInt64Ty>(), true),
-				make_tuple(i8ty, em.MkTy<SInt32Ty>(), false)
+				make_tuple(i8ty, em.MkIntTy<int8_t>(), true),
+				make_tuple(i16ty, em.MkIntTy<int16_t>(), true),
+				make_tuple(i32ty, em.MkIntTy<int32_t>(), true),
+				make_tuple(i64ty, em.MkIntTy<int64_t>(), true),
+				make_tuple(ui8ty, em.MkIntTy<uint8_t>(), true),
+				make_tuple(ui16ty, em.MkIntTy<uint16_t>(), true),
+				make_tuple(ui32ty, em.MkIntTy<uint32_t>(), true),
+				make_tuple(ui64ty, em.MkIntTy<uint64_t>(), true),
+				make_tuple(i8ty, em.MkIntTy<uint32_t>(), false)
 		};
 
 		auto checker = [] (the_tuple tpl) {
