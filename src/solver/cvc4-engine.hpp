@@ -17,7 +17,7 @@
 # include <memory>
 
 namespace solver {
-	class CVC4Engine final : public ISMTEngine {
+	class CVC4Engine final : public ISMTEngine<CVC4::Expr> {
 	public:
 		CVC4Engine();
 		virtual ~CVC4Engine();
@@ -29,7 +29,7 @@ namespace solver {
 #ifndef DBG
 	private:
 #endif
-		CVC4::Expr Prism(ExprPtr expr);
+		CVC4::Expr Prism(ExprPtr expr) throw(std::logic_error);
 		CVC4::ExprManager expr_manager_;
 		CVC4::SmtEngine smt_engine_;
 		CVC4::SymbolTable symbol_table_;

@@ -1,6 +1,9 @@
 # include "cvc4-engine.hpp"
 
 namespace solver {
+	using std::dynamic_pointer_cast;
+	using std::logic_error;
+
 	CVC4Engine::CVC4Engine() : smt_engine_(&expr_manager_) {
 		 // ??? Set "Non-linear integer arithmetic with uninterpreted sort and function symbols." logic:
 		// This line causes the bug:
@@ -39,6 +42,7 @@ namespace solver {
 		}
 	}
 
+	/*
 	ValuePtr CVC4Engine::GetValue(ExprPtr expr) {
 		auto var = std::dynamic_pointer_cast<Var>(expr);
 		if (!var)
@@ -47,18 +51,17 @@ namespace solver {
 		auto btv_const = cvcexpr.getConst<CVC4::BitVector>();
 		return FromBitVector(btv_const);
 	}
+	*/
 
 	// private things
 	// TODO: refactoring - extract pattern (helper) code
-	CVC4::Expr CVC4Engine::Prism(ExprPtr expr) {
+	CVC4::Expr CVC4Engine::Prism(ExprPtr expr) throw(std::logic_error) {
 		if (expr == nullptr)
 			throw std::logic_error("null not valid");
 
-		auto var = std::dynamic_pointer_cast<Var>(expr);
-		auto binop = std::dynamic_pointer_cast<BinOp>(expr);
-		auto cnst = std::dynamic_pointer_cast<ConstI32>(expr);
 		// side effect here:
-		if (var != nullptr) {
+		if (instanceof<Var>(expr)) {
+			auto var = dynamic_pointer_cast<Var>(expr);
 			CVC4::Expr var_expr;
 			auto var_name = var->GetName();
 			if (symbol_table_.isBound(var_name)) {
@@ -70,18 +73,25 @@ namespace solver {
 			}
 			return var_expr;
 		}
-		else if (binop != nullptr) {
+		else if (instanceof<BinOp>(expr)) {
+			auto binop = dynamic_pointer_cast<BinOp>(expr);
 			//TODO: refactoring
 			switch (binop->GetKind()) {
 			case solver::Kind::EQ:
 				return expr_manager_.mkExpr(CVC4::Kind::EQUAL, Prism(binop->GetLeftChild()), Prism(binop->GetRightChild()));
 			}
 		}
-		else if (cnst != nullptr) {
+		else if (instanceof<Const>(expr)) {
+			auto cnst = dynamic_pointer_cast<Const>(expr);
 			auto val = cnst->GetValue();
-			//TODO verify bitwise operation usage
-			unsigned int uval = val bitand (compl 0);
-			return expr_manager_.mkConst(CVC4::BitVector(32, uval));
+			if (instanceof<BasicInt>(val)) {
+				auto int_val = dynamic_pointer_cast<BasicInt>(cnst);
+				//TODO verify bitwise operation usage
+
+				//return expr_manager_.mkConst(CVC4::BitVector(32, uval));
+			}
+			else
+				throw std::logic_error("not implemented");
 		}
 
 		// Expression casting failure

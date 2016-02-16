@@ -19,6 +19,7 @@ namespace solver {
 
 	using TypePtr = std::shared_ptr<Type>;
 
+	/*
 	using SInt8Ty = IntTy<std::int8_t>;
 	using SInt16Ty = IntTy<std::int16_t>;
 	using SInt32Ty = IntTy<std::int32_t>;
@@ -27,6 +28,7 @@ namespace solver {
 	using UInt16Ty = IntTy<std::uint16_t>;
 	using UInt32Ty = IntTy<std::uint32_t>;
 	using UInt64Ty = IntTy<std::uint64_t>;
+	*/
 
 	class Type : public CRTP <Type, Object> {
 	public:

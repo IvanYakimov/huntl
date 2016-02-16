@@ -91,6 +91,53 @@ namespace solver {
 		for_each(val_list.begin(), val_list.end(), checker);
 	}
 
+	namespace ability_test{
+	template<typename T>
+	void helper() {
+		using namespace std;
+		ASSERT_TRUE(numeric_limits<T>::is_integer);
+
+		auto min = numeric_limits<T>::min();
+		auto max = numeric_limits<T>::max();
+		auto checker = [&] (T val) -> void {
+			shared_ptr<BasicInt> first = make_shared<Int<T>>(val);
+			shared_ptr<BasicInt> second = make_shared<Int<T>>();
+			auto l = first->GetUInt64();
+			ASSERT_EQ(8, sizeof(l));
+			second->SetUInt64(l);
+			//cout << *first << " val to long: " << l << ", back to val: " << *second << endl;
+			ASSERT_EQ(val, (dynamic_pointer_cast<Int<T>>(second))->GetVal());
+		};
+
+		std::list<T> val_list = {
+				min,
+				max,
+				0,
+				42
+		};
+
+		if (std::numeric_limits<T>::is_signed)
+			val_list.push_back(-42);
+
+		for_each(val_list.begin(), val_list.end(), checker);
+	}
+
+	void body() {
+		helper<int8_t>();
+		helper<int16_t>();
+		helper<int32_t>();
+		helper<int64_t>();
+		helper<uint8_t>();
+		helper<uint16_t>();
+		helper<uint32_t>();
+		helper<uint64_t>();
+	};
+	}
+
+	TEST_F(ValueTest, Ability) {
+		ability_test::body();
+	}
+
 	//TODO:
 	//ToString
 	//GedWidth

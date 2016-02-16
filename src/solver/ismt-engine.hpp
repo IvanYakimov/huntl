@@ -16,15 +16,20 @@ namespace solver
 		  UNKNOWN
 	}Sat;
 
+	template <class T>
 	class ISMTEngine
 	{
 	public:
 		virtual ~ISMTEngine() {}
 		virtual void Assert (ExprPtr expr) = 0;
 		virtual Sat CheckSat() = 0;
-		virtual std::int32_t GetValue(ExprPtr varible) = 0;
+		virtual ValuePtr GetValue(ExprPtr varible) = 0;
 		virtual void Push() = 0;
 		virtual void Pop() = 0;
+#ifndef DBG
+	private:
+#endif
+		T Prism(ExprPtr expr) throw(std::logic_error);
 	};
 }
 

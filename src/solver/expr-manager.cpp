@@ -3,14 +3,14 @@
 namespace solver {
 
 	ExprManager::ExprManager() : type_table_ {
-		std::make_shared<SInt8Ty>(),
-		std::make_shared<SInt16Ty>(),
-		std::make_shared<SInt32Ty>(),
-		std::make_shared<SInt64Ty>(),
-		std::make_shared<UInt8Ty>(),
-		std::make_shared<UInt16Ty>(),
-		std::make_shared<UInt32Ty>(),
-		std::make_shared<UInt64Ty>()} {
+		std::make_shared<IntTy<int8_t>>(),
+		std::make_shared<IntTy<int16_t>>(),
+		std::make_shared<IntTy<int32_t>>(),
+		std::make_shared<IntTy<int64_t>>(),
+		std::make_shared<IntTy<uint8_t>>(),
+		std::make_shared<IntTy<uint16_t>>(),
+		std::make_shared<IntTy<uint32_t>>(),
+		std::make_shared<IntTy<uint64_t>>()} {
 	}
 
 	ExprManager::~ExprManager() {
