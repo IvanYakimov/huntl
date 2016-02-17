@@ -46,19 +46,19 @@ namespace solver {
 		};
 
 		switch (width) {
-		case 8:
+		case Width::w8:
 			return is_signed ?
 					setval(make_shared<Int<int8_t>>()) :
 					setval(make_shared<Int<uint8_t>>());
-		case 16:
+		case Width::w16:
 			return is_signed ?
 					setval(make_shared<Int<int16_t>>())	:
 					setval(make_shared<Int<uint16_t>>());
-		case 32:
+		case Width::w32:
 			return is_signed ?
 					setval(make_shared<Int<int32_t>>())	:
 					setval(make_shared<Int<uint32_t>>());
-		case 64:
+		case Width::w64:
 			return is_signed ?
 					setval(make_shared<Int<int64_t>>()):
 					setval(make_shared<Int<uint64_t>>());

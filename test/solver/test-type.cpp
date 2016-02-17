@@ -66,14 +66,14 @@ namespace solver {
 		};
 
 		the_list val_list = {
-				make_tuple(MkTy<std::int8_t>(), true, 1, 8),
-				make_tuple(MkTy<std::int16_t>(), true, 2, 16),
-				make_tuple(MkTy<std::int32_t>(), true, 4, 32),
-				make_tuple(MkTy<std::int64_t>(), true, 8, 64),
-				make_tuple(MkTy<std::uint8_t>(), false, 1, 8),
-				make_tuple(MkTy<std::uint16_t>(), false, 2, 16),
-				make_tuple(MkTy<std::uint32_t>(), false, 4, 32),
-				make_tuple(MkTy<std::uint64_t>(), false, 8, 64)
+				make_tuple(MkTy<std::int8_t>(), true, 1, Width::w8),
+				make_tuple(MkTy<std::int16_t>(), true, 2, Width::w16),
+				make_tuple(MkTy<std::int32_t>(), true, 4, Width::w32),
+				make_tuple(MkTy<std::int64_t>(), true, 8, Width::w64),
+				make_tuple(MkTy<std::uint8_t>(), false, 1, Width::w8),
+				make_tuple(MkTy<std::uint16_t>(), false, 2, Width::w16),
+				make_tuple(MkTy<std::uint32_t>(), false, 4, Width::w32),
+				make_tuple(MkTy<std::uint64_t>(), false, 8, Width::w64)
 		};
 
 		for_each(val_list.begin(), val_list.end(), checker);

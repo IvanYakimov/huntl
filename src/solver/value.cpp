@@ -22,7 +22,7 @@ namespace solver {
 
 	template<typename T>
 	std::string Int<T>::ToString() const {
-		return (IsSigned()?"i":"u") + std::to_string(GetWidth()) + " " + std::to_string(GetVal());
+		return (IsSigned()?"i":"u") + solver::to_string(GetWidth()) + " " + std::to_string(GetVal());
 	}
 
 	template<typename T>
@@ -32,7 +32,7 @@ namespace solver {
 
 	template<typename T>
 	Width Int<T>::GetWidth() const {
-		return sizeof(T)*8;
+		return solver::from_size_t(sizeof(T));
 	}
 
 	template<typename T>

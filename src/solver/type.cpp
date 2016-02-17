@@ -3,7 +3,7 @@
 namespace solver {
 	template<typename T>
 	std::string IntTy<T>::ToString() const {
-		return (IsSigned()?"i":"u") + std::to_string(GetWidth()) + " ty";
+		return (IsSigned()?"i":"u") + solver::to_string(GetWidth()) + " ty";
 	}
 
 	template<typename T>
@@ -14,7 +14,7 @@ namespace solver {
 
 	template<typename T>
 	Width IntTy<T>::GetWidth() const {
-		return sizeof(T)*8;
+		return solver::from_size_t(sizeof(T));
 	}
 
 	template<typename T>

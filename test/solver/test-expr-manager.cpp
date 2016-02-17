@@ -31,14 +31,14 @@ namespace solver {
 		ExprManagerPtr em_ = GetExprManager();
 		uint64_t val = 42;
 
-		auto i8ty = em_->MkIntVal(true, 8, val);
-		auto i16ty = em_->MkIntVal(true, 16, val);
-		auto i32ty = em_->MkIntVal(true, 32, val);
-		auto i64ty = em_->MkIntVal(true, 64, val);
-		auto ui8ty = em_->MkIntVal(false, 8, val);
-		auto ui16ty = em_->MkIntVal(false, 16, val);
-		auto ui32ty = em_->MkIntVal(false, 32, val);
-		auto ui64ty = em_->MkIntVal(false, 64, val);
+		auto i8ty = em_->MkIntVal(true, Width::w8, val);
+		auto i16ty = em_->MkIntVal(true, Width::w16, val);
+		auto i32ty = em_->MkIntVal(true, Width::w32, val);
+		auto i64ty = em_->MkIntVal(true, Width::w64, val);
+		auto ui8ty = em_->MkIntVal(false, Width::w8, val);
+		auto ui16ty = em_->MkIntVal(false, Width::w16, val);
+		auto ui32ty = em_->MkIntVal(false, Width::w32, val);
+		auto ui64ty = em_->MkIntVal(false, Width::w64, val);
 
 		using the_tuple = tuple<ValuePtr, ValuePtr, Equality>;
 		using the_list = list<the_tuple>;
