@@ -2,6 +2,14 @@
 
 namespace solver {
 
+	ExprManagerPtr GetExprManager() {
+		static ExprManagerPtr em_ (nullptr);
+		if (em_ == nullptr)
+			return em_ = std::make_shared<ExprManager>();
+		else
+			return em_;
+	}
+
 	ExprManager::ExprManager() : type_table_ {
 		std::make_shared<IntTy<int8_t>>(),
 		std::make_shared<IntTy<int16_t>>(),
@@ -29,4 +37,27 @@ namespace solver {
 		return std::make_shared <BinOp>(a, b, op_code);
 	}
 
+	ValuePtr ExprManager::MkIntVal(bool is_signed, Width width, uint64_t val) {
+		switch (width) {
+		case 8:
+		case 16:
+		case 32:
+		case 64:
+			break;
+		};
+		throw std::logic_error("not implemented");
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

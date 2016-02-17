@@ -5,8 +5,15 @@
 
 #include "expr.hpp"
 #include <algorithm>
+#include <memory>
 
 namespace solver {
+	class ExprManager;
+	using ExprManagerPtr = std::shared_ptr<ExprManager>;
+
+	// Singleton implementation
+	ExprManagerPtr GetExprManager();
+
 	class ExprManager
 	{
 	public:
@@ -31,6 +38,8 @@ namespace solver {
 			else
 				throw std::logic_error("type not found");
 		}
+
+		ValuePtr MkIntVal(bool is_signed, Width width, uint64_t val);
 
 	private:
 		std::list<TypePtr> type_table_;

@@ -7,6 +7,14 @@ namespace solver {
 		ExprManager em;
 	};
 
+	TEST_F(ExprManagerTest, Singleton) {
+		ExprManagerPtr em_1 = GetExprManager();
+		ExprManagerPtr em_2 = GetExprManager();
+		ExprManagerPtr em_3 = GetExprManager();
+		ASSERT_NE(em_1, nullptr);
+		ASSERT_EQ(em_1, em_2); ASSERT_EQ(em_2, em_3); ASSERT_EQ(em_1, em_3);
+	}
+
 	TEST_F(ExprManagerTest, MkVal) {
 		int val = 42;
 		auto produced_item = em.MkIntVal<int8_t>(val);
