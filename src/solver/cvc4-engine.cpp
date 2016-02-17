@@ -42,16 +42,22 @@ namespace solver {
 		}
 	}
 
-	/*
-	ValuePtr CVC4Engine::GetValue(ExprPtr expr) {
-		auto var = std::dynamic_pointer_cast<Var>(expr);
-		if (!var)
-			throw std::bad_cast();
-		auto cvcexpr = symbol_table_.lookup(var->GetName());
-		auto btv_const = cvcexpr.getConst<CVC4::BitVector>();
-		return FromBitVector(btv_const);
+	ValuePtr CVC4Engine::GetValue(ExprPtr expr) throw (std::logic_error) {
+		if (instanceof<Var>(expr)) {
+			auto var = std::dynamic_pointer_cast<Var>(expr);
+			if (instanceof<BasicInt>(var->GetType())) {
+				CVC4::Expr cvcexpr = symbol_table_.lookup(var->GetName());
+				CVC4::BitVector btv = cvcexpr.getConst<CVC4::BitVector>();
+				CVC4::Integer integer = btv.toInteger();
+				uint64_t ulval = integer.getUnsignedLong();
+				//TODO:
+				throw std::logic_error("not implemented");
+			}
+			else throw std::logic_error("only integer type supported");
+		}
+		else
+			throw std::logic_error("incompatible type of expression");
 	}
-	*/
 
 	// private things
 	// TODO: refactoring - extract pattern (helper) code
@@ -89,6 +95,7 @@ namespace solver {
 				//TODO verify bitwise operation usage
 
 				//return expr_manager_.mkConst(CVC4::BitVector(32, uval));
+				throw std::logic_error("not implemented");
 			}
 			else
 				throw std::logic_error("not implemented");

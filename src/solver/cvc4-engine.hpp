@@ -23,7 +23,7 @@ namespace solver {
 		virtual ~CVC4Engine();
 		virtual void Assert(ExprPtr expr) final;
 		virtual Sat CheckSat() final;
-		virtual ValuePtr GetValue(ExprPtr varible) final;
+		virtual ValuePtr GetValue(ExprPtr varible) throw(std::logic_error) final;
 		virtual void Push() final;
 		virtual void Pop() final;
 #ifndef DBG

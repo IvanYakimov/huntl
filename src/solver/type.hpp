@@ -10,9 +10,6 @@
 #include <memory>
 
 namespace solver {
-	using Alignment = std::size_t;
-	using Width = unsigned short;
-
 	class Type;
 	class BasicIntTy;
 	template<typename T> class IntTy;

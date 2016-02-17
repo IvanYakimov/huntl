@@ -37,14 +37,33 @@ namespace solver {
 		return std::make_shared <BinOp>(a, b, op_code);
 	}
 
-	ValuePtr ExprManager::MkIntVal(bool is_signed, Width width, uint64_t val) {
+	ValuePtr ExprManager::MkIntVal(bool is_signed, Width width, uint64_t ulval) {
+		//TODO: refactroing of Width (make an enum)
+		using std::make_shared;
+		auto setval = [&] (BasicIntPtr int_obj) {
+			int_obj->SetUInt64(ulval);
+			return int_obj;
+		};
+
 		switch (width) {
 		case 8:
+			return is_signed ?
+					setval(make_shared<Int<int8_t>>()) :
+					setval(make_shared<Int<uint8_t>>());
 		case 16:
+			return is_signed ?
+					setval(make_shared<Int<int16_t>>())	:
+					setval(make_shared<Int<uint16_t>>());
 		case 32:
+			return is_signed ?
+					setval(make_shared<Int<int32_t>>())	:
+					setval(make_shared<Int<uint32_t>>());
 		case 64:
-			break;
+			return is_signed ?
+					setval(make_shared<Int<int64_t>>()):
+					setval(make_shared<Int<uint64_t>>());
 		};
+
 		throw std::logic_error("not implemented");
 	}
 }

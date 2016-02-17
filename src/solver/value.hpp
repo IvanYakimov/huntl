@@ -11,9 +11,6 @@
 #include <memory>
 
 namespace solver {
-	using Alignment = std::size_t;
-	using Width = unsigned short;
-
 	class Value;
 	class BasicInt;
 	template<typename T> class Int;
