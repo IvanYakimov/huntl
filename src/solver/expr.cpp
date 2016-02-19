@@ -19,8 +19,6 @@ namespace solver
 
 	Var::~Var() {}
 
-	std::string Var::ToString() const {return GetName();}
-
 	bool Var::Equals(const Object& rhs) const {
 		auto cmp = [] (auto lhs, auto rhs) -> bool {
 			return lhs.name_ == rhs.name_
@@ -29,6 +27,7 @@ namespace solver
 		return EqualsHelper<Var>(*this, rhs, cmp);
 	}
 
+	std::string Var::ToString() const {return GetName();}
 	std::string Var::GetName() const {return name_;}
 	TypePtr Var::GetType() const {return type_;}
 
@@ -44,15 +43,15 @@ namespace solver
 
 	Const::~Const() {}
 
-	std::string Const::ToString() const {
-		return GetValue()->ToString();
-	}
-
 	bool Const::Equals(const Object& rhs) const {
 		auto cmp = [] (auto lhs, auto rhs) -> bool {
 			return lhs.GetValue() == rhs.GetValue();
 		};
 		return EqualsHelper<Const>(*this, rhs, cmp);
+	}
+
+	std::string Const::ToString() const {
+		return GetValue()->ToString();
 	}
 
 	ValuePtr Const::GetValue() const {
@@ -71,10 +70,6 @@ namespace solver
 
 	BinOp::~BinOp() {}
 
-	std::string BinOp::ToString() const {
-		return GetKindName() + " " + GetLeftChild()->ToString() + " " + GetRightChild()->ToString();
-	}
-
 	bool BinOp::Equals(const Object& rhs) const {
 		auto cmp = [] (auto lhs, auto rhs) -> bool {
 			return lhs.kind_ == rhs.kind_ &&
@@ -82,6 +77,10 @@ namespace solver
 					lhs.right_child_ == rhs.right_child_;
 		};
 		return EqualsHelper<BinOp>(*this, rhs, cmp);
+	}
+
+	std::string BinOp::ToString() const {
+		return GetKindName() + " " + GetLeftChild()->ToString() + " " + GetRightChild()->ToString();
 	}
 
 	ExprPtr BinOp::GetLeftChild() const {return left_child_;}

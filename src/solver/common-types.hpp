@@ -5,13 +5,10 @@
 #include <memory>
 #include <string>
 
+//TODO: move to /src/solver directory
 namespace solver {
 	//-------------------------------------------
 	// Basic
-	//using Width = uint16_t;
-	//using Alignment = size_t;
-	using Alignment = size_t;
-
 	enum class Width {
 			w8 = 8,
 			w16 = 16,

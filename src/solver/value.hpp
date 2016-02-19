@@ -3,7 +3,7 @@
 
 // PROJECT
 #include "../utils/object.hpp"
-#include "../utils/common-types.hpp"
+#include "common-types.hpp"
 #include "../utils/memory.hpp"
 
 // SLT
@@ -19,17 +19,6 @@ namespace solver {
 	using BasicIntPtr = std::shared_ptr<BasicInt>;
 	template<typename T> using IntPtr = std::shared_ptr<Int<T>>;
 
-	/*
-	using SInt8 = Int<std::int8_t>;
-	using SInt16 = Int<std::int16_t>;
-	using SInt32 = Int<std::int32_t>;
-	using SInt64 = Int<std::int64_t>;
-	using UInt8 = Int<std::uint8_t>;
-	using UInt16 = Int<std::uint16_t>;
-	using UInt32 = Int<std::uint32_t>;
-	using UInt64 = Int<std::uint64_t>;
-	*/
-
 	class Value : public CRTP <Value, Object> {
 	public:
 		virtual ~Value() {}
@@ -38,7 +27,6 @@ namespace solver {
 	class BasicInt : public CRTP <BasicInt, Value> {
 	public:
 		virtual Width GetWidth() const = 0;
-		virtual Alignment GetAlignment() const = 0;
 		virtual bool IsSigned() const = 0;
 		virtual uint64_t GetUInt64() const = 0;
 		virtual void SetUInt64(const uint64_t& val) = 0;
@@ -47,14 +35,14 @@ namespace solver {
 	template<typename T>
 	class Int : public CRTP <Int<T>, BasicInt> {
 	public:
-		virtual ~Int();
 		Int(T value);
 		Int();
-		virtual std::string ToString() const final;
+		virtual ~Int();
 		virtual bool Equals (const Object& rhs) const final;
+		virtual std::string ToString() const final;
+		//TODO: rename to GetInteger
 		T GetVal() const;
 		virtual Width GetWidth() const final;
-		virtual Alignment GetAlignment() const final;
 		virtual bool IsSigned() const final;
 		virtual uint64_t GetUInt64() const final;
 		virtual void SetUInt64(const uint64_t& val) final;

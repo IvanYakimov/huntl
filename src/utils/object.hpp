@@ -9,8 +9,8 @@
 class Object : public std::enable_shared_from_this<Object> {
 public:
 	virtual ~Object() {}
-	virtual std::string ToString() const = 0;
 	virtual bool Equals (const Object& rhs) const = 0;
+	virtual std::string ToString() const = 0;
 };
 
 /*

@@ -2,13 +2,14 @@ SHELL = /bin/sh
 
 SOLVER = kind.o type.o expr.o expr-manager.o value.o cvc4-engine.o \
 	common-types.o 
-SOLVER_TEST = test-runner.o test-value.o test-type.o test-expr.o test-expr-manager.o test-cvc4-engine.o 
+SOLVER_TEST = test-runner.o test-value.o test-type.o test-expr.o test-expr-manager.o test-cvc4-engine.o \
+	test-common-types.o 
 #test-z3-engine.o
 
 PARSER = parser.o pattern-matcher.o interpreter.o local-memory.o
 PARSER_TEST = 
 
-UTILS = interruption.o
+UTILS = 
 
 OBJ_TEST = $(SOLVER_TEST) $(PARSER_TEST)
 OBJ = $(SOLVER) $(PARSER) $(UTILS)

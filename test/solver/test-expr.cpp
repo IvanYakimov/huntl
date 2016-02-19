@@ -20,6 +20,7 @@
 
 using std::shared_ptr;
 
+//TODO: test review - adopt to new format
 //TODO: remove redundant testing
 namespace solver {
 	class ExprTest : public ::testing::Test {

@@ -2,8 +2,13 @@
 
 namespace solver {
 	template<typename T>
-	std::string IntTy<T>::ToString() const {
-		return (IsSigned()?"i":"u") + width::to_string(GetWidth()) + " ty";
+	IntTy<T>::IntTy() {
+
+	}
+
+	template<typename T>
+	IntTy<T>::~IntTy() {
+
 	}
 
 	template<typename T>
@@ -13,13 +18,13 @@ namespace solver {
 	}
 
 	template<typename T>
-	Width IntTy<T>::GetWidth() const {
-		return width::from_size_t(sizeof(T));
+	std::string IntTy<T>::ToString() const {
+		return (IsSigned()?"i":"ui") + width::to_string(GetWidth());
 	}
 
 	template<typename T>
-	Alignment IntTy<T>::GetAlignment() const {
-		return sizeof(T);
+	Width IntTy<T>::GetWidth() const {
+		return width::from_size_t(sizeof(T));
 	}
 
 	template<typename T>

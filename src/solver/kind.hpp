@@ -4,8 +4,6 @@
 //STL
 #include <map>
 
-#include "../utils/common-types.hpp"
-
 namespace solver {
 	enum class Kind;
 	enum class Kind{

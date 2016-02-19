@@ -3,7 +3,7 @@
 
 //PROJECT
 #include "../utils/object.hpp"
-#include "../utils/common-types.hpp"
+#include "common-types.hpp"
 
 //STL
 #include <limits>
@@ -16,17 +16,6 @@ namespace solver {
 
 	using TypePtr = std::shared_ptr<Type>;
 
-	/*
-	using SInt8Ty = IntTy<std::int8_t>;
-	using SInt16Ty = IntTy<std::int16_t>;
-	using SInt32Ty = IntTy<std::int32_t>;
-	using SInt64Ty = IntTy<std::int64_t>;
-	using UInt8Ty = IntTy<std::uint8_t>;
-	using UInt16Ty = IntTy<std::uint16_t>;
-	using UInt32Ty = IntTy<std::uint32_t>;
-	using UInt64Ty = IntTy<std::uint64_t>;
-	*/
-
 	class Type : public CRTP <Type, Object> {
 	public:
 		virtual ~Type() {}
@@ -36,19 +25,17 @@ namespace solver {
 	public:
 		virtual ~BasicIntTy() {}
 		virtual Width GetWidth() const = 0;
-		virtual Alignment GetAlignment() const = 0;
 		virtual bool IsSigned() const = 0;
 	};
 
 	template<typename T>
 	class IntTy : public CRTP <IntTy<T>, BasicIntTy> {
 	public:
-		virtual ~IntTy() {}
-		IntTy () {}
-		virtual std::string ToString() const final;
+		IntTy ();
+		virtual ~IntTy();
 		virtual bool Equals (const Object& rhs) const final;
+		virtual std::string ToString() const final;
 		virtual Width GetWidth() const final;
-		virtual Alignment GetAlignment() const final;
 		virtual bool IsSigned() const final;
 	};
 

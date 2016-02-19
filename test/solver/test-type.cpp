@@ -17,8 +17,15 @@ namespace solver {
 		TypePtr MkTy() { return std::make_shared<IntTy<T>>(); }
 	};
 
-	//TODO: combinatorial testing
-	TEST_F(TypeTest, Comparison) {
+	TEST_F(TypeTest, DISABLED_Constructor) {
+		throw std::logic_error("not implemented");
+	}
+
+	TEST_F(TypeTest, DISABLED_Destructor) {
+		throw std::logic_error("not implemented");
+	}
+
+	TEST_F(TypeTest, Equals) {
 		using namespace std;
 		TypePtr x1 = MkTy<int32_t>(),
 				x2 = MkTy<int32_t>(),
@@ -34,7 +41,7 @@ namespace solver {
 		EXPECT_NE(nullptr, x1);
 	}
 
-	TEST_F(TypeTest, Comb_Comparison) {
+	TEST_F(TypeTest, Equals_combinatorial) {
 		using namespace std;
 		array<TypePtr, 8> val_list = {
 				MkTy<int8_t>(),
@@ -56,24 +63,30 @@ namespace solver {
 					ASSERT_NE(val_list[i], val_list[j]);
 	}
 
-	TEST_F(TypeTest, Validity) {
+	TEST_F(TypeTest, ToString_GetWidth_IsSigned) {
 		using namespace std;
-		using the_tuple = std::tuple<TypePtr, bool, Alignment, Width>;
+		using the_tuple = std::tuple<TypePtr, string, bool, Width>;
 		using the_list = std::list<the_tuple>;
 
 		auto checker = [] (the_tuple tpl) -> bool{
-				auto ty = get<0>(tpl);
+			auto ty = dynamic_pointer_cast<BasicIntTy>(get<0>(tpl));
+			auto name = get<1>(tpl);
+			auto sign = get<2>(tpl);
+			auto width = get<3>(tpl);
+			EXPECT_EQ(name, ty->ToString());
+			EXPECT_EQ(sign, ty->IsSigned());
+			EXPECT_EQ(width, ty->GetWidth());
 		};
 
 		the_list val_list = {
-				make_tuple(MkTy<std::int8_t>(), true, 1, Width::w8),
-				make_tuple(MkTy<std::int16_t>(), true, 2, Width::w16),
-				make_tuple(MkTy<std::int32_t>(), true, 4, Width::w32),
-				make_tuple(MkTy<std::int64_t>(), true, 8, Width::w64),
-				make_tuple(MkTy<std::uint8_t>(), false, 1, Width::w8),
-				make_tuple(MkTy<std::uint16_t>(), false, 2, Width::w16),
-				make_tuple(MkTy<std::uint32_t>(), false, 4, Width::w32),
-				make_tuple(MkTy<std::uint64_t>(), false, 8, Width::w64)
+				make_tuple(MkTy<std::int8_t>(), "i8", true, Width::w8),
+				make_tuple(MkTy<std::int16_t>(), "i16", true, Width::w16),
+				make_tuple(MkTy<std::int32_t>(), "i32", true, Width::w32),
+				make_tuple(MkTy<std::int64_t>(), "i64", true, Width::w64),
+				make_tuple(MkTy<std::uint8_t>(), "ui8", false, Width::w8),
+				make_tuple(MkTy<std::uint16_t>(), "ui16", false, Width::w16),
+				make_tuple(MkTy<std::uint32_t>(), "ui32", false, Width::w32),
+				make_tuple(MkTy<std::uint64_t>(), "ui64", false, Width::w64)
 		};
 
 		for_each(val_list.begin(), val_list.end(), checker);

@@ -40,8 +40,8 @@ namespace solver
 		//TODO: place Kind at first position
 		BinOp(ExprPtr left_child, ExprPtr right_child, Kind kind);
 		~BinOp();
-		std::string ToString() const final;
 		bool Equals(const Object &rhs) const final;
+		std::string ToString() const final;
 		ExprPtr GetLeftChild() const;
 		ExprPtr GetRightChild() const;
 		Kind GetKind() const;
@@ -57,8 +57,8 @@ namespace solver
 	public:
 		Var (std::string name, TypePtr type) throw(std::logic_error); //TODO: throw
 		virtual ~Var() final;
-		virtual std::string ToString() const final;
 		virtual bool Equals(const Object& rhs) const final;
+		virtual std::string ToString() const final;
 		std::string GetName() const;
 		TypePtr GetType() const;
 	private:
@@ -70,8 +70,8 @@ namespace solver
 	public:
 		Const (ValuePtr val) throw(std::logic_error);
 		virtual ~Const();
-		virtual std::string ToString() const final;
 		virtual bool Equals(const Object& rhs) const final;
+		virtual std::string ToString() const final;
 		ValuePtr GetValue() const;
 	private:
 		ValuePtr value_;
