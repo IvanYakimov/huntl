@@ -17,8 +17,8 @@ namespace solver {
 		};
 
 	namespace width {
-		using namespace solver;
 		Width from_size_t(size_t s);
+		int to_int(Width w);
 		std::string to_string(Width w);
 	}
 };

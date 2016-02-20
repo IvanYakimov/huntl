@@ -13,6 +13,15 @@ namespace solver {
 			}
 		}
 
+		int to_int(Width w) {
+			switch (w) {
+			case Width::w8: return 8;
+			case Width::w16: return 16;
+			case Width::w32: return 32;
+			case Width::w64: return 64;
+			}
+		}
+
 		std::string to_string(Width w) {
 			switch (w) {
 			case Width::w8: return "8";

@@ -92,8 +92,8 @@ namespace solver {
 			auto val = cnst->GetValue();
 			if (instanceof<BasicInt>(val)) {
 				auto int_val = dynamic_pointer_cast<BasicInt>(cnst);
-				//TODO verify bitwise operation usage
-
+				auto width = int_val->GetWidth();
+				auto uval = int_val->GetUInt64();
 				//return expr_manager_.mkConst(CVC4::BitVector(32, uval));
 				throw std::logic_error("not implemented");
 			}
