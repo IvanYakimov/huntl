@@ -37,7 +37,7 @@ namespace solver {
 		ASSERT_TRUE(nlp_ex);
 	}
 
-	TEST_F(CVC4EngineTest, CVC4ExprManagerBug_part1) {
+	TEST_F(CVC4EngineTest, DISABLED_CVC4ExprManagerBug_part1) {
 		// No error - normal behavior
 		CVC4::ExprManager cvc4em;
 		CVC4::Type btv_ty1 = cvc4em.mkBitVectorType(32);
@@ -45,7 +45,7 @@ namespace solver {
 		ASSERT_EQ(btv_ty1, btv_ty2);
 	}
 
-	TEST_F(CVC4EngineTest, CVC4ExprManagerBug_part2) {
+	TEST_F(CVC4EngineTest, DISABLED_CVC4ExprManagerBug_part2) {
 		// Error - 2 structural equivalent objects are equal
 		CVC4::ExprManager cvc4em1;
 		CVC4::ExprManager cvc4em2;
@@ -55,27 +55,36 @@ namespace solver {
 	}
 
 	template <typename T>
-	void Prism_Var__helper (CVC4Engine *cvc4engine_, ExprManagerPtr em_, CVC4::ExprManager &cvc4em) {
-		std::string name = "x";
+	void Prism_Var__helper (CVC4Engine *cvc4engine_, ExprManagerPtr em_) {
+		using namespace std;
+		string name = "x";
 		auto ty = em_->MkIntTy<T>();
 		ExprPtr var = em_->MkVar(name, ty);
 		CVC4::Expr cvc4_var = cvc4engine_->Prism(var);
+		CVC4::ExprManager cvc4em;
+		CVC4::Type btv_ty = cvc4em.mkBitVectorType(sizeof(T)*8);
+		cout << "TRACE: " << "original " << *var << " cvc4 " << cvc4_var.toString() << " type " << cvc4_var.getType().toString() <<
+						" type size " << static_cast<CVC4::BitVectorType>(cvc4_var.getType()).getSize() << endl;
 		ASSERT_EQ(name, cvc4_var.toString());
 		ASSERT_TRUE(cvc4_var.getType().isBitVector());
+		// note: operator== doesn't work properly for objects created by different CVC4::ExprManager instances
+		// so we compare string representation instead
+		ASSERT_EQ(btv_ty.toString(), cvc4_var.getType().toString());
 	}
 
 	TEST_F(CVC4EngineTest, Prism_Var) {
 		// (declare-const NAME (_ BitVec 32))
 		auto cvc4engine = dynamic_cast<CVC4Engine*>(engine_);
-		auto cvc4em = cvc4engine->expr_manager_;
-		Prism_Var__helper<int8_t>(cvc4engine, em_, cvc4em);
-		Prism_Var__helper<int16_t>(cvc4engine, em_, cvc4em);
-		Prism_Var__helper<int32_t>(cvc4engine, em_, cvc4em);
-		Prism_Var__helper<int64_t>(cvc4engine, em_, cvc4em);
-		Prism_Var__helper<uint8_t>(cvc4engine, em_, cvc4em);
-		Prism_Var__helper<uint16_t>(cvc4engine, em_, cvc4em);
-		Prism_Var__helper<uint32_t>(cvc4engine, em_, cvc4em);
-		Prism_Var__helper<uint64_t>(cvc4engine, em_, cvc4em);
+		//auto cvc4em = cvc4engine->expr_manager_;
+		CVC4::ExprManager cvc4em();
+		Prism_Var__helper<int8_t>(cvc4engine, em_);
+		Prism_Var__helper<int16_t>(cvc4engine, em_);
+		Prism_Var__helper<int32_t>(cvc4engine, em_);
+		Prism_Var__helper<int64_t>(cvc4engine, em_);
+		Prism_Var__helper<uint8_t>(cvc4engine, em_);
+		Prism_Var__helper<uint16_t>(cvc4engine, em_);
+		Prism_Var__helper<uint32_t>(cvc4engine, em_);
+		Prism_Var__helper<uint64_t>(cvc4engine, em_);
 	}
 
 	template <typename T>

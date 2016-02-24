@@ -25,8 +25,9 @@ namespace solver
 		virtual ValuePtr GetValue(ExprPtr varible) = 0;
 		virtual void Push() = 0;
 		virtual void Pop() = 0;
-#ifndef DBG
 	private:
+#ifdef DBG
+	public:
 #endif
 		template <class T>
 		T Prism(ExprPtr expr) throw(std::logic_error);

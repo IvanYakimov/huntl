@@ -26,8 +26,9 @@ namespace solver {
 		virtual ValuePtr GetValue(ExprPtr varible) throw(std::logic_error) final;
 		virtual void Push() final;
 		virtual void Pop() final;
-#ifndef DBG
 	private:
+#ifdef DBG
+	public:
 #endif
 		CVC4::Expr Prism(ExprPtr expr) throw(std::logic_error);
 		CVC4::ExprManager expr_manager_;
