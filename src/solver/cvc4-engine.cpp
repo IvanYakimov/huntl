@@ -68,16 +68,24 @@ namespace solver {
 		// side effect here:
 		if (instanceof<Var>(expr)) {
 			auto var = dynamic_pointer_cast<Var>(expr);
-			CVC4::Expr var_expr;
+			CVC4::Expr cvc4var;
 			auto var_name = var->GetName();
 			if (symbol_table_.isBound(var_name)) {
-				var_expr = symbol_table_.lookup(var_name);
+				cvc4var = symbol_table_.lookup(var_name);
 			}
 			else {
-				var_expr = expr_manager_.mkVar(var_name, expr_manager_.integerType());
-				symbol_table_.bind(var_name, var_expr);
+				auto ty = var->GetType();
+				if (instanceof<BasicIntTy>(ty)) {
+					auto int_ty = std::dynamic_pointer_cast<BasicIntTy>(ty);
+					auto size = width::to_int(int_ty->GetWidth());
+					auto cvc4btv_ty = expr_manager_.mkBitVectorType(size);
+					cvc4var = expr_manager_.mkVar(var_name, cvc4btv_ty);
+					symbol_table_.bind(var_name, cvc4var);
+				}
+				else
+					throw std::logic_error("not implemented");
 			}
-			return var_expr;
+			return cvc4var;
 		}
 		else if (instanceof<BinOp>(expr)) {
 			auto binop = dynamic_pointer_cast<BinOp>(expr);
@@ -91,11 +99,10 @@ namespace solver {
 			auto cnst = dynamic_pointer_cast<Const>(expr);
 			auto val = cnst->GetValue();
 			if (instanceof<BasicInt>(val)) {
-				auto int_val = dynamic_pointer_cast<BasicInt>(cnst);
+				auto int_val = dynamic_pointer_cast<BasicInt>(val);
 				auto width = int_val->GetWidth();
 				auto uval = int_val->GetUInt64();
-				//return expr_manager_.mkConst(CVC4::BitVector(32, uval));
-				throw std::logic_error("not implemented");
+				return expr_manager_.mkConst(CVC4::BitVector(width::to_int(width), uval));
 			}
 			else
 				throw std::logic_error("not implemented");

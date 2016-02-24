@@ -16,7 +16,6 @@ namespace solver
 		  UNKNOWN
 	}Sat;
 
-	template <class T>
 	class ISMTEngine
 	{
 	public:
@@ -29,6 +28,7 @@ namespace solver
 #ifndef DBG
 	private:
 #endif
+		template <class T>
 		T Prism(ExprPtr expr) throw(std::logic_error);
 	};
 }

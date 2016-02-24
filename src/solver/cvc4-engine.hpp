@@ -17,7 +17,7 @@
 # include <memory>
 
 namespace solver {
-	class CVC4Engine final : public ISMTEngine<CVC4::Expr> {
+	class CVC4Engine final : public ISMTEngine {
 	public:
 		CVC4Engine();
 		virtual ~CVC4Engine();
