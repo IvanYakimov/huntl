@@ -246,7 +246,7 @@ namespace solver {
 			auto binop = em->MkBinOp(x, c, Kind::EQ);
 			cvc4engine->Push(); {
 				CVC4::Expr cvc4_expr = cvc4engine->Prism(binop);
-				cout << "--------" << endl << binop->ToString() << " " << cvc4_expr.toString() << endl;
+				//cout << "--------" << endl << binop->ToString() << " " << cvc4_expr.toString() << endl;
 				// check op
 				ASSERT_FALSE(cvc4_expr.isNull() or cvc4_expr.isVariable() or cvc4_expr.isConst());
 				ASSERT_EQ(cvc4_expr.getKind(), CVC4::Kind::EQUAL);
@@ -269,7 +269,7 @@ namespace solver {
 				CVC4::BitVector cvc4_c_btv = cvc4_c.getConst<CVC4::BitVector>();
 				CVC4::Integer cvc4_c_integer = cvc4_c_btv.toInteger();
 				auto actual_raw_ulong = cvc4_c_integer.getUnsignedLong();
-				cout << "sizeof actual ulong : " << sizeof(actual_raw_ulong) << endl;
+				//cout << "sizeof actual ulong : " << sizeof(actual_raw_ulong) << endl;
 				auto basic_int_val = dynamic_pointer_cast<BasicInt>(int_val);
 				uint64_t expected_raw_ulong = basic_int_val->GetUInt64();
 				ASSERT_EQ(expected_raw_ulong, actual_raw_ulong);
@@ -291,13 +291,13 @@ namespace solver {
 
 	TEST_F(CVC4EngineTest, Prism_BinOp) {
 		auto cvc4engine = dynamic_cast<CVC4Engine*>(engine_);
-		/*Prism_BinOp__helper<int8_t>(cvc4engine, em_);
-		Prism_BinOp__helper<int16_t>(cvc4engine, em_);*/
+		Prism_BinOp__helper<int8_t>(cvc4engine, em_);
+		Prism_BinOp__helper<int16_t>(cvc4engine, em_);
 		Prism_BinOp__helper<int32_t>(cvc4engine, em_);
 		Prism_BinOp__helper<int64_t>(cvc4engine, em_);
-		/*Prism_BinOp__helper<uint8_t>(cvc4engine, em_);
+		Prism_BinOp__helper<uint8_t>(cvc4engine, em_);
 		Prism_BinOp__helper<uint16_t>(cvc4engine, em_);
-		Prism_BinOp__helper<uint32_t>(cvc4engine, em_);*/
+		Prism_BinOp__helper<uint32_t>(cvc4engine, em_);
 		Prism_BinOp__helper<uint64_t>(cvc4engine, em_);
 	}
 

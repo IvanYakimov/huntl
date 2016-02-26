@@ -8,6 +8,7 @@
 #include <memory>
 #include <iostream>
 #include <list>
+#include <bitset>
 
 namespace solver {
 	class ValueTest : public ::testing::Test {
@@ -78,10 +79,19 @@ namespace solver {
 		auto checker = [&] (T val) -> void {
 			shared_ptr<BasicInt> first = make_shared<Int<T>>(val);
 			shared_ptr<BasicInt> second = make_shared<Int<T>>();
+
+			//FromUInt64()
 			auto l = first->GetUInt64();
+			auto expected_ulong_str = bitset<64 - sizeof(T)*8>(0).to_string() + bitset<sizeof(T)*8>(val).to_string();
+			auto actual_ulong_str = bitset<64>(l).to_string();
+			//cout <<  Int<T>(val).ToString() << endl;
+			//cout << expected_ulong_str << " expected" << endl;
+			//cout << actual_ulong_str << " from GetUInt64()" << endl;
+			ASSERT_EQ(expected_ulong_str, actual_ulong_str);
 			ASSERT_EQ(8, sizeof(l));
+
+			//ToUInt64
 			second->SetUInt64(l);
-			//cout << *first << " val to long: " << l << ", back to val: " << *second << endl;
 			ASSERT_EQ(val, (dynamic_pointer_cast<Int<T>>(second))->GetVal());
 		};
 

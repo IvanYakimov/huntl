@@ -41,17 +41,25 @@ namespace solver {
 		return std::numeric_limits<T>::is_signed;
 	}
 
-	//TODO: project - try to verify it with Z3
+	//TODO: try to replace by fast bitwise operations
 	template<typename T>
 	uint64_t Int<T>::GetUInt64() const {
-		uint64_t mask = 0L;
-		return uint64_t(mask bitor value_);
+#if defined(_M_X64) || defined(__amd64__)
+		uint64_t result = 0L;
+		memcpy(&result, &value_, sizeof(T));
+		return result;
+#else
+#error "on amd64 is supported"
+#endif
 	}
 
 	template<typename T>
 	void Int<T>::SetUInt64(const uint64_t& val) {
-		uint64_t mask = 0L;
-		const_cast<T&>(value_) = T(val bitor mask);
+#if defined(_M_X64) || defined(__amd64__)
+		memcpy(&value_, &val, sizeof(T));
+#else
+#error "on amd64 is supported"
+#endif
 	}
 }
 

@@ -9,6 +9,7 @@
 // SLT
 #include <limits>
 #include <memory>
+#include <cstring>
 
 namespace solver {
 	class Value;
@@ -48,7 +49,7 @@ namespace solver {
 		virtual void SetUInt64(const uint64_t& val) final;
 	private:
 		//TODO: replace by unique_ptr<const T> (to allow check initialization)
-		const T value_;
+		T value_;
 	};
 
 	template class Int<int8_t>;
