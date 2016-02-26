@@ -19,10 +19,12 @@ namespace solver {
 
 	void CVC4Engine::Push() {
 		symbol_table_.pushScope();
+		//std::cout << "push scope at level " << symbol_table_.getLevel() << std::endl;
 	}
 
 	void CVC4Engine::Pop() {
 		symbol_table_.popScope();
+		//std::cout << "pop scope at level " << symbol_table_.getLevel() << std::endl;
 	}
 
 	CVC4Engine::~CVC4Engine() {
@@ -43,15 +45,23 @@ namespace solver {
 	}
 
 	ValuePtr CVC4Engine::GetValue(ExprPtr expr) throw (std::logic_error) {
+		//TODO: check var type! (compare CVC4::Type and solver::Type)
+		// The argument must be an instance of a variable
 		if (instanceof<Var>(expr)) {
 			auto var = std::dynamic_pointer_cast<Var>(expr);
-			if (instanceof<BasicInt>(var->GetType())) {
+			// Can't return value of unbound variable
+			if (not symbol_table_.isBound(var->GetName()))
+				return nullptr;
+			auto ty = var->GetType();
+			// Only integers are supported at the time
+			if (instanceof<BasicIntTy>(ty)) {
+				auto int_ty = std::dynamic_pointer_cast<BasicIntTy>(ty);
 				CVC4::Expr cvcexpr = symbol_table_.lookup(var->GetName());
 				CVC4::BitVector btv = cvcexpr.getConst<CVC4::BitVector>();
 				CVC4::Integer integer = btv.toInteger();
 				uint64_t ulval = integer.getUnsignedLong();
-				//TODO:
-				throw std::logic_error("not implemented");
+				auto result = GetExprManager()->MkIntVal(int_ty->IsSigned(), int_ty->GetWidth(), ulval);
+				return result;
 			}
 			else throw std::logic_error("only integer type supported");
 		}
@@ -70,8 +80,11 @@ namespace solver {
 			auto var = dynamic_pointer_cast<Var>(expr);
 			CVC4::Expr cvc4var;
 			auto var_name = var->GetName();
+			//TODO: check var type! (compare CVC4::Type and solver::Type)
 			if (symbol_table_.isBound(var_name)) {
 				cvc4var = symbol_table_.lookup(var_name);
+				//TODO: remove
+				//std::cout << "Prism: " << *var << " found " << cvc4var.getType().toString() << " " << cvc4var.toString() << " at level: " << symbol_table_.getLevel() << std::endl;
 			}
 			else {
 				auto ty = var->GetType();
@@ -80,6 +93,8 @@ namespace solver {
 					auto size = width::to_int(int_ty->GetWidth());
 					auto cvc4btv_ty = expr_manager_.mkBitVectorType(size);
 					cvc4var = expr_manager_.mkVar(var_name, cvc4btv_ty);
+					//TODO: remove of implement as a log-function
+					// std::cout << "Prism: " << *var << " creates " << cvc4btv_ty.toString() << " " << cvc4var.toString() << " at level: " << symbol_table_.getLevel() << std::endl;
 					symbol_table_.bind(var_name, cvc4var);
 				}
 				else

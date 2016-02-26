@@ -27,7 +27,9 @@ namespace solver
 		return EqualsHelper<Var>(*this, rhs, cmp);
 	}
 
-	std::string Var::ToString() const {return GetName();}
+	std::string Var::ToString() const {
+		return GetType()->ToString() + " " + GetName();
+	}
 	std::string Var::GetName() const {return name_;}
 	TypePtr Var::GetType() const {return type_;}
 

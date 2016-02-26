@@ -1,5 +1,8 @@
 // Project
 #include "../../src/solver/type.hpp"
+#include "../../src/solver/expr.hpp"
+#include "../../src/solver/value.hpp"
+#include "../../src/utils/object.hpp"
 
 // Google Test
 # include "gtest/gtest.h"
@@ -90,6 +93,23 @@ namespace solver {
 		};
 
 		for_each(val_list.begin(), val_list.end(), checker);
+	}
+
+	TEST_F(TypeTest, instanceof) {
+		TypePtr ty = MkTy<int32_t>();
+		ASSERT_TRUE(instanceof<Object>(ty));
+		ASSERT_TRUE(instanceof<Type>(ty));
+		ASSERT_TRUE(instanceof<BasicIntTy>(ty));
+		ASSERT_TRUE(instanceof<IntTy<int32_t>>(ty));
+
+		ASSERT_FALSE(instanceof<IntTy<int16_t>>(ty));
+
+		ASSERT_FALSE(instanceof<Expr>(ty));
+		ASSERT_FALSE(instanceof<Var>(ty));
+		ASSERT_FALSE(instanceof<Const>(ty));
+		ASSERT_FALSE(instanceof<BinOp>(ty));
+		ASSERT_FALSE(instanceof<Value>(ty));
+		ASSERT_FALSE(instanceof<BasicInt>(ty));
 	}
 }
 

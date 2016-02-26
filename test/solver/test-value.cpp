@@ -110,6 +110,7 @@ namespace solver {
 	};
 	}
 
+	//TODO: test prefix - it should contain 64 - sizeof(T)*8 zeros
 	TEST_F(ValueTest, FromUInt64_ToUInt64) {
 		ability_test::body();
 	}

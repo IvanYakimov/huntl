@@ -10,6 +10,7 @@
 // Project
 # include "ismt-engine.hpp"
 # include "expr.hpp"
+# include "expr-manager.hpp"
 # include "value.hpp"
 # include "../../src/utils/memory.hpp"
 

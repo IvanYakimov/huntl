@@ -41,14 +41,17 @@ namespace solver {
 		return std::numeric_limits<T>::is_signed;
 	}
 
+	//TODO: project - try to verify it with Z3
 	template<typename T>
 	uint64_t Int<T>::GetUInt64() const {
-		return uint64_t(value_ bitand (compl T(0)));
+		uint64_t mask = 0L;
+		return uint64_t(mask bitor value_);
 	}
 
 	template<typename T>
 	void Int<T>::SetUInt64(const uint64_t& val) {
-		const_cast<T&>(value_) = T(val bitand (compl uint64_t(0)));
+		uint64_t mask = 0L;
+		const_cast<T&>(value_) = T(val bitor mask);
 	}
 }
 
