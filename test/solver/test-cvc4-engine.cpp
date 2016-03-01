@@ -53,8 +53,13 @@ namespace solver {
 
 			cvc4engine->Push(); {
 				cvc4engine->Assert(binop);
-				auto obtained = cvc4engine->GetValue(x);
-				cout << *obtained << endl;
+				if (cvc4engine->CheckSat() == Sat::SAT) {
+					auto obtained = cvc4engine->GetValue(x);
+					//cout << *val_obj << " -> "<< *obtained << endl;
+					ASSERT_EQ(*val_obj, *obtained);
+				}
+				else
+					FAIL();
 			}
 			cvc4engine->Pop();
 		};
@@ -71,7 +76,7 @@ namespace solver {
 		for_each (val_list.begin(), val_list.end(), checker);
 	}
 
-	TEST_F(CVC4EngineTest, DISABLED_GetValue) {
+	TEST_F(CVC4EngineTest, GetValue) {
 		// (declare-const x (_ BitVec 32))
 		// (assert (= x VAL))
 		// (check-sat)
@@ -91,7 +96,7 @@ namespace solver {
 	//-------------------------------------------------------------------------
 	// Push-Pop
 
-	TEST_F(CVC4EngineTest, DISABLED_Push_Pop__test1) {
+	TEST_F(CVC4EngineTest, Push_Pop_1) {
 		using namespace std;
 		auto x = em_->MkVar("x", em_->MkIntTy<int32_t>());
 		auto val = engine_->GetValue(x);
@@ -99,48 +104,33 @@ namespace solver {
 		ASSERT_EQ(nullptr, val);
 	}
 
-	TEST_F(CVC4EngineTest, DISABLED_Push_Pop__test2) {
+	TEST_F(CVC4EngineTest, Push_Pop_2) {
 		using namespace std;
 		auto x_32 = em_->MkVar("x", em_->MkIntTy<int32_t>());
-		auto x_16 = em_->MkVar("x", em_->MkIntTy<int16_t>());
 
 		auto x_32_unbound = [&] {
 			auto v1 = engine_->GetValue(x_32);
 			ASSERT_EQ(nullptr, v1);
 		};
 
-		auto x_16_unbound = [&] {
-			auto v2 = engine_->GetValue(x_16);
-			ASSERT_EQ(nullptr, v2);
-		};
-
-		auto all_unbound = [&] () {
-			x_32_unbound();
-			x_16_unbound();
-		};
-
 		// level 1 - all variables are unbound
-		all_unbound();
+		x_32_unbound();
 		engine_->Push(); {
 			// level 2 - bind x_32
-			all_unbound();
+			x_32_unbound();
 			auto orig_val = em_->MkIntVal<int32_t>(42);
 			auto c42 = em_->MkConst(orig_val);
 			auto binop = em_->MkBinOp(x_32, c42, Kind::EQ);
 			engine_->Assert(binop);
-			auto res_val = engine_->GetValue(x_32);
-			EXPECT_EQ(orig_val, res_val);
-			x_16_unbound();
+			if (engine_->CheckSat() == Sat::SAT) {
+				auto res_val = engine_->GetValue(x_32);
+				EXPECT_EQ(*orig_val, *res_val);
+			}
+			else FAIL();
 		}
 		engine_->Pop();
 		// level 1 - all variables are unbound
-		all_unbound();
-		engine_->Push(); {
-			// level 2 - bind x_16
-		}
-		engine_->Pop();
-		// level 1 - all variables are unbound
-		all_unbound();
+		x_32_unbound();
 	}
 
 	//-------------------------------------------------------------------------
@@ -230,8 +220,7 @@ namespace solver {
 		Prism_Const__helper<uint64_t>(cvc4engine, em_);
 	}
 
-	//TODO: Prism_BinOp testing - implement test case to check work with different Kind's
-
+	//TODO: Prism_BinOp testing - implement test case to check work with different Kinds
 	template <typename T>
 	void Prism_BinOp__helper (CVC4Engine *cvc4engine, ExprManagerPtr em) {
 		using namespace std;
@@ -301,6 +290,11 @@ namespace solver {
 		Prism_BinOp__helper<uint64_t>(cvc4engine, em_);
 	}
 
+	//-------------------------------------------------------------------------
+	// Basic operations testing
+	TEST_F(CVC4EngineTest, arithmetic) {
+
+	}
 
 
 
@@ -308,7 +302,7 @@ namespace solver {
 
 	//-------------------------------------------------------------------------
 	// CVC4 Internals:
-	TEST_F(CVC4EngineTest, DISABLED_CVC4ExprManagerBug_part1) {
+	TEST_F(CVC4EngineTest, DISABLED_CVC4ExprManager_1) {
 		// No error - normal behavior
 		CVC4::ExprManager cvc4em;
 		CVC4::Type btv_ty1 = cvc4em.mkBitVectorType(32);
@@ -316,45 +310,13 @@ namespace solver {
 		ASSERT_EQ(btv_ty1, btv_ty2);
 	}
 
-	TEST_F(CVC4EngineTest, DISABLED_CVC4ExprManagerBug_part2) {
+	TEST_F(CVC4EngineTest, DISABLED_CVC4ExprManager_2) {
 		// Error - 2 structural equivalent objects are equal
 		CVC4::ExprManager cvc4em1;
 		CVC4::ExprManager cvc4em2;
 		CVC4::Type btv_ty1 = cvc4em1.mkBitVectorType(32);
 		CVC4::Type btv_ty2 = cvc4em2.mkBitVectorType(32);
-		ASSERT_EQ(btv_ty1, btv_ty2);
-	}
-
-	TEST_F(CVC4EngineTest, DISABLED_CVC4ExprManagerScopes) {
-		using namespace std;
-		CVC4::ExprManager em;
-		CVC4::SmtEngine engine(&em);
-		CVC4::SymbolTable symbol_table;
-		engine.setOption("incremental", CVC4::SExpr("true"));
-		engine.setOption("produce-models", CVC4::SExpr("true"));
-		engine.setOption("rewrite-divk", CVC4::SExpr("true"));
-		auto btv32_ty = em.mkBitVectorType(32);
-		auto btv16_ty = em.mkBitVectorType(16);
-		auto x1 = em.mkVar("x", btv32_ty);
-		auto x2 = em.mkVar("x", btv16_ty);
-		symbol_table.pushScope(); {
-			cout << "level " << symbol_table.getLevel() << endl;
-			cout << "is bound x " << symbol_table.isBound("x") << endl;
-			symbol_table.bind("x", x1);
-			cout << "x 32 bound " << endl;
-			cout << "lookup x: " << symbol_table.lookup("x") << symbol_table.lookup("x").getType() << endl;
-			symbol_table.pushScope(); {
-				cout << "level " << symbol_table.getLevel() << endl;
-				cout << "is bound x " << symbol_table.isBound("x") << endl;
-				symbol_table.bind("x", x2);
-				cout << "x 16 bound " << endl;
-				cout << "lookup x: " << symbol_table.lookup("x") << symbol_table.lookup("x").getType() << endl;
-			}
-			symbol_table.popScope();
-			cout << "level " << symbol_table.getLevel() << endl;
-			cout << "lookup x: " << symbol_table.lookup("x") << symbol_table.lookup("x").getType() << endl;
-		}
-		symbol_table.popScope();
+		ASSERT_NE(btv_ty1, btv_ty2);
 	}
 }
 

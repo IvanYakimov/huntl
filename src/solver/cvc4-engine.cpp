@@ -56,11 +56,12 @@ namespace solver {
 			// Only integers are supported at the time
 			if (instanceof<BasicIntTy>(ty)) {
 				auto int_ty = std::dynamic_pointer_cast<BasicIntTy>(ty);
-				CVC4::Expr cvcexpr = symbol_table_.lookup(var->GetName());
-				CVC4::BitVector btv = cvcexpr.getConst<CVC4::BitVector>();
-				CVC4::Integer integer = btv.toInteger();
-				uint64_t ulval = integer.getUnsignedLong();
-				auto result = GetExprManager()->MkIntVal(int_ty->IsSigned(), int_ty->GetWidth(), ulval);
+				CVC4::Expr cvc4_expr = symbol_table_.lookup(var->GetName());
+				CVC4::Expr cvc4_val = smt_engine_.getValue(cvc4_expr);
+				CVC4::BitVector cvc4_btv = cvc4_val.getConst<CVC4::BitVector>();
+				CVC4::Integer cvc4_integer = cvc4_btv.toInteger();
+				uint64_t raw_ulval = cvc4_integer.getUnsignedLong();
+				auto result = GetExprManager()->MkIntVal(int_ty->IsSigned(), int_ty->GetWidth(), raw_ulval);
 				return result;
 			}
 			else throw std::logic_error("only integer type supported");
@@ -103,12 +104,44 @@ namespace solver {
 			return cvc4var;
 		}
 		else if (instanceof<BinOp>(expr)) {
+			auto op_map = [&] (solver::Kind kind) -> CVC4::Kind {
+				switch (kind) {
+				// arithmetic
+				case Kind::ADD: return CVC4::Kind::BITVECTOR_PLUS;
+				case Kind::SUB: return CVC4::Kind::BITVECTOR_SUB;
+				case Kind::MUL: return CVC4::Kind::BITVECTOR_MULT;
+				//TODO: what is SDIV_TOTAL?
+				case Kind::SDIV: return CVC4::Kind::BITVECTOR_SDIV;
+				case Kind::SREM: return CVC4::Kind::BITVECTOR_SREM;
+				//TODO: what is UDIV_TOTAL?
+				case Kind::UDIV: return CVC4::Kind::BITVECTOR_UDIV;
+				case Kind::UREM: return CVC4::Kind::BITVECTOR_UREM;
+				case Kind::SHL: return CVC4::Kind::BITVECTOR_SHL;
+				case Kind::LSHR: return CVC4::Kind::BITVECTOR_LSHR;
+				case Kind::ASHR: return CVC4::Kind::BITVECTOR_ASHR;
+				// bitwise
+				case Kind::AND: return CVC4::Kind::BITVECTOR_AND;
+				case Kind::OR: return CVC4::Kind::BITVECTOR_OR;
+				case Kind::XOR: return CVC4::Kind::BITVECTOR_XOR;
+				// predicates
+				case Kind::EQ: return CVC4::Kind::EQUAL;
+				//TODO: where is not equal?
+				case Kind::UGT: return CVC4::Kind::BITVECTOR_UGT;
+				case Kind::UGE: return CVC4::Kind::BITVECTOR_UGE;
+				case Kind::ULT: return CVC4::Kind::BITVECTOR_ULT;
+				case Kind::ULE: return CVC4::Kind::BITVECTOR_ULE;
+				case Kind::SGT: return CVC4::Kind::BITVECTOR_SGT;
+				case Kind::SGE: return CVC4::Kind::BITVECTOR_SGE;
+				case Kind::SLT: return CVC4::Kind::BITVECTOR_SLT;
+				case Kind::SLE: return CVC4::Kind::BITVECTOR_SLE;
+				}
+			};
+
 			auto binop = dynamic_pointer_cast<BinOp>(expr);
 			//TODO: refactoring
-			switch (binop->GetKind()) {
-			case solver::Kind::EQ:
-				return expr_manager_.mkExpr(CVC4::Kind::EQUAL, Prism(binop->GetLeftChild()), Prism(binop->GetRightChild()));
-			}
+			CVC4::Expr cvc4_binop = expr_manager_.mkExpr(op_map(binop->GetKind()),
+					Prism(binop->GetLeftChild()), Prism(binop->GetRightChild()));
+			return cvc4_binop;
 		}
 		else if (instanceof<Const>(expr)) {
 			auto cnst = dynamic_pointer_cast<Const>(expr);
@@ -116,8 +149,8 @@ namespace solver {
 			if (instanceof<BasicInt>(val)) {
 				auto int_val = dynamic_pointer_cast<BasicInt>(val);
 				auto width = int_val->GetWidth();
-				auto uval = int_val->GetUInt64();
-				return expr_manager_.mkConst(CVC4::BitVector(width::to_int(width), uval));
+				auto raw_ulval = int_val->GetUInt64();
+				return expr_manager_.mkConst(CVC4::BitVector(width::to_int(width), raw_ulval));
 			}
 			else
 				throw std::logic_error("not implemented");

@@ -7,7 +7,7 @@
 namespace solver {
 	enum class Kind;
 	enum class Kind{
-  		  /* arithmetical */
+  		  /* arithmetic */
   		  ADD,
   		  SUB,
   		  MUL,
@@ -15,15 +15,14 @@ namespace solver {
   		  SREM,
 		  UDIV,
 		  UREM,
-  		  /* vector */
   		  SHL,
   		  LSHR,
   		  ASHR,
-  		  /* logical */
+  		  /* bitwise */
   		  AND,
   		  OR,
   		  XOR,
-  		  /* comparisons */
+  		  /* predicates */
   		  EQ,
   		  NE,
   		  UGT,
