@@ -5,6 +5,7 @@
 #include "../../src/solver/ismt-engine.hpp"
 #include "../../src/solver/cvc4-engine.hpp"
 #include "../../src/solver/expr-manager.hpp"
+#include "../../src/solver/expr-manager-helper.hpp"
 
 // Google Test
 #include "gtest/gtest.h"
@@ -292,8 +293,51 @@ namespace solver {
 
 	//-------------------------------------------------------------------------
 	// Basic operations testing
-	TEST_F(CVC4EngineTest, arithmetic) {
+	TEST_F(CVC4EngineTest, helpers_test) {
+		using namespace std;
+		using namespace expr_manager_helper;
+		using the_tuple = tuple<function<ExprPtr(ExprPtr, ExprPtr)>, Kind>;
+		using the_list = list<the_tuple>;
+		auto checker = [&] (the_tuple tpl) {
+			auto f = get<0>(tpl);
+			auto k = get<1>(tpl);
+			auto l = V<int32_t>("x");
+			auto r = V<int32_t>("y");
+			auto act = f(l, r);
+			auto exp = GetExprManager()->MkBinOp(l, r, k);
+			ASSERT_EQ(*exp, *act);
+		};
 
+		the_list val_list = {
+				make_tuple(Add, Kind::ADD),
+				make_tuple(Sub, Kind::SUB),
+				make_tuple(Mul, Kind::MUL),
+				make_tuple(SDiv, Kind::SDIV),
+				make_tuple(SRem, Kind::SREM),
+				make_tuple(UDiv, Kind::UDIV),
+				make_tuple(URem, Kind::UREM),
+				make_tuple(Shl, Kind::SHL),
+				make_tuple(LShr, Kind::LSHR),
+				make_tuple(AShr, Kind::ASHR),
+				make_tuple(And, Kind::AND),
+				make_tuple(Or, Kind::OR),
+				make_tuple(Xor, Kind::XOR),
+				make_tuple(Eq, Kind::EQ),
+				make_tuple(Ne, Kind::NE),
+				make_tuple(UGt, Kind::UGT),
+				make_tuple(UGe, Kind::UGE),
+				make_tuple(ULt, Kind::ULT),
+				make_tuple(ULe, Kind::ULE),
+				make_tuple(SGt, Kind::SGT),
+				make_tuple(SGe, Kind::SGE),
+				make_tuple(ULt, Kind::ULT),
+				make_tuple(ULe, Kind::ULE)
+		};
+
+		for_each(val_list.begin(), val_list.end(), checker);
+	}
+
+	TEST_F(CVC4EngineTest, arithmetic) {
 	}
 
 
