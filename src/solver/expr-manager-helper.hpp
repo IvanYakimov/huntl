@@ -18,6 +18,8 @@ namespace solver {
 			return GetExprManager()->MkBinOp(left, right, kind);
 		}
 
+		using Func = std::function<ExprPtr(ExprPtr,ExprPtr)>;
+
 		static ExprPtr Add(ExprPtr l, ExprPtr r) { return Apply(l, r, Kind::ADD); }
 		static ExprPtr Sub(ExprPtr l, ExprPtr r) { return Apply(l, r, Kind::SUB); }
 		static ExprPtr Mul(ExprPtr l, ExprPtr r) { return Apply(l, r, Kind::MUL); }
@@ -32,7 +34,7 @@ namespace solver {
 		static ExprPtr Or(ExprPtr l, ExprPtr r) { return Apply(l, r, Kind::OR); }
 		static ExprPtr Xor(ExprPtr l, ExprPtr r) { return Apply(l, r, Kind::XOR); }
 		static ExprPtr Eq(ExprPtr l, ExprPtr r) { return Apply(l, r, Kind::EQ); }
-		static ExprPtr Ne(ExprPtr l, ExprPtr r) { return Apply(l, r, Kind::NE); }
+		//static ExprPtr Ne(ExprPtr l, ExprPtr r) { return Apply(l, r, Kind::NE); }
 		static ExprPtr UGt(ExprPtr l, ExprPtr r) { return Apply(l, r, Kind::UGT); }
 		static ExprPtr UGe(ExprPtr l, ExprPtr r) { return Apply(l, r, Kind::UGE); }
 		static ExprPtr ULt(ExprPtr l, ExprPtr r) { return Apply(l, r, Kind::ULT); }

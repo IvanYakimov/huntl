@@ -10,7 +10,7 @@ namespace solver{
 
     	  /* vector */
     	  const std::string shift_left_str = "shl";
-    	  const std::string logical_shift_right_str = "lshr";
+    	  const std::string logic_shift_right_str = "lshr";
     	  const std::string arith_shift_right_str = "ashr";
 
     	  /* logical */
@@ -20,7 +20,6 @@ namespace solver{
 
     	  /* comparisons */
     	  const std::string equal_str = "eq";
-    	  const std::string not_equal_str = "ne";
     	  const std::string unsigned_greater_than_str = "ugt";
 		  const std::string unsigned_greater_or_equal_str = "uge";
 		  const std::string unsigned_less_than_str = "ult";
@@ -40,7 +39,7 @@ namespace solver{
 
 			/* vector */
 			{Kind::SHL, shift_left_str},
-			{Kind::LSHR, logical_shift_right_str},
+			{Kind::LSHR, logic_shift_right_str},
 			{Kind::ASHR, arith_shift_right_str},
 
 			/* logical */
@@ -50,7 +49,6 @@ namespace solver{
 
 			/* comparisons */
 			{Kind::EQ, equal_str},
-			{Kind::NE, not_equal_str},
 			{Kind::UGE, unsigned_greater_or_equal_str},
 			{Kind::UGT, unsigned_greater_than_str},
 			{Kind::ULE, unsigned_less_or_equal_str},

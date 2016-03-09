@@ -302,7 +302,7 @@ namespace solver {
 			auto f = get<0>(tpl);
 			auto k = get<1>(tpl);
 			auto l = V<int32_t>("x");
-			auto r = V<int32_t>("y");
+			auto r = C<int32_t>(42);
 			auto act = f(l, r);
 			auto exp = GetExprManager()->MkBinOp(l, r, k);
 			ASSERT_EQ(*exp, *act);
@@ -323,7 +323,6 @@ namespace solver {
 				make_tuple(Or, Kind::OR),
 				make_tuple(Xor, Kind::XOR),
 				make_tuple(Eq, Kind::EQ),
-				make_tuple(Ne, Kind::NE),
 				make_tuple(UGt, Kind::UGT),
 				make_tuple(UGe, Kind::UGE),
 				make_tuple(ULt, Kind::ULT),
@@ -337,10 +336,294 @@ namespace solver {
 		for_each(val_list.begin(), val_list.end(), checker);
 	}
 
+	template <typename T>
+	void arithmetic_helper(ISMTEngine* engine) {
+		using namespace std;
+		using namespace expr_manager_helper;
+		using native = function<T(T,T)>;
+
+		// Verbose <
+		cout << "#########################################################" << endl;
+		cout << "target ty is " << typeid(T).name() << ", min: " << numeric_limits<T>::min() << ", max: " << numeric_limits<T>::max() << endl;
+		// >
+
+		native _add = [] (T a, T b) -> T {return a + b;};
+		native _sub = [] (T a, T b) -> T {return a - b;};
+		native _mul	= [] (T a, T b) -> T {return a * b;};
+		native _sdiv = [] (T a, T b) -> T {return a / b;};
+		native _srem = [] (T a, T b) -> T {return a % b;};
+		native _udiv = [] (T a, T b) -> T {return a / b;};
+		native _urem = [] (T a, T b) -> T {return a % b;};
+		native _shl = [] (T a, T b) -> T {return a << b;};
+		native _shr = [] (T a, T b) -> T {return a >> b;};
+		//native _eq = [] (T a, T b) -> bool {return a == b;};
+		native _or = [] (T a, T b) -> T {return a | b;};
+		native _and = [] (T a, T b) -> T {return a & b;};
+		native _xor = [] (T a, T b) -> T {return a ^ b;};
+		/*
+		native _gt = [] (T a, T b) -> T {return a > b;};
+		native _ge = [] (T a, T b) -> T {return a >= b;};
+		native _lt = [] (T a, T b) -> T {return a < b;};
+		native _le = [] (T a, T b) -> T {return a <= b;};
+		*/
+
+		using the_context = tuple<Func, native, string>;
+		using the_tuple = tuple<T, T, T, the_context>;
+		using the_list = list<the_tuple>;
+
+		auto _add_cnxt = make_tuple(Add, _add, "+");
+		auto _sub_cnxt = make_tuple(Sub, _sub, "-");
+		auto _mul_cnxt = make_tuple(Mul, _mul, "*");
+		auto _sdiv_cnxt = make_tuple(SDiv, _sdiv, "`sdiv`");
+		auto _srem_cnxt = make_tuple(SRem, _srem, "`srem`");
+		auto _udiv_cnxt = make_tuple(UDiv, _udiv, "`udiv`");
+		auto _urem_cnxt = make_tuple(URem, _urem, "`urem`");
+		auto _shl_cnxt = make_tuple(Shl, _shl, "`shl`");
+		auto _ashr_cnxt = make_tuple(AShr, _shr, "`ashr`");
+		auto _lshr_cnxt = make_tuple(LShr, _shr, "`lshr`");
+		//auto _eq_cnxt = make_tuple(Eq, _eq, "=");
+		auto _or_cnxt = make_tuple(Or, _or, "`or`");
+		auto _and_cnxt = make_tuple(And, _and, "`and`");
+		auto _xor_cnxt = make_tuple(Xor, _xor, "`xor`");
+		/*
+		auto _sgt_cnxt = make_tuple(SGt, _gt, "`sgt`");
+		auto _sge_cnxt = make_tuple(SGe, _ge, "`sge`");
+		auto _slt_cnxt = make_tuple(SLt, _lt, "`slt`");
+		auto _sle_cnxt = make_tuple(SLe, _le, "`sle`");
+		auto _ugt_cnxt = make_tuple(UGt, _gt, "`ugt`");
+		auto _uge_cnxt = make_tuple(UGe, _ge, "`uge`");
+		auto _ult_cnxt = make_tuple(ULt, _lt, "`ult`");
+		auto _ule_cnxt = make_tuple(ULe, _le, "`ule`");
+		*/
+
+		auto checker = [&] (the_tuple tpl) {
+			T raw_a = get<0>(tpl);
+			T raw_b = get<1>(tpl);
+			T raw_c = get<2>(tpl);
+			the_context context = get<3>(tpl);
+			Func f = get<0>(context);
+			native g = get<1>(context);
+			string op = get<2>(context);
+			auto a = C<T>(raw_a);
+			auto b = C<T>(raw_b);
+			auto c = C<T>(raw_c);
+			auto fab = f(a,b);
+			auto from_native = C<T>(g(raw_a,raw_b));
+			auto expr = Eq(V<T>("x"), fab);
+			engine->Push(); {
+				engine->Assert(expr);
+				if(engine->CheckSat() == Sat::SAT) {
+					auto actual = engine->GetValue(V<T>("x"));
+					auto expected = dynamic_pointer_cast<Const>(c)->GetValue();
+					auto exp_native = dynamic_pointer_cast<Const>(from_native)->GetValue();
+
+
+					//Verbose <
+					if (*expected != *actual)
+					{
+						engine->Pop();
+						auto get_bitwise = [] (T arg) -> string {
+							return bitset<sizeof(T)*8>(arg).to_string();
+						};
+
+						cout << "---------------------------------------" << endl;
+						auto raw_printer = [&] (T val) -> string {
+							if (val == numeric_limits<T>::max())
+								return "max";
+							else if (val == numeric_limits<T>::min())
+								return "min";
+							else
+								return to_string(val);
+						};
+						cout << raw_printer(raw_a) << " " << op << " " << raw_printer(raw_b) << " = " << raw_printer(raw_c) << endl;
+						cout << endl << get_bitwise(raw_a) << endl << op << endl << get_bitwise(raw_b) << endl << "=" << endl << get_bitwise(raw_c) << endl;
+					}
+					// >
+
+					ASSERT_EQ(*expected, *actual);
+					ASSERT_EQ(*exp_native, *actual);
+				}
+				else
+					FAIL();
+			}
+			engine->Pop();
+		};
+
+		T max = numeric_limits<T>::max();
+		T min = numeric_limits<T>::min();
+
+		the_list main_list, sign_list, unsign_list;
+
+		main_list = {
+
+		};
+
+		if (numeric_limits<T>::is_signed) {
+			sign_list = {
+					// ADD
+					make_tuple(8,		2,		10,		_add_cnxt),
+					make_tuple(8,		-2,		6,		_add_cnxt),
+					make_tuple(max, 	max, 	-2, 	_add_cnxt),
+					make_tuple(max, 	1, 		min, 	_add_cnxt),
+					make_tuple(max,		min,	-1,		_add_cnxt),
+					make_tuple(min, 	min, 	0, 		_add_cnxt),
+					make_tuple(0, 		1, 		1, 		_add_cnxt),
+					// SUB
+					make_tuple(8,		2,		6,		_sub_cnxt),
+					make_tuple(8,		-2,		10,		_sub_cnxt),
+					make_tuple(max,		max, 	0,		_sub_cnxt),
+					make_tuple(max,		min,	-1,		_sub_cnxt),
+					make_tuple(min, 	max,	1,		_sub_cnxt),
+					make_tuple(min,		min,	0,		_sub_cnxt),
+					make_tuple(0,		max,	max+2,	_sub_cnxt),
+					make_tuple(0, 		min, 	min,	_sub_cnxt),
+					make_tuple(1, 		0, 		1,		_sub_cnxt),
+					make_tuple(0,		1,		-1,		_sub_cnxt),
+					// MUL
+					make_tuple(8,		2,		16,		_mul_cnxt),
+					make_tuple(8,		-2,		-16,	_mul_cnxt),
+					make_tuple(0,		1, 		0,		_mul_cnxt),
+					make_tuple(1,		1, 		1, 		_mul_cnxt),
+					make_tuple(1,		2,		2,		_mul_cnxt),
+					make_tuple(1,		max,	max,	_mul_cnxt),
+					make_tuple(1,		min,	min,	_mul_cnxt),
+					make_tuple(max,		max,	1,		_mul_cnxt),
+					make_tuple(min,		min,	0,		_mul_cnxt),
+					// SDIV
+					make_tuple(8,		2,		4,		_sdiv_cnxt),
+					make_tuple(8,		-2,		-4,		_sdiv_cnxt),
+					make_tuple(0,		1,		0,		_sdiv_cnxt),
+					make_tuple(0,		-1,		0,		_sdiv_cnxt),
+					make_tuple(max,		max,	1,		_sdiv_cnxt),
+					make_tuple(min, 	min,	1,		_sdiv_cnxt),
+					// SREM
+					make_tuple(8,		3,		2,		_sdiv_cnxt),
+					make_tuple(8,		-3,		-2,		_sdiv_cnxt),
+					// SHL
+					make_tuple(0,		1,		0,		_shl_cnxt),
+					make_tuple(1,		1,		2,		_shl_cnxt),
+					make_tuple(2,		2,		8,		_shl_cnxt),
+					make_tuple(max,		1,		-2,		_shl_cnxt),
+					make_tuple(min,		1,		0, 		_shl_cnxt),
+					// ASHR
+					make_tuple(0,		1,		0,		_ashr_cnxt),
+					make_tuple(1,		1,		0,		_ashr_cnxt),
+					make_tuple(max,		1,		max/2,	_ashr_cnxt),
+					make_tuple(min,		1,		min/2,	_ashr_cnxt),
+					// OR
+					make_tuple(0,		0,		0,		_or_cnxt),
+					make_tuple(1,		0,		1,		_or_cnxt),
+					make_tuple(1,		1,		1,		_or_cnxt),
+					make_tuple(max,		0,		max,	_or_cnxt),
+					make_tuple(min,		0,		min,	_or_cnxt),
+					// AND
+					make_tuple(0,		0,		0,		_and_cnxt),
+					make_tuple(1,		0,		0,		_and_cnxt),
+					make_tuple(1,		1,		1,		_and_cnxt),
+					make_tuple(max,		0,		0,		_and_cnxt),
+					make_tuple(min,		0,		0,		_and_cnxt),
+					// XOR
+					make_tuple(0,		0,		0,		_xor_cnxt),
+					make_tuple(0,		1,		1,		_xor_cnxt),
+					make_tuple(1,		1,		0,		_xor_cnxt),
+					make_tuple(max,		0,		max,	_xor_cnxt),
+					make_tuple(max,		-1,		min,	_xor_cnxt),
+					make_tuple(min,		-1,		max,	_xor_cnxt)
+			};
+		}
+		else {
+			unsign_list = {
+				// ADD
+				make_tuple(8,		2,		10,		_add_cnxt),
+				make_tuple(8,		-2,		6,		_add_cnxt),
+				make_tuple(max, 	max, 	max-1, 	_add_cnxt),
+				make_tuple(max, 	1, 		min, 	_add_cnxt),
+				make_tuple(max,		min,	max,	_add_cnxt),
+				make_tuple(min, 	min, 	0, 		_add_cnxt),
+				make_tuple(0, 		1, 		1, 		_add_cnxt),
+				// SUB
+				make_tuple(8,		2,		6,		_sub_cnxt),
+				make_tuple(8,		-2,		10,		_sub_cnxt),
+				make_tuple(max,		max, 	0,		_sub_cnxt),
+				make_tuple(max,		min,	max,	_sub_cnxt),
+				make_tuple(min, 	max,	1,		_sub_cnxt),
+				make_tuple(min,		min,	0,		_sub_cnxt),
+				make_tuple(0,		max,	1,		_sub_cnxt),
+				make_tuple(0, 		min, 	min,	_sub_cnxt),
+				make_tuple(1, 		0, 		1,		_sub_cnxt),
+				make_tuple(0,		1,		max,	_sub_cnxt),
+				// MUL
+				make_tuple(8,		2,		16,		_mul_cnxt),
+				make_tuple(0,		1, 		0,		_mul_cnxt),
+				make_tuple(1,		1, 		1, 		_mul_cnxt),
+				make_tuple(1,		2,		2,		_mul_cnxt),
+				make_tuple(1,		max,	max,	_mul_cnxt),
+				make_tuple(1,		min,	min,	_mul_cnxt),
+				make_tuple(max,		max,	1,		_mul_cnxt),
+				make_tuple(min,		min,	0,		_mul_cnxt),
+				// UDIV
+				make_tuple(8,		2,		4,		_udiv_cnxt),
+				make_tuple(0,		1,		0,		_udiv_cnxt),
+				make_tuple(max,		max,	1,		_udiv_cnxt),
+				// UREM
+				make_tuple(8,		3,		2,		_urem_cnxt),
+				// SHL
+				make_tuple(1,		1,		2,		_shl_cnxt),
+				make_tuple(2,		2,		8,		_shl_cnxt),
+				make_tuple(min,		1,		0,		_shl_cnxt),
+				make_tuple(max,		1,		max-1,	_shl_cnxt),
+				// LSHR
+				make_tuple(1,		1,		0,		_lshr_cnxt),
+				make_tuple(min,		1,		0,		_lshr_cnxt),
+				make_tuple(max,		1,		max/2,	_lshr_cnxt),
+				// OR
+				make_tuple(0,		0,		0,		_or_cnxt),
+				make_tuple(1,		0,		1,		_or_cnxt),
+				make_tuple(1,		1,		1,		_or_cnxt),
+				make_tuple(max,		0,		max,	_or_cnxt),
+				make_tuple(min,		0,		min,	_or_cnxt),
+				// AND
+				make_tuple(0,		0,		0,		_and_cnxt),
+				make_tuple(1,		0,		0,		_and_cnxt),
+				make_tuple(1,		1,		1,		_and_cnxt),
+				make_tuple(max,		0,		0,		_and_cnxt),
+				make_tuple(min,		0,		0,		_and_cnxt),
+				// XOR
+				make_tuple(0,		0,		0,		_xor_cnxt),
+				make_tuple(0,		1,		1,		_xor_cnxt),
+				make_tuple(1,		1,		0,		_xor_cnxt),
+				make_tuple(max,		0,		max,	_xor_cnxt),
+				make_tuple(max,		max,	min,	_xor_cnxt),
+				make_tuple(min,		max,	max,	_xor_cnxt)
+			};
+		}
+
+		if (numeric_limits<T>::is_signed)
+			main_list.splice(main_list.end(), sign_list);
+		else
+			main_list.splice(main_list.end(), unsign_list);
+
+		for_each(main_list.begin(), main_list.end(), checker);
+	}
+
 	TEST_F(CVC4EngineTest, arithmetic) {
+		using namespace std;
+		ISMTEngine *engine_ptr = dynamic_cast<ISMTEngine*>(engine_);
+		//TODO: other types
+		//arithmetic_helper<int8_t>(engine_ptr);
+		arithmetic_helper<int16_t>(engine_ptr);
+		//arithmetic_helper<int32_t>(engine_ptr);
+		//arithmetic_helper<int64_t>(engine_ptr);
+		//arithmetic_helper<uint8_t>(engine_ptr);
+		arithmetic_helper<uint16_t>(engine_ptr);
+		//arithmetic_helper<uint32_t>(engine_ptr);
+		//arithmetic_helper<uint64_t>(engine_ptr);
 	}
 
 
+	TEST_F(CVC4EngineTest, DISABLED_division_by_zero) {
+		//TODO:
+	}
 
 
 

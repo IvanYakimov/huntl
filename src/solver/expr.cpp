@@ -82,7 +82,7 @@ namespace solver
 	}
 
 	std::string BinOp::ToString() const {
-		return GetKindName() + " " + GetLeftChild()->ToString() + " " + GetRightChild()->ToString();
+		return "(" + GetKindName() + " " + GetLeftChild()->ToString() + " " + GetRightChild()->ToString() + ")";
 	}
 
 	ExprPtr BinOp::GetLeftChild() const {return left_child_;}

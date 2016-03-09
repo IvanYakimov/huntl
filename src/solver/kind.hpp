@@ -24,7 +24,7 @@ namespace solver {
   		  XOR,
   		  /* predicates */
   		  EQ,
-  		  NE,
+  		  //NE,	not supported by SMT
   		  UGT,
   		  UGE,
   		  ULT,
