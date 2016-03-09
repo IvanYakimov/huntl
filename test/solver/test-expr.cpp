@@ -177,7 +177,7 @@ namespace solver {
 		EXPECT_EQ(left, bin_op.GetLeftChild());
 		EXPECT_EQ(right, bin_op.GetRightChild());
 		EXPECT_EQ(Kind::ADD, bin_op.GetKind());
-		EXPECT_EQ("add i32 x i32 y", bin_op.ToString());
+		EXPECT_EQ("(add i32 x i32 y)", bin_op.ToString());
 	}
 
 
@@ -260,7 +260,6 @@ namespace solver {
 
 				// Comparisons
 				{Kind::EQ, "eq"},
-				{Kind::NE, "ne"},
 				{Kind::UGE, "uge"},
 				{Kind::UGT, "ugt"},
 				{Kind::ULE, "ule"},

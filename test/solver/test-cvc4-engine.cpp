@@ -342,11 +342,6 @@ namespace solver {
 		using namespace expr_manager_helper;
 		using native = function<T(T,T)>;
 
-		// Verbose <
-		cout << "#########################################################" << endl;
-		cout << "target ty is " << typeid(T).name() << ", min: " << numeric_limits<T>::min() << ", max: " << numeric_limits<T>::max() << endl;
-		// >
-
 		native _add = [] (T a, T b) -> T {return a + b;};
 		native _sub = [] (T a, T b) -> T {return a - b;};
 		native _mul	= [] (T a, T b) -> T {return a * b;};
@@ -356,16 +351,9 @@ namespace solver {
 		native _urem = [] (T a, T b) -> T {return a % b;};
 		native _shl = [] (T a, T b) -> T {return a << b;};
 		native _shr = [] (T a, T b) -> T {return a >> b;};
-		//native _eq = [] (T a, T b) -> bool {return a == b;};
 		native _or = [] (T a, T b) -> T {return a | b;};
 		native _and = [] (T a, T b) -> T {return a & b;};
 		native _xor = [] (T a, T b) -> T {return a ^ b;};
-		/*
-		native _gt = [] (T a, T b) -> T {return a > b;};
-		native _ge = [] (T a, T b) -> T {return a >= b;};
-		native _lt = [] (T a, T b) -> T {return a < b;};
-		native _le = [] (T a, T b) -> T {return a <= b;};
-		*/
 
 		using the_context = tuple<Func, native, string>;
 		using the_tuple = tuple<T, T, T, the_context>;
@@ -381,20 +369,9 @@ namespace solver {
 		auto _shl_cnxt = make_tuple(Shl, _shl, "`shl`");
 		auto _ashr_cnxt = make_tuple(AShr, _shr, "`ashr`");
 		auto _lshr_cnxt = make_tuple(LShr, _shr, "`lshr`");
-		//auto _eq_cnxt = make_tuple(Eq, _eq, "=");
 		auto _or_cnxt = make_tuple(Or, _or, "`or`");
 		auto _and_cnxt = make_tuple(And, _and, "`and`");
 		auto _xor_cnxt = make_tuple(Xor, _xor, "`xor`");
-		/*
-		auto _sgt_cnxt = make_tuple(SGt, _gt, "`sgt`");
-		auto _sge_cnxt = make_tuple(SGe, _ge, "`sge`");
-		auto _slt_cnxt = make_tuple(SLt, _lt, "`slt`");
-		auto _sle_cnxt = make_tuple(SLe, _le, "`sle`");
-		auto _ugt_cnxt = make_tuple(UGt, _gt, "`ugt`");
-		auto _uge_cnxt = make_tuple(UGe, _ge, "`uge`");
-		auto _ult_cnxt = make_tuple(ULt, _lt, "`ult`");
-		auto _ule_cnxt = make_tuple(ULe, _le, "`ule`");
-		*/
 
 		auto checker = [&] (the_tuple tpl) {
 			T raw_a = get<0>(tpl);
@@ -416,7 +393,6 @@ namespace solver {
 					auto actual = engine->GetValue(V<T>("x"));
 					auto expected = dynamic_pointer_cast<Const>(c)->GetValue();
 					auto exp_native = dynamic_pointer_cast<Const>(from_native)->GetValue();
-
 
 					//Verbose <
 					if (*expected != *actual)
@@ -609,23 +585,121 @@ namespace solver {
 	TEST_F(CVC4EngineTest, arithmetic) {
 		using namespace std;
 		ISMTEngine *engine_ptr = dynamic_cast<ISMTEngine*>(engine_);
-		//TODO: other types
-		//arithmetic_helper<int8_t>(engine_ptr);
+		arithmetic_helper<int8_t>(engine_ptr);
 		arithmetic_helper<int16_t>(engine_ptr);
-		//arithmetic_helper<int32_t>(engine_ptr);
-		//arithmetic_helper<int64_t>(engine_ptr);
-		//arithmetic_helper<uint8_t>(engine_ptr);
+		arithmetic_helper<int32_t>(engine_ptr);
+		arithmetic_helper<int64_t>(engine_ptr);
+		arithmetic_helper<uint8_t>(engine_ptr);
 		arithmetic_helper<uint16_t>(engine_ptr);
-		//arithmetic_helper<uint32_t>(engine_ptr);
-		//arithmetic_helper<uint64_t>(engine_ptr);
+		arithmetic_helper<uint32_t>(engine_ptr);
+		arithmetic_helper<uint64_t>(engine_ptr);
+	}
+
+	template <typename T>
+	void comparisons_helper(ISMTEngine* engine) {
+		using namespace std;
+		using namespace expr_manager_helper;
+		using native = function<bool(T,T)>;
+
+		using the_context = tuple<Func, native, string>;
+		using the_tuple = tuple<the_context>;
+		using the_list = list<the_tuple>;
+
+		native _eq = [] (T a, T b) -> bool {return a == b;};
+		native _gt = [] (T a, T b) -> T {return a > b;};
+		native _ge = [] (T a, T b) -> T {return a >= b;};
+		native _lt = [] (T a, T b) -> T {return a < b;};
+		native _le = [] (T a, T b) -> T {return a <= b;};
+
+		auto _eq_cnxt = make_tuple(Eq, _eq, "=");
+		auto _sgt_cnxt = make_tuple(SGt, _gt, "`sgt`");
+		auto _sge_cnxt = make_tuple(SGe, _ge, "`sge`");
+		auto _slt_cnxt = make_tuple(SLt, _lt, "`slt`");
+		auto _sle_cnxt = make_tuple(SLe, _le, "`sle`");
+		auto _ugt_cnxt = make_tuple(UGt, _gt, "`ugt`");
+		auto _uge_cnxt = make_tuple(UGe, _ge, "`uge`");
+		auto _ult_cnxt = make_tuple(ULt, _lt, "`ult`");
+		auto _ule_cnxt = make_tuple(ULe, _le, "`ule`");
+
+		auto checker = [&] (the_tuple tpl) {
+			auto cnxt = get<0>(tpl);
+			Func f = get<0>(cnxt);
+			native ntv_f = get<1>(cnxt);
+			string f_name = get<2>(cnxt);
+			ExprPtr x = V<T>("x");
+			ExprPtr y = V<T>("y");
+			ExprPtr x_op_y = f(x, y);
+			engine->Push(); {
+				engine->Assert(x_op_y);
+				if (engine->CheckSat() == Sat::SAT) {
+					//TODO:
+					ValuePtr x_val = engine->GetValue(x);
+					ValuePtr y_val = engine->GetValue(y);
+					T raw_x_val = dynamic_pointer_cast<Int<T>>(x_val)->GetVal();
+					T raw_y_val = dynamic_pointer_cast<Int<T>>(y_val)->GetVal();
+					ASSERT_TRUE(ntv_f(raw_x_val, raw_y_val));
+					//< Verbose
+					/*
+					{
+						cout << "-------------------------------" << endl;
+						cout << "x " << f_name << " y has a model: " << endl;
+						cout << *x_val << " | " << *y_val << endl;
+					}
+					//> */
+				}
+				else
+					FAIL();
+			}
+			engine->Pop();
+		};
+
+		the_list main_list, sign_list, unsign_list;
+		main_list = {
+			make_tuple(_eq_cnxt)
+		};
+
+		if (numeric_limits<T>::is_signed) {
+			sign_list = {
+				make_tuple(_sgt_cnxt),
+				make_tuple(_sge_cnxt),
+				make_tuple(_slt_cnxt),
+				make_tuple(_sle_cnxt)
+			};
+		}
+		else {
+			unsign_list = {
+				make_tuple(_ugt_cnxt),
+				make_tuple(_uge_cnxt),
+				make_tuple(_ult_cnxt),
+				make_tuple(_ule_cnxt)
+			};
+		}
+
+		if (numeric_limits<T>::is_signed)
+			main_list.splice(main_list.end(), sign_list);
+		else
+			main_list.splice(main_list.end(), unsign_list);
+
+		for_each(main_list.begin(), main_list.end(), checker);
+	}
+
+	TEST_F(CVC4EngineTest, comparisons) {
+		using namespace std;
+		ISMTEngine *engine_ptr = dynamic_cast<ISMTEngine*>(engine_);
+		comparisons_helper<int8_t>(engine_ptr);
+		comparisons_helper<int16_t>(engine_ptr);
+		comparisons_helper<int32_t>(engine_ptr);
+		comparisons_helper<int64_t>(engine_ptr);
+		comparisons_helper<uint8_t>(engine_ptr);
+		comparisons_helper<uint16_t>(engine_ptr);
+		comparisons_helper<uint32_t>(engine_ptr);
+		comparisons_helper<uint64_t>(engine_ptr);
 	}
 
 
 	TEST_F(CVC4EngineTest, DISABLED_division_by_zero) {
 		//TODO:
 	}
-
-
 
 	//-------------------------------------------------------------------------
 	// CVC4 Internals:
