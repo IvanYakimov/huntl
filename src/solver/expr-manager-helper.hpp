@@ -33,8 +33,8 @@ namespace solver {
 		static ExprPtr AShr(ExprPtr l, ExprPtr r) { return Apply(l, r, Kind::ASHR); }
 		static ExprPtr Or(ExprPtr l, ExprPtr r) { return Apply(l, r, Kind::OR); }
 		static ExprPtr Xor(ExprPtr l, ExprPtr r) { return Apply(l, r, Kind::XOR); }
-		static ExprPtr Eq(ExprPtr l, ExprPtr r) { return Apply(l, r, Kind::EQ); }
-		static ExprPtr Ne(ExprPtr l, ExprPtr r) { return Apply(l, r, Kind::NE); }
+		static ExprPtr Equal(ExprPtr l, ExprPtr r) { return Apply(l, r, Kind::EQUAL); }
+		static ExprPtr Distinct(ExprPtr l, ExprPtr r) { return Apply(l, r, Kind::DISTINCT); }
 		static ExprPtr UGt(ExprPtr l, ExprPtr r) { return Apply(l, r, Kind::UGT); }
 		static ExprPtr UGe(ExprPtr l, ExprPtr r) { return Apply(l, r, Kind::UGE); }
 		static ExprPtr ULt(ExprPtr l, ExprPtr r) { return Apply(l, r, Kind::ULT); }

@@ -23,8 +23,8 @@ namespace solver {
   		  OR,
   		  XOR,
   		  /* predicates */
-  		  EQ,
-  		  NE,
+  		  EQUAL,
+  		  DISTINCT,
   		  UGT,
   		  UGE,
   		  ULT,

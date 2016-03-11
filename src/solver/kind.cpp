@@ -48,7 +48,7 @@ namespace solver{
 			{Kind::XOR, xor_str},
 
 			/* comparisons */
-			{Kind::EQ, equal_str},
+			{Kind::EQUAL, equal_str},
 			{Kind::UGE, unsigned_greater_or_equal_str},
 			{Kind::UGT, unsigned_greater_than_str},
 			{Kind::ULE, unsigned_less_or_equal_str},

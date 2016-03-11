@@ -259,7 +259,7 @@ namespace solver {
 				{Kind::XOR, "xor"},
 
 				// Comparisons
-				{Kind::EQ, "eq"},
+				{Kind::EQUAL, "eq"},
 				{Kind::UGE, "uge"},
 				{Kind::UGT, "ugt"},
 				{Kind::ULE, "ule"},
@@ -410,7 +410,7 @@ namespace solver {
 		auto val = em.MkIntVal<int32_t>(42);
 		ExprPtr v = em.MkVar("x", ty),
 				c = em.MkConst(val),
-				b = em.MkBinOp(v, c, Kind::EQ);
+				b = em.MkBinOp(v, c, Kind::EQUAL);
 
 		auto pvv = std::dynamic_pointer_cast<Var>(v);
 		auto pvc = std::dynamic_pointer_cast<Const>(v);
@@ -446,7 +446,7 @@ namespace solver {
 		auto val = em.MkIntVal<int32_t>(42);
 		ExprPtr v = em.MkVar("x", ty),
 				c = em.MkConst(val),
-				b = em.MkBinOp(v, c, Kind::EQ);
+				b = em.MkBinOp(v, c, Kind::EQUAL);
 
 		// Variable
 		ASSERT_TRUE(instanceof<Object>(v));

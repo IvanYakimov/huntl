@@ -50,7 +50,7 @@ namespace solver {
 			auto c = em->MkConst(val_obj);
 			auto ty = em->MkIntTy<T>();
 			auto x = em->MkVar("x", ty);
-			auto binop = em->MkBinOp(x, c, Kind::EQ);
+			auto binop = em->MkBinOp(x, c, Kind::EQUAL);
 
 			cvc4engine->Push(); {
 				cvc4engine->Assert(binop);
@@ -121,7 +121,7 @@ namespace solver {
 			x_32_unbound();
 			auto orig_val = em_->MkIntVal<int32_t>(42);
 			auto c42 = em_->MkConst(orig_val);
-			auto binop = em_->MkBinOp(x_32, c42, Kind::EQ);
+			auto binop = em_->MkBinOp(x_32, c42, Kind::EQUAL);
 			engine_->Assert(binop);
 			if (engine_->CheckSat() == Sat::SAT) {
 				auto res_val = engine_->GetValue(x_32);
@@ -233,7 +233,7 @@ namespace solver {
 			auto c = em->MkConst(int_val);
 			auto int_ty = em->MkIntTy<T>();
 			auto x = em->MkVar("x", int_ty);
-			auto binop = em->MkBinOp(x, c, Kind::EQ);
+			auto binop = em->MkBinOp(x, c, Kind::EQUAL);
 			cvc4engine->Push(); {
 				CVC4::Expr cvc4_expr = cvc4engine->Prism(binop);
 				//cout << "--------" << endl << binop->ToString() << " " << cvc4_expr.toString() << endl;
@@ -322,8 +322,8 @@ namespace solver {
 				make_tuple(And, Kind::AND),
 				make_tuple(Or, Kind::OR),
 				make_tuple(Xor, Kind::XOR),
-				make_tuple(Eq, Kind::EQ),
-				make_tuple(Ne, Kind::NE),
+				make_tuple(Equal, Kind::EQUAL),
+				make_tuple(Distinct, Kind::DISTINCT),
 				make_tuple(UGt, Kind::UGT),
 				make_tuple(UGe, Kind::UGE),
 				make_tuple(ULt, Kind::ULT),
@@ -387,7 +387,7 @@ namespace solver {
 			auto c = C<T>(raw_c);
 			auto fab = f(a,b);
 			auto from_native = C<T>(g(raw_a,raw_b));
-			auto expr = Eq(V<T>("x"), fab);
+			auto expr = Equal(V<T>("x"), fab);
 			engine->Push(); {
 				engine->Assert(expr);
 				if(engine->CheckSat() == Sat::SAT) {
@@ -606,15 +606,15 @@ namespace solver {
 		using the_tuple = tuple<the_context>;
 		using the_list = list<the_tuple>;
 
-		native _eq = [] (T a, T b) -> bool {return a == b;};
-		native _ne = [] (T a, T b) -> bool {return a != b;};
+		native _equal = [] (T a, T b) -> bool {return a == b;};
+		native _distinct = [] (T a, T b) -> bool {return a != b;};
 		native _gt = [] (T a, T b) -> T {return a > b;};
 		native _ge = [] (T a, T b) -> T {return a >= b;};
 		native _lt = [] (T a, T b) -> T {return a < b;};
 		native _le = [] (T a, T b) -> T {return a <= b;};
 
-		auto _eq_cnxt = make_tuple(Eq, _eq, "=");
-		auto _ne_cnxt = make_tuple(Ne, _ne, "`distinct`");
+		auto _equal_cnxt = make_tuple(Equal, _equal, "=");
+		auto _distinct_cnxt = make_tuple(Distinct, _distinct, "`distinct`");
 		auto _sgt_cnxt = make_tuple(SGt, _gt, "`sgt`");
 		auto _sge_cnxt = make_tuple(SGe, _ge, "`sge`");
 		auto _slt_cnxt = make_tuple(SLt, _lt, "`slt`");
@@ -642,7 +642,7 @@ namespace solver {
 					T raw_y_val = dynamic_pointer_cast<Int<T>>(y_val)->GetVal();
 					ASSERT_TRUE(ntv_f(raw_x_val, raw_y_val));
 					//< Verbose
-
+					/*
 					{
 						cout << "-------------------------------" << endl;
 						cout << "x " << f_name << " y has a model: " << endl;
@@ -658,8 +658,8 @@ namespace solver {
 
 		the_list main_list, sign_list, unsign_list;
 		main_list = {
-			make_tuple(_eq_cnxt),
-			make_tuple(_ne_cnxt)
+			make_tuple(_equal_cnxt),
+			make_tuple(_distinct_cnxt)
 		};
 
 		if (numeric_limits<T>::is_signed) {

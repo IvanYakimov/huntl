@@ -124,8 +124,8 @@ namespace solver {
 				case Kind::OR: return CVC4::Kind::BITVECTOR_OR;
 				case Kind::XOR: return CVC4::Kind::BITVECTOR_XOR;
 				// comparisons
-				case Kind::EQ: return CVC4::Kind::EQUAL;
-				case Kind::NE: return CVC4::Kind::DISTINCT;
+				case Kind::EQUAL: return CVC4::Kind::EQUAL;
+				case Kind::DISTINCT: return CVC4::Kind::DISTINCT;
 				case Kind::UGT: return CVC4::Kind::BITVECTOR_UGT;
 				case Kind::UGE: return CVC4::Kind::BITVECTOR_UGE;
 				case Kind::ULT: return CVC4::Kind::BITVECTOR_ULT;
