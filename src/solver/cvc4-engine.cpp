@@ -123,9 +123,9 @@ namespace solver {
 				case Kind::AND: return CVC4::Kind::BITVECTOR_AND;
 				case Kind::OR: return CVC4::Kind::BITVECTOR_OR;
 				case Kind::XOR: return CVC4::Kind::BITVECTOR_XOR;
-				// predicates
+				// comparisons
 				case Kind::EQ: return CVC4::Kind::EQUAL;
-				//TODO: where is not equal?
+				case Kind::NE: return CVC4::Kind::DISTINCT;
 				case Kind::UGT: return CVC4::Kind::BITVECTOR_UGT;
 				case Kind::UGE: return CVC4::Kind::BITVECTOR_UGE;
 				case Kind::ULT: return CVC4::Kind::BITVECTOR_ULT;

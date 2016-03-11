@@ -323,6 +323,7 @@ namespace solver {
 				make_tuple(Or, Kind::OR),
 				make_tuple(Xor, Kind::XOR),
 				make_tuple(Eq, Kind::EQ),
+				make_tuple(Ne, Kind::NE),
 				make_tuple(UGt, Kind::UGT),
 				make_tuple(UGe, Kind::UGE),
 				make_tuple(ULt, Kind::ULT),
@@ -606,12 +607,14 @@ namespace solver {
 		using the_list = list<the_tuple>;
 
 		native _eq = [] (T a, T b) -> bool {return a == b;};
+		native _ne = [] (T a, T b) -> bool {return a != b;};
 		native _gt = [] (T a, T b) -> T {return a > b;};
 		native _ge = [] (T a, T b) -> T {return a >= b;};
 		native _lt = [] (T a, T b) -> T {return a < b;};
 		native _le = [] (T a, T b) -> T {return a <= b;};
 
 		auto _eq_cnxt = make_tuple(Eq, _eq, "=");
+		auto _ne_cnxt = make_tuple(Ne, _ne, "`distinct`");
 		auto _sgt_cnxt = make_tuple(SGt, _gt, "`sgt`");
 		auto _sge_cnxt = make_tuple(SGe, _ge, "`sge`");
 		auto _slt_cnxt = make_tuple(SLt, _lt, "`slt`");
@@ -639,7 +642,7 @@ namespace solver {
 					T raw_y_val = dynamic_pointer_cast<Int<T>>(y_val)->GetVal();
 					ASSERT_TRUE(ntv_f(raw_x_val, raw_y_val));
 					//< Verbose
-					/*
+
 					{
 						cout << "-------------------------------" << endl;
 						cout << "x " << f_name << " y has a model: " << endl;
@@ -655,7 +658,8 @@ namespace solver {
 
 		the_list main_list, sign_list, unsign_list;
 		main_list = {
-			make_tuple(_eq_cnxt)
+			make_tuple(_eq_cnxt),
+			make_tuple(_ne_cnxt)
 		};
 
 		if (numeric_limits<T>::is_signed) {
