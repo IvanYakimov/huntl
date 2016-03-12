@@ -74,7 +74,10 @@ namespace solver {
 			return std::make_shared<Int<T>>(val);
 		}
 
-		//TODO: testing
+		/** Returns (smart pointer to) integer type.
+		 * @param T - scalar integer type from STL (e.g. int32_t etc.).
+		 * \see IntTy
+		 */
 		template<class T>
 		TypePtr MkIntTy() {
 			TypePtr tmp = std::make_shared<IntTy<T>>();
