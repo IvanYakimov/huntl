@@ -100,7 +100,6 @@ namespace solver {
 	}
 
 	TEST_F(ExprManagerTest, MkTy) {
-		//TODO: this kind of testing is redundant (in current implementation of ExprManager)
 		using namespace std;
 		using Equality = bool;
 

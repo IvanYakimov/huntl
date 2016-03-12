@@ -69,16 +69,16 @@ namespace solver {
 		 * @tparam T - scalar integer type from STL (e.g. int32_t etc.).
 		 * \see Int
 		 */
-		template<typename T, typename... Args>
-		ValuePtr MkIntVal(Args... args) {
-			return std::make_shared<Int<T>>(std::forward<Args>(args)...);
+		template<typename T>
+		ValuePtr MkIntVal(T val) {
+			return std::make_shared<Int<T>>(val);
 		}
 
 		//TODO: testing
-		template<class T, typename... Args>
-		TypePtr MkIntTy(Args... args) {
-			const IntTy<T> tmp(std::forward<Args>(args)...);
-			auto it = std::find_if(type_table_.begin(), type_table_.end(), [&tmp] (const TypePtr &item) {return *item == tmp;});
+		template<class T>
+		TypePtr MkIntTy() {
+			TypePtr tmp = std::make_shared<IntTy<T>>();
+			auto it = std::find_if(type_table_.begin(), type_table_.end(), [&tmp] (const TypePtr &item) {return *item == *tmp;});
 			if (it != type_table_.end())
 				return *it;
 			else
