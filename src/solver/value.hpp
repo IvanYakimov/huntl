@@ -40,11 +40,15 @@ namespace solver {
 		virtual bool IsSigned() const = 0;
 		/** Returns 64-bit unsigned long representation of the stored integer value.
 		 * This routine copies significant bytes from stored raw integer value to result (in machine dependent order),
-		 * and fills insignificant bytes by zeros. */
+		 * and fills insignificant bytes by zeros.
+		 * \see SetUInt64 */
 		virtual uint64_t GetUInt64() const = 0;
 		/** Set up value from 64-bit unsigned long representation.
 		 * This routine copies significant bytes from argument to stored raw integer value (in machine dependent order),
-		 * and fills insignificant bytes by zeros. */
+		 * and fills insignificant bytes by zeros.
+		 * For example: if we have int8_t x = "FF", the val (representing x as uint64_t) should contain "00 00 00 00 00 00 00 FF";
+		 * for int32_t y = "FF FF FF FF" val = "00 00 00 00 FF FF FF FF", etc.
+		 * \see GetUInt64 */
 		virtual void SetUInt64(const uint64_t& val) = 0;
 	};
 
