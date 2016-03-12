@@ -260,6 +260,7 @@ namespace solver {
 
 				// Comparisons
 				{Kind::EQUAL, "eq"},
+				{Kind::DISTINCT, "distinct"},
 				{Kind::UGE, "uge"},
 				{Kind::UGT, "ugt"},
 				{Kind::ULE, "ule"},

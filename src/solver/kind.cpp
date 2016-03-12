@@ -1,7 +1,7 @@
 #include "kind.hpp"
 
 namespace solver{
-/* arithmetical */
+		  /* arithmetical */
     	  const std::string add_str = "add";
     	  const std::string sub_str = "sub";
     	  const std::string mul_str = "mul";
@@ -21,6 +21,7 @@ namespace solver{
     	  /* comparisons */
     	  //TODO: where is "distinct"?
     	  const std::string equal_str = "eq";
+    	  const std::string distinct_str = "distinct";
     	  const std::string unsigned_greater_than_str = "ugt";
 		  const std::string unsigned_greater_or_equal_str = "uge";
 		  const std::string unsigned_less_than_str = "ult";
@@ -50,6 +51,7 @@ namespace solver{
 
 			/* comparisons */
 			{Kind::EQUAL, equal_str},
+			{Kind::DISTINCT, distinct_str},
 			{Kind::UGE, unsigned_greater_or_equal_str},
 			{Kind::UGT, unsigned_greater_than_str},
 			{Kind::ULE, unsigned_less_or_equal_str},
