@@ -17,20 +17,25 @@
 #include "type.hpp"
 #include "value.hpp"
 
-
 namespace solver
 {
 	class Expr;
 	class Var;
 	class BinOp;
 	class ExprManager;
+	class Const;
 
+	/** Smart pointer to an SMT expression. Use ExprManager to create smart pointers to particular kinds of expressions.
+	 * \see Expr
+	 * \see ExprManager */
 	using ExprPtr = std::shared_ptr<Expr>;
-	using VarPtr = std::shared_ptr<Var>;
-	using BinOpPtr = std::shared_ptr<BinOp>;
 
 	/**
-	 * A basic SMT expression. Every particular kind of expression should be inherited (by using CRTP<T,B>) from this.
+	 * A basic SMT expression. Every particular kind of expression should be inherited (by using CRTP <T,B>) from this.
+	 * To create instance of particular kind of expression use ExprManager.
+	 * \see ExprManager
+	 * \see ExprPtr
+	 * \see CRTP
 	 */
 	class Expr : public CRTP<Expr, Object> {
 	public:
@@ -38,7 +43,12 @@ namespace solver
 	};
 
 	/**
-	 * An arbitrary binary operation. Kind of operation is a class field and set up for every particular class instance in rut-time.
+	 * An arbitrary binary operation. Holds (smart pointers to) left and right children, which are arbitrary smt expressions.
+	 * Also holds kind of operation, which should be setup (for every instance of binary operation) in run-time.
+	 * To create instance of binary operation use ExprManager::MkBinOp.
+	 * \see ExprPtr
+	 * \see Kind
+	 * \see ExprManager::MkBinOp
 	 */
 	class BinOp : public CRTP<BinOp, Expr>{
 	public:
@@ -48,7 +58,7 @@ namespace solver
 		/** Structural equality of this BinOp instance and another object instance. Returns true if rhs is instance of BinOp,
 		 * it has equivalent kind and their left and right children are both structurally equivalent. */
 		bool Equals(const Object &rhs) const final;
-		/** String representation in format "(kind left right)", where kind - string representation of the binop's kind,
+		/** String representation in format "(<kind> <left> <right>)", where kind - string representation of the binop's kind,
 		 * left and right - string representation of the binop's children*/
 		std::string ToString() const final;
 		/** Returns (smart) pointer to left children */
@@ -66,7 +76,10 @@ namespace solver
 	};
 
 	/**
-	 * A variable (constant in terms of SMT-LIB2).
+	 * A variable (constant in terms of SMT-LIB2). Holds variable's name and (smart pointer to) variable's type.
+	 * To create an instance of variable use ExprManager::MkVar.
+	 * \see Type
+	 * \see ExprManager::MkVar
 	 */
 	class Var final : public CRTP <Var, Expr> {
 	public:
@@ -77,7 +90,7 @@ namespace solver
 		 * and it has the same type as this.
 		 */
 		virtual bool Equals(const Object& rhs) const final;
-		/** String representation of the variable. Returns string in format "type name",
+		/** String representation of the variable. Returns string in format "<type> <name>",
 		 * where type - string representation of a variable type and name - a name of the variable */
 		virtual std::string ToString() const final;
 		/** Returns name of the variable */
@@ -90,7 +103,10 @@ namespace solver
 	};
 
 	/**
-	 * A constant.
+	 * A constant. Holds (smart pointer to) an appropriate value.
+	 * To create an instance of constant use ExprManager::MkConst.
+	 * \see Value
+	 * \see ExprManager::MkConst
 	 */
 	class Const : public CRTP<Const, Expr> {
 	public:
@@ -101,15 +117,17 @@ namespace solver
 		 * and their values are structurally equivalent.
 		 */
 		virtual bool Equals(const Object& rhs) const final;
-		/** String representation of the constant. Format is "value", where
-		 * value is a string representation of the constant's value.
+		/** String representation of the constant. Format is "<value>", where
+		 * value is a string representation of the constant's value
 		 */
 		virtual std::string ToString() const final;
+		/**
+		 * Returns (smart) pointer to the stored value.
+		 */
 		ValuePtr GetValue() const;
 	private:
 		ValuePtr value_;
 	};
-	// Unsigned Integer Constant
 }
 
 # endif /* __EXPR_HPP__ */

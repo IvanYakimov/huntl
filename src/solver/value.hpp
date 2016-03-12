@@ -30,6 +30,7 @@ namespace solver {
 
 	/** Basic integer value. This is useful to make (smart) pointer for particular integer value
 	 * \see Int
+	 * \see ExprManager::MkIntVal
 	 */
 	class BasicInt : public CRTP <BasicInt, Value> {
 	public:
@@ -37,12 +38,12 @@ namespace solver {
 		virtual Width GetWidth() const = 0;
 		/** Returns true if this is signed integer, and false if it's not. */
 		virtual bool IsSigned() const = 0;
-		/** Returns 64-bit-lenghted unsigned long representation of the stored integer value.
-		 * This routine copies significant bytes from value to result (in machine dependent order),
+		/** Returns 64-bit unsigned long representation of the stored integer value.
+		 * This routine copies significant bytes from stored raw integer value to result (in machine dependent order),
 		 * and fills insignificant bytes by zeros. */
 		virtual uint64_t GetUInt64() const = 0;
-		/** Set up value from 64-bit-lenghted unsigned long representation.
-		 * This routine copies significant bytes from argument to value (in machine dependent order),
+		/** Set up value from 64-bit unsigned long representation.
+		 * This routine copies significant bytes from argument to stored raw integer value (in machine dependent order),
 		 * and fills insignificant bytes by zeros. */
 		virtual void SetUInt64(const uint64_t& val) = 0;
 	};
@@ -54,19 +55,33 @@ namespace solver {
 	template<typename T>
 	class Int : public CRTP <Int<T>, BasicInt> {
 	public:
+		/** Basic constructor, do NOT use it directly! Use ExprManager::MkIntVal instead */
 		Int(T value);
+		/** Creates "empty" integer value for further initialization, do NOT use it directly!
+		 * Use ExprManager::MkIntVal(bool, Width, uint64_t) instead */
 		Int();
 		virtual ~Int();
+		/** Structural equality of this Int<T> instance and another Object instance.
+		 * Returns true if the rhs is instance of Int<T>,
+		 * their types (template parameter T) must be equivalent, as well as
+		 * their stored raw integer values must be equivalent too.
+		 */
 		virtual bool Equals (const Object& rhs) const final;
+		/** String representation in format "i<width> <value>".
+		 * Where width is number of bites of stored raw integer value
+		 * and value is string representation of stored raw integer value.
+		 */
 		virtual std::string ToString() const final;
-		//TODO: rename to GetInteger
 		T GetVal() const;
+		/** Returns value's width. \see BasicInt::GetWidth */
 		virtual Width GetWidth() const final;
+		/** Whether it is signed or not. \see  BasicInt::IsSigned */
 		virtual bool IsSigned() const final;
+		/** Returns unsigned long representation. \see BasicInt::GetUInt64 */
 		virtual uint64_t GetUInt64() const final;
+		/** Initialize from unsigned long. \see BasicInt::SetUInt64*/
 		virtual void SetUInt64(const uint64_t& val) final;
 	private:
-		//TODO: replace by unique_ptr<const T> (to allow check initialization)
 		T value_;
 	};
 
