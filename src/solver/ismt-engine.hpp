@@ -5,17 +5,18 @@
 
 namespace solver
 {
-  /**
- * Interface for an abstract incremental solver.
- * @author Ivan Yakimov, e-mail: ivan.yakimov.research@yandex.ru
- * @date 14.09.2015
- */
+
 	typedef enum {
 		  UNSAT,
 		  SAT,
 		  UNKNOWN
 	}Sat;
 
+	/**
+	 * Interface for an abstract incremental solver.
+	 * @author Ivan Yakimov, e-mail: ivan.yakimov.research@yandex.ru
+	 * @date 14.09.2015
+	 */
 	class ISMTEngine
 	{
 	public:

@@ -19,6 +19,7 @@ namespace solver{
     	  const std::string xor_str = "xor";
 
     	  /* comparisons */
+    	  //TODO: where is "distinct"?
     	  const std::string equal_str = "eq";
     	  const std::string unsigned_greater_than_str = "ugt";
 		  const std::string unsigned_greater_or_equal_str = "uge";
