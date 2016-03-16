@@ -3,7 +3,7 @@
 
 //PROJECT
 #include "../utils/object.hpp"
-#include "common-types.hpp"
+#include "width.hpp"
 
 //STL
 #include <limits>

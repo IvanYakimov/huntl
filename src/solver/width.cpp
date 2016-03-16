@@ -1,4 +1,4 @@
-#include "common-types.hpp"
+#include "width.hpp"
 
 namespace solver {
 //TODO: remove width namespace

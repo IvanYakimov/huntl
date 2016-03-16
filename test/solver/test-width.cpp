@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "../../src/solver/common-types.hpp"
+#include "../../src/solver/width.hpp"
 
 #include <list>
 

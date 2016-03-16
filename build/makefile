@@ -1,8 +1,8 @@
 SHELL = /bin/sh
 
 SOLVER = kind.o type.o expr.o expr-manager.o value.o cvc4-engine.o \
-	common-types.o expr-manager-helper.o
-SOLVER_TEST = test-runner.o test-value.o test-type.o test-expr.o test-expr-manager.o test-cvc4-engine.o test-common-types.o 
+	width.o expr-manager-helper.o
+SOLVER_TEST = test-runner.o test-value.o test-type.o test-expr.o test-expr-manager.o test-cvc4-engine.o test-width.o 
 #test-z3-engine.o
 
 PARSER = parser.o pattern-matcher.o interpreter.o local-memory.o
