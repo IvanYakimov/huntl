@@ -20,8 +20,6 @@
 
 using std::shared_ptr;
 
-//TODO: test review - adopt to new format
-//TODO: remove redundant testing
 namespace solver {
 	class ExprTest : public ::testing::Test {
 		public:
@@ -345,53 +343,6 @@ namespace solver {
 		EXPECT_NE(*op, *c1);
 	}
 
-	/*
-	//------------------------------------------------------------------
-	TEST_F(ExprTest, HelperOperators) {
-		typedef std::function<ExprPtr(ExprPtr, ExprPtr)> oper;
-		typedef std::tuple<Kind, oper> kind_to_op;
-		using std::make_tuple;
-				std::list<kind_to_op> l = {
-				make_tuple(Kind::ADD, Add),
-				make_tuple(Kind::SUB, Sub),
-				make_tuple(Kind::MUL, Mul),
-				make_tuple(Kind::SDIV, Sdiv),
-				make_tuple(Kind::SREM, Srem),
-				make_tuple(Kind::UDIV, Udiv),
-				make_tuple(Kind::UREM, Urem),
-				make_tuple(Kind::SHL, Shl),
-				make_tuple(Kind::LSHR, Lshr),
-				make_tuple(Kind::ASHR, Ashr),
-				make_tuple(Kind::AND, And),
-				make_tuple(Kind::OR, Or),
-				make_tuple(Kind::XOR, Xor),
-				make_tuple(Kind::EQ, Eq),
-				make_tuple(Kind::NE, Ne),
-				make_tuple(Kind::SGE, Sge),
-				make_tuple(Kind::SGT, Sgt),
-				make_tuple(Kind::SLE, Sle),
-				make_tuple(Kind::SLT, Slt),
-				make_tuple(Kind::UGE, Uge),
-				make_tuple(Kind::UGT, Ugt),
-				make_tuple(Kind::ULE, Ule),
-				make_tuple(Kind::ULT, Ult)
-		};
-
-		auto checker = [] (kind_to_op t) {
-			static auto l = V("l");
-			static auto r = V("r");
-			Kind kind = std::get<0>(t);
-			oper op = std::get<1>(t);
-			ExprPtr expr = op(l, r);
-			auto binop = std::dynamic_pointer_cast<BinOp>(expr);
-			ASSERT_EQ(binop->GetKind(), kind);
-			ASSERT_EQ(binop->GetLeftChild(), l);
-			ASSERT_EQ(binop->GetRightChild(), r);
-		};
-
-		std::for_each(l.begin(), l.end(), checker);
-	}
-	*/
 	//-------------------------------------------------------------------
 	// Casting
 	TEST_F(ExprTest, Cast) {

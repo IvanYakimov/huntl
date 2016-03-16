@@ -38,7 +38,6 @@ namespace solver {
 	}
 
 	ValuePtr ExprManager::MkIntVal(bool is_signed, Width width, uint64_t ulval) {
-		//TODO: refactroing of Width (make an enum)
 		using std::make_shared;
 		auto setval = [&] (BasicIntPtr int_obj) {
 			int_obj->SetUInt64(ulval);

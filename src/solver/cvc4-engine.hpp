@@ -35,8 +35,6 @@ namespace solver {
 		CVC4::ExprManager expr_manager_;
 		CVC4::SmtEngine smt_engine_;
 		CVC4::SymbolTable symbol_table_;
-		//TODO: add usage in the source file
-		CVC4::Type btv32_;
 	};
 }
 

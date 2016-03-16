@@ -82,7 +82,6 @@ namespace solver {
 		// (assert (= x VAL))
 		// (check-sat)
 		// (get-value (x))
-		//TODO:
 		auto cvc4engine = dynamic_cast<CVC4Engine*>(engine_);
 		GetValue__helper<int8_t>(cvc4engine, em_);
 		GetValue__helper<int16_t>(cvc4engine, em_);
@@ -635,7 +634,6 @@ namespace solver {
 			engine->Push(); {
 				engine->Assert(x_op_y);
 				if (engine->CheckSat() == Sat::SAT) {
-					//TODO:
 					ValuePtr x_val = engine->GetValue(x);
 					ValuePtr y_val = engine->GetValue(y);
 					T raw_x_val = dynamic_pointer_cast<Int<T>>(x_val)->GetVal();

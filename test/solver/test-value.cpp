@@ -69,58 +69,54 @@ namespace solver {
 
 	//FromUInt64_ToUInt64 test infrastructure (see below test body)
 	namespace ability_test{
-	template<typename T>
-	void helper() {
-		using namespace std;
-		ASSERT_TRUE(numeric_limits<T>::is_integer);
+		template<typename T>
+		void helper() {
+			using namespace std;
+			ASSERT_TRUE(numeric_limits<T>::is_integer);
 
-		auto min = numeric_limits<T>::min();
-		auto max = numeric_limits<T>::max();
-		auto checker = [&] (T val) -> void {
-			shared_ptr<BasicInt> first = make_shared<Int<T>>(val);
-			shared_ptr<BasicInt> second = make_shared<Int<T>>();
+			auto min = numeric_limits<T>::min();
+			auto max = numeric_limits<T>::max();
+			auto checker = [&] (T val) -> void {
+				shared_ptr<BasicInt> first = make_shared<Int<T>>(val);
+				shared_ptr<BasicInt> second = make_shared<Int<T>>();
 
-			//FromUInt64()
-			auto l = first->GetUInt64();
-			auto expected_ulong_str = bitset<64 - sizeof(T)*8>(0).to_string() + bitset<sizeof(T)*8>(val).to_string();
-			auto actual_ulong_str = bitset<64>(l).to_string();
-			//cout <<  Int<T>(val).ToString() << endl;
-			//cout << expected_ulong_str << " expected" << endl;
-			//cout << actual_ulong_str << " from GetUInt64()" << endl;
-			ASSERT_EQ(expected_ulong_str, actual_ulong_str);
-			ASSERT_EQ(8, sizeof(l));
+				//FromUInt64()
+				auto l = first->GetUInt64();
+				auto expected_ulong_str = bitset<64 - sizeof(T)*8>(0).to_string() + bitset<sizeof(T)*8>(val).to_string();
+				auto actual_ulong_str = bitset<64>(l).to_string();
+				ASSERT_EQ(expected_ulong_str, actual_ulong_str);
+				ASSERT_EQ(8, sizeof(l));
 
-			//ToUInt64
-			second->SetUInt64(l);
-			ASSERT_EQ(val, (dynamic_pointer_cast<Int<T>>(second))->GetVal());
+				//ToUInt64
+				second->SetUInt64(l);
+				ASSERT_EQ(val, (dynamic_pointer_cast<Int<T>>(second))->GetVal());
+			};
+
+			std::list<T> val_list = {
+					min,
+					max,
+					0,
+					42
+			};
+
+			if (std::numeric_limits<T>::is_signed)
+				val_list.push_back(-42);
+
+			for_each(val_list.begin(), val_list.end(), checker);
+		}
+
+		void body() {
+			helper<int8_t>();
+			helper<int16_t>();
+			helper<int32_t>();
+			helper<int64_t>();
+			helper<uint8_t>();
+			helper<uint16_t>();
+			helper<uint32_t>();
+			helper<uint64_t>();
 		};
-
-		std::list<T> val_list = {
-				min,
-				max,
-				0,
-				42
-		};
-
-		if (std::numeric_limits<T>::is_signed)
-			val_list.push_back(-42);
-
-		for_each(val_list.begin(), val_list.end(), checker);
 	}
 
-	void body() {
-		helper<int8_t>();
-		helper<int16_t>();
-		helper<int32_t>();
-		helper<int64_t>();
-		helper<uint8_t>();
-		helper<uint16_t>();
-		helper<uint32_t>();
-		helper<uint64_t>();
-	};
-	}
-
-	//TODO: test prefix - it should contain 64 - sizeof(T)*8 zeros
 	TEST_F(ValueTest, FromUInt64_ToUInt64) {
 		ability_test::body();
 	}

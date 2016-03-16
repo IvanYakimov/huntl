@@ -41,7 +41,6 @@ namespace solver {
 		return std::numeric_limits<T>::is_signed;
 	}
 
-	//TODO: try to replace by fast bitwise operations
 	template<typename T>
 	uint64_t Int<T>::GetUInt64() const {
 #if defined(_M_X64) || defined(__amd64__)

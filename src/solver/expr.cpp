@@ -6,8 +6,6 @@ namespace solver
 {//-------------------------------------------------------------------
 	//-------------------------------------------------------------------
 	// Variable
-	//TODO: solver compilation problem
-
 	Var::Var (std::string name, TypePtr type) throw(std::logic_error) {
 		if (not name.empty() and type != nullptr) {
 			name_ = name;
