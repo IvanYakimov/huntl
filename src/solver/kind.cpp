@@ -1,6 +1,7 @@
 #include "kind.hpp"
 
 namespace solver{
+//TODO: kind helper
 		  /* arithmetical */
     	  const std::string add_str = "add";
     	  const std::string sub_str = "sub";
@@ -62,7 +63,7 @@ namespace solver{
 			{Kind::SLE,  signed_less_or_equal_str}
 	  };
 
-	std::string KindToString(Kind kind) {
+	std::string to_string(Kind kind) {
 		return op_code_map_[kind];
 	}
 }

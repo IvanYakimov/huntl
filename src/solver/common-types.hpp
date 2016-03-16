@@ -5,7 +5,7 @@
 #include <memory>
 #include <string>
 
-//TODO: move to /src/solver directory
+//TODO: move to /src/solver directory, in files width{.hpp/.cpp}
 namespace solver {
 	//-------------------------------------------
 	// Basic

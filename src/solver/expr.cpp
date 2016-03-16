@@ -89,7 +89,7 @@ namespace solver
 	ExprPtr BinOp::GetRightChild() const {return right_child_;}
 
 	Kind BinOp::GetKind() const {return kind_;}
-	std::string BinOp::GetKindName() const {return KindToString(kind_);}
+	std::string BinOp::GetKindName() const {return to_string(kind_);}
 
 }
 

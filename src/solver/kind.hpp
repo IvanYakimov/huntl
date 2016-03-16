@@ -8,6 +8,7 @@ namespace solver {
 	enum class Kind;
 	/** Kind of binary operation. Most of kinds are the same as in FixedSizeBitVectors theory of SMT-LIB2 standard,
 	 * but some of them are from Core theory (these are EQAUL and DISTINCT).
+	 * \see to_string(Kind)
 	 * \see BinOp
 	 * \see http://smtlib.cs.uiowa.edu/theories.shtml
 	 * \see https://en.wikipedia.org/wiki/Two%27s_complement
@@ -61,7 +62,10 @@ namespace solver {
   		  SLE
   	};
 
-std::string KindToString(Kind kind);
+	/** String representation of kind.
+	 * Arithmetical and logical commands has the same representation as in smt-lib2, but without bv prefix.
+	 * Equality and distinction relations are represented by '=' and 'distinct'.*/
+	std::string to_string(Kind kind);
 }
 
 #endif

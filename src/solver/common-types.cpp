@@ -1,6 +1,8 @@
 #include "common-types.hpp"
 
 namespace solver {
+//TODO: remove width namespace
+//TODO: extract all width helper functions into single helper class
 	namespace width {
 		using namespace solver;
 
