@@ -191,7 +191,7 @@ namespace solver {
 			CVC4::BitVector cvc4_btv = expr.getConst<CVC4::BitVector>();
 			CVC4::Integer cvc4_int = cvc4_btv.toInteger();
 			uint64_t ulval = cvc4_int.getUnsignedLong();
-			ValuePtr re_conv =  em->MkIntVal(dynamic_pointer_cast<BasicInt>(val_obj)->IsSigned(), width::from_size_t(sizeof(T)), ulval);
+			ValuePtr re_conv =  em->MkIntVal(dynamic_pointer_cast<BasicInt>(val_obj)->IsSigned(), from_size_t(sizeof(T)), ulval);
 			EXPECT_EQ(*val_obj, *re_conv);
 			cvc4engine->Pop();
 		};

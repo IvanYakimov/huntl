@@ -20,16 +20,16 @@ namespace solver {
 			auto size = get<1>(tpl);
 			auto integer = get<2>(tpl);
 			auto str = get<3>(tpl);
-			ASSERT_EQ(width, width::from_size_t(size));
-			ASSERT_EQ(integer, width::to_int(width));
-			ASSERT_EQ(str, width::to_string(width));
+			ASSERT_EQ(width, from_size_t(size));
+			ASSERT_EQ(integer, to_int(width));
+			ASSERT_EQ(str, to_string(width));
 		};
 
 		the_list val_list = {
-				make_tuple(Width::w8, 1, 8, "8"),
-				make_tuple(Width::w16, 2, 16, "16"),
-				make_tuple(Width::w32, 4, 32, "32"),
-				make_tuple(Width::w64, 8, 64, "64")
+			make_tuple(Width::w8, 1, 8, "8"),
+			make_tuple(Width::w16, 2, 16, "16"),
+			make_tuple(Width::w32, 4, 32, "32"),
+			make_tuple(Width::w64, 8, 64, "64")
 		};
 
 		for_each(val_list.begin(), val_list.end(), checker);

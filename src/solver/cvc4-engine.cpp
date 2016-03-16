@@ -8,7 +8,7 @@ namespace solver {
 		 // ??? Set "Non-linear integer arithmetic with uninterpreted sort and function symbols." logic:
 		// This line causes the bug:
 		// "SmtEngine: turning off produce-models because unsupported for nonlinear arith
-		// Cannot get value when produce-models options is off.Cannot get value when produce-models options is off.f:"
+		// Cannot get value when produce-models options is off.Cannot get value when produce-models options is off:"
 		// smtEngine->setLogic("UFNIA");
 		smt_engine_.setOption("incremental", CVC4::SExpr("true"));
 		smt_engine_.setOption("produce-models", CVC4::SExpr("true"));
@@ -91,7 +91,7 @@ namespace solver {
 				auto ty = var->GetType();
 				if (instanceof<BasicIntTy>(ty)) {
 					auto int_ty = std::dynamic_pointer_cast<BasicIntTy>(ty);
-					auto size = width::to_int(int_ty->GetWidth());
+					auto size = to_int(int_ty->GetWidth());
 					auto cvc4btv_ty = expr_manager_.mkBitVectorType(size);
 					cvc4var = expr_manager_.mkVar(var_name, cvc4btv_ty);
 					//TODO: remove of implement as a log-function
@@ -150,7 +150,7 @@ namespace solver {
 				auto int_val = dynamic_pointer_cast<BasicInt>(val);
 				auto width = int_val->GetWidth();
 				auto raw_ulval = int_val->GetUInt64();
-				return expr_manager_.mkConst(CVC4::BitVector(width::to_int(width), raw_ulval));
+				return expr_manager_.mkConst(CVC4::BitVector(to_int(width), raw_ulval));
 			}
 			else
 				throw std::logic_error("not implemented");

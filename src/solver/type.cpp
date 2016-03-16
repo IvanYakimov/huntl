@@ -19,12 +19,12 @@ namespace solver {
 
 	template<typename T>
 	std::string IntTy<T>::ToString() const {
-		return (IsSigned()?"i":"ui") + width::to_string(GetWidth());
+		return (IsSigned()?"i":"ui") + to_string(GetWidth());
 	}
 
 	template<typename T>
 	Width IntTy<T>::GetWidth() const {
-		return width::from_size_t(sizeof(T));
+		return from_size_t(sizeof(T));
 	}
 
 	template<typename T>

@@ -16,11 +16,9 @@ namespace solver {
 			w64 = 64
 		};
 
-	namespace width {
-		Width from_size_t(size_t s);
-		int to_int(Width w);
-		std::string to_string(Width w);
-	}
+	Width from_size_t(size_t s);
+	int to_int(Width w);
+	std::string to_string(Width w);
 };
 
 #endif /* __COMMON_TYPES_HPP__ */
