@@ -6,15 +6,10 @@ namespace solver {
 
 
 	CVC4Engine::CVC4Engine() : smt_engine_(&expr_manager_) {
-		 // ??? Set "Non-linear integer arithmetic with uninterpreted sort and function symbols." logic:
-		// This line causes the bug:
-		// "SmtEngine: turning off produce-models because unsupported for nonlinear arith
-		// Cannot get value when produce-models options is off.Cannot get value when produce-models options is off:"
-		// smtEngine->setLogic("UFNIA");
+		//TODO: set bitvector logic
 		smt_engine_.setOption("incremental", CVC4::SExpr("true"));
 		smt_engine_.setOption("produce-models", CVC4::SExpr("true"));
 		smt_engine_.setOption("rewrite-divk", CVC4::SExpr("true"));
-		btv32_ = expr_manager_.mkBitVectorType(32);
 		symbol_table_.pushScope();
 	}
 
