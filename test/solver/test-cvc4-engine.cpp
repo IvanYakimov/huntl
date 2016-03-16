@@ -410,7 +410,7 @@ namespace solver {
 							else if (val == numeric_limits<T>::min())
 								return "min";
 							else
-								return to_string(val);
+								return std::to_string(val);
 						};
 						cout << raw_printer(raw_a) << " " << op << " " << raw_printer(raw_b) << " = " << raw_printer(raw_c) << endl;
 						cout << endl << get_bitwise(raw_a) << endl << op << endl << get_bitwise(raw_b) << endl << "=" << endl << get_bitwise(raw_c) << endl;
