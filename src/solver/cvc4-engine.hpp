@@ -18,22 +18,36 @@
 # include <memory>
 
 namespace solver {
+	/** A wrapper for CVC4 engine in context of ISMTSolver infrastructure. */
 	class CVC4Engine final : public ISMTEngine {
 	public:
+		/** Basic constructor. Provides all necessary initialization for creation of instance for the cvc4 solver's wrapper,
+		 * you can use it directlry.
+		 */
 		CVC4Engine();
 		virtual ~CVC4Engine();
+		/** \see ISMTEngine::Assert */
 		virtual void Assert(ExprPtr expr) final;
+		/** \see ISMTEngine::CheckSat */
 		virtual Sat CheckSat() final;
+		/** \see ISMTEngine::GetValue */
 		virtual ValuePtr GetValue(ExprPtr varible) throw(std::logic_error) final;
+		/** \see ISMTEngine::Push */
 		virtual void Push() final;
+		/** \see ISMTEngiine::Pop */
 		virtual void Pop() final;
 	private:
 #ifdef DBG
 	public:
 #endif
+		/** \see ISMTEngine::Prism */
 		CVC4::Expr Prism(ExprPtr expr) throw(std::logic_error);
+		/** Expression manager, provides creation and memory management for CVC4 expressions.
+		 * See CVC4 documentation for details. */
 		CVC4::ExprManager expr_manager_;
+		/** SMT engine provides commands, available for smt-lib2 standard. */
 		CVC4::SmtEngine smt_engine_;
+		/** Symbol table - provides scopes and variables management. */
 		CVC4::SymbolTable symbol_table_;
 	};
 }

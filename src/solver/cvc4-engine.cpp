@@ -4,6 +4,7 @@ namespace solver {
 	using std::dynamic_pointer_cast;
 	using std::logic_error;
 
+
 	CVC4Engine::CVC4Engine() : smt_engine_(&expr_manager_) {
 		 // ??? Set "Non-linear integer arithmetic with uninterpreted sort and function symbols." logic:
 		// This line causes the bug:
