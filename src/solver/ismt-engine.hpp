@@ -2,17 +2,14 @@
 #define __ISMT_ENGINE_HPP__
 
 # include "expr.hpp"
-# include "solver-exception.hpp"
-
-#include <exception>
+#include "exception.hpp"
 
 namespace solver
 {
-	class ScopeException : std::logic_error {
+	class ScopeException : Exception {
 	public:
 		virtual ~ScopeException() {}
-		ScopeException() : logic_error("cannot pop on zero scope level") {}
-		virtual const char * what () const noexcept;
+		ScopeException() : Exception("cannot pop on zero scope level") {}
 	};
 
 	/** Enumeration of all available results from satisfiability checking.
@@ -51,7 +48,7 @@ namespace solver
 		virtual ValuePtr GetValue(ExprPtr varible) throw(std::logic_error) = 0;
 		/** Push new scope into stack */
 		virtual void Push() = 0;
-		/** Pop scope from stack. ??? */
+		/** Pop scope from stack. If one tries to pop scope on zero level, it throws ScopeException. */
 		virtual void Pop() throw (ScopeException) = 0;
 	private:
 #ifdef DBG

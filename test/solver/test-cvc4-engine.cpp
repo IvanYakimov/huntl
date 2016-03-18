@@ -22,7 +22,7 @@ namespace solver {
 	public:
 		void SetUp() {engine_ = new CVC4Engine();}
 		void TearDown() {
-			try { delete engine_; } catch (SolverException &ex) {;}
+			try { delete engine_; } catch (Exception &ex) {;}
 		}
 		ExprManagerPtr em_ = GetExprManager();
 		CVC4Engine *engine_ = nullptr;
