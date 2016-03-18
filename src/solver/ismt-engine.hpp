@@ -2,9 +2,19 @@
 #define __ISMT_ENGINE_HPP__
 
 # include "expr.hpp"
+# include "solver-exception.hpp"
+
+#include <exception>
 
 namespace solver
 {
+	class ScopeException : std::logic_error {
+	public:
+		virtual ~ScopeException() {}
+		ScopeException() : logic_error("cannot pop on zero scope level") {}
+		virtual const char * what () const noexcept;
+	};
+
 	/** Enumeration of all available results from satisfiability checking.
 	 * \see ISMTEngie::CheckSat
 	 */
@@ -13,7 +23,7 @@ namespace solver
 		UNSAT,
 		/** There is at least one model for formulars in stack. */
 		SAT,
-		/** Solver can't determine whether or not available any model for formulas in user formulas' stack. */
+		/** Solver can't determine whether or not available any model for formulas in stack. */
 		UNKNOWN
 	}Sat;
 
@@ -24,19 +34,25 @@ namespace solver
 	 */
 	class ISMTEngine
 	{
+		//TODO: implement appropriate exceptions
+		//TODO: REFACTORING!!!
 	public:
+		/** */
 		virtual ~ISMTEngine() {}
-		/** Asserts expression into the stack of user provided formulas. */
-		virtual void Assert (ExprPtr expr) = 0;
+		/** Asserts expression into the stack of user provided formulas.
+		 * \throws logic_error - one tries to assert expression at 0 scope level. */
+		virtual void Assert (ExprPtr expr) throw (std::logic_error)= 0;
 		/** Checks satisifiabilty for formulas in the stack.
 		 * \see Sat */
 		virtual Sat CheckSat() = 0;
-		/** Returns value of a variable if it's available.
+		/** Returns value of a variable if it is available.
 		 * Throws logic_error if the variable doesn't bound.
 		 * \see Value */
 		virtual ValuePtr GetValue(ExprPtr varible) throw(std::logic_error) = 0;
+		/** Push new scope into stack */
 		virtual void Push() = 0;
-		virtual void Pop() = 0;
+		/** Pop scope from stack. ??? */
+		virtual void Pop() throw (ScopeException) = 0;
 	private:
 #ifdef DBG
 	public:

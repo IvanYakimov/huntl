@@ -27,7 +27,7 @@ namespace solver {
 		CVC4Engine();
 		virtual ~CVC4Engine();
 		/** \see ISMTEngine::Assert */
-		virtual void Assert(ExprPtr expr) final;
+		virtual void Assert(ExprPtr expr) throw(std::logic_error)final;
 		/** \see ISMTEngine::CheckSat */
 		virtual Sat CheckSat() final;
 		/** \see ISMTEngine::GetValue */
@@ -35,7 +35,7 @@ namespace solver {
 		/** \see ISMTEngine::Push */
 		virtual void Push() final;
 		/** \see ISMTEngiine::Pop */
-		virtual void Pop() final;
+		virtual void Pop() throw (ScopeException) final;
 	private:
 #ifdef DBG
 	public:

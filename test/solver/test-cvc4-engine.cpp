@@ -21,7 +21,9 @@ namespace solver {
 	class CVC4EngineTest : public ::testing::Test {
 	public:
 		void SetUp() {engine_ = new CVC4Engine();}
-		void TearDown() {delete engine_;}
+		void TearDown() {
+			try { delete engine_; } catch (SolverException &ex) {;}
+		}
 		ExprManagerPtr em_ = GetExprManager();
 		CVC4Engine *engine_ = nullptr;
 	};
@@ -30,7 +32,11 @@ namespace solver {
 		throw std::logic_error("not implemented");
 	}
 
-	TEST_F(CVC4EngineTest, DISABLED_Desctructor) {
+	TEST_F(CVC4EngineTest, Desctructor) {
+		throw std::logic_error("not implemented");
+	}
+
+	TEST_F(CVC4EngineTest, Assert) {
 		throw std::logic_error("not implemented");
 	}
 
@@ -131,6 +137,19 @@ namespace solver {
 		engine_->Pop();
 		// level 1 - all variables are unbound
 		x_32_unbound();
+	}
+
+	TEST_F(CVC4EngineTest, Pop) {
+		bool thrown = false;
+		try {
+			engine_->Pop(); // scope level 1 -> 0
+			engine_->Pop(); // failure
+			FAIL();
+		}
+		catch (solver::ScopeException &ex) {
+			thrown = true;
+		}
+		ASSERT_TRUE(thrown);
 	}
 
 	//-------------------------------------------------------------------------

@@ -16,6 +16,8 @@ namespace solver {
 	class BasicInt;
 	template<typename T> class Int;
 
+	//TODO: REFACTORING - remove all logic_error usages!!!
+
 	using ValuePtr = std::shared_ptr<Value>;
 	using BasicIntPtr = std::shared_ptr<BasicInt>;
 	template<typename T> using IntPtr = std::shared_ptr<Int<T>>;

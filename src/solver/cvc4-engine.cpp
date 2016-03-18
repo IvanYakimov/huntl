@@ -15,19 +15,20 @@ namespace solver {
 
 	void CVC4Engine::Push() {
 		symbol_table_.pushScope();
-		//std::cout << "push scope at level " << symbol_table_.getLevel() << std::endl;
 	}
 
-	void CVC4Engine::Pop() {
-		symbol_table_.popScope();
-		//std::cout << "pop scope at level " << symbol_table_.getLevel() << std::endl;
+	//TODO: testing
+	void CVC4Engine::Pop() throw (ScopeException){
+		if (symbol_table_.getLevel() == 0)
+			throw ScopeException();
+		else
+			symbol_table_.popScope();
 	}
 
-	CVC4Engine::~CVC4Engine() {
-		symbol_table_.popScope();
-	}
+	CVC4Engine::~CVC4Engine() {}
 
-	void CVC4Engine::Assert(ExprPtr expr) {
+	void CVC4Engine::Assert(ExprPtr expr) throw (std::logic_error) {
+		//TODO: implement type checking
 		smt_engine_.assertFormula(Prism(expr));
 	}
 
