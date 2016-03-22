@@ -10,6 +10,7 @@ namespace solver {
 		smt_engine_.setOption("incremental", CVC4::SExpr("true"));
 		smt_engine_.setOption("produce-models", CVC4::SExpr("true"));
 		smt_engine_.setOption("rewrite-divk", CVC4::SExpr("true"));
+		//TODO: check!!! this \/
 		symbol_table_.pushScope();
 	}
 
@@ -41,30 +42,38 @@ namespace solver {
 		}
 	}
 
-	ValuePtr CVC4Engine::GetValue(ExprPtr expr) throw (std::logic_error) {
+	ValuePtr CVC4Engine::GetValue(ExprPtr expr) throw (ModelException, BindingException, UnknownException) {
 		//TODO: check var type! (compare CVC4::Type and solver::Type)
 		// The argument must be an instance of a variable
-		if (instanceof<Var>(expr)) {
-			auto var = std::dynamic_pointer_cast<Var>(expr);
-			// Can't return value of unbound variable
-			if (not symbol_table_.isBound(var->GetName()))
-				return nullptr;
-			auto ty = var->GetType();
-			// Only integers are supported at the time
-			if (instanceof<BasicIntTy>(ty)) {
-				auto int_ty = std::dynamic_pointer_cast<BasicIntTy>(ty);
-				CVC4::Expr cvc4_expr = symbol_table_.lookup(var->GetName());
-				CVC4::Expr cvc4_val = smt_engine_.getValue(cvc4_expr);
-				CVC4::BitVector cvc4_btv = cvc4_val.getConst<CVC4::BitVector>();
-				CVC4::Integer cvc4_integer = cvc4_btv.toInteger();
-				uint64_t raw_ulval = cvc4_integer.getUnsignedLong();
-				auto result = GetExprManager()->MkIntVal(int_ty->IsSigned(), int_ty->GetWidth(), raw_ulval);
-				return result;
+		try {
+			if (instanceof<Var>(expr)) {
+				auto var = std::dynamic_pointer_cast<Var>(expr);
+				// Can't return value of unbound variable
+				if (not symbol_table_.isBound(var->GetName()))
+					throw BindingException();
+				auto ty = var->GetType();
+				// Only integers are supported at the time
+				if (instanceof<BasicIntTy>(ty)) {
+					auto int_ty = std::dynamic_pointer_cast<BasicIntTy>(ty);
+					CVC4::Expr cvc4_expr = symbol_table_.lookup(var->GetName());
+					CVC4::Expr cvc4_val = smt_engine_.getValue(cvc4_expr);
+					CVC4::BitVector cvc4_btv = cvc4_val.getConst<CVC4::BitVector>();
+					CVC4::Integer cvc4_integer = cvc4_btv.toInteger();
+					uint64_t raw_ulval = cvc4_integer.getUnsignedLong();
+					auto result = GetExprManager()->MkIntVal(int_ty->IsSigned(), int_ty->GetWidth(), raw_ulval);
+					return result;
+				}
+				else throw ImplementException();
 			}
-			else throw std::logic_error("only integer type supported");
+			else
+				throw ImplementException();
 		}
-		else
-			throw std::logic_error("incompatible type of expression");
+		catch (CVC4::ModalException &ex) {
+			throw ModelException();
+		}
+		catch (CVC4::Exception &ex) {
+			throw UnknownException(ex.what());
+		}
 	}
 
 	// private things

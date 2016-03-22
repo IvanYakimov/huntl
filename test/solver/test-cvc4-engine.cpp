@@ -32,11 +32,11 @@ namespace solver {
 		throw std::logic_error("not implemented");
 	}
 
-	TEST_F(CVC4EngineTest, Desctructor) {
+	TEST_F(CVC4EngineTest, DISABLED_Desctructor) {
 		throw std::logic_error("not implemented");
 	}
 
-	TEST_F(CVC4EngineTest, Assert) {
+	TEST_F(CVC4EngineTest, DISABLED_Assert) {
 		throw std::logic_error("not implemented");
 	}
 
@@ -46,6 +46,60 @@ namespace solver {
 
 	//-------------------------------------------------------------------------
 	// GetValue
+	TEST_F(CVC4EngineTest, GetValue__unbound_var) {
+		using namespace expr_manager_helper;
+		auto x = V<int32_t>("x");
+		try {
+			engine_->GetValue(x); 	// x is unbound
+			FAIL();
+		}
+		catch (BindingException &ex) {}
+	}
+
+	TEST_F(CVC4EngineTest, GetValue__unsat_assertion_set) {
+		using namespace expr_manager_helper;
+		auto x = V<int32_t>("x");
+		auto zero = C<int32_t>(0);
+		auto x_eq_zero = Equal(x, zero);
+		auto x_ne_zero = Distinct(x, zero);
+		engine_->Assert(x_eq_zero);
+		engine_->Assert(x_ne_zero);
+		auto sat = engine_->CheckSat();
+		ASSERT_EQ(Sat::UNSAT, sat);
+		try {
+			engine_->GetValue(x);	// assertions are not satisifiable
+			FAIL();
+		}
+		catch (ModelException &ex) {
+			std::cout << ex.what() << std::endl;
+		}
+	}
+
+	TEST_F(CVC4EngineTest, sandbox) {
+		CVC4::ExprManager em;
+		CVC4::SmtEngine engine(&em);
+		engine.setOption("incremental", CVC4::SExpr("true"));
+		engine.setOption("produce-models", CVC4::SExpr("true"));
+		engine.setOption("rewrite-divk", CVC4::SExpr("true"));
+		auto bv32 = em.mkBitVectorType(32);
+		auto x = em.mkVar("x", bv32);
+		auto zero = em.mkConst(CVC4::BitVector(32));
+		auto x_eq_zero = em.mkExpr(CVC4::Kind::EQUAL, x, zero);
+		engine.assertFormula(x_eq_zero);
+		engine.checkSat();
+		auto val = engine.getValue(x_eq_zero);
+		std::cout << val.toString() << std::endl;
+	}
+
+	TEST_F(CVC4EngineTest, GetValue__malformed_expr) {
+		using namespace expr_manager_helper;
+		auto x = V<int32_t>("x");
+		auto zero = C<int32_t>(0);
+		auto x_ne_zero = Distinct(x, zero);
+		engine_->Assert(x_ne_zero);
+		engine_->GetValue(x_ne_zero); // not a variable
+	}
+
 	template <typename T>
 	void GetValue__helper (CVC4Engine *cvc4engine, ExprManagerPtr em) {
 		using namespace std;
@@ -83,7 +137,7 @@ namespace solver {
 		for_each (val_list.begin(), val_list.end(), checker);
 	}
 
-	TEST_F(CVC4EngineTest, GetValue) {
+	TEST_F(CVC4EngineTest, GetValue_parametrized) {
 		// (declare-const x (_ BitVec 32))
 		// (assert (= x VAL))
 		// (check-sat)
@@ -105,9 +159,12 @@ namespace solver {
 	TEST_F(CVC4EngineTest, Push_Pop_1) {
 		using namespace std;
 		auto x = em_->MkVar("x", em_->MkIntTy<int32_t>());
-		auto val = engine_->GetValue(x);
-		// x is unbound variable
-		ASSERT_EQ(nullptr, val);
+		try {
+			auto val = engine_->GetValue(x);
+			FAIL();
+		} // x is unbound
+		catch (BindingException &ex) {}
+
 	}
 
 	TEST_F(CVC4EngineTest, Push_Pop_2) {
@@ -115,8 +172,11 @@ namespace solver {
 		auto x_32 = em_->MkVar("x", em_->MkIntTy<int32_t>());
 
 		auto x_32_unbound = [&] {
-			auto v1 = engine_->GetValue(x_32);
-			ASSERT_EQ(nullptr, v1);
+			try {
+				auto val = engine_->GetValue(x_32);
+				FAIL();
+			}
+			catch (BindingException &ex) {}
 		};
 
 		// level 1 - all variables are unbound

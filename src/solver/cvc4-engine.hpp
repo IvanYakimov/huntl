@@ -31,7 +31,7 @@ namespace solver {
 		/** \see ISMTEngine::CheckSat */
 		virtual Sat CheckSat() final;
 		/** \see ISMTEngine::GetValue */
-		virtual ValuePtr GetValue(ExprPtr varible) throw(std::logic_error) final;
+		virtual ValuePtr GetValue(ExprPtr varible) throw(ModelException, BindingException, UnknownException) final;
 		/** \see ISMTEngine::Push */
 		virtual void Push() final;
 		/** \see ISMTEngiine::Pop */

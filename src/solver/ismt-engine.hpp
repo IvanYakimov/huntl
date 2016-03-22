@@ -6,10 +6,22 @@
 
 namespace solver
 {
-	class ScopeException : Exception {
+	class ScopeException : public Exception {
 	public:
 		virtual ~ScopeException() {}
 		ScopeException() : Exception("cannot pop on zero scope level") {}
+	};
+
+	class ModelException : public Exception {
+	public:
+		virtual ~ModelException() {}
+		ModelException() : Exception("model is not available") {}
+	};
+
+	class BindingException : public Exception {
+	public:
+		virtual ~BindingException() {}
+		BindingException() : Exception("unbound variable") {}
 	};
 
 	/** Enumeration of all available results from satisfiability checking.
@@ -45,7 +57,7 @@ namespace solver
 		/** Returns value of a variable if it is available.
 		 * Throws logic_error if the variable doesn't bound.
 		 * \see Value */
-		virtual ValuePtr GetValue(ExprPtr varible) throw(std::logic_error) = 0;
+		virtual ValuePtr GetValue(ExprPtr varible) throw(ModelException, BindingException, UnknownException) = 0;
 		/** Push new scope into stack */
 		virtual void Push() = 0;
 		/** Pop scope from stack. If one tries to pop scope on zero level, it throws ScopeException. */
