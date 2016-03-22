@@ -25,9 +25,9 @@ namespace solver {
 		 * you can use it directlry.
 		 */
 		CVC4Engine();
-		virtual ~CVC4Engine();
+		virtual ~CVC4Engine() throw() final;
 		/** \see ISMTEngine::Assert */
-		virtual void Assert(ExprPtr expr) throw(ScopeException) final;
+		virtual void Assert(ExprPtr expr) throw(TypeCheckingException, UnknownException) final;
 		/** \see ISMTEngine::CheckSat */
 		virtual Sat CheckSat() final;
 		/** \see ISMTEngine::GetValue */

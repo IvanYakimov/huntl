@@ -38,13 +38,14 @@ namespace solver {
 
 	//-------------------------------------------------------------------------
 	// Assert
-	TEST_F(CVC4EngineTest, Assert__scope_exception) {
+	TEST_F(CVC4EngineTest, Assert__invalid_type) {
 		using namespace expr_manager_helper;
-		engine_->Pop();
 		auto x = V<int32_t>("x");
-		auto zero = C<int32_t>(0);
-		auto expr = Equal(x, zero);
-		engine_->Assert(expr);
+		try {
+			engine_->Assert(x);
+			FAIL();
+		}
+		catch (TypeCheckingException &ex) {}
 	}
 
 	TEST_F(CVC4EngineTest, DISABLED_CheckSat) {

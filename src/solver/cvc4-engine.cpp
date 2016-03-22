@@ -6,45 +6,55 @@ namespace solver {
 
 
 	CVC4Engine::CVC4Engine() : smt_engine_(&expr_manager_) {
-		//TODO: set bitvector logic
+		smt_engine_.setLogic("QF_BV");
 		smt_engine_.setOption("incremental", CVC4::SExpr("true"));
 		smt_engine_.setOption("produce-models", CVC4::SExpr("true"));
 		smt_engine_.setOption("rewrite-divk", CVC4::SExpr("true"));
-		//TODO: check!!! this \/
-		//symbol_table_.pushScope();
 	}
 
+	CVC4Engine::~CVC4Engine() throw() {}
+
 	void CVC4Engine::Push() throw() {
+		smt_engine_.push();
 		symbol_table_.pushScope();
 	}
 
-	//TODO: testing
-	void CVC4Engine::Pop() throw (ScopeException){
+	void CVC4Engine::Pop() throw (ScopeException) {
+		try
+			{ smt_engine_.pop(); }
+		catch (CVC4::ModalException &ex)
+			{ throw ScopeException(); }
+
 		if (symbol_table_.getLevel() == 0)
 			throw ScopeException();
 		else
 			symbol_table_.popScope();
 	}
 
-	CVC4Engine::~CVC4Engine() {}
 
-	void CVC4Engine::Assert(ExprPtr expr) throw (ScopeException) {
-		//TODO: implement type checking
-		smt_engine_.assertFormula(Prism(expr));
+	void CVC4Engine::Assert(ExprPtr expr) throw (TypeCheckingException, UnknownException) {
+		try {
+			smt_engine_.assertFormula(Prism(expr));
+		}
+		catch (CVC4::TypeCheckingException &ex) {
+			throw TypeCheckingException();
+		}
+		catch (CVC4::Exception &ex) {
+			throw UnknownException(ex.what());
+		}
 	}
 
 	Sat CVC4Engine::CheckSat() {
 		auto result = smt_engine_.checkSat().isSat();
 		switch (result) {
-		case CVC4::Result::SAT: return Sat::SAT;
-		case CVC4::Result::UNSAT: return Sat::UNSAT;
-		case CVC4::Result::SAT_UNKNOWN: return Sat::UNKNOWN;
+			case CVC4::Result::SAT: return Sat::SAT;
+			case CVC4::Result::UNSAT: return Sat::UNSAT;
+			case CVC4::Result::SAT_UNKNOWN: return Sat::UNKNOWN;
 		}
 	}
 
 	ValuePtr CVC4Engine::GetValue(ExprPtr expr)
 		throw (BindingException, TypeCheckingException, ModelException, ImplementationException, UnknownException) {
-		//TODO: check var type! (compare CVC4::Type and solver::Type)
 		try {
 			// One can obtain only value of a variable
 			if (instanceof<Var>(expr)) {

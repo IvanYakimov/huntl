@@ -46,13 +46,14 @@ namespace solver
 	{
 	public:
 		/** */
-		virtual ~ISMTEngine() {}
+		virtual ~ISMTEngine() throw() {}
 		/** Asserts expression into the assertions stack.
 		 * During the SMT-LIB2 standard expr must be well sorted closed term of sort Bool.
 		 * \throws ScopeError - one tries to assert expression at 0 scope level.
 		 * \throws TypeCheckingError - one tries to asset malformed expression
 		 * */
-		virtual void Assert (ExprPtr expr) throw (ScopeException)= 0;
+		virtual void Assert (ExprPtr expr) throw (TypeCheckingException, UnknownException)= 0;
+		//TODO: exceptions handling
 		/** Checks satisifiabilty of all the currently asserted formulas.
 		 * \see Sat */
 		virtual Sat CheckSat() = 0;
@@ -76,6 +77,7 @@ namespace solver
 #ifdef DBG
 	public:
 #endif
+		//TODO: exceptions handling
 		template <class T>
 		T Prism(ExprPtr expr) throw(std::logic_error);
 	};
