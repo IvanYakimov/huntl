@@ -16,6 +16,7 @@
 #include "kind.hpp"
 #include "type.hpp"
 #include "value.hpp"
+#include "exception.hpp"
 
 namespace solver
 {
@@ -53,7 +54,7 @@ namespace solver
 	class BinOp : public CRTP<BinOp, Expr>{
 	public:
 		/** Basic constructor, do NOT use it directly! Use ::solver::ExprManager::MkBinOp() instead */
-		BinOp(ExprPtr left_child, ExprPtr right_child, Kind kind);
+		BinOp(ExprPtr left_child, ExprPtr right_child, Kind kind) throw (IllegalArgException);
 		~BinOp();
 		/** Structural equality of this BinOp instance and another object instance. Returns true if rhs is instance of BinOp,
 		 * it has equivalent kind and their left and right children are both structurally equivalent. */
@@ -84,7 +85,7 @@ namespace solver
 	class Var final : public CRTP <Var, Expr> {
 	public:
 		/** Basic constructor, do NOT use it directly! Use ::solver::ExprManager::MkVar() instead */
-		Var (std::string name, TypePtr type) throw(std::logic_error);
+		Var (std::string name, TypePtr type) throw(IllegalArgException);
 		virtual ~Var() final;
 		/** Structural equality of this Var instance and another Object instance. Returns true if rhs is instance of Var
 		 * and it has the same type as this.
@@ -111,7 +112,7 @@ namespace solver
 	class Const : public CRTP<Const, Expr> {
 	public:
 		/** Basic constructor, do NOT use it directly! Use ::solver::ExprManager::MkConst() instead */
-		Const (ValuePtr val) throw(std::logic_error);
+		Const (ValuePtr val) throw(IllegalArgException);
 		virtual ~Const();
 		/** Structural equality of this Const instance and another Object instance. Returns true if Object is instance of Const
 		 * and their values are structurally equivalent.

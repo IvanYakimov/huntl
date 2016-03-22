@@ -13,6 +13,7 @@ namespace solver {
 	// http://z3prover.github.io/api/html/group__capi.html#ga2d57bd6f0d1cb1f98835a5f38a9dc4bb
 
 	TEST_F(Z3EngineTest, Ability) {
+		/*
 		using namespace ::z3;
 		using namespace ::std;
 		context c;
@@ -20,6 +21,7 @@ namespace solver {
 		int val;
 		Z3_get_numeral_int(c, x, &val);
 		cout << val << endl;
+		*/
 	}
 }
 

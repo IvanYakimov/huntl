@@ -49,7 +49,7 @@ namespace solver {
 			try {
 				Var v(name, ty);
 			}
-			catch (exception &ex) {
+			catch (IllegalArgException &ex) {
 				thrown = true;
 			}
 			ASSERT_EQ(throws_exception, thrown);
@@ -90,14 +90,11 @@ namespace solver {
 
 	// TODO: creation test
 	TEST_F(ExprTest, Constant_Creation) {
-		bool thrown = false;
 		try {
 			Const(nullptr);
+			FAIL();
 		}
-		catch (std::logic_error &e) {
-			thrown = true;
-		}
-		EXPECT_TRUE(thrown);
+		catch (IllegalArgException &e) {}
 	}
 
 	TEST_F(ExprTest, Constant_Accessors) {
@@ -132,37 +129,28 @@ namespace solver {
 				s4 = false;
 		try {
 			BinOp b(nullptr, v, Kind::ADD);
+			FAIL();
 		}
-		catch (std::logic_error &e) {
-			s1 = true;
-		}
+		catch (IllegalArgException &e) {}
 
 		try {
 			BinOp b(v, nullptr, Kind::ADD);
+			FAIL();
 		}
-		catch (std::logic_error &e) {
-			s2 = true;
-		}
+		catch (IllegalArgException &e) {}
 
 		try {
 			BinOp b(nullptr, nullptr, Kind::ADD);
+			FAIL();
 		}
-		catch (std::logic_error &e) {
-			s3 = true;
-		}
+		catch (IllegalArgException &e) {}
 
 		try {
 			BinOp b(v, v, Kind::ADD);
-			s4 = true;
 		}
-		catch (std::logic_error &e) {
-			s4 = false;
+		catch (IllegalArgException &e) {
+			FAIL();
 		}
-
-		ASSERT_TRUE(s1);
-		ASSERT_TRUE(s2);
-		ASSERT_TRUE(s3);
-		ASSERT_TRUE(s4);
 	}
 
 

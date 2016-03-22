@@ -6,13 +6,13 @@ namespace solver
 {//-------------------------------------------------------------------
 	//-------------------------------------------------------------------
 	// Variable
-	Var::Var (std::string name, TypePtr type) throw(std::logic_error) {
+	Var::Var (std::string name, TypePtr type) throw(IllegalArgException) {
 		if (not name.empty() and type != nullptr) {
 			name_ = name;
 			type_ = type;
 		}
 		else
-			throw std::logic_error("invalid arguments");
+			throw IllegalArgException();
 	}
 
 	Var::~Var() {}
@@ -34,11 +34,11 @@ namespace solver
 	//-------------------------------------------------------------------
 	// Constant
 
-	Const::Const(ValuePtr val) throw(std::logic_error) {
+	Const::Const(ValuePtr val) throw(IllegalArgException) {
 		if (val != nullptr)
 			value_ = val;
 		else
-			throw std::logic_error("null not available");
+			throw IllegalArgException();
 	}
 
 	Const::~Const() {}
@@ -60,9 +60,9 @@ namespace solver
 
 	//-------------------------------------------------------------------
 	// BinaryOperation
-	BinOp::BinOp(ExprPtr l, ExprPtr r, Kind k){
+	BinOp::BinOp(ExprPtr l, ExprPtr r, Kind k) throw (IllegalArgException) {
 		if (l == nullptr or r == nullptr)
-			throw std::logic_error("null not valid");
+			throw IllegalArgException();
 		kind_ = k;
 		left_child_ = l;
 		right_child_ = r;

@@ -49,6 +49,7 @@ namespace solver {
 	TEST_F(CVC4EngineTest, GetValue__unbound_var) {
 		using namespace expr_manager_helper;
 		auto x = V<int32_t>("x");
+		ASSERT_EQ(engine_->CheckSat(), Sat::SAT);
 		try {
 			engine_->GetValue(x); 	// x is unbound
 			FAIL();
@@ -56,7 +57,22 @@ namespace solver {
 		catch (BindingException &ex) {}
 	}
 
-	TEST_F(CVC4EngineTest, GetValue__unsat_assertion_set) {
+	TEST_F(CVC4EngineTest, GetValue__invalid_type) {
+		using namespace expr_manager_helper;
+		auto x = V<int32_t>("x");
+		auto zero = C<int32_t>(0);
+		auto expr = Equal(x, zero);
+		engine_->Assert(expr);
+		ASSERT_EQ(Sat::SAT, engine_->CheckSat());
+		try {
+			auto bad_x = V<int16_t>("x");
+			engine_->GetValue(bad_x);
+			FAIL();
+		}
+		catch (TypeCheckingException &ex) {}
+	}
+
+	TEST_F(CVC4EngineTest, GetValue__with_negative_sat_checking_result) {
 		using namespace expr_manager_helper;
 		auto x = V<int32_t>("x");
 		auto zero = C<int32_t>(0);
@@ -67,15 +83,14 @@ namespace solver {
 		auto sat = engine_->CheckSat();
 		ASSERT_EQ(Sat::UNSAT, sat);
 		try {
-			engine_->GetValue(x);	// assertions are not satisifiable
+			engine_->GetValue(x);	// try to get value with unsat stack
 			FAIL();
 		}
-		catch (ModelException &ex) {
-			std::cout << ex.what() << std::endl;
-		}
+		catch (ModelException &ex) {}
 	}
 
 	TEST_F(CVC4EngineTest, sandbox) {
+		/*
 		CVC4::ExprManager em;
 		CVC4::SmtEngine engine(&em);
 		engine.setOption("incremental", CVC4::SExpr("true"));
@@ -89,15 +104,29 @@ namespace solver {
 		engine.checkSat();
 		auto val = engine.getValue(x_eq_zero);
 		std::cout << val.toString() << std::endl;
+		*/
 	}
 
-	TEST_F(CVC4EngineTest, GetValue__malformed_expr) {
+	TEST_F(CVC4EngineTest, GetValue__binop_is_unimplemented) {
 		using namespace expr_manager_helper;
 		auto x = V<int32_t>("x");
 		auto zero = C<int32_t>(0);
 		auto x_ne_zero = Distinct(x, zero);
 		engine_->Assert(x_ne_zero);
-		engine_->GetValue(x_ne_zero); // not a variable
+		try {
+			engine_->GetValue(x_ne_zero); // not a variable
+			FAIL();
+		}
+		catch (ImplementationException &ex) {}
+	}
+
+	TEST_F(CVC4EngineTest, GetValue__constan_is_unimplemented) {
+		using namespace expr_manager_helper;
+		ASSERT_EQ(engine_->CheckSat(), Sat::SAT);
+		try {
+			engine_->GetValue(C<int32_t>(1));
+		}
+		catch (ImplementationException &ex) {}
 	}
 
 	template <typename T>

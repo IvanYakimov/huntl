@@ -31,9 +31,10 @@ namespace solver {
 		/** \see ISMTEngine::CheckSat */
 		virtual Sat CheckSat() final;
 		/** \see ISMTEngine::GetValue */
-		virtual ValuePtr GetValue(ExprPtr varible) throw(ModelException, BindingException, UnknownException) final;
+		virtual ValuePtr GetValue(ExprPtr varible)
+			throw (BindingException, TypeCheckingException, ModelException, ImplementationException, UnknownException)final;
 		/** \see ISMTEngine::Push */
-		virtual void Push() final;
+		virtual void Push() throw() final;
 		/** \see ISMTEngiine::Pop */
 		virtual void Pop() throw (ScopeException) final;
 	private:

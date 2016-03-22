@@ -38,13 +38,12 @@ namespace solver
 
 	/**
 	 * Abstract interface for an abstract SMT-solver.
+	 * Specification of this interface relies on SMT-LIB2 Standard Version 2.0.
 	 * \author Ivan Yakimov, e-mail: ivan.yakimov.research@yandex.ru
 	 * \date 14.09.2015
 	 */
 	class ISMTEngine
 	{
-		//TODO: implement appropriate exceptions
-		//TODO: REFACTORING!!!
 	public:
 		/** */
 		virtual ~ISMTEngine() {}
@@ -54,14 +53,22 @@ namespace solver
 		/** Checks satisifiabilty for formulas in the stack.
 		 * \see Sat */
 		virtual Sat CheckSat() = 0;
-		/** Returns value of a variable if it is available.
-		 * Throws logic_error if the variable doesn't bound.
+		/** Returns value of an expression if it is available.
+		 * \throws BindingException - expr is an unbound variable
+		 * \throws TypeCheckingException - type of passed variable isn't compatible with type of actual bound variable
+		 * \throws ModelException - solver cannot returnvalue of expression without sat checking
+		 * \throws ImplementationException - piece of code isn't implemented
+		 * \throws UnknownException - wrapped solver throws an exception which isn't supported buy the abstract interface
 		 * \see Value */
-		virtual ValuePtr GetValue(ExprPtr varible) throw(ModelException, BindingException, UnknownException) = 0;
+		virtual ValuePtr GetValue(ExprPtr varible)
+			throw (BindingException, TypeCheckingException, ModelException, ImplementationException, UnknownException) = 0;
 		/** Push new scope into stack */
-		virtual void Push() = 0;
-		/** Pop scope from stack. If one tries to pop scope on zero level, it throws ScopeException. */
-		virtual void Pop() throw (ScopeException) = 0;
+		virtual void Push()
+			throw () = 0;
+		/** Pop scope from stack.
+		 * \throws ScopeException - one tries to pop scope on zero level */
+		virtual void Pop()
+			throw (ScopeException) = 0;
 	private:
 #ifdef DBG
 	public:

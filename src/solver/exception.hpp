@@ -16,11 +16,35 @@ namespace solver {
 		UnknownException(const char* msg) : Exception(msg) {}
 	};
 
-	class ImplementException : public Exception {
+	class ImplementationException : public Exception {
 	public:
-		virtual ~ImplementException () {}
-		ImplementException() : Exception("not implemented") {}
+		virtual ~ImplementationException () {}
+		ImplementationException() : Exception("not implemented") {}
+	};
+
+	class IllegalArgException : public Exception {
+	public:
+		virtual ~IllegalArgException () {}
+		IllegalArgException() : Exception("illegal argument(s)") {}
+	};
+
+	class TypeCheckingException : public Exception {
+	public:
+		virtual ~TypeCheckingException () {}
+		TypeCheckingException() : Exception("type checking error") {}
 	};
 }
 
 #endif
+
+
+
+
+
+
+
+
+
+
+
+

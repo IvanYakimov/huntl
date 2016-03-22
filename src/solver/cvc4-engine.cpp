@@ -14,7 +14,7 @@ namespace solver {
 		symbol_table_.pushScope();
 	}
 
-	void CVC4Engine::Push() {
+	void CVC4Engine::Push() throw() {
 		symbol_table_.pushScope();
 	}
 
@@ -42,10 +42,11 @@ namespace solver {
 		}
 	}
 
-	ValuePtr CVC4Engine::GetValue(ExprPtr expr) throw (ModelException, BindingException, UnknownException) {
+	ValuePtr CVC4Engine::GetValue(ExprPtr expr)
+		throw (BindingException, TypeCheckingException, ModelException, ImplementationException, UnknownException) {
 		//TODO: check var type! (compare CVC4::Type and solver::Type)
-		// The argument must be an instance of a variable
 		try {
+			// One can obtain only value of a variable
 			if (instanceof<Var>(expr)) {
 				auto var = std::dynamic_pointer_cast<Var>(expr);
 				// Can't return value of unbound variable
@@ -58,15 +59,17 @@ namespace solver {
 					CVC4::Expr cvc4_expr = symbol_table_.lookup(var->GetName());
 					CVC4::Expr cvc4_val = smt_engine_.getValue(cvc4_expr);
 					CVC4::BitVector cvc4_btv = cvc4_val.getConst<CVC4::BitVector>();
+					if (cvc4_btv.getSize() != to_int(int_ty->GetWidth()))
+						throw TypeCheckingException();
 					CVC4::Integer cvc4_integer = cvc4_btv.toInteger();
 					uint64_t raw_ulval = cvc4_integer.getUnsignedLong();
 					auto result = GetExprManager()->MkIntVal(int_ty->IsSigned(), int_ty->GetWidth(), raw_ulval);
 					return result;
 				}
-				else throw ImplementException();
+				else throw ImplementationException();
 			}
 			else
-				throw ImplementException();
+				throw ImplementationException();
 		}
 		catch (CVC4::ModalException &ex) {
 			throw ModelException();
