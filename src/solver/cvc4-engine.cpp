@@ -11,7 +11,7 @@ namespace solver {
 		smt_engine_.setOption("produce-models", CVC4::SExpr("true"));
 		smt_engine_.setOption("rewrite-divk", CVC4::SExpr("true"));
 		//TODO: check!!! this \/
-		symbol_table_.pushScope();
+		//symbol_table_.pushScope();
 	}
 
 	void CVC4Engine::Push() throw() {
@@ -28,7 +28,7 @@ namespace solver {
 
 	CVC4Engine::~CVC4Engine() {}
 
-	void CVC4Engine::Assert(ExprPtr expr) throw (std::logic_error) {
+	void CVC4Engine::Assert(ExprPtr expr) throw (ScopeException) {
 		//TODO: implement type checking
 		smt_engine_.assertFormula(Prism(expr));
 	}

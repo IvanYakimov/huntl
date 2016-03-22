@@ -36,8 +36,15 @@ namespace solver {
 		throw std::logic_error("not implemented");
 	}
 
-	TEST_F(CVC4EngineTest, DISABLED_Assert) {
-		throw std::logic_error("not implemented");
+	//-------------------------------------------------------------------------
+	// Assert
+	TEST_F(CVC4EngineTest, Assert__scope_exception) {
+		using namespace expr_manager_helper;
+		engine_->Pop();
+		auto x = V<int32_t>("x");
+		auto zero = C<int32_t>(0);
+		auto expr = Equal(x, zero);
+		engine_->Assert(expr);
 	}
 
 	TEST_F(CVC4EngineTest, DISABLED_CheckSat) {

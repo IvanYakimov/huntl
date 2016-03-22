@@ -28,16 +28,16 @@ namespace solver
 	 * \see ISMTEngie::CheckSat
 	 */
 	typedef enum {
-		/** There is no models for formulas in stack. */
+		/** There is no model for the asserted formulas . */
 		UNSAT,
-		/** There is at least one model for formulars in stack. */
+		/** There is at least one model for the asserted formulars. */
 		SAT,
-		/** Solver can't determine whether or not available any model for formulas in stack. */
+		/** Solver can't determine whether or not available any model for the asserted formulas. */
 		UNKNOWN
 	}Sat;
 
 	/**
-	 * Abstract interface for an abstract SMT-solver.
+	 * Abstract interface for a fragment of SMT-LIB compatible solver (only QF_BV logic is supported).
 	 * Specification of this interface relies on SMT-LIB2 Standard Version 2.0.
 	 * \author Ivan Yakimov, e-mail: ivan.yakimov.research@yandex.ru
 	 * \date 14.09.2015
@@ -47,10 +47,13 @@ namespace solver
 	public:
 		/** */
 		virtual ~ISMTEngine() {}
-		/** Asserts expression into the stack of user provided formulas.
-		 * \throws logic_error - one tries to assert expression at 0 scope level. */
-		virtual void Assert (ExprPtr expr) throw (std::logic_error)= 0;
-		/** Checks satisifiabilty for formulas in the stack.
+		/** Asserts expression into the assertions stack.
+		 * During the SMT-LIB2 standard expr must be well sorted closed term of sort Bool.
+		 * \throws ScopeError - one tries to assert expression at 0 scope level.
+		 * \throws TypeCheckingError - one tries to asset malformed expression
+		 * */
+		virtual void Assert (ExprPtr expr) throw (ScopeException)= 0;
+		/** Checks satisifiabilty of all the currently asserted formulas.
 		 * \see Sat */
 		virtual Sat CheckSat() = 0;
 		/** Returns value of an expression if it is available.
@@ -62,10 +65,10 @@ namespace solver
 		 * \see Value */
 		virtual ValuePtr GetValue(ExprPtr varible)
 			throw (BindingException, TypeCheckingException, ModelException, ImplementationException, UnknownException) = 0;
-		/** Push new scope into stack */
+		/** Push new scope into the assertions stack */
 		virtual void Push()
 			throw () = 0;
-		/** Pop scope from stack.
+		/** Pop scope from the assertions stack.
 		 * \throws ScopeException - one tries to pop scope on zero level */
 		virtual void Pop()
 			throw (ScopeException) = 0;

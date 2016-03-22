@@ -27,7 +27,7 @@ namespace solver {
 		CVC4Engine();
 		virtual ~CVC4Engine();
 		/** \see ISMTEngine::Assert */
-		virtual void Assert(ExprPtr expr) throw(std::logic_error)final;
+		virtual void Assert(ExprPtr expr) throw(ScopeException) final;
 		/** \see ISMTEngine::CheckSat */
 		virtual Sat CheckSat() final;
 		/** \see ISMTEngine::GetValue */
