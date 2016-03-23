@@ -31,7 +31,7 @@ namespace solver {
 	//-------------------------------------------------------------------------
 	// Assert
 	TEST_F(CVC4EngineTest, Assert__invalid_type) {
-		using namespace expr_manager_helper;
+
 		auto x = V<int32_t>("x");
 		try {
 			engine_->Assert(x);
@@ -43,7 +43,7 @@ namespace solver {
 	//-------------------------------------------------------------------------
 	// GetValue
 	TEST_F(CVC4EngineTest, GetValue__unbound_var) {
-		using namespace expr_manager_helper;
+
 		auto x = V<int32_t>("x");
 		ASSERT_EQ(engine_->CheckSat(), Sat::SAT);
 		try {
@@ -54,7 +54,7 @@ namespace solver {
 	}
 
 	TEST_F(CVC4EngineTest, GetValue__invalid_type) {
-		using namespace expr_manager_helper;
+
 		auto x = V<int32_t>("x");
 		auto zero = C<int32_t>(0);
 		auto expr = Equal(x, zero);
@@ -69,7 +69,7 @@ namespace solver {
 	}
 
 	TEST_F(CVC4EngineTest, GetValue__with_negative_sat_checking_result) {
-		using namespace expr_manager_helper;
+
 		auto x = V<int32_t>("x");
 		auto zero = C<int32_t>(0);
 		auto x_eq_zero = Equal(x, zero);
@@ -86,7 +86,7 @@ namespace solver {
 	}
 
 	TEST_F(CVC4EngineTest, GetValue__binop_is_unimplemented) {
-		using namespace expr_manager_helper;
+
 		auto x = V<int32_t>("x");
 		auto zero = C<int32_t>(0);
 		auto x_ne_zero = Distinct(x, zero);
@@ -99,7 +99,7 @@ namespace solver {
 	}
 
 	TEST_F(CVC4EngineTest, GetValue__constan_is_unimplemented) {
-		using namespace expr_manager_helper;
+
 		ASSERT_EQ(engine_->CheckSat(), Sat::SAT);
 		try {
 			engine_->GetValue(C<int32_t>(1));
@@ -380,7 +380,7 @@ namespace solver {
 	// Basic operations testing
 	TEST_F(CVC4EngineTest, helpers_test) {
 		using namespace std;
-		using namespace expr_manager_helper;
+
 		using the_tuple = tuple<function<ExprPtr(ExprPtr, ExprPtr)>, Kind>;
 		using the_list = list<the_tuple>;
 		auto checker = [&] (the_tuple tpl) {
@@ -425,7 +425,7 @@ namespace solver {
 	template <typename T>
 	void arithmetic_helper(ISMTEngine* engine) {
 		using namespace std;
-		using namespace expr_manager_helper;
+
 		using native = function<T(T,T)>;
 
 		native _add = [] (T a, T b) -> T {return a + b;};
@@ -684,7 +684,7 @@ namespace solver {
 	template <typename T>
 	void comparisons_helper(ISMTEngine* engine) {
 		using namespace std;
-		using namespace expr_manager_helper;
+
 		using native = function<bool(T,T)>;
 
 		using the_context = tuple<Func, native, string>;
@@ -785,7 +785,7 @@ namespace solver {
 	}
 
 	TEST_F(CVC4EngineTest, DISABLED_division_by_zero) {
-		using namespace expr_manager_helper;
+
 		auto x = V<int32_t>("x");
 		auto a = C<int32_t>(1);
 		auto b = C<int32_t>(0);
