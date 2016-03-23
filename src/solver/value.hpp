@@ -16,15 +16,14 @@ namespace solver {
 	class BasicInt;
 	template<typename T> class Int;
 
-	//TODO: REFACTORING - remove all logic_error usages!!!
-
 	using ValuePtr = std::shared_ptr<Value>;
 	using BasicIntPtr = std::shared_ptr<BasicInt>;
 	template<typename T> using IntPtr = std::shared_ptr<Int<T>>;
 
-	/** Basic value. Every particular value class should be inherited (by CRTP<T,B>) from this.
+	/** Basic value.
+	 * \note Every particular value class should be inherited (by CRTP <T,B>) from this.
 	 * \see BasicInt
-	 */
+	 * \see CRTP <T,B> */
 	class Value : public CRTP <Value, Object> {
 	public:
 		virtual ~Value() {}
@@ -64,7 +63,7 @@ namespace solver {
 		/** Basic constructor, do NOT use it directly! Use ExprManager::MkIntVal instead */
 		Int(T value);
 		/** Creates "empty" integer value for further initialization, do NOT use it directly!
-		 * Use ExprManager::MkIntVal(bool, Width, uint64_t) instead */
+		 * \note Use ExprManager::MkIntVal(bool, Width, uint64_t) instead */
 		Int();
 		virtual ~Int();
 		/** Structural equality of this Int<T> instance and another Object instance.

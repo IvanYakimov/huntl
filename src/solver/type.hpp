@@ -16,7 +16,10 @@ namespace solver {
 
 	using TypePtr = std::shared_ptr<Type>;
 
-	/** Basic type. Every particular type should be inherited (bt CRTP<T,B>) from this. */
+	/** Basic type.
+	 * \note Every particular type should be inherited (by CRTP <T,B>) from this.
+	 * \see BasicIntTy
+	 * \see CRTP <T,B>*/
 	class Type : public CRTP <Type, Object> {
 	public:
 		virtual ~Type() {}
@@ -41,7 +44,8 @@ namespace solver {
 	template<typename T>
 	class IntTy : public CRTP <IntTy<T>, BasicIntTy> {
 	public:
-		/** Basic constructor, do NOT use int directly! Use ExprManager::MkIntTy instead */
+		/** Basic constructor.
+		 * \attention Do NOT use int directly! Use ExprManager::MkIntTy instead */
 		IntTy ();
 		virtual ~IntTy();
 		/** Structural equality of this instance of IntTy and instance of another Object.

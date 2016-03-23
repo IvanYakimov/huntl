@@ -26,14 +26,19 @@ namespace solver
 	class ExprManager;
 	class Const;
 
-	/** Smart pointer to an SMT expression. Use ExprManager to create smart pointers to particular kinds of expressions.
+	/** Smart pointer to an SMT expression.
+	 * \note Use ExprManager to create smart pointers to particular kinds of expressions.
 	 * \see Expr
 	 * \see ExprManager */
 	using ExprPtr = std::shared_ptr<Expr>;
 
 	/**
-	 * A basic SMT expression. Every particular kind of expression should be inherited (by using CRTP <T,B>) from this.
-	 * To create instance of particular kind of expression use ExprManager.
+	 * A basic SMT expression.
+	 * \note Every particular kind of expression should be inherited (by using CRTP <T,B>) from this.
+	 * \note To create instance of particular kind of expression use ExprManager.
+	 * \see Var
+	 * \see Const
+	 * \see BinOp
 	 * \see ExprManager
 	 * \see ExprPtr
 	 * \see CRTP
@@ -46,14 +51,15 @@ namespace solver
 	/**
 	 * An arbitrary binary operation. Holds (smart pointers to) left and right children, which are arbitrary smt expressions.
 	 * Also holds kind of operation, which should be setup (for every instance of binary operation) in run-time.
-	 * To create instance of binary operation use ExprManager::MkBinOp.
+	 * \note To create instance of binary operation use ExprManager::MkBinOp.
 	 * \see ExprPtr
 	 * \see Kind
 	 * \see ExprManager::MkBinOp
 	 */
 	class BinOp : public CRTP<BinOp, Expr>{
 	public:
-		/** Basic constructor, do NOT use it directly! Use ::solver::ExprManager::MkBinOp() instead */
+		/** Basic constructor.
+		 * \attention Do NOT use it directly! Use ::solver::ExprManager::MkBinOp() instead */
 		BinOp(ExprPtr left_child, ExprPtr right_child, Kind kind) throw (IllegalArgException);
 		~BinOp();
 		/** Structural equality of this BinOp instance and another object instance. Returns true if rhs is instance of BinOp,
@@ -78,13 +84,14 @@ namespace solver
 
 	/**
 	 * A variable (constant in terms of SMT-LIB2). Holds variable's name and (smart pointer to) variable's type.
-	 * To create an instance of variable use ExprManager::MkVar.
+	 * \note To create an instance of variable use ExprManager::MkVar.
 	 * \see Type
 	 * \see ExprManager::MkVar
 	 */
 	class Var final : public CRTP <Var, Expr> {
 	public:
-		/** Basic constructor, do NOT use it directly! Use ::solver::ExprManager::MkVar() instead */
+		/** Basic constructor.
+		 * \attention Do NOT use it directly! Use ::solver::ExprManager::MkVar() instead */
 		Var (std::string name, TypePtr type) throw(IllegalArgException);
 		virtual ~Var() final;
 		/** Structural equality of this Var instance and another Object instance. Returns true if rhs is instance of Var
@@ -105,13 +112,14 @@ namespace solver
 
 	/**
 	 * A constant. Holds (smart pointer to) an appropriate value.
-	 * To create an instance of constant use ExprManager::MkConst.
+	 * \note To create an instance of constant use ExprManager::MkConst.
 	 * \see Value
 	 * \see ExprManager::MkConst
 	 */
 	class Const : public CRTP<Const, Expr> {
 	public:
-		/** Basic constructor, do NOT use it directly! Use ::solver::ExprManager::MkConst() instead */
+		/** Basic constructor.
+		 * \attention Do NOT use it directly! Use ::solver::ExprManager::MkConst() instead */
 		Const (ValuePtr val) throw(IllegalArgException);
 		virtual ~Const();
 		/** Structural equality of this Const instance and another Object instance. Returns true if Object is instance of Const
