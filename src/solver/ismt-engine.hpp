@@ -6,18 +6,23 @@
 
 namespace solver
 {
+	/**
+	 * Throws if one tries to pop on a zero scope level of the assertion stack.
+	 */
 	class ScopeException : public Exception {
 	public:
 		virtual ~ScopeException() {}
 		ScopeException() : Exception("cannot pop on zero scope level") {}
 	};
 
+	/** Throws if one tries to perform operation which involves usage of model, but it's not available. */
 	class ModelException : public Exception {
 	public:
 		virtual ~ModelException() {}
 		ModelException() : Exception("model is not available") {}
 	};
 
+	/** Throws if one tries to obtain value of unbound variable. */
 	class BindingException : public Exception {
 	public:
 		virtual ~BindingException() {}

@@ -3,9 +3,7 @@
 using std::function;
 
 namespace solver
-{//-------------------------------------------------------------------
-	//-------------------------------------------------------------------
-	// Variable
+{
 	Var::Var (std::string name, TypePtr type) throw(IllegalArgException) {
 		if (not name.empty() and type != nullptr) {
 			name_ = name;
@@ -31,9 +29,6 @@ namespace solver
 	std::string Var::GetName() const {return name_;}
 	TypePtr Var::GetType() const {return type_;}
 
-	//-------------------------------------------------------------------
-	// Constant
-
 	Const::Const(ValuePtr val) throw(IllegalArgException) {
 		if (val != nullptr)
 			value_ = val;
@@ -58,8 +53,6 @@ namespace solver
 		return value_;
 	}
 
-	//-------------------------------------------------------------------
-	// BinaryOperation
 	BinOp::BinOp(ExprPtr l, ExprPtr r, Kind k) throw (IllegalArgException) {
 		if (l == nullptr or r == nullptr)
 			throw IllegalArgException();
