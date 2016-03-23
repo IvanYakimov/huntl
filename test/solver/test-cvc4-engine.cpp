@@ -28,14 +28,6 @@ namespace solver {
 		CVC4Engine *engine_ = nullptr;
 	};
 
-	TEST_F(CVC4EngineTest, DISABLED_Constructor) {
-		throw std::logic_error("not implemented");
-	}
-
-	TEST_F(CVC4EngineTest, DISABLED_Desctructor) {
-		throw std::logic_error("not implemented");
-	}
-
 	//-------------------------------------------------------------------------
 	// Assert
 	TEST_F(CVC4EngineTest, Assert__invalid_type) {
@@ -46,10 +38,6 @@ namespace solver {
 			FAIL();
 		}
 		catch (TypeCheckingException &ex) {}
-	}
-
-	TEST_F(CVC4EngineTest, DISABLED_CheckSat) {
-		throw std::logic_error("not implemented");
 	}
 
 	//-------------------------------------------------------------------------
@@ -95,24 +83,6 @@ namespace solver {
 			FAIL();
 		}
 		catch (ModelException &ex) {}
-	}
-
-	TEST_F(CVC4EngineTest, sandbox) {
-		/*
-		CVC4::ExprManager em;
-		CVC4::SmtEngine engine(&em);
-		engine.setOption("incremental", CVC4::SExpr("true"));
-		engine.setOption("produce-models", CVC4::SExpr("true"));
-		engine.setOption("rewrite-divk", CVC4::SExpr("true"));
-		auto bv32 = em.mkBitVectorType(32);
-		auto x = em.mkVar("x", bv32);
-		auto zero = em.mkConst(CVC4::BitVector(32));
-		auto x_eq_zero = em.mkExpr(CVC4::Kind::EQUAL, x, zero);
-		engine.assertFormula(x_eq_zero);
-		engine.checkSat();
-		auto val = engine.getValue(x_eq_zero);
-		std::cout << val.toString() << std::endl;
-		*/
 	}
 
 	TEST_F(CVC4EngineTest, GetValue__binop_is_unimplemented) {
@@ -814,28 +784,16 @@ namespace solver {
 		comparisons_helper<uint64_t>(engine_ptr);
 	}
 
-
 	TEST_F(CVC4EngineTest, DISABLED_division_by_zero) {
-		//TODO:
-	}
-
-	//-------------------------------------------------------------------------
-	// CVC4 Internals:
-	TEST_F(CVC4EngineTest, DISABLED_CVC4ExprManager_1) {
-		// No error - normal behavior
-		CVC4::ExprManager cvc4em;
-		CVC4::Type btv_ty1 = cvc4em.mkBitVectorType(32);
-		CVC4::Type btv_ty2 = cvc4em.mkBitVectorType(32);
-		ASSERT_EQ(btv_ty1, btv_ty2);
-	}
-
-	TEST_F(CVC4EngineTest, DISABLED_CVC4ExprManager_2) {
-		// Error - 2 structural equivalent objects are equal
-		CVC4::ExprManager cvc4em1;
-		CVC4::ExprManager cvc4em2;
-		CVC4::Type btv_ty1 = cvc4em1.mkBitVectorType(32);
-		CVC4::Type btv_ty2 = cvc4em2.mkBitVectorType(32);
-		ASSERT_NE(btv_ty1, btv_ty2);
+		using namespace expr_manager_helper;
+		auto x = V<int32_t>("x");
+		auto a = C<int32_t>(1);
+		auto b = C<int32_t>(0);
+		auto expr = Equal(x, SDiv(a, b));
+		engine_->Assert(expr);
+		engine_->CheckSat();
+		auto val = engine_->GetValue(x);
+		std::cout << *val << std::endl;
 	}
 }
 

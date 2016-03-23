@@ -77,9 +77,9 @@ namespace solver
 #ifdef DBG
 	public:
 #endif
-		//TODO: exceptions handling
 		template <class T>
-		T Prism(ExprPtr expr) throw(std::logic_error);
+		T Prism(ExprPtr expr)
+			throw(IllegalArgException, CastingException, ImplementationException);
 	};
 }
 

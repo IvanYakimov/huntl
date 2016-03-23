@@ -33,6 +33,12 @@ namespace solver {
 		virtual ~TypeCheckingException () {}
 		TypeCheckingException() : Exception("type checking error") {}
 	};
+
+	class CastingException : public Exception {
+	public:
+		virtual ~CastingException() {}
+		CastingException() : Exception("casting failure") {}
+	};
 }
 
 #endif

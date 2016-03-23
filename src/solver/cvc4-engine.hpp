@@ -42,7 +42,8 @@ namespace solver {
 	public:
 #endif
 		/** \see ISMTEngine::Prism */
-		CVC4::Expr Prism(ExprPtr expr) throw(std::logic_error);
+		CVC4::Expr Prism(ExprPtr expr)
+			throw(IllegalArgException, CastingException, ImplementationException);
 		/** Expression manager, provides creation and memory management for CVC4 expressions.
 		 * See CVC4 documentation for details. */
 		CVC4::ExprManager expr_manager_;

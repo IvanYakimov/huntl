@@ -45,11 +45,16 @@ namespace solver {
 	}
 
 	Sat CVC4Engine::CheckSat() {
-		auto result = smt_engine_.checkSat().isSat();
-		switch (result) {
-			case CVC4::Result::SAT: return Sat::SAT;
-			case CVC4::Result::UNSAT: return Sat::UNSAT;
-			case CVC4::Result::SAT_UNKNOWN: return Sat::UNKNOWN;
+		try {
+			auto result = smt_engine_.checkSat().isSat();
+			switch (result) {
+				case CVC4::Result::SAT: return Sat::SAT;
+				case CVC4::Result::UNSAT: return Sat::UNSAT;
+				case CVC4::Result::SAT_UNKNOWN: return Sat::UNKNOWN;
+			}
+		}
+		catch (CVC4::Exception &ex) {
+			throw UnknownException(ex.what());
 		}
 	}
 
@@ -91,16 +96,15 @@ namespace solver {
 
 	// private things
 	// TODO: refactoring - extract pattern (helper) code
-	CVC4::Expr CVC4Engine::Prism(ExprPtr expr) throw(std::logic_error) {
+	CVC4::Expr CVC4Engine::Prism(ExprPtr expr) throw(IllegalArgException, CastingException, ImplementationException) {
 		if (expr == nullptr)
-			throw std::logic_error("null not valid");
+			throw IllegalArgException();
 
 		// side effect here:
 		if (instanceof<Var>(expr)) {
 			auto var = dynamic_pointer_cast<Var>(expr);
 			CVC4::Expr cvc4var;
 			auto var_name = var->GetName();
-			//TODO: check var type! (compare CVC4::Type and solver::Type)
 			if (symbol_table_.isBound(var_name)) {
 				cvc4var = symbol_table_.lookup(var_name);
 			}
@@ -114,7 +118,7 @@ namespace solver {
 					symbol_table_.bind(var_name, cvc4var);
 				}
 				else
-					throw std::logic_error("not implemented");
+					throw ImplementationException();
 			}
 			return cvc4var;
 		}
@@ -167,11 +171,11 @@ namespace solver {
 				return expr_manager_.mkConst(CVC4::BitVector(to_int(width), raw_ulval));
 			}
 			else
-				throw std::logic_error("not implemented");
+				throw ImplementationException();
 		}
 
 		// Expression casting failure
-		throw std::logic_error("incompatible type of expression");
+		throw CastingException();
 	}
 }
 
