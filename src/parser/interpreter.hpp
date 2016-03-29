@@ -1,14 +1,13 @@
 # ifndef __INTERPRETER_HPP__
 # define __INTERPRETER_HPP__
 
+
 // LLVM
 //# include "llvm/IR/Constants.h"
 
 // Project
 # include "pattern-matcher.hpp"
-# include "local-memory.hpp"
-# include "../solver/expr.hpp"
-# include "../solver/expr-factory.hpp"
+//# include "local-memory.hpp"
 # include "../utils/interruption.hpp"
 //TODO: use -I option to perform headers search instead of ../ (?)
 //# include "../solver/expr.hpp"
@@ -19,7 +18,7 @@ public:
 		inst_ = std::unique_ptr<llvm::Instruction>(inst.clone());
 	}
 
-	virtual ~InterpretationFailure() {/*nothing to do*/}
+	virtual ~InterpretationFailure() {}
 
 	virtual void Print() {
 		llvm::errs() << "\nInterpretation failed on: " << *inst_ << "\n";
@@ -32,8 +31,7 @@ private:
 class Interpreter final : public PatternMatcher
 {
 private:
-	LocalMemory memory_;
-	solver::ExprManager expr_factory_;
+	//LocalMemory memory_;
 
 	// Return
 	virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst);
@@ -59,7 +57,7 @@ private:
 	virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Instruction *instruction, const llvm::Value *ptr);
 	virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Constant *constant, const llvm::Value *ptr);
 
-	static inline void DebugExprInfo(solver::ExprPtr expr);
+	//static inline void DebugExprInfo(solver::ExprPtr expr);
 };
 
 # endif /* __INTERPRETER_HPP__ */

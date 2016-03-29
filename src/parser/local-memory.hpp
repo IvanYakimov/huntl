@@ -1,6 +1,7 @@
 # ifndef __LOCAL_MEMORY_HPP__
 # define __LOCAL_MEMORY_HPP__
 
+/*
 //TODO interruption handling (replace interruptions by exceptions)
 
 // LLVM
@@ -11,7 +12,7 @@
 # include <map>
 
 // Project
-# include "../solver/expr.hpp"
+//# include "../solver/expr.hpp"
 # include "../utils/interruption.hpp"
 
 typedef const llvm::Value *ConstValPtr;
@@ -22,7 +23,7 @@ public:
 		val_ = val;
 	}
 
-	virtual ~LMemoryAccessFailure() {/*nothing to do*/}
+	virtual ~LMemoryAccessFailure() {}
 
 	virtual void Print() {
 		llvm::errs() << "\nLocal memory access failed on: " << *val_ << "\n";
@@ -40,5 +41,5 @@ public:
 private:
 	std::map<ConstValPtr, solver::ExprPtr> memory_;
 };
-
+*/
 # endif /* __LOCAL_MEMORY_HPP__ */
