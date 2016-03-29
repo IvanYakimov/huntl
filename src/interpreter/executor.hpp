@@ -7,10 +7,8 @@
 
 // Project
 # include "pattern-matcher.hpp"
-//# include "local-memory.hpp"
 # include "../utils/interruption.hpp"
 //TODO: use -I option to perform headers search instead of ../ (?)
-//# include "../solver/expr.hpp"
 
 class InterpretationFailure final : public Interruption {
 public:
@@ -31,8 +29,6 @@ private:
 class Executor final : public PatternMatcher
 {
 private:
-	//LocalMemory memory_;
-
 	// Return
 	virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst);
 	virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Constant *ret_const);
@@ -56,8 +52,6 @@ private:
 	virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Value *val, const llvm::Value *ptr);
 	virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Instruction *instruction, const llvm::Value *ptr);
 	virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Constant *constant, const llvm::Value *ptr);
-
-	//static inline void DebugExprInfo(solver::ExprPtr expr);
 };
 
 # endif /* __INTERPRETER_HPP__ */

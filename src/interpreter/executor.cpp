@@ -1,54 +1,31 @@
 #include "executor.hpp"
 
 using namespace llvm;
-//using namespace solver;
-
-//TODO interruption handling (replace interruptions by exceptions)
-//void Interpreter::DebugExprInfo(ExprPtr expr) {
-# ifdef DBG
-/*
-	if (expr)
-		errs() << "> " << expr->ToString() << "\n";
-	else
-		errs() << "> void" << "\n";
-*/
-# endif
-//}
-
 
 // Return
 void Executor::HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst) {
-	//auto expr = memory_.Load(ret_inst);
-
-	//DebugExprInfo(expr);
 }
 
 void Executor::HandleReturnInst (const llvm::Instruction &inst, const llvm::Constant *ret_const) {
 	if (ret_const->getType()->isIntegerTy()) {
 		auto constant_int = dyn_cast<ConstantInt>(ret_const);
-		//auto expr = expr_factory_.ProduceConstantI32(constant_int->getSExtValue());
-
-		//DebugExprInfo(expr);
+		// Produce constant, use ConstantInt::getSExtValue();
 	}
 	else
-		InterruptionHandler::Do(new InterpretationFailure(inst));
+		; // Interpretation failure.
 }
 
 void Executor::HandleReturnInst (const llvm::Instruction &inst, const llvm::Value *ret_val) {
-
 }
 
 void Executor::HandleReturnInst (const llvm::Instruction &inst) {
-	//DebugExprInfo(NULL);
 }
 
 // Branch
 void Executor::HandleBranchInst (const llvm::Instruction &inst, const llvm::Value *cond, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse) {
-
 }
 
 void Executor::HandleBranchInst (const llvm::Instruction &inst, const llvm::BasicBlock *jump) {
-
 }
 
 // Cmp
@@ -61,43 +38,46 @@ void Executor::HandleICmpInst (const llvm::Instruction &inst, const llvm::Value 
 		};
 	};
 
-	//auto left = memory_.Load(lhs);
-	//auto right = memory_.Load(rhs);
-	//auto expr = expr_factory_.ProduceBinaryOperation(left, right, get_op(inst));
-
-	//DebugExprInfo(expr);
+	// Load left and right args.
+	// Produce expression, use get_op, defined above
 }
 
 // Alloca
 void Executor::HandleAllocaInst (const llvm::Instruction &inst, const llvm::Value *allocated) {
-	//memory_.Alloca(allocated);
+	// Allocate memory in the current activation record.
 }
 
 // Load
 void Executor::HandleLoadInst (const llvm::Instruction &inst, const llvm::Value *ptr) {
-	//auto expr = memory_.Load(ptr);
-	//memory_.Store(&inst, expr);
+	// Load expr form ptr
+	// Store expr to &inst
 }
 
 // Store
 void Executor::HandleStoreInst (const llvm::Instruction &inst, const llvm::Value *val, const llvm::Value *ptr) {
 	//TODO move to pattern-matcher (?)
 	auto name = val->getName();
-	if (!name.empty())
-		;//memory_.Store(ptr, expr_factory_.MkVar(name.str()));
+	if (!name.empty()) {
+		// Produce new variable
+		// Store new variable to ptr
+	}
 	else
-		InterruptionHandler::Do(new InterpretationFailure(inst));
+		; // Interpretation Failure
 }
 
 void Executor::HandleStoreInst (const llvm::Instruction &inst, const llvm::Instruction *instruction, const llvm::Value *ptr) {
-	//auto expr = memory_.Load(instruction);
-	//memory_.Store(ptr, expr);
+	// Load expr from instruction
+	// Store expr to ptr
 }
 
 void Executor::HandleStoreInst (const llvm::Instruction &inst, const llvm::Constant *constant, const llvm::Value *ptr) {
 	if (constant->getType()->isIntegerTy()) {
 		auto constant_int = dyn_cast<ConstantInt>(constant);
-		//memory_.Store(ptr, expr_factory_.ProduceConstantI32(constant_int->getSExtValue()));
+		// Produce new constant
+		// Store it to ptr
+	}
+	else {
+		// Interpretation failure
 	}
 }
 

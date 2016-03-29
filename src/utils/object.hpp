@@ -54,6 +54,10 @@ public:
 
 /** Helper function for Object::Equals() overloading.
  * \note To use it one should provide comparison function cmp, which accepts two T-type objects and compares their fields.
+ * \tparam T - type of compared objects
+ * \param lhs - this (left) object
+ * \param rhs - target (right) object, should be (smart pointer to) an instance of T
+ * \param cmp - comparison operator, should return true if lhs and rhs are structurally equivalent and false otherwise.
  * The code of comparison function may looks like this:
  * \code
  * auto cmp = [] (auto lhs, auto rhs) -> bool {
@@ -75,15 +79,27 @@ template <class T>
  * It is something like Java instanceof keyword.
  * \note In most cases it should be applied only for instances of (smart pointers to) classes,
  * derived (transitively) from Object
+ * \param obj - target object
+ * \tparam T - target type
+ * \tparam U - type of obj (can be skipped)
  * \attention it works only for std::shared_pointer-s!
  * \see Object
  */
 template<class T, class U>
-bool instanceof( const std::shared_ptr<U>& r ) noexcept {
-    if (std::dynamic_pointer_cast<T>(r) != nullptr)
+bool instanceof( const std::shared_ptr<U>& obj ) noexcept {
+    if (std::dynamic_pointer_cast<T>(obj) != nullptr)
     	return true;
     else
         return false;
+}
+
+/** Allocates new unique-pointed object.
+ * \tparam T - type of the allocated object
+ * \tparam Args - list of arguments, which should be passed to a constructor of the allocated object
+ */
+template<typename T, typename... Args>
+std::unique_ptr<T> make_unique(Args&&... args) {
+    return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
 }
 
 #endif
