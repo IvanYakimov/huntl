@@ -87,6 +87,7 @@ namespace solver {
 		/** Initialize from unsigned long. \see BasicInt::SetUInt64*/
 		virtual void SetUInt64(const uint64_t& val) final;
 	private:
+		//TODO: value MUST be immutable!
 		T value_;
 	};
 
