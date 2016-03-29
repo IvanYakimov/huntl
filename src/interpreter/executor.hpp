@@ -28,7 +28,7 @@ private:
 	std::unique_ptr<llvm::Instruction> inst_ = NULL;
 };
 
-class Interpreter final : public PatternMatcher
+class Executor final : public PatternMatcher
 {
 private:
 	//LocalMemory memory_;

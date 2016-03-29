@@ -1,17 +1,17 @@
-# include "parser.hpp"
+#include "interpreter.hpp"
 
-void Parser::DebugFunctionInfo(const llvm::Function &func) {
+void Interpreter::DebugFunctionInfo(const llvm::Function &func) {
 # ifdef DBG
 	errs() << func.getName() << "\n";
 # endif
 }
 
-bool Parser::runOnFunction (Function &func) {
+bool Interpreter::runOnFunction (Function &func) {
 	DebugFunctionInfo(func);
 
-	Interpreter interpreter;
+	Executor executor;
 	for (Function::iterator i = func.begin(), e = func.end(); i != e; ++i) {
-		interpreter.visit(i);
+		executor.visit(i);
 	}
 
 	// No transformations.

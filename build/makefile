@@ -5,14 +5,13 @@ SOLVER = kind.o type.o expr.o expr-manager.o value.o cvc4-engine.o \
 SOLVER_TEST = test-runner.o test-value.o test-type.o test-expr.o test-expr-manager.o test-cvc4-engine.o test-width.o \
 	test-z3-engine.o
 
-PARSER = parser.o pattern-matcher.o interpreter.o 
-#local-memory.o state.o
-PARSER_TEST = 
+INTERPRETER = interpreter.o pattern-matcher.o executor.o 
+INTERPRETER_TEST = 
 
 UTILS = 
 
-OBJ_TEST = $(SOLVER_TEST) $(PARSER_TEST)
-OBJ = $(SOLVER) $(PARSER) $(UTILS)
+OBJ_TEST = $(SOLVER_TEST) $(INTERPRETER_TEST)
+OBJ = $(SOLVER) $(INTERPRETER) $(UTILS)
 
 CXX = g++
 CXXFLAGS = -fdiagnostics-color=always -g -std=c++14 -fpic -rdynamic \
@@ -28,28 +27,28 @@ SRC = ../src
 TST = ../test
 
 vpath %.cpp $(SRC)/solver $(TST)/solver/
-vpath %.cpp $(SRC)/parser
+vpath %.cpp $(SRC)/interpreter
 vpath %.cpp $(SRC)/utils
 vpath %.hpp $(SRC)/solver $(TST)/solver/
-vpath %.hpp $(SRC)/parser
+vpath %.hpp $(SRC)/interpreter
 vpath %.hpp $(SRC)/utils
-vpath %.c 	$(SRC)/parser
+vpath %.c 	$(SRC)/interpreter
 		
 program.so: shared.o 
 	$(CXX) -shared $< -o $@ $(CXXFLAGS) 
 
-shared.o: $(PARSER) #$(SOLVER) $(UTILS)
+shared.o: $(INTERPRETER) #$(SOLVER) $(UTILS)
 	ld -r $^ -o $@
 
 solvertest.out: $(SOLVER_TEST) $(SOLVER) $(LDFLAGS)
 	$(CXX) $^ -o $@ -lgtest -pthread $(CXXFLAGS)
 	
-#parsertest.out
+#INTERPRETERtest.out
 
 $(SOLVER_TEST):
 $(SOLVER):
-$(PARSER_TEST):
-$(PARSER):
+$(INTERPRETER_TEST):
+$(INTERPRETER):
 $(UTILS):
 %.o: %.cpp %.hpp
 	$(CXX) -c $< -o $@ $(CXXFLAGS) 
@@ -69,9 +68,9 @@ api-pattern.cpp: test.ll
 
 .PHONY: run
 run:	program.so test.ll
-	opt -load=./program.so < test.ll > /dev/null -Parser
+	opt -load=./program.so < test.ll > /dev/null -Interpreter
 
-gdb: parser.so test.ll
+gdb: program.so test.ll
 	gdb opt	
 # helpers ----------------------------------------------- />	
 	

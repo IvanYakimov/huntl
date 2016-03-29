@@ -15,23 +15,23 @@ using namespace llvm;
 // STL
 
 // Project
-# include "interpreter.hpp"
+# include "executor.hpp"
 # include "pattern-matcher.hpp"
 
 namespace
 {
-  struct Parser : public FunctionPass
+  struct Interpreter : public FunctionPass
   {
     static char ID;
-    Parser() : FunctionPass (ID) {}
+    Interpreter() : FunctionPass (ID) {}
     bool runOnFunction (Function &F) override;
   private:
     void DebugFunctionInfo(const llvm::Function &func);
   };
 }
 
-char Parser::ID = 0;
-static RegisterPass <Parser> X("Parser", "Parser pass",
+char Interpreter::ID = 0;
+static RegisterPass <Interpreter> X("Interpreter", "Interpreter pass",
 				    false, // Only looks at CFG
 				    false); // Analysis Pass
 
