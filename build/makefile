@@ -6,7 +6,7 @@ SOLVER_TEST = test-runner.o test-value.o test-type.o test-expr.o test-expr-manag
 	test-z3-engine.o
 
 INTERPRETER = interpreter.o pattern-matcher.o executor.o memory.o 
-INTERPRETER_TEST = 
+INTERPRETER_TEST = test-memory.o
 
 UTILS = 
 
@@ -21,15 +21,15 @@ LDFLAGS = $(CVC4FLAGS) $(Z3FLAGS)
 CVC4FLAGS = -lcvc4 -lgmp  
 Z3FLAGS = /usr/lib/libz3.so
 LLVMFLAGS = $(shell llvm-config --cxxflags)
-DBGFLAGS = -D DBG
+DBGFLAGS = -D DBG -U NDEBUG
 
 SRC = ../src
 TST = ../test
 
 vpath %.cpp $(SRC)/solver $(TST)/solver/
-vpath %.cpp $(SRC)/interpreter
+vpath %.cpp $(SRC)/interpreter $(TST)/interpreter/
 vpath %.cpp $(SRC)/utils
-vpath %.hpp $(SRC)/solver $(TST)/solver/
+vpath %.hpp $(SRC)/solver
 vpath %.hpp $(SRC)/interpreter
 vpath %.hpp $(SRC)/utils
 vpath %.c 	$(SRC)/interpreter
@@ -41,6 +41,9 @@ shared.o: $(INTERPRETER) #$(SOLVER) $(UTILS)
 	ld -r $^ -o $@
 
 solvertest.out: $(SOLVER_TEST) $(SOLVER) $(LDFLAGS)
+	$(CXX) $^ -o $@ -lgtest -pthread $(CXXFLAGS)
+	
+interpreter-test.out: $(INTERPRETER_TEST) memory.o test-runner.o $(LDFLAGS)
 	$(CXX) $^ -o $@ -lgtest -pthread $(CXXFLAGS)
 	
 #INTERPRETERtest.out

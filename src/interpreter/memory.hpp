@@ -3,13 +3,19 @@
 
 #include <map>
 #include <vector>
+#include <cassert>
 #include "../utils/object.hpp"
 
 namespace interpreter {
-	class ObjectPtr;
 	using Address = uint64_t;
 	using StateId = uint64_t;
 
+	/** Implementation of copy-on-write idiom for memory management on object-level.
+	 * It is similar to the UNIX copy-on-write algorithm for managing memory pages among several processes.
+	 * It uses mechanism similar to C++ std::shared_ptr for garbage collection.
+	 * \see Modern Operating Systems (4th Edition) 4th Edition by Andrew S. Tanenbaum (Author), Herbert Bos  (Author)
+	 * \see 2014. Effective Modern C++: 42 Specific Ways to Improve Your Use of C++11 and C++14. ISBN 1-491-90399-6
+	 */
 	class Memory {
 		enum class Permission {
 				READ_ONLY,
@@ -21,6 +27,8 @@ namespace interpreter {
 		};
 
 	public:
+
+		Memory();
 
 		/** Obtain an appropriate object.
 		 * Check that the object's owner list contains state_id, if not - throw an exception.
@@ -147,7 +155,24 @@ namespace interpreter {
 		 * \param - address of the target object record
 		 */
 		void TryDelete(Address address);
+
+	private:
+		std::vector<StateId> owner_list_;
 	};
 }
 
 #endif /* __MEMORY_HPP__ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+

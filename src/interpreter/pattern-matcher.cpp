@@ -44,7 +44,7 @@ void PatternMatcher::visitReturnInst (const ReturnInst &inst) {
 	else if (Case (inst, 0))
 		HandleReturnInst(inst);
 	else
-		InterruptionHandler::Do(new MatchingFailure(inst));
+		; // Matching failure
 }
 
 void PatternMatcher::visitBranchInst(const BranchInst &inst) {
@@ -60,7 +60,7 @@ void PatternMatcher::visitBranchInst(const BranchInst &inst) {
 	else if (Case (inst, 0, &jump))
 		HandleBranchInst(inst, jump);
 	else
-		InterruptionHandler::Do(new MatchingFailure(inst));
+		; // Matching failure
 }
 
 void PatternMatcher::visitICmpInst(const ICmpInst &inst) {
@@ -72,7 +72,7 @@ void PatternMatcher::visitICmpInst(const ICmpInst &inst) {
 	if (Case (inst, 0, &lhs, &rhs))
 		HandleICmpInst(inst, lhs, rhs);
 	else
-		InterruptionHandler::Do(new MatchingFailure(inst));
+		; // Matching Failure
 }
 
 void PatternMatcher::visitAllocaInst (const AllocaInst &inst)
@@ -83,7 +83,7 @@ void PatternMatcher::visitAllocaInst (const AllocaInst &inst)
 	if (Case (inst, 0, &allocated))
 		HandleAllocaInst(inst, allocated);
 	else
-		InterruptionHandler::Do(new MatchingFailure(inst));
+		; // Matching Failure
 }
 
 void PatternMatcher::visitLoadInst (const LoadInst &inst)
@@ -94,7 +94,7 @@ void PatternMatcher::visitLoadInst (const LoadInst &inst)
 	if (Case (inst, 0, &ptr))
 		HandleLoadInst(inst, ptr);
 	else
-		InterruptionHandler::Do(new MatchingFailure(inst));
+		; // Matching Failure
 }
 
 void PatternMatcher::visitStoreInst (const StoreInst &inst)
@@ -113,7 +113,7 @@ void PatternMatcher::visitStoreInst (const StoreInst &inst)
 	else if (Case (inst, 0, &val, &ptr))
 		HandleStoreInst(inst, val, ptr);
 	else
-		InterruptionHandler::Do(new MatchingFailure(inst));
+		; // Matching Failure
 }
 
 //--------------------

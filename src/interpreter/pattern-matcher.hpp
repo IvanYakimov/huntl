@@ -25,24 +25,6 @@ http://www.cplusplus.com/reference/type_traits/remove_pointer/
 # include <exception>
 # include <ostream>
 
-#include "../utils/interruption.hpp"
-//# include "../utils/memory.hpp"
-
-class MatchingFailure : public Interruption {
-public:
-	MatchingFailure(const llvm::Instruction &inst) {
-		inst_ = std::unique_ptr<llvm::Instruction>(inst.clone());
-	}
-	virtual ~MatchingFailure() {/*nothing to free*/}
-
-	void Print() {
-		//TODO std::function<> instead of errs() (or create function llvm::raw_ostream& -> &std::ostream)
-		llvm::errs() << "\nPattern Matching failed on: " << *inst_ << "\n";
-	}
-private:
-	std::unique_ptr<llvm::Instruction> inst_ = NULL;
-};
-
 //TODO: refactoring
 class PatternMatcher : public llvm::InstVisitor <PatternMatcher>
 {

@@ -6,6 +6,7 @@
 # include <iostream>
 
 //TODO: VERIFY!!! from_this !
+//TODO: ALL shared objects MUST be IMMUTABLE!
 /** Base class for all shared objects in the program.
  * \note inheritance from std::enable_shared_from_this<Object> allows
  * to refer to 'this' pointer from code. */
@@ -23,6 +24,11 @@ public:
 	 * \see std::ostream& operator<<(std::ostream &os, const T& obj) */
 	virtual std::string ToString() const = 0;
 };
+
+/**
+ * TODO: documentation
+ */
+using ObjectPtr = std::shared_ptr<Object>;
 
 /** Static (F-bound) polymorphism idiom implementation.
  * \tparam T - type of the target class
