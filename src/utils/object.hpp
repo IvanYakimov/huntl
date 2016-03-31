@@ -108,6 +108,27 @@ std::unique_ptr<T> make_unique(Args&&... args) {
     return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
 }
 
+
+/** TODO: documentation
+ */
+template <typename X, typename A, typename... Args>
+inline void Assert(A assertion, Args&&... args) {
+//#ifndef NDEBUG	/* only for DEBUG purposes */
+	if (not assertion)
+		throw X(std::forward<Args>(args)...);
+//#endif
+}
+
+/*
+template <typename FUNC, typename PRE, typename POST, typename INV>
+inline void Contract(FUNC func, PRE pre, POST post, INV inv) {
+	inv();
+	pre();
+	post();
+	inv();
+}
+*/
+
 #endif
 
 

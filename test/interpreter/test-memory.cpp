@@ -11,10 +11,6 @@ namespace interpreter {
 
 	TEST_F(MemoryTest, Read) {
 		Memory m;
-		try {
-			m.Read(0, 0);
-		}
-		catch (std::exception &e) {
-		}
+		m.Read(0, 0);
 	}
 }

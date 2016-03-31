@@ -3,7 +3,7 @@
 
 #include <map>
 #include <vector>
-#include <cassert>
+#include <algorithm>
 #include "../utils/object.hpp"
 
 namespace interpreter {
@@ -17,13 +17,32 @@ namespace interpreter {
 	 * \see 2014. Effective Modern C++: 42 Specific Ways to Improve Your Use of C++11 and C++14. ISBN 1-491-90399-6
 	 */
 	class Memory {
+	public:
+		enum class Failure {
+					BAD_ADDRESS,
+					STATE_ID_NOT_FOUND,
+					OWNER_LIST_CHANGED,
+					PERMISSION_CHANGED,
+					OBJECT_NOT_EXIST,
+					BAD_OWNER_LIST_SIZE_ON_READ_ONLY,
+					BAD_OWNER_LIST_SIZE_ON_READ_WRITE
+				};
+
+		class Exception : public std::exception {
+		public: Exception (Failure failure) : failure_(failure) {}
+		private: Failure failure_;
+		};
+
+	private:
 		enum class Permission {
 				READ_ONLY,
 				READ_WRITE
 			};
 
-		class ObjectRecord {
+		struct ObjectRecord {
 			std::vector<StateId> owner_list_;
+			Permission permission_;
+			ObjectPtr object_;
 		};
 
 	public:
@@ -31,10 +50,10 @@ namespace interpreter {
 		Memory();
 
 		/** Obtain an appropriate object.
-		 * Check that the object's owner list contains state_id, if not - throw an exception.
 		 * Return an appropriate object.
 		 * \invariant
-		 * - owner list size doesn't change
+		 * - owner list size cannot change
+		 * - permission cannot change
 		 * \pre
 		 * - object record with the passed addess exists
 		 * - owner list contains the passed state id
@@ -157,7 +176,7 @@ namespace interpreter {
 		void TryDelete(Address address);
 
 	private:
-		std::vector<StateId> owner_list_;
+		std::map <Address, ObjectRecord> memory_map_;
 	};
 }
 
