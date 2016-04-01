@@ -120,9 +120,11 @@ inline void Assert(A assertion, Args&&... args) {
 }
 
 #define CONTRACT
-template <typename FUNC, typename PRE, typename POST, typename INV_IN, typename INV_OUT>
-inline void Contract(FUNC func, PRE pre, POST post, INV_IN inv_in, INV_OUT inv_out) {
+template <typename INIT, typename MORE_INIT, typename INV_IN, typename PRE, typename FUNC, typename POST, typename INV_OUT>
+inline void Contract(INIT init, MORE_INIT more_init, INV_IN inv_in, PRE pre, FUNC func, POST post, INV_OUT inv_out) {
+	init();
 #ifdef CONTRACT
+	more_init();
 	auto x = inv_in();
 	pre();
 #endif
