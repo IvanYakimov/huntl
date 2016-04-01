@@ -4,6 +4,7 @@
 #include <map>
 #include <vector>
 #include <algorithm>
+#include <tuple>
 #include "../utils/object.hpp"
 
 namespace interpreter {
@@ -34,6 +35,12 @@ namespace interpreter {
 		};
 
 	private:
+		struct ObjectRecord;
+		enum class Permission;
+
+		using OwnerList = std::vector<StateId>;
+		using MemoryMap = std::map<Address, ObjectRecord>;
+
 		enum class Permission {
 				READ_ONLY,
 				READ_WRITE
@@ -59,6 +66,7 @@ namespace interpreter {
 		 * - owner list contains the passed state id
 		 * - if permission is READ-WRITE, than owner list size = 1
 		 * - if permission is READ-ONLY, than owner list size >= 1
+		 * - object contains data (not null)
 		 * \param address - address of the object
 		 * \param state_id - state id, the state must be in object's owner list
 		 */

@@ -119,15 +119,19 @@ inline void Assert(A assertion, Args&&... args) {
 //#endif
 }
 
-/*
-template <typename FUNC, typename PRE, typename POST, typename INV>
-inline void Contract(FUNC func, PRE pre, POST post, INV inv) {
-	inv();
+#define CONTRACT
+template <typename FUNC, typename PRE, typename POST, typename INV_IN, typename INV_OUT>
+inline void Contract(FUNC func, PRE pre, POST post, INV_IN inv_in, INV_OUT inv_out) {
+#ifdef CONTRACT
+	auto x = inv_in();
 	pre();
+#endif
+	func();
+#ifdef CONTRACT
 	post();
-	inv();
+	inv_out(x);
+#endif
 }
-*/
 
 #endif
 
