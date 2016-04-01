@@ -59,14 +59,15 @@ namespace interpreter {
 		/** Obtain an appropriate object.
 		 * Return an appropriate object.
 		 * \invariant
-		 * - owner list size cannot change
-		 * - permission cannot change
+		 * - owner list size cannot be changed
+		 * - permission cannot be changed
 		 * \pre
 		 * - object record with the passed addess exists
 		 * - owner list contains the passed state id
 		 * - if permission is READ-WRITE, than owner list size = 1
 		 * - if permission is READ-ONLY, than owner list size >= 1
 		 * - object contains data (not null)
+		 * \post
 		 * \param address - address of the object
 		 * \param state_id - state id, the state must be in object's owner list
 		 */
