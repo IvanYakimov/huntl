@@ -8,41 +8,41 @@ namespace interpreter {
 		ObjectRecord record;
 		ObjectPtr result;
 
-#ifdef CONTRACT
+//#ifdef CONTRACT
 		OwnerList owner_list;
 		size_t owner_list_size;
 		OwnerList::iterator onwer_list_iter;
 		Permission permission;
-#endif
+//#endif
 
 		mmap_iter = memory_map_.find(address);	// Find object record.
 
-#ifdef CONTRACT
-		Assert<Exception>(mmap_iter != memory_map_.end(), Failure::BAD_ADDRESS);
-#endif
+//#ifdef CONTRACT
+		Assert<Exception>(mmap_iter != memory_map_.end(), Failure::RECORD_NOT_FOUND);
+//#endif
 
 		record = mmap_iter->second; // Obtain if from iterator.
 
-#ifdef CONTRACT
+//#ifdef CONTRACT
 		owner_list = record.owner_list_;
 		permission = record.permission_;
 		owner_list_size = owner_list.size();
 		onwer_list_iter = std::find(owner_list.begin(), owner_list.end(), state_id);
 
-		Assert<Exception>(onwer_list_iter != owner_list.end(), Failure::STATE_ID_NOT_FOUND);
+		Assert<Exception>(onwer_list_iter != owner_list.end(), Failure::OWNER_NOT_FOUND);
 		if (permission == Permission::READ_WRITE)
-			Assert<Exception>(owner_list.size() == 1, Failure::BAD_OWNER_LIST_SIZE_ON_READ_WRITE);
+			Assert<Exception>(owner_list.size() == 1, Failure::INVALID_OWNER_LIST);
 		if (permission == Permission::READ_ONLY)
-			Assert<Exception>(owner_list.size() > 1, Failure::BAD_OWNER_LIST_SIZE_ON_READ_ONLY);
+			Assert<Exception>(owner_list.size() > 1, Failure::INVALID_OWNER_LIST);
 		Assert<Exception>(record.object_ != nullptr, Failure::OBJECT_NOT_EXIST);
-#endif
+//#endif
 
 		result = record.object_; // Return appropriate object pointer.
 
-#ifdef CONTRACT
-		Assert<Exception>(owner_list_size == record.owner_list_.size(), Failure::OWNER_LIST_CHANGED);
-		Assert<Exception>(permission == record.permission_, Failure::PERMISSION_CHANGED);
-#endif
+//#ifdef CONTRACT
+		Assert<Exception>(owner_list_size == record.owner_list_.size(), Failure::OWNER_LIST_CRASH);
+		Assert<Exception>(permission == record.permission_, Failure::PERMISSION_CRASH);
+//#endif
 
 		return result;
 	}
@@ -59,44 +59,53 @@ namespace interpreter {
 		size_t owner_list_size;
 		OwnerList::iterator owner_list_iter;
 
-		mmap_iter = memory_map_.find(address);	/** Find object record. */
+		mmap_iter = memory_map_.find(address); // Find object record
 
+		// precondition
 		Assert<Exception>(mmap_iter != memory_map_.end(), Failure::OBJECT_NOT_EXIST);
 
-		record = mmap_iter->second;
+		record = mmap_iter->second;	// Get object record
+		permission = record.permission_; // Get permission
 
 		owner_list = record.owner_list_;
-
 		owner_list_size = owner_list.size();
 		owner_list_iter = std::find(owner_list.begin(), owner_list.end(), state_id);
 
-		Assert<Exception>(owner_list_iter != owner_list.end(), Failure::STATE_ID_NOT_FOUND);
-
-		permission = record.permission_;
-		if (permission == Permission::READ_ONLY) {
-			allocated_address = Allocate(state_id);
-			written_address = Write(allocated_address, state_id, object);
-			RemoveOwner(address, state_id);
-			result = allocated_address;
-
-			// returned address != passed one
-			Assert<Exception>(result != address, Failure::BAD_RETURN_ADDRESS_ON_READ_ONLY);
-			// allocated address = written address
-			Assert<Exception>(allocated_address == written_address, Failure::ADDRESS_CHANGED_ON_INITIALIZATION);
-			// list size = n - 1, where n - old size
-			Assert<Exception>(owner_list.size() == owner_list_size - 1);
+		// precondition
+		Assert<Exception>(owner_list_iter != owner_list.end(), Failure::OWNER_NOT_FOUND);
+		if (owner_list_size == 0) {
+			Assert<Exception>(permission == Permission::READ_WRITE, Failure::INVALID_PERMISSION);
 		}
-		else if (permission == Permission::READ_WRITE) {
+		else if (owner_list_size == 1) {
+			// Permission can be  be either READ-ONLY or READ-WRITE - no assertion needed
+		}
+		else if (owner_list_size > 1) {
+			Assert<Exception>(permission == Permission::READ_ONLY, Failure::INVALID_PERMISSION);
+		}
+
+
+		if (permission == Permission::READ_ONLY) { // if READ-ONLY
+			allocated_address = Allocate(state_id); // Allocate memory for new object record
+			written_address = Write(allocated_address, state_id, object); // Write new object to allocated memory
+			RemoveOwner(address, state_id); // Remove owner from current object record
+			result = allocated_address; // Return new address
+
+			// postconditions
+			Assert<Exception>(result != address, Failure::RETURN_CRASH);
+			Assert<Exception>(allocated_address == written_address, Failure::RETURN_CRASH);
+			Assert<Exception>(owner_list.size() == owner_list_size - 1, Failure::OWNER_LIST_CRASH);
+		}
+		else if (permission == Permission::READ_WRITE) { // else if READ-WRITE
 			record.object_ = object;
 			result = allocated_address;
 
-			// returned address = passed one
-			Assert<Exception>(result == address, Failure::ADDRESS_CHANGED_ON_WRITING);
-			// owner list size = 1
-			Assert<Exception>(owner_list.size() == 1, Failure::BAD_OWNER_LIST_SIZE);
+			// postconditions
+			Assert<Exception>(result == address, Failure::ADDRESS_CRASH);
+			Assert<Exception>(owner_list.size() == 1, Failure::OWNER_LIST_CRASH);
 		}
 
-		Assert<Exception>(permission == record.permission_, Failure::PERMISSION_CHANGED);
+		// invariants
+		Assert<Exception>(permission == record.permission_, Failure::PERMISSION_CRASH);
 
 		return result;
 	}

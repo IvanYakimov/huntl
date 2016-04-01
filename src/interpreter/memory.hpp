@@ -12,7 +12,7 @@ namespace interpreter {
 	using StateId = uint64_t;
 
 	/** Implementation of copy-on-write idiom for memory management on object-level.
-	 * It is similar to the UNIX copy-on-write algorithm for managing memory pages among several processes.
+	 * It is similar to the UNIX copy-on-write algorithm for managing memory among several processes.
 	 * It uses mechanism similar to C++ std::shared_ptr for garbage collection.
 	 * \see Modern Operating Systems (4th Edition) 4th Edition by Andrew S. Tanenbaum (Author), Herbert Bos  (Author)
 	 * \see 2014. Effective Modern C++: 42 Specific Ways to Improve Your Use of C++11 and C++14. ISBN 1-491-90399-6
@@ -20,18 +20,15 @@ namespace interpreter {
 	class Memory {
 	public:
 		enum class Failure {
-					BAD_ADDRESS,
-					STATE_ID_NOT_FOUND,
-					OWNER_LIST_CHANGED,
-					OWNER_LIST_NOT_CHANGED,
-					BAD_OWNER_LIST_SIZE,
-					PERMISSION_CHANGED,
 					OBJECT_NOT_EXIST,
-					BAD_OWNER_LIST_SIZE_ON_READ_ONLY,
-					BAD_OWNER_LIST_SIZE_ON_READ_WRITE,
-					BAD_RETURN_ADDRESS_ON_READ_ONLY,
-					ADDRESS_CHANGED_ON_INITIALIZATION,
-					ADDRESS_CHANGED_ON_WRITING
+					RECORD_NOT_FOUND,
+					OWNER_NOT_FOUND,
+					OWNER_LIST_CRASH,
+					ADDRESS_CRASH,
+					PERMISSION_CRASH,
+					RETURN_CRASH,
+					INVALID_OWNER_LIST,
+					INVALID_PERMISSION
 				};
 
 		class Exception : public std::exception {
@@ -91,7 +88,7 @@ namespace interpreter {
 		 * - object record with the passed addess exists
 		 * - owner list contains the passed state id
 		 * - if owner list size = 0, than permission must be READ-WRITE
-		 * (the object record's just allocated )
+		 * (the object record's just allocated, read it make no sense)
 		 * - if owner list size = 1, than permission can be either READ-ONLY or READ-WRITE
 		 * (single owner can be able either only to read or to read and write)
 		 * - if owner list size > 1, than permission must be READ-ONLY
@@ -108,7 +105,6 @@ namespace interpreter {
 		 * - owner list size = 1
 		 * - [skipped] owner list contains(only) the passed state id
 		 * \invariant
-		 * - object record, if exists, holds not null pointer
 		 * - permission cannot be changed
 		 * \param address - object's address
 		 * \param state_id - state id, the state must be in object's owner list
