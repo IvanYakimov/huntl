@@ -23,10 +23,15 @@ namespace interpreter {
 					BAD_ADDRESS,
 					STATE_ID_NOT_FOUND,
 					OWNER_LIST_CHANGED,
+					OWNER_LIST_NOT_CHANGED,
+					BAD_OWNER_LIST_SIZE,
 					PERMISSION_CHANGED,
 					OBJECT_NOT_EXIST,
 					BAD_OWNER_LIST_SIZE_ON_READ_ONLY,
-					BAD_OWNER_LIST_SIZE_ON_READ_WRITE
+					BAD_OWNER_LIST_SIZE_ON_READ_WRITE,
+					BAD_RETURN_ADDRESS_ON_READ_ONLY,
+					ADDRESS_CHANGED_ON_INITIALIZATION,
+					ADDRESS_CHANGED_ON_WRITING
 				};
 
 		class Exception : public std::exception {
@@ -57,7 +62,7 @@ namespace interpreter {
 		Memory();
 
 		/** Obtain an appropriate object.
-		 * Return an appropriate object.
+		 * Return the object pointer.
 		 * \invariant
 		 * - owner list size cannot be changed
 		 * - permission cannot be changed
@@ -85,17 +90,26 @@ namespace interpreter {
 		 * \pre
 		 * - object record with the passed addess exists
 		 * - owner list contains the passed state id
-		 * - if owner list size = 0, when permission must be READ-WRITE
+		 * - if owner list size = 0, than permission must be READ-WRITE
 		 * (the object record's just allocated )
-		 * - if owner list size = 1, when permission can be either READ-ONLY or READ-WRITE
+		 * - if owner list size = 1, than permission can be either READ-ONLY or READ-WRITE
 		 * (single owner can be able either only to read or to read and write)
-		 * - if owner list size > 1, when permission must be READ-ONLY
+		 * - if owner list size > 1, than permission must be READ-ONLY
 		 * (mulptiple ownership allows only to read)
 		 * \post
-		 * - if permission is READ-ONLY, when owner list size = n - 1, where n - old size
-		 * - if permission is READ-ONLY, wher owner list doesn't contain the passed state id
-		 * - if permission is READ-WRITE when owner list size = 1
-		 * - if permission is READ-WRITE, when owner list contains(only) the passed state id
+		 * if permission is READ-ONLY, than:
+		 * - returned address != passed one
+		 * - allocated address = written address
+		 * - list size = n - 1, where n - old size
+		 * - [skipped] owner list doesn't contain the passed state id
+		 * \post
+		 * else, if permission is READ-WRITE, than:
+		 * - returned address = passed one
+		 * - owner list size = 1
+		 * - [skipped] owner list contains(only) the passed state id
+		 * \invariant
+		 * - object record, if exists, holds not null pointer
+		 * - permission cannot be changed
 		 * \param address - object's address
 		 * \param state_id - state id, the state must be in object's owner list
 		 * \param object - target object
