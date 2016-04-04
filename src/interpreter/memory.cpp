@@ -1,6 +1,38 @@
 #include "memory.hpp"
 
 namespace interpreter {
+	Address Memory::AddressCache::Get() {
+		Address result;
+
+#ifdef CONTRACT
+		size_t old_size = cache_.size();
+#endif
+
+		if (not cache_.empty()) {
+			result = cache_.top();
+			cache_.pop();
+		}
+		else {
+			result = ++address_counter_;
+
+#ifdef CONTRACT
+			Assert<Exception>(result != std::numeric_limits<Address>::max(), Failure::ADDRESS_CACHE_OVERFLOW);
+#endif
+
+		}
+
+#ifdef CONTRACT
+		if (old_size != 0)
+			Assert<Exception>(old_size - 1 == cache_.size(), Failure::ADDRESS_CACHE_CRASH);
+#endif
+
+		return result;
+	}
+
+	void Memory::AddressCache::Return(Address address) {
+		cache_.push(address);
+	}
+
 	Memory::Memory() {}
 
 	ObjectPtr Memory::Read(Address address, StateId state_id) {

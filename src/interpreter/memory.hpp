@@ -4,12 +4,12 @@
 #include <map>
 #include <vector>
 #include <algorithm>
-#include <tuple>
+#include <stack>
 #include "../utils/object.hpp"
 
 namespace interpreter {
-	using Address = uint64_t;
-	using StateId = uint64_t;
+	using Address = unsigned long;
+	using StateId = unsigned long;
 
 	/** Implementation of copy-on-write idiom for memory management on object-level.
 	 * It is similar to the UNIX copy-on-write algorithm for managing memory among several processes.
@@ -28,7 +28,9 @@ namespace interpreter {
 					PERMISSION_CRASH,
 					RETURN_CRASH,
 					INVALID_OWNER_LIST,
-					INVALID_PERMISSION
+					INVALID_PERMISSION,
+					ADDRESS_CACHE_OVERFLOW,
+					ADDRESS_CACHE_CRASH
 				};
 
 		class Exception : public std::exception {
@@ -52,6 +54,38 @@ namespace interpreter {
 			std::vector<StateId> owner_list_;
 			Permission permission_;
 			ObjectPtr object_;
+		};
+
+		class AddressCache {
+		public:
+			/** Obtain free address.
+			 * \remarks
+			 * if the cache contains not empty, than:
+			 * - pop and return address from the cache
+			 * \remarks
+			 * if the cache doesn't contain any element
+			 * - increment address counter
+			 * - return appropriate address
+			 * \pre
+			 * \post
+			 * - address counter != max<Address>
+			 * - let n = cache size before call, if n > 0, than after call n' = n - 1
+			 * \invariant
+			 */
+			Address Get();
+
+			/** Push free addres to the address cache
+			 * \remark
+			 * - just push address to the address cache
+			 * \pre
+			 * \post
+			 * \invariant
+			 */
+			void Return(Address address);
+		private:
+			Address address_counter_;
+			std::stack<Address> cache_;
+
 		};
 
 	public:
