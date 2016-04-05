@@ -5,7 +5,7 @@ SOLVER = kind.o type.o expr.o expr-manager.o value.o cvc4-engine.o \
 SOLVER_TEST = test-runner.o test-value.o test-type.o test-expr.o test-expr-manager.o test-cvc4-engine.o test-width.o \
 	test-z3-engine.o
 
-INTERPRETER = interpreter.o pattern-matcher.o executor.o memory.o 
+INTERPRETER = interpreter.o pattern-matcher.o executor.o memory.o state.o 
 INTERPRETER_TEST = test-memory.o
 
 UTILS = 

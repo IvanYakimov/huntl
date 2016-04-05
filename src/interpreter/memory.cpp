@@ -28,6 +28,7 @@ namespace interpreter {
 		record = GetRecord(address, state_id);
 		result = record.object_; // Return appropriate object pointer.
 
+		//TODO: return copy instead of original object (?)
 		return result;
 	}
 
