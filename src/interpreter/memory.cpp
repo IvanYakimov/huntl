@@ -1,24 +1,6 @@
 #include "memory.hpp"
 
 namespace interpreter {
-	Address Memory::AddressCache::Get() {
-		Address result;
-
-		if (not cache_.empty()) {
-			result = cache_.top();
-			cache_.pop();
-		}
-		else {
-			result = ++address_counter_;
-		}
-
-		return result;
-	}
-
-	void Memory::AddressCache::Return(Address address) {
-		cache_.push(address);
-	}
-
 	void Memory::ObjectRecord::AddOwner(StateId state_id) {
 		owner_list_.push_back(state_id);
 	}
@@ -64,7 +46,7 @@ namespace interpreter {
 		}
 		else if (not record.IsReadOnly()) { // else if READ-WRITE
 			record.object_ = object;
-			result = allocated_address;
+			result = address;
 		}
 
 		return result;
@@ -73,14 +55,15 @@ namespace interpreter {
 	Address Memory::Allocate(StateId state_id) {
 		Address address = address_cache_.Get();
 		ObjectRecord record;
-		// Bug: add record to memory!!!
-		throw std::logic_error("not implemented");
 		record.AddOwner(state_id);
+		memory_map_.insert(std::make_pair(address, record));
 		return address;
 	}
 
 	Address Memory::Allocate(StateId state_id, ObjectPtr object) {
-		throw std::logic_error("not implemented");
+		Address allocated = Allocate(state_id);
+		Address written = Write(allocated, state_id, object);
+		return written;
 	}
 
 	void Memory::Free(Address address, StateId state_id) {

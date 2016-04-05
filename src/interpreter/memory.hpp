@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <stack>
 #include "../utils/object.hpp"
+#include "../utils/index-cache.hpp"
 
 namespace interpreter {
 	using Address = uint32_t;
@@ -41,7 +42,6 @@ namespace interpreter {
 
 	private:
 		struct ObjectRecord;
-		enum class Permission;
 
 		using OwnerList = std::vector<StateId>;
 		using MemoryMap = std::map<Address, ObjectRecord>;
@@ -61,38 +61,6 @@ namespace interpreter {
 			void SetReadOnly();
 			//size_t OwnerCount();
 			//bool IsOwner(StateId state_id);
-		};
-
-		class AddressCache {
-		public:
-			/** Obtain free address.
-			 * \remarks
-			 * if the cache contains not empty, than:
-			 * - pop and return address from the cache
-			 * \remarks
-			 * if the cache doesn't contain any element
-			 * - increment address counter
-			 * - return appropriate address
-			 * \pre
-			 * \post
-			 * - address counter != max<Address>
-			 * - let n = cache size before call, if n > 0, than after call n' = n - 1
-			 * \invariant
-			 */
-			Address Get();
-
-			/** Push free addres to the address cache
-			 * \remark
-			 * - just push address to the address cache
-			 * \pre
-			 * \post
-			 * \invariant
-			 */
-			void Return(Address address);
-		private:
-			Address address_counter_;
-			std::stack<Address> cache_;
-
 		};
 
 	public:
@@ -246,7 +214,7 @@ namespace interpreter {
 
 	private:
 		std::map <Address, ObjectRecord> memory_map_;
-		AddressCache address_cache_;
+		IndexCache<Address> address_cache_;
 	};
 }
 
