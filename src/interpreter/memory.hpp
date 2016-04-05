@@ -183,6 +183,7 @@ namespace interpreter {
 		ObjectRecord GetRecord(Address address, StateId state_id);
 
 	private:
+		//TODO: extract MemoryMap class
 		std::map <Address, ObjectRecord> memory_map_;
 		IndexCache<Address> address_cache_;
 	};

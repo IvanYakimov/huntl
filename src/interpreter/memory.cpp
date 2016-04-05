@@ -84,12 +84,13 @@ namespace interpreter {
 	}
 
 	void Memory::TryDelete(Address address) {
-
+		throw std::logic_error("not implemented");
 	}
 
 	Memory::ObjectRecord Memory::GetRecord(Address address, StateId state_id) {
 		MemoryMap::iterator mmap_iter;
 		ObjectRecord record;
+
 		/** \pre
 		 * - object record with the passed addess exists
 		 * - state with the passed state id has access the record
