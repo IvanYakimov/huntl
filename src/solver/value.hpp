@@ -4,7 +4,6 @@
 // PROJECT
 #include "../utils/object.hpp"
 #include "width.hpp"
-#include "../utils/memory.hpp"
 
 // SLT
 #include <limits>

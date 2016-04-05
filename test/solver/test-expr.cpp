@@ -390,18 +390,24 @@ namespace solver {
 
 		// Variable
 		ASSERT_TRUE(instanceof<Object>(v));
+		ASSERT_TRUE(instanceof<Immutable>(v));
+		ASSERT_FALSE(instanceof<Mutable>(v));
 		ASSERT_TRUE(instanceof<Expr>(v));
 		ASSERT_TRUE(instanceof<Var>(v));
 		ASSERT_FALSE(instanceof<Const>(v));
 		ASSERT_FALSE(instanceof<BinOp>(v));
 
 		ASSERT_TRUE(instanceof<Object>(c));
+		ASSERT_TRUE(instanceof<Immutable>(c));
+		ASSERT_FALSE(instanceof<Mutable>(c));
 		ASSERT_TRUE(instanceof<Expr>(c));
 		ASSERT_FALSE(instanceof<Var>(c));
 		ASSERT_TRUE(instanceof<Const>(c));
 		ASSERT_FALSE(instanceof<BinOp>(c));
 
 		ASSERT_TRUE(instanceof<Object>(b));
+		ASSERT_TRUE(instanceof<Immutable>(b));
+		ASSERT_FALSE(instanceof<Mutable>(b));
 		ASSERT_TRUE(instanceof<Expr>(b));
 		ASSERT_FALSE(instanceof<Var>(b));
 		ASSERT_FALSE(instanceof<Const>(b));

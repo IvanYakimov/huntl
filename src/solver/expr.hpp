@@ -11,7 +11,6 @@
 #include <cstring>
 
 // Project
-#include "../utils/memory.hpp"
 #include "../utils/object.hpp"
 #include "kind.hpp"
 #include "type.hpp"
@@ -43,7 +42,7 @@ namespace solver
 	 * \see ExprPtr
 	 * \see CRTP
 	 */
-	class Expr : public CRTP<Expr, Object> {
+	class Expr : public CRTP<Expr, Immutable> {
 	public:
 		virtual ~Expr() {}
 	};

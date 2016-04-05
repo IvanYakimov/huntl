@@ -58,6 +58,20 @@ public:
 	}
 };
 
+/** Every immutable shared object must be inherited from this.
+ */
+class Immutable : public CRTP<Immutable, Object> {
+public:
+	virtual ~Immutable() {}
+};
+
+/** Evey mutalbe shared object must be inherited from this.
+ */
+class Mutable : public CRTP<Mutable, Object> {
+	virtual ~Mutable() {}
+	virtual ObjectPtr Clone() = 0;
+};
+
 /** Helper function for Object::Equals() overloading.
  * \note To use it one should provide comparison function cmp, which accepts two T-type objects and compares their fields.
  * \tparam T - type of compared objects
