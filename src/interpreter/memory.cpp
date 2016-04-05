@@ -32,7 +32,6 @@ namespace interpreter {
 	}
 
 	Address Memory::Write(Address address, StateId state_id, ObjectPtr object) {
-
 		ObjectRecord record;
 		Address allocated_address;
 		Address result;
