@@ -11,6 +11,5 @@ namespace interpreter {
 
 	TEST_F(MemoryTest, Read) {
 		Memory m;
-		m.Read(0, 0);
 	}
 }

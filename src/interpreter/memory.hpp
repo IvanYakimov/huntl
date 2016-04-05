@@ -8,8 +8,8 @@
 #include "../utils/object.hpp"
 
 namespace interpreter {
-	using Address = unsigned long;
-	using StateId = unsigned long;
+	using Address = uint32_t;
+	using StateId = uint64_t;
 
 	/** Implementation of copy-on-write idiom for memory management on object-level.
 	 * It is similar to the UNIX copy-on-write algorithm for managing memory among several processes.
@@ -30,7 +30,8 @@ namespace interpreter {
 					INVALID_OWNER_LIST,
 					INVALID_PERMISSION,
 					ADDRESS_CACHE_OVERFLOW,
-					ADDRESS_CACHE_CRASH
+					ADDRESS_CACHE_CRASH,
+					MEMORY_MAP_CRASH
 				};
 
 		class Exception : public std::exception {
@@ -54,6 +55,12 @@ namespace interpreter {
 			std::vector<StateId> owner_list_;
 			Permission permission_;
 			ObjectPtr object_;
+			void AddOwner(StateId state_id);
+			void RemoveOwner(StateId state_id);
+			bool IsReadOnly();
+			void SetReadOnly();
+			//size_t OwnerCount();
+			//bool IsOwner(StateId state_id);
 		};
 
 		class AddressCache {
@@ -147,12 +154,7 @@ namespace interpreter {
 		Address Write(Address address, StateId state_id, ObjectPtr object);
 
 		/** Allocate memory for new object.
-		 * Try to obtain free address from address cache
-		 * If there is a free address, than
-		 * - Get this address (it should be removed from the address cache)
-		 * Else
-		 * - Generate new address.
-		 * After that:
+		 * - Get free address from cache
 		 * - Allocate memory for new object.
 		 * - Add the passed state to the owner list of new object record (by AddOwner)
 		 * - Set the object field to the nullptr.
@@ -160,17 +162,25 @@ namespace interpreter {
 		 */
 		Address Allocate(StateId state_id);
 
-		/** Detach memory which not used by state with the passed state id.
-		 * Remove state from the object's owner list (by RemoveOwner).
+		Address Allocate(StateId state_id, ObjectPtr object);
+
+		/** Free memory which not used by state with the passed state id.
+		 * \remarks
+		 * - Remove state from the object's owner list (by RemoveOwner).
+		 * - Try to delete object record (by TryDelete)
 		 * \pre
 		 * - object record with the passed address exists
 		 * - owner list contains the passed state id
+		 * \post
+		 * - owner list size = n - 1, where n - old size
+		 * \invariant
 		 */
-		void Detach(Address address, StateId state_id);
+		void Free(Address address, StateId state_id);
 
 		/** Try to share object.
-		 * Set permission to READ-ONLY.
-		 * Add passed state_id to the objects owner list (by AddOwner).
+		 * \remarks
+		 * - Set permission to READ-ONLY.
+		 * - Add passed state_id to the objects owner list (by AddOwner).
 		 * \note As well as this operation applied, no one can write to the address until memory is free.
 		 * \pre
 		 * - object record with the passed address exists
@@ -187,6 +197,7 @@ namespace interpreter {
 		void Share(Address address, StateId state_id);
 
 	private:
+		ObjectRecord GetRecord(Address address);
 
 		/** Add owner to the object record with an appropriate address.
 		 * \invariant
@@ -209,9 +220,10 @@ namespace interpreter {
 		 * \pre
 		 * - object record with the passed address exists
 		 * - owner list contains the passed state id
-		 * - owner list size > 1
+		 * - [skipped] owner list size > 1
 		 * \post
 		 * - owner list size = n - 1, where n - old size of the owner list
+		 * - owner list doesn't containd removed item
 		 * \param address - address of the object
 		 * \param state_id - id of removed object's owner
 		 */
@@ -228,8 +240,13 @@ namespace interpreter {
 		 */
 		void TryDelete(Address address);
 
+		/** Get appropriate object record.
+		 */
+		ObjectRecord GetRecord(Address address, StateId state_id);
+
 	private:
 		std::map <Address, ObjectRecord> memory_map_;
+		AddressCache address_cache_;
 	};
 }
 

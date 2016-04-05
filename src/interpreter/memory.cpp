@@ -4,27 +4,13 @@ namespace interpreter {
 	Address Memory::AddressCache::Get() {
 		Address result;
 
-#ifdef CONTRACT
-		size_t old_size = cache_.size();
-#endif
-
 		if (not cache_.empty()) {
 			result = cache_.top();
 			cache_.pop();
 		}
 		else {
 			result = ++address_counter_;
-
-#ifdef CONTRACT
-			Assert<Exception>(result != std::numeric_limits<Address>::max(), Failure::ADDRESS_CACHE_OVERFLOW);
-#endif
-
 		}
-
-#ifdef CONTRACT
-		if (old_size != 0)
-			Assert<Exception>(old_size - 1 == cache_.size(), Failure::ADDRESS_CACHE_CRASH);
-#endif
 
 		return result;
 	}
@@ -33,151 +19,102 @@ namespace interpreter {
 		cache_.push(address);
 	}
 
+	void Memory::ObjectRecord::AddOwner(StateId state_id) {
+		owner_list_.push_back(state_id);
+	}
+
+	void Memory::ObjectRecord::RemoveOwner(StateId state_id) {
+		OwnerList::iterator owner_pos;
+		owner_pos = std::find(owner_list_.begin(), owner_list_.end(), state_id);
+		owner_list_.erase(owner_pos);
+	}
+
+	bool Memory::ObjectRecord::IsReadOnly() {
+		return permission_ == Permission::READ_ONLY;
+	}
+
+	void Memory::ObjectRecord::SetReadOnly() {
+		permission_ = Permission::READ_ONLY;
+	}
+
 	Memory::Memory() {}
 
 	ObjectPtr Memory::Read(Address address, StateId state_id) {
-		MemoryMap::iterator mmap_iter;
 		ObjectRecord record;
 		ObjectPtr result;
 
-#ifdef CONTRACT
-		OwnerList owner_list;
-		size_t owner_list_size;
-		OwnerList::iterator onwer_list_iter;
-		Permission permission;
-#endif
-
-		mmap_iter = memory_map_.find(address);	// Find object record.
-
-#ifdef CONTRACT
-		Assert<Exception>(mmap_iter != memory_map_.end(), Failure::RECORD_NOT_FOUND);
-#endif
-
-		record = mmap_iter->second; // Obtain if from iterator.
-
-#ifdef CONTRACT
-		owner_list = record.owner_list_;
-		permission = record.permission_;
-		owner_list_size = owner_list.size();
-		onwer_list_iter = std::find(owner_list.begin(), owner_list.end(), state_id);
-
-		Assert<Exception>(onwer_list_iter != owner_list.end(), Failure::OWNER_NOT_FOUND);
-		if (permission == Permission::READ_WRITE)
-			Assert<Exception>(owner_list.size() == 1, Failure::INVALID_OWNER_LIST);
-		if (permission == Permission::READ_ONLY)
-			Assert<Exception>(owner_list.size() > 1, Failure::INVALID_OWNER_LIST);
-		Assert<Exception>(record.object_ != nullptr, Failure::OBJECT_NOT_EXIST);
-#endif
-
+		record = GetRecord(address, state_id);
 		result = record.object_; // Return appropriate object pointer.
-
-#ifdef CONTRACT
-		Assert<Exception>(owner_list_size == record.owner_list_.size(), Failure::OWNER_LIST_CRASH);
-		Assert<Exception>(permission == record.permission_, Failure::PERMISSION_CRASH);
-#endif
 
 		return result;
 	}
 
 	Address Memory::Write(Address address, StateId state_id, ObjectPtr object) {
 
-		MemoryMap::iterator mmap_iter;
 		ObjectRecord record;
-		Permission permission;
 		Address allocated_address;
-		Address written_address;
 		Address result;
 
-#ifdef CONTRACT
-		OwnerList owner_list;
-		size_t owner_list_size;
-		OwnerList::iterator owner_list_iter;
-#endif
+		record = GetRecord(address, state_id);	// Get object record
 
-		mmap_iter = memory_map_.find(address); // Find object record
-
-#ifdef CONTRACT
-		// precondition
-		Assert<Exception>(mmap_iter != memory_map_.end(), Failure::OBJECT_NOT_EXIST);
-#endif
-
-		record = mmap_iter->second;	// Get object record
-		permission = record.permission_; // Get permission
-
-#ifdef CONTRACT
-		owner_list = record.owner_list_;
-		owner_list_size = owner_list.size();
-		owner_list_iter = std::find(owner_list.begin(), owner_list.end(), state_id);
-
-		// precondition
-		Assert<Exception>(owner_list_iter != owner_list.end(), Failure::OWNER_NOT_FOUND);
-		if (owner_list_size == 0) {
-			Assert<Exception>(permission == Permission::READ_WRITE, Failure::INVALID_PERMISSION);
-		}
-		else if (owner_list_size == 1) {
-			// Permission can be  be either READ-ONLY or READ-WRITE - no assertion needed
-		}
-		else if (owner_list_size > 1) {
-			Assert<Exception>(permission == Permission::READ_ONLY, Failure::INVALID_PERMISSION);
-		}
-#endif
-
-		if (permission == Permission::READ_ONLY) { // if READ-ONLY
-			allocated_address = Allocate(state_id); // Allocate memory for new object record
-			written_address = Write(allocated_address, state_id, object); // Write new object to allocated memory
-			RemoveOwner(address, state_id); // Remove owner from current object record
+		if (record.IsReadOnly()) { // if READ-ONLY
+			allocated_address = Allocate(state_id, object); // Allocate memory for new object record
+			record.RemoveOwner(state_id); // Remove owner from current object record
 			result = allocated_address; // Return new address
-
-#ifdef CONTRACT
-			// postconditions
-			Assert<Exception>(result != address, Failure::RETURN_CRASH);
-			Assert<Exception>(allocated_address == written_address, Failure::RETURN_CRASH);
-			Assert<Exception>(owner_list.size() == owner_list_size - 1, Failure::OWNER_LIST_CRASH);
-#endif
-
 		}
-		else if (permission == Permission::READ_WRITE) { // else if READ-WRITE
+		else if (not record.IsReadOnly()) { // else if READ-WRITE
 			record.object_ = object;
 			result = allocated_address;
-
-#ifdef CONTRACT
-			// postconditions
-			Assert<Exception>(result == address, Failure::ADDRESS_CRASH);
-			Assert<Exception>(owner_list.size() == 1, Failure::OWNER_LIST_CRASH);
-#endif
-
 		}
-
-#ifdef CONTRACT
-		// invariants
-		Assert<Exception>(permission == record.permission_, Failure::PERMISSION_CRASH);
-#endif
 
 		return result;
 	}
 
 	Address Memory::Allocate(StateId state_id) {
-
+		Address address = address_cache_.Get();
+		ObjectRecord record;
+		// Bug: add record to memory!!!
+		throw std::logic_error("not implemented");
+		record.AddOwner(state_id);
+		return address;
 	}
 
-	void Memory::Detach(Address address, StateId state_id) {
+	Address Memory::Allocate(StateId state_id, ObjectPtr object) {
+		throw std::logic_error("not implemented");
+	}
 
+	void Memory::Free(Address address, StateId state_id) {
+		ObjectRecord record = GetRecord(address, state_id);
+		record.RemoveOwner(state_id);
+		TryDelete(address);
 	}
 
 	void Memory::Share(Address address, StateId state_id) {
+		MemoryMap::iterator record_pos;
+		ObjectRecord record;
+		OwnerList owner_list;
+		OwnerList::iterator owner_pos;
 
-	}
-
-	void Memory::AddOwner(Address address, StateId state_id) {
-
-	}
-
-	void Memory::RemoveOwner(Address address, StateId state_id) {
-
+		record = GetRecord(address, state_id);
+		record.SetReadOnly();
+		record.AddOwner(state_id);
 	}
 
 	void Memory::TryDelete(Address address) {
 
+	}
+
+	Memory::ObjectRecord Memory::GetRecord(Address address, StateId state_id) {
+		MemoryMap::iterator mmap_iter;
+		ObjectRecord record;
+		/** \pre
+		 * - object record with the passed addess exists
+		 * - state with the passed state id has access the record
+		 */
+
+		mmap_iter = memory_map_.find(address);	// Find object record.
+		record = mmap_iter->second; // Obtain if from iterator.
+		return record;
 	}
 }
 
