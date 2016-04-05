@@ -167,36 +167,6 @@ namespace interpreter {
 	private:
 		ObjectRecord GetRecord(Address address);
 
-		/** Add owner to the object record with an appropriate address.
-		 * \invariant
-		 * - object record permission is READ-ONLY
-		 * - object record with passed address exists
-		 * \pre
-		 * - owner list doesn't contain passed state id
-		 * - owner list size > 0
-		 * \post
-		 * - owner list contains passed state id
-		 * - owner list size = n + 1, where n - old size of the owner list
-		 * \param address - address of the object record
-		 * \param state_id - id of new object's owner
-		 */
-		void AddOwner(Address address, StateId state_id);
-
-		/** Remove owner from object's owner list.
-		 * Remove state id from the object's owner list.
-		 * Try to remove the object record (by TryRemove).
-		 * \pre
-		 * - object record with the passed address exists
-		 * - owner list contains the passed state id
-		 * - [skipped] owner list size > 1
-		 * \post
-		 * - owner list size = n - 1, where n - old size of the owner list
-		 * - owner list doesn't containd removed item
-		 * \param address - address of the object
-		 * \param state_id - id of removed object's owner
-		 */
-		void RemoveOwner(Address address, StateId state_id);
-
 		/** Try to delete object record with an appropriate address.
 		 * If owner list size = 0
 		 * - Remove object, add address to the address cache
