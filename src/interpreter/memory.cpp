@@ -11,6 +11,19 @@ namespace interpreter {
 		owner_list_.erase(owner_pos);
 	}
 
+	void Memory::ObjectRecord::WriteObject(StateId state_id, ObjectPtr object_ptr) {
+
+	}
+
+	ObjectPtr Memory::ObjectRecord::ReadObject(StateId state_id) {
+		if (instanceof<Immutable>(object_))
+			return object_;
+		else if (instanceof<Mutable>(object_))
+			return std::dynamic_pointer_cast<Mutable>(object_)->Clone();
+		else
+			throw std::logic_error("not implemented");
+	}
+
 	bool Memory::ObjectRecord::IsReadOnly() {
 		return permission_ == Permission::READ_ONLY;
 	}
@@ -20,15 +33,19 @@ namespace interpreter {
 	}
 
 	Memory::Memory() {}
+	Memory::~Memory() {
+		/** \pre
+		 * Memory map size = 0
+		 */
+	}
 
 	ObjectPtr Memory::Read(Address address, StateId state_id) {
 		ObjectRecord record;
 		ObjectPtr result;
 
 		record = GetRecord(address, state_id);
-		result = record.object_; // Return appropriate object pointer.
+		result = record.ReadObject(state_id); // Return appropriate object pointer.
 
-		//TODO: return copy instead of original object (?)
 		return result;
 	}
 
@@ -45,7 +62,7 @@ namespace interpreter {
 			result = allocated_address; // Return new address
 		}
 		else if (not record.IsReadOnly()) { // else if READ-WRITE
-			record.object_ = object;
+			record.WriteObject(state_id, object);
 			result = address;
 		}
 
@@ -53,10 +70,10 @@ namespace interpreter {
 	}
 
 	Address Memory::Allocate(StateId state_id) {
-		Address address = address_cache_.Get();
+		Address address = addr_cache_.Get();
 		ObjectRecord record;
 		record.AddOwner(state_id);
-		memory_map_.insert(std::make_pair(address, record));
+		mmap_.insert(std::make_pair(address, record));
 		return address;
 	}
 
@@ -96,7 +113,7 @@ namespace interpreter {
 		 * - state with the passed state id has access the record
 		 */
 
-		mmap_iter = memory_map_.find(address);	// Find object record.
+		mmap_iter = mmap_.find(address);	// Find object record.
 		record = mmap_iter->second; // Obtain if from iterator.
 		return record;
 	}

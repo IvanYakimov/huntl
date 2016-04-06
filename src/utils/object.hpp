@@ -134,6 +134,9 @@ inline void Assert(A assertion, Args&&... args) {
 //#endif
 }
 
+/**
+ * deprecated
+ */
 #define CONTRACT
 template <typename INIT, typename MORE_INIT, typename INV_IN, typename PRE, typename FUNC, typename POST, typename INV_OUT>
 inline void Contract(INIT init, MORE_INIT more_init, INV_IN inv_in, PRE pre, FUNC func, POST post, INV_OUT inv_out) {
@@ -150,7 +153,12 @@ inline void Contract(INIT init, MORE_INIT more_init, INV_IN inv_in, PRE pre, FUN
 #endif
 }
 
-#endif
+#ifdef CONTRACT
+#define PRE
+#define POST
+#endif /*CONTRACT*/
+
+#endif /*__OBJECT_HPP__*/
 
 
 

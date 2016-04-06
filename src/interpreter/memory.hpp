@@ -51,10 +51,14 @@ namespace interpreter {
 				READ_WRITE
 			};
 
-		struct ObjectRecord {
+		class ObjectRecord {
+		private:
 			std::vector<StateId> owner_list_;
 			Permission permission_;
 			ObjectPtr object_;
+		public:
+			ObjectPtr ReadObject(StateId state_id);
+			void WriteObject(StateId state_id, ObjectPtr object_ptr);
 			void AddOwner(StateId state_id);
 			void RemoveOwner(StateId state_id);
 			bool IsReadOnly();
@@ -66,6 +70,7 @@ namespace interpreter {
 	public:
 
 		Memory();
+		~Memory();
 
 		/** Obtain an appropriate object.
 		 * Return the object pointer.
@@ -184,8 +189,8 @@ namespace interpreter {
 
 	private:
 		//TODO: extract MemoryMap class
-		std::map <Address, ObjectRecord> memory_map_;
-		IndexCache<Address> address_cache_;
+		std::map <Address, ObjectRecord> mmap_;
+		IndexCache<Address> addr_cache_;
 	};
 }
 
