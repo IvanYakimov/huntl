@@ -27,12 +27,8 @@ namespace interpreter {
 					OWNER_LIST_CRASH,
 					ADDRESS_CRASH,
 					PERMISSION_CRASH,
-					RETURN_CRASH,
-					INVALID_OWNER_LIST,
-					INVALID_PERMISSION,
-					ADDRESS_CACHE_OVERFLOW,
-					ADDRESS_CACHE_CRASH,
-					MEMORY_MAP_CRASH
+					MEMORY_MAP_CRASH,
+					OBJECT_PTR_CRASH
 				};
 
 		class Exception : public std::exception {
@@ -62,9 +58,10 @@ namespace interpreter {
 			void AddOwner(StateId state_id);
 			void RemoveOwner(StateId state_id);
 			bool IsReadOnly();
+			bool IsReadWrite();
 			void SetReadOnly();
-			//size_t OwnerCount();
-			//bool IsOwner(StateId state_id);
+			size_t OwnerCount();
+			bool IsOwner(StateId state_id);
 		};
 
 	public:
