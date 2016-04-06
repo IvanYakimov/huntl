@@ -12,7 +12,7 @@ namespace interpreter {
 	}
 
 	void Memory::ObjectRecord::WriteObject(StateId state_id, ObjectPtr object_ptr) {
-
+		object_ = object_ptr;
 	}
 
 	ObjectPtr Memory::ObjectRecord::ReadObject(StateId state_id) {
