@@ -43,7 +43,7 @@ shared.o: $(INTERPRETER) #$(SOLVER) $(UTILS)
 solvertest.out: $(SOLVER_TEST) $(SOLVER) $(LDFLAGS)
 	$(CXX) $^ -o $@ -lgtest -pthread $(CXXFLAGS)
 	
-interpreter-test.out: $(INTERPRETER_TEST) memory.o test-runner.o $(LDFLAGS)
+interpreter-test.out: $(INTERPRETER_TEST) memory.o state.o test-runner.o $(LDFLAGS)
 	$(CXX) $^ -o $@ -lgtest -pthread $(CXXFLAGS)
 	
 #INTERPRETERtest.out

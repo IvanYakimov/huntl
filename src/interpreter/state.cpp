@@ -1,27 +1,44 @@
 #include "state.hpp"
 
 namespace interpreter {
+
+	IndexCache<StateId> State::id_cache_;
+
 	State::State() {
-		id_ = state_cache_.Get();
+		id_ = id_cache_.Get();
 	}
 
 	State::~State() {
-		state_cache_.PushBack(id_);
+		id_cache_.PushBack(id_);
 	}
 
-	bool State::operator ==(const State& rhs) {
-		return *this == rhs;
+	bool State::Equals (const Object& rhs) const {
+		auto cmp = [] (const State &lhs, const State &rhs) {
+			return lhs.id_ == rhs.id_;
+		};
+		return EqualsHelper<State>(*this, rhs, cmp);
 	}
 
-	bool State::operator !=(const State& rhs) {
-		return not (*this == rhs);
+	std::string State::ToString() const {
+		return "state #" + std::to_string(id_);
 	}
 
-	bool operator==(const State& lhs, const State& rhs) {
-		return lhs.id_ == rhs.id_;
-	}
-
-	bool operator!=(const State& lhs, const State& rhs) {
-		return not (lhs == rhs);
+	ObjectPtr State::Clone() {
+		throw std::logic_error("not implemented");
 	}
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

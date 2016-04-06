@@ -68,6 +68,7 @@ public:
 /** Evey mutalbe shared object must be inherited from this.
  */
 class Mutable : public CRTP<Mutable, Object> {
+public:
 	virtual ~Mutable() {}
 	virtual ObjectPtr Clone() = 0;
 };

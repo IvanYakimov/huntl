@@ -3,26 +3,39 @@
 
 #include <stack>
 #include <memory>
-#include <iostream>
+#include <string>
 #include "../utils/index-cache.hpp"
+#include "../utils/object.hpp"
 
 namespace interpreter {
 	class State;
 	using StatePtr = std::shared_ptr<State>;
 	using StateId = unsigned long;
-	class State {
+	class State : public CRTP <State, Mutable> {
 	public:
 		State();
 		~State();
-		friend bool operator==(const State& lhs, const State& rhs);
-		friend bool operator!=(const State& lhs, const State& rhs);
-		bool operator==(const State& rhs);
-		bool operator!=(const State& rhs);
-		friend std::ostream& operator<<(std::ostream &os, const State& state);
+		virtual bool Equals (const Object& rhs) const;
+		virtual std::string ToString() const;
+		virtual ObjectPtr Clone();
 	private:
 		StateId id_;
-		static IndexCache<StateId> state_cache_;
+		static IndexCache<StateId> id_cache_;
 	};
 };
 
 #endif /* __STATE_HPP__ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
