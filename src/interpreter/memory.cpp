@@ -1,6 +1,35 @@
 #include "memory.hpp"
 
 namespace interpreter {
+	const char* Memory::Exception::what() const noexcept {
+		static std::map<Failure, std::string> failure_map_ = {
+				{Failure::RECORD_NOT_FOUND, "record not found"},
+				{Failure::ACCESS_FAILURE, "access failure"},
+				{Failure::OWNERSHIP_CRASH, "ownership crash"},
+				{Failure::ADDRESS_CRASH, "address crash"},
+				{Failure::PERMISSION_CRASH, "permission crash"},
+				{Failure::MEMORY_MAP_CRASH, "memory map crash"},
+				{Failure::OBJECT_PTR_CRASH, "object ptr crash"}
+		};
+		return ("[memory failure]: " + failure_map_[failure_]).c_str();
+	}
+
+	Memory::Record::Record() : permission_(Permission::READ_WRITE), object_(nullptr) {
+		/** \post
+		 * - permission is READ-WRITE by default (as state crates object record only the state owns the record)
+		 * - object ptr points to nullptr (it holds hothing)
+		 */
+#ifdef POST
+		Assert<Exception>(ReadWrite(), Failure::PERMISSION_CRASH);
+		Assert<Exception>(object_ == nullptr, Failure::OBJECT_PTR_CRASH);
+#endif
+	}
+
+	Memory::Record::~Record() {
+
+	}
+
+
 	void Memory::Record::AddOwner(StateId state_id) {
 #ifdef PRE
 		auto old_size = OwnerCount();
@@ -261,7 +290,6 @@ namespace interpreter {
 #endif
 	}
 
-	//TODO:
 	void Memory::Share(Address address, StateId owner, StateId follower) {
 		MemoryMap::iterator record_pos;
 		RecordPtr record;

@@ -2,7 +2,8 @@
 
 namespace interpreter {
 
-	IndexCache<StateId> State::id_cache_;
+	//TODO:
+	IndexCache<StateId> State::id_cache_(0);
 
 	State::State() {
 		id_ = id_cache_.Get();

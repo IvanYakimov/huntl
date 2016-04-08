@@ -4,6 +4,12 @@
 template <typename T>
 class IndexCache {
 public:
+	class Exception : public std::exception {
+		public: Exception () {}
+	};
+
+	//TODO: contract
+
 	IndexCache(T initial) : counter_(initial){}
 	/** Obtain free index.
 	 * \remarks

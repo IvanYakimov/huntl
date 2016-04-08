@@ -23,7 +23,6 @@ namespace interpreter {
 #define INITIAL_ID 1
 	public:
 		enum class Failure {
-					OBJECT_NOT_EXIST,
 					RECORD_NOT_FOUND,
 					ACCESS_FAILURE,
 					OWNERSHIP_CRASH,
@@ -34,8 +33,11 @@ namespace interpreter {
 				};
 
 		class Exception : public std::exception {
-		public: Exception (Failure failure) : failure_(failure) {}
-		private: Failure failure_;
+		public:
+			Exception (Failure failure) : failure_(failure) {}
+			virtual const char* what() const noexcept;
+		private:
+			Failure failure_;
 		};
 
 	private:
@@ -52,6 +54,8 @@ namespace interpreter {
 				READ_WRITE
 			};
 
+			Record();
+			~Record();
 			ObjectPtr ReadObject(StateId state_id);
 			void WriteObject(StateId state_id, ObjectPtr object_ptr);
 			void AddOwner(StateId state_id);
