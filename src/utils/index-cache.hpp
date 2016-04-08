@@ -4,6 +4,7 @@
 template <typename T>
 class IndexCache {
 public:
+	IndexCache(T initial) : counter_(initial){}
 	/** Obtain free index.
 	 * \remarks
 	 * if the cache contains not empty, than:
@@ -26,7 +27,7 @@ public:
 			cache_.pop();
 		}
 		else {
-			result = ++counter_;
+			result = counter_++;
 		}
 
 		return result;
