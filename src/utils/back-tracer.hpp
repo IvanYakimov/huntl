@@ -4,6 +4,7 @@
 #include <execinfo.h>
 
 class BackTracer {
+	//TODO: impl
 	//see: http://man7.org/linux/man-pages/man3/backtrace.3.html
 };
 

@@ -8,6 +8,8 @@
 #include <iostream>
 #include <memory>
 
+//TODO: test contracts themselves!
+//TODO: test object stub itselfy
 namespace interpreter {
 	using std::cout;
 	using std::endl;
