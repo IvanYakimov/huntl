@@ -10,7 +10,8 @@
 namespace interpreter {
 	class State;
 	using StatePtr = std::shared_ptr<State>;
-	using StateId = unsigned long;
+	/** 65,535 states available */
+	using StateId = uint16_t;
 	class State : public CRTP <State, Mutable> {
 	public:
 		State();

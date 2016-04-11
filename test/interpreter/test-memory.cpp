@@ -78,58 +78,92 @@ namespace interpreter {
 	}
 
 	TEST_F(MemoryTest, Allocate__basic) {
-		auto obj_1 = MkObj();
-		auto obj_2 = MkObj();
-		StateId s1 = MkSt();
-		StateId s2 = MkSt();
-		Memory m;
+		try {
+			auto obj_1 = MkObj();
+			auto obj_2 = MkObj();
+			StateId s1 = MkSt();
+			StateId s2 = MkSt();
+			Memory m;
 
-		auto addr_1 = m.Allocate(s1, obj_1);
-		auto addr_2 = m.Allocate(s2, obj_2);
+			auto addr_1 = m.Allocate(s1, obj_1);
+			auto addr_2 = m.Allocate(s2, obj_2);
 
-		m.Free(addr_1, s1);
-		m.Free(addr_2, s2);
+			m.Free(addr_1, s1);
+			m.Free(addr_2, s2);
 
-		ASSERT_NE(addr_1, addr_2);
-		ASSERT_NE(obj_1, obj_2);
-		ASSERT_NE(*obj_1, *obj_2);
+			ASSERT_NE(addr_1, addr_2);
+			ASSERT_NE(obj_1, obj_2);
+			ASSERT_NE(*obj_1, *obj_2);
+		} catch (Memory::Exception& ex) {
+			FAIL();
+		}
 	}
 
 	TEST_F(MemoryTest, Share__basic) {
-		auto obj_1 = MkObj();
-		StateId s1 = MkSt();
-		StateId s2 = MkSt();
-		Memory m;
+		try {
+			auto obj_1 = MkObj();
+			StateId s1 = MkSt();
+			StateId s2 = MkSt();
+			Memory m;
 
-		auto addr_1 = m.Allocate(s1, obj_1);
-		m.Share(addr_1, s1, s2);
+			auto addr_1 = m.Allocate(s1, obj_1);
+			m.Share(addr_1, s1, s2);
 
-		auto obj_1_1 = m.Read(addr_1, s1);
-		auto obj_1_2 = m.Read(addr_1, s2);
+			auto obj_1_1 = m.Read(addr_1, s1);
+			auto obj_1_2 = m.Read(addr_1, s2);
 
-		ASSERT_EQ(obj_1_1, obj_1_2);
-		ASSERT_EQ(*Stub(obj_1_1), *Stub(obj_1_2));
+			ASSERT_EQ(obj_1_1, obj_1_2);
+			ASSERT_EQ(*Stub(obj_1_1), *Stub(obj_1_2));
 
-		m.Free(addr_1, s1);
-		m.Free(addr_1, s2);
+			m.Free(addr_1, s1);
+			m.Free(addr_1, s2);
+		} catch (Memory::Exception &ex) {
+			FAIL();
+		}
 	}
 
 	TEST_F(MemoryTest, Write__basic) {
-		auto ob1 = MkObj();
-		auto ob2 = MkObj();
-		auto st1 = MkSt();
-		auto st2 = MkSt();
+		try {
+			auto ob1 = MkObj();
+			auto ob2 = MkObj();
+			auto st1 = MkSt();
+			auto st2 = MkSt();
 
-		Memory m;
+			Memory m;
 
-		auto ad1 = m.Allocate(st1, ob1);
-		m.Share(ad1, st1, st2);
-		auto ad2 = m.Write(ad1, st2, ob2);
+			auto ad1 = m.Allocate(st1, ob1);
+			m.Share(ad1, st1, st2);
+			auto ad2 = m.Write(ad1, st2, ob2);
 
-		ASSERT_NE(ad1, ad2);
+			ASSERT_NE(ad1, ad2);
 
-		m.Free(ad1, st1);
-		m.Free(ad2, st2);
+			m.Free(ad1, st1);
+			m.Free(ad2, st2);
+		} catch (Memory::Exception &ex) {
+			FAIL();
+		}
+	}
+
+	TEST_F(MemoryTest, Write__basic_2) {
+		try {
+			auto ob1 = MkObj();
+			auto st1 = MkSt();
+
+			Memory m;
+			auto ad1 = m.Allocate(st1);
+			auto ad2 = m.Write(ad1, st1, ob1);
+
+			ASSERT_EQ(ad1, ad2);
+
+			auto ob2 = m.Read(ad1, st1);
+
+			ASSERT_EQ(*Stub(ob1), *Stub(ob2));
+
+			m.Free(ad1, st1);
+		}
+		catch (Memory::Exception &ex) {
+			FAIL();
+		}
 	}
 }
 

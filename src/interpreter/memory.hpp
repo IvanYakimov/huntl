@@ -7,10 +7,10 @@
 #include <stack>
 #include "../utils/object.hpp"
 #include "../utils/index-cache.hpp"
+#include "state.hpp"
 
 namespace interpreter {
 	using Address = uint32_t;
-	using StateId = uint64_t;
 
 	/** Implementation of copy-on-write idiom for memory management on object-level.
 	 * It is similar to the UNIX copy-on-write algorithm for managing memory among several processes.
