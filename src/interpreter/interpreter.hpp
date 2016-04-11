@@ -31,7 +31,7 @@ namespace
 }
 
 char Interpreter::ID = 0;
-static RegisterPass <Interpreter> X("Interpreter", "Interpreter pass",
+static RegisterPass <Interpreter> X("ll-voyager", "ll-voyager virtual machine",
 				    false, // Only looks at CFG
 				    false); // Analysis Pass
 

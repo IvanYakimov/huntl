@@ -71,7 +71,7 @@ api-pattern.cpp: test.ll
 
 .PHONY: run
 run:	program.so test.ll
-	opt -load=./program.so < test.ll > /dev/null -Interpreter
+	opt -load=./program.so < test.ll > /dev/null -ll-voyager
 
 gdb: program.so test.ll
 	gdb opt	

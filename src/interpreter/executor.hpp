@@ -6,10 +6,11 @@
 //# include "llvm/IR/Constants.h"
 
 // Project
-# include "pattern-matcher.hpp"
+#include "pattern-matcher.hpp"
+#include <exception>
 //TODO: use -I option to perform headers search instead of ../ (?)
 
-class InterpretationFailure final : public Interruption {
+class InterpretationFailure final : public std::exception {
 public:
 	InterpretationFailure(const llvm::Instruction &inst) {
 		inst_ = std::unique_ptr<llvm::Instruction>(inst.clone());
