@@ -128,10 +128,8 @@ std::unique_ptr<T> make_unique(Args&&... args) {
  */
 template <typename X, typename A, typename... Args>
 inline void Assert(A assertion, Args&&... args) {
-//#ifndef NDEBUG	/* only for DEBUG purposes */
 	if (not assertion)
 		throw X(std::forward<Args>(args)...);
-//#endif
 }
 
 /**
