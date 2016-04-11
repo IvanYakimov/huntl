@@ -7,7 +7,6 @@
 
 // Project
 # include "pattern-matcher.hpp"
-# include "../utils/interruption.hpp"
 //TODO: use -I option to perform headers search instead of ../ (?)
 
 class InterpretationFailure final : public Interruption {
