@@ -5,8 +5,8 @@ SOLVER = kind.o type.o expr.o expr-manager.o value.o cvc4-engine.o \
 SOLVER_TEST = test-runner.o test-value.o test-type.o test-expr.o test-expr-manager.o test-cvc4-engine.o test-width.o \
 	test-z3-engine.o
 
-INTERPRETER = interpreter.o pattern-matcher.o executor.o memory.o state.o voyager-pass.o 
-INTERPRETER_TEST = test-memory.o
+INTERPRETER = interpreter.o pattern-matcher.o executor.o memory.o state.o voyager-pass.o
+INTERPRETER_TEST = test-memory.o test-pattern-matcher.o
 
 UTILS = 
 
@@ -43,6 +43,7 @@ shared.o: $(INTERPRETER) #$(SOLVER) $(UTILS)
 solvertest.out: $(SOLVER_TEST) $(SOLVER) $(LDFLAGS)
 	$(CXX) $^ -o $@ -lgtest -pthread $(CXXFLAGS)
 	
+#//TODO:
 interpreter-test.out: $(INTERPRETER_TEST) memory.o state.o test-runner.o $(LDFLAGS)
 	$(CXX) $^ -o $@ -lgtest -pthread $(CXXFLAGS)
 	
