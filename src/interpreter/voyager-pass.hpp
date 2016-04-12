@@ -4,11 +4,7 @@
 // LLVM
 # include "llvm/Pass.h"
 # include "llvm/IR/Function.h"
-//# include "llvm/IR/Instruction.h"
-//# include "llvm/IR/InstIterator.h"
-//# include "llvm/IR/InstVisitor.h"
 # include "llvm/Support/raw_ostream.h"
-//# include "llvm/Support/Debug.h"
 
 // STL
 
@@ -23,6 +19,7 @@ namespace
     bool runOnFunction (llvm::Function &F) override;
   };
 }
+
 
 char VoyagerPass::ID = 0;
 static llvm::RegisterPass <VoyagerPass> X("ll-voyager", "ll-voyager virtual machine",

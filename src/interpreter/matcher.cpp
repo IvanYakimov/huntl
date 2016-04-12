@@ -1,4 +1,4 @@
-#include "pattern-matcher.hpp"
+#include "matcher.hpp"
 using namespace llvm;
 
 /*
@@ -8,13 +8,13 @@ e-mail: ivan.yakimov.research@yandex.ru
 */
 
 namespace interpreter {
-	void PatternMatcher::DebugInstInfo(const llvm::Instruction &inst) {
+	void Matcher::DebugInstInfo(const llvm::Instruction &inst) {
 	# ifdef DBG
 		errs() << inst << "\n";
 	# endif
 	}
 
-	void PatternMatcher::DebugOpList(const llvm::Instruction &inst) {
+	void Matcher::DebugOpList(const llvm::Instruction &inst) {
 	# ifdef DBG
 		for (auto i = 0; i < inst.getNumOperands(); i++) {
 			auto type = inst.getOperand(i)->getType();
@@ -29,7 +29,7 @@ namespace interpreter {
 	// --------------------------------------------------------
 	// Instruction visitors
 
-	void PatternMatcher::visitReturnInst (const ReturnInst &inst) {
+	void Matcher::visitReturnInst (const ReturnInst &inst) {
 		DebugInstInfo(inst);
 
 		Value *ret_val = NULL;
@@ -48,7 +48,7 @@ namespace interpreter {
 			; // Matching failure
 	}
 
-	void PatternMatcher::visitBranchInst(const BranchInst &inst) {
+	void Matcher::visitBranchInst(const BranchInst &inst) {
 		DebugInstInfo(inst);
 
 		BasicBlock *iftrue = NULL,
@@ -64,7 +64,7 @@ namespace interpreter {
 			; // Matching failure
 	}
 
-	void PatternMatcher::visitICmpInst(const ICmpInst &inst) {
+	void Matcher::visitICmpInst(const ICmpInst &inst) {
 		DebugInstInfo(inst);
 
 		Value *lhs = NULL,
@@ -76,7 +76,7 @@ namespace interpreter {
 			; // Matching Failure
 	}
 
-	void PatternMatcher::visitAllocaInst (const AllocaInst &inst)
+	void Matcher::visitAllocaInst (const AllocaInst &inst)
 	{
 		DebugInstInfo(inst);
 
@@ -87,7 +87,7 @@ namespace interpreter {
 			; // Matching Failure
 	}
 
-	void PatternMatcher::visitLoadInst (const LoadInst &inst)
+	void Matcher::visitLoadInst (const LoadInst &inst)
 	{
 		DebugInstInfo(inst);
 
@@ -98,7 +98,7 @@ namespace interpreter {
 			; // Matching Failure
 	}
 
-	void PatternMatcher::visitStoreInst (const StoreInst &inst)
+	void Matcher::visitStoreInst (const StoreInst &inst)
 	{
 		DebugInstInfo(inst);
 
@@ -119,7 +119,7 @@ namespace interpreter {
 
 	//--------------------
 	// Helper methods
-	bool PatternMatcher::Case (const Instruction &inst, unsigned i)
+	bool Matcher::Case (const Instruction &inst, unsigned i)
 	{
 		if (inst.getNumOperands() != i)
 			return false;
@@ -128,7 +128,7 @@ namespace interpreter {
 	}
 
 	template <typename T, typename... Targs>
-	bool PatternMatcher::Case (const Instruction &inst, unsigned i, T value, Targs... Fargs)
+	bool Matcher::Case (const Instruction &inst, unsigned i, T value, Targs... Fargs)
 	{
 		typedef typename std::remove_pointer<T>::type pV;
 		typedef typename std::remove_pointer<pV>::type V;

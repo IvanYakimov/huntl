@@ -5,8 +5,9 @@
 //# include "llvm/IR/Constants.h"
 
 // Project
-#include "pattern-matcher.hpp"
 #include <exception>
+
+#include "matcher.hpp"
 //TODO: use -I option to perform headers search instead of ../ (?)
 
 namespace interpreter {
@@ -26,7 +27,7 @@ namespace interpreter {
 		std::unique_ptr<llvm::Instruction> inst_ = NULL;
 	};
 
-	class Executor final : public PatternMatcher
+	class Executor final : public Matcher
 	{
 	private:
 		// Return

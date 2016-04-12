@@ -1,5 +1,5 @@
-# ifndef __PATTERN_MATCHER_HPP__
-# define __PATTERN_MATCHER_HPP__
+# ifndef __MATCHER_HPP__
+# define __MATCHER_HPP__
 
 /* 
 author: Ivan Yakimov
@@ -27,11 +27,11 @@ http://www.cplusplus.com/reference/type_traits/remove_pointer/
 
 namespace interpreter {
 	//TODO: refactoring
-	class PatternMatcher : public llvm::InstVisitor <PatternMatcher>
+	class Matcher : public llvm::InstVisitor <Matcher>
 	{
 	public:
-		PatternMatcher () {}
-		virtual ~PatternMatcher () {}
+		Matcher () {}
+		virtual ~Matcher () {}
 
 		// Specific Instruction type classes
 		void visitReturnInst (const llvm::ReturnInst &inst);
