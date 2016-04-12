@@ -1,26 +1,27 @@
 #include "interpreter.hpp"
 
-void Interpreter::DebugFunctionInfo(const llvm::Function &func) {
-# ifdef DBG
-	errs() << func.getName() << "\n";
-# endif
-}
+namespace interpreter {
+	using namespace llvm;
 
-bool Interpreter::runOnFunction (Function &func) {
-	DebugFunctionInfo(func);
-
-	// Loop:
-	// Check time, if it is done - select new state
-	// Make step
-	// 	- if step is forking - clone this state, update state table
-	//	- else - back to start
-
-	Executor executor;
-	for (Function::iterator i = func.begin(), e = func.end(); i != e; ++i) {
-		executor.visit(i);
+	void DebugFunctionInfo(const llvm::Function &func) {
+	# ifdef DBG
+		errs() << func.getName() << "\n";
+	# endif
 	}
 
-	// No transformations.
-	return false;
-}
+	/** Run interpreter on function */
+	void Interpreter::Do(llvm::Function &func) {
+		DebugFunctionInfo(func);
 
+		// Loop:
+		// Check time, if it is done - select new state
+		// Make step
+		// 	- if step is forking - clone this state, update state table
+		//	- else - back to start
+
+		Executor executor;
+		for (Function::iterator i = func.begin(), e = func.end(); i != e; ++i) {
+			executor.visit(i);
+		}
+	}
+}

@@ -1,6 +1,5 @@
-# ifndef __INTERPRETER_HPP__
-# define __INTERPRETER_HPP__
-
+# ifndef __EXECUTOR_HPP__
+# define __EXECUTOR_HPP__
 
 // LLVM
 //# include "llvm/IR/Constants.h"
@@ -10,49 +9,51 @@
 #include <exception>
 //TODO: use -I option to perform headers search instead of ../ (?)
 
-class InterpretationFailure final : public std::exception {
-public:
-	InterpretationFailure(const llvm::Instruction &inst) {
-		inst_ = std::unique_ptr<llvm::Instruction>(inst.clone());
-	}
+namespace interpreter {
+	class InterpretationFailure final : public std::exception {
+	public:
+		InterpretationFailure(const llvm::Instruction &inst) {
+			inst_ = std::unique_ptr<llvm::Instruction>(inst.clone());
+		}
 
-	virtual ~InterpretationFailure() {}
+		virtual ~InterpretationFailure() {}
 
-	virtual void Print() {
-		llvm::errs() << "\nInterpretation failed on: " << *inst_ << "\n";
-	}
+		virtual void Print() {
+			llvm::errs() << "\nInterpretation failed on: " << *inst_ << "\n";
+		}
 
-private:
-	std::unique_ptr<llvm::Instruction> inst_ = NULL;
-};
+	private:
+		std::unique_ptr<llvm::Instruction> inst_ = NULL;
+	};
 
-class Executor final : public PatternMatcher
-{
-private:
-	// Return
-	virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst);
-	virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Constant *ret_const);
-	virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Value *ret_val);
-	virtual void HandleReturnInst (const llvm::Instruction &inst);
+	class Executor final : public PatternMatcher
+	{
+	private:
+		// Return
+		virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst);
+		virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Constant *ret_const);
+		virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Value *ret_val);
+		virtual void HandleReturnInst (const llvm::Instruction &inst);
 
-	// Branch
-	virtual void HandleBranchInst (const llvm::Instruction &inst, const llvm::Value *cond, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse);
-	virtual void HandleBranchInst (const llvm::Instruction &inst, const llvm::BasicBlock *jump);
+		// Branch
+		virtual void HandleBranchInst (const llvm::Instruction &inst, const llvm::Value *cond, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse);
+		virtual void HandleBranchInst (const llvm::Instruction &inst, const llvm::BasicBlock *jump);
 
-	// Cmp
-	virtual void HandleICmpInst (const llvm::Instruction &inst, const llvm::Value *lhs, const llvm::Value *rhs);
+		// Cmp
+		virtual void HandleICmpInst (const llvm::Instruction &inst, const llvm::Value *lhs, const llvm::Value *rhs);
 
-	// Alloca
-	virtual void HandleAllocaInst (const llvm::Instruction &inst, const llvm::Value *allocated);
+		// Alloca
+		virtual void HandleAllocaInst (const llvm::Instruction &inst, const llvm::Value *allocated);
 
-	// Load
-	virtual void HandleLoadInst (const llvm::Instruction &inst, const llvm::Value *ptr);
+		// Load
+		virtual void HandleLoadInst (const llvm::Instruction &inst, const llvm::Value *ptr);
 
-	// Store
-	virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Value *val, const llvm::Value *ptr);
-	virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Instruction *instruction, const llvm::Value *ptr);
-	virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Constant *constant, const llvm::Value *ptr);
-};
+		// Store
+		virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Value *val, const llvm::Value *ptr);
+		virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Instruction *instruction, const llvm::Value *ptr);
+		virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Constant *constant, const llvm::Value *ptr);
+	};
+}
 
 # endif /* __INTERPRETER_HPP__ */
 
