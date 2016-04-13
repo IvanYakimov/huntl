@@ -5,22 +5,24 @@ namespace interpreter {
 
 	// Return
 	void MatcherStub::HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst) {
-		llvm::errs() << "<< ret instruction >> \n";
+		llvm::errs() << "[ret inst]\n";
 		FAIL();
 	}
 
 	void MatcherStub::HandleReturnInst (const llvm::Instruction &inst, const llvm::Constant *ret_const) {
-		llvm::errs() << "<< ret constant >> \n";
+		llvm::errs() << "[ret const]\n";
 		ASSERT_TRUE(isa<Instruction>(inst));
 		ASSERT_TRUE(isa<Constant>(ret_const));
 	}
 
 	void MatcherStub::HandleReturnInst (const llvm::Instruction &inst, const llvm::Value *ret_val) {
-		llvm::errs() << "<< ret value >> \n";
+		llvm::errs() << "[ret val]\n";
 		FAIL();
 	}
 
 	void MatcherStub::HandleReturnInst (const llvm::Instruction &inst) {
+		llvm::errs() << "[ret void]\n";
+		ASSERT_TRUE(isa<Instruction>(inst));
 		FAIL();
 	}
 

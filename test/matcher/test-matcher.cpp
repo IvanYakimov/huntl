@@ -10,46 +10,47 @@ public:
 	LLVMContext &context_ ;// = getGlobalContext();
 	IRBuilder<> builder_ ;//(getGlobalContext());
 	Module *module_;
-	MatcherTest() : builder_(getGlobalContext()), context_(getGlobalContext()), module_(nullptr) {
 
+	FunctionType *func_ty_;
+	Function *func_;
+	BasicBlock *entry_;
+	interpreter::MatcherStub matcher_;
+	MatcherTest() : builder_(getGlobalContext()), context_(getGlobalContext()), module_(nullptr),
+			func_ty_(nullptr), func_(nullptr), entry_(nullptr){
+		errs() << "constructor\n";
+	}
+
+	virtual void SetUp() {
+		errs() << "setup\n";
+		module_ = new Module("test", context_);
+		// void func()
+		func_ty_ = FunctionType::get(Type::getVoidTy(context_), false);
+		func_ = Function::Create(func_ty_, Function::ExternalLinkage, "test", module_);
+		entry_ = BasicBlock::Create(context_, "entry", func_);
+		builder_.SetInsertPoint(entry_);
+	}
+
+	virtual void TearDown() {
+		errs() << *func_ << "\n";
+		ASSERT_TRUE(verifyFunction(*func_));
+
+		for (Function::iterator i = func_->begin(), e = func_->end(); i != e; ++i) {
+			matcher_.visit(i);
+		}
+
+		func_->deleteBody();
+
+		delete module_;
+		errs() << "teardown\n";
 	}
 };
 
 TEST_F(MatcherTest, bodyless_function) {
-	module_ = new Module("test", context_);
-	FunctionType *func_ty = FunctionType::get(Type::getVoidTy(context_), false);
-	Function *func = Function::Create(func_ty, Function::ExternalLinkage, "test", module_);
-	BasicBlock *entry_ = BasicBlock::Create(context_, "entry", func);
-	builder_.SetInsertPoint(entry_);
-	auto done = verifyFunction(*func);
-	ASSERT_TRUE(done);
-	errs() << *func << "\n";
-	delete module_;
 }
 
 TEST_F(MatcherTest, ret_const) {
-	module_ = new Module("test", context_);
-	FunctionType *func_ty = FunctionType::get(Type::getVoidTy(context_), false);
-	Function *func = Function::Create(func_ty, Function::ExternalLinkage, "test", module_);
-	BasicBlock *entry_ = BasicBlock::Create(context_, "entry", func);
-	builder_.SetInsertPoint(entry_);
-
-	/**/
 	auto c1 = ConstantInt::get(module_->getContext(), APInt(32, 2, true));
-	//auto c2 = ConstantInt::get(module_->getContext(), APInt(32, 2, true));
-	//auto add = builder_.CreateAdd(c1, c2, "addtmp");
 	builder_.CreateRet(c1);
-	/**/
-
-	interpreter::MatcherStub matcher;
-	for (Function::iterator i = func->begin(), e = func->end(); i != e; ++i) {
-		matcher.visit(i);
-	}
-
-	auto done = verifyFunction(*func);
-	ASSERT_TRUE(done);
-	errs() << *func << "\n";
-	delete module_;
 }
 
 
