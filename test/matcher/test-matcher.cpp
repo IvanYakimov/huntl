@@ -4,35 +4,32 @@
 
 using namespace llvm;
 
-LLVMContext &context_ = getGlobalContext();
-Module *module_;
-IRBuilder<> builder_ (getGlobalContext());
 
-void InitModule() {
+class MatcherTest : public ::testing::Test {
+public:
+	LLVMContext &context_ ;// = getGlobalContext();
+	IRBuilder<> builder_ ;//(getGlobalContext());
+	Module *module_;
+	MatcherTest() : builder_(getGlobalContext()), context_(getGlobalContext()), module_(nullptr) {
+
+	}
+};
+
+TEST_F(MatcherTest, bodyless_function) {
 	module_ = new Module("test", context_);
-	FunctionType *func_ty = FunctionType::get(Type::getVoidTy(getGlobalContext()), false);
+	FunctionType *func_ty = FunctionType::get(Type::getVoidTy(context_), false);
 	Function *func = Function::Create(func_ty, Function::ExternalLinkage, "test", module_);
-	BasicBlock *entry_ = BasicBlock::Create(getGlobalContext(), "entry", func);
+	BasicBlock *entry_ = BasicBlock::Create(context_, "entry", func);
 	builder_.SetInsertPoint(entry_);
-	errs() << verifyFunction(*func) << "\n";
+	auto done = verifyFunction(*func);
+	ASSERT_TRUE(done);
 	errs() << *func << "\n";
 	delete module_;
 }
 
-
-class MatcherTest : public ::testing::Test {
-	public:
-};
-
-TEST_F(MatcherTest, dummy) {
-	ASSERT_TRUE(true);
-}
-
 int main(int argc, char** argv, char **env) {
-	InitModule();
 	::testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
-	return 0;
 }
 
 
