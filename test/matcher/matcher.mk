@@ -1,52 +1,32 @@
 SHELL = /bin/sh
 
-INTERPRETER = matcher.o executor.o
-INTERPRETER_TEST = test-matcher.o
+OBJ = matcher.o test-matcher.o
 
 CXX = g++
-CXXFLAGS = -fdiagnostics-color=always -g -std=c++14 -fpic -rdynamic \
-	$(filter-out -g -fno-exceptions -O2 -std=c++11, $(LLVMFLAGS)) $(DBGFLAGS) \
-	-Wno-deprecated
-LLVMFLAGS = $(shell llvm-config --cxxflags)
+CXXFLAGS = -fdiagnostics-color=always -g -std=c++14 -Wno-deprecated
+LLVMFLAGS = $(filter-out -g -fno-exceptions -O2 -std=c++11, $(shell llvm-config --cxxflags))
 
 SRC = ../../src
 TST = .
 
-vpath %.cpp $(SRC)/interpreter $(TST)/interpreter/
-vpath %.hpp $(SRC)/interpreter
-vpath %.c 	$(SRC)/interpreter
+vpath %.cpp $(SRC)/interpreter $(TST)
+vpath %.hpp $(SRC)/interpreter $(TST)
 		
-program.so: shared.o 
-	$(CXX) -shared $< -o $@ 
+test-matcher.out: $(OBJ)
+	$(CXX) $^ -o $@ 
+#-pthread -ltinfo $(LLVMFLAGS) -ldl
 
-shared.o: $(INTERPRETER) $(INTERPRETER_TEST)
-	ld -r $^ -o $@ 
-
-$(INTERPRETER_TEST):
-$(INTERPRETER):
+$(OBJ):
 %.o: %.cpp %.hpp
 	$(CXX) -c $< -o $@ $(CXXFLAGS) 
+# $(LLVMFLAGS) 
 	
 .PHONY: clean
 clean:
-	@rm -vf *~ *.o *.out *.so
-	@rm -vf *.ll api-pattern.cpp
+	@rm -vf *~ *.o *.out
+	@rm -vf *.ll 
 	@rm -vf \#*\#
 
-# < helpers ------------------------------------------------
-.PHONY: run
-run:	program.so test.ll
-	opt -load=./program.so < test.ll > /dev/null -test
-	
-test.ll: test.c
-	clang -S -emit-llvm $< -Wimplicit-int
-# helpers ----------------------------------------------- />	
-	
-	
-	
-	
-	
-	
 	
 	
 	
