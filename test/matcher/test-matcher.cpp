@@ -19,8 +19,19 @@ void InitModule() {
 	delete module_;
 }
 
+
+class MatcherTest : public ::testing::Test {
+	public:
+};
+
+TEST_F(MatcherTest, dummy) {
+	ASSERT_TRUE(true);
+}
+
 int main(int argc, char** argv, char **env) {
 	InitModule();
+	::testing::InitGoogleTest(&argc, argv);
+	return RUN_ALL_TESTS();
 	return 0;
 }
 

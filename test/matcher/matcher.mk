@@ -13,7 +13,7 @@ vpath %.cpp $(SRC)/interpreter $(TST)
 vpath %.hpp $(SRC)/interpreter $(TST)
 		
 test-matcher.out: $(OBJ)
-	$(CXX) $^ -o $@ -pthread -ltinfo $(LLVMFLAGS) -ldl
+	$(CXX) $^ -o $@ -pthread -ltinfo -lgtest $(LLVMFLAGS) -ldl
 
 $(OBJ):
 %.o: %.cpp %.hpp
