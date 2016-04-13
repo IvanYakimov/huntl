@@ -41,6 +41,11 @@ TEST_F(MatcherTest, ret_const) {
 	builder_.CreateRet(c1);
 	/**/
 
+	interpreter::MatcherStub matcher;
+	for (Function::iterator i = func->begin(), e = func->end(); i != e; ++i) {
+		matcher.visit(i);
+	}
+
 	auto done = verifyFunction(*func);
 	ASSERT_TRUE(done);
 	errs() << *func << "\n";
