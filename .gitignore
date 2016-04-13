@@ -2,3 +2,5 @@
 .cproject
 .project
 docs/
+api-pattern.cpp
+*.ll
