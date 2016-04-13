@@ -50,6 +50,7 @@ TEST_F(MatcherTest, bodyless_function) {
 
 TEST_F(MatcherTest, ret_const) {
 	auto c1 = ConstantInt::get(module_->getContext(), APInt(32, 2, true));
+	//TODO: actually, we work with a void function in the whole test suite (it can't return any value)
 	builder_.CreateRet(c1);
 }
 
