@@ -4,7 +4,7 @@
 
 using namespace llvm;
 
-
+//TODO: total refactoring!!!
 class MatcherTest : public ::testing::Test {
 public:
 	LLVMContext &context_ ;// = getGlobalContext();
@@ -17,11 +17,14 @@ public:
 	interpreter::MatcherStub matcher_;
 	MatcherTest() : builder_(getGlobalContext()), context_(getGlobalContext()), module_(nullptr),
 			func_ty_(nullptr), func_(nullptr), entry_(nullptr){
-		errs() << "constructor\n";
+		//errs() << "constructor\n";
+	}
+
+	~MatcherTest() {
 	}
 
 	virtual void SetUp() {
-		errs() << "setup\n";
+		//errs() << "setup\n";
 		module_ = new Module("test", context_);
 		// void func()
 		func_ty_ = FunctionType::get(Type::getVoidTy(context_), false);
@@ -41,7 +44,7 @@ public:
 		func_->deleteBody();
 
 		delete module_;
-		errs() << "teardown\n";
+		//errs() << "teardown\n";
 	}
 };
 
@@ -54,6 +57,16 @@ TEST_F(MatcherTest, ret_const) {
 	builder_.CreateRet(c1);
 }
 
+TEST_F(MatcherTest, alloca_store_load__const) {
+	ConstantInt* c1 = ConstantInt::get(module_->getContext(), APInt(32, 2, true));
+	//TODO:refactoring:
+	AllocaInst* x = builder_.CreateAlloca(Type::getInt32Ty(module_->getContext()), 0, "x");
+	x->setAlignment(4);
+	//AllocaInst* y = builder_.CreateAlloca(Type::getInt32Ty(module_->getContext()), 0, "y");
+	//y->setAlignment(4);
+	StoreInst* store_x = builder_.CreateStore(c1, x);
+	LoadInst* load_x = builder_.CreateLoad(x);
+}
 
 int main(int argc, char** argv, char **env) {
 	::testing::InitGoogleTest(&argc, argv);
