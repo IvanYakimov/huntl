@@ -118,9 +118,13 @@ namespace interpreter {
 	}
 
 	//--------------------
-	// Helper methods
+	// Case matcher
+	template <typename... Targs>
+	bool Matcher::Case(const Instruction &inst, Targs... Fargs) {
+		return CaseHelper::Do(inst, 0, Fargs...);
+	}
 
-	bool Matcher::Case__helper (const Instruction &inst, unsigned i)
+	bool Matcher::CaseHelper::Do (const Instruction &inst, unsigned i)
 	{
 		if (inst.getNumOperands() != i)
 			return false;
@@ -129,7 +133,7 @@ namespace interpreter {
 	}
 
 	template <typename T, typename... Targs>
-	bool Matcher::Case__helper (const Instruction &inst, unsigned i, T value, Targs... Fargs)
+	bool Matcher::CaseHelper::Do (const Instruction &inst, unsigned i, T value, Targs... Fargs)
 	{
 		typedef typename std::remove_pointer<T>::type pV;
 		typedef typename std::remove_pointer<pV>::type V;
@@ -137,15 +141,10 @@ namespace interpreter {
 		// TODO:i cannot be greater than number of operands
 		if (isa<V>(operand)) {
 			*value = dyn_cast<V>(operand);
-			return true && Case__helper(inst, ++i, Fargs...);
+			return true && Do(inst, ++i, Fargs...);
 		}
 		else
 			return false;
-	}
-
-	template <typename... Targs>
-	bool Matcher::Case(const Instruction &inst, Targs... Fargs) {
-		return Case__helper(inst, 0, Fargs...);
 	}
 }
 

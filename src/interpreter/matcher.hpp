@@ -74,12 +74,15 @@ namespace interpreter {
 	private:
 		// "pattern matching"
 		template <typename... Targs>
-		bool Case (const llvm::Instruction &inst, Targs... Fargs); // inductive case
+		bool Case (const llvm::Instruction &inst, Targs... Fargs); // inductive casen
 
+		class CaseHelper {
+		public:
 		// "pattern matching"
-		bool Case__helper (const llvm::Instruction &inst, unsigned i); // base case
-		template <typename T, typename... Targs>
-		bool Case__helper (const llvm::Instruction &inst, unsigned i, T value, Targs... Fargs); // inductive case
+			static bool Do (const llvm::Instruction &inst, unsigned i); // base case
+			template <typename T, typename... Targs>
+			static bool Do (const llvm::Instruction &inst, unsigned i, T value, Targs... Fargs); // inductive case
+		};
 
 		static inline void DebugInstInfo(const llvm::Instruction &inst);
 		static inline void DebugOpList(const llvm::Instruction &inst);
@@ -87,3 +90,11 @@ namespace interpreter {
 }
 
 # endif /* __INST_PRINTER_HPP__ */
+
+
+
+
+
+
+
+
