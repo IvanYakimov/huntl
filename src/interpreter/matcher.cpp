@@ -137,11 +137,17 @@ namespace interpreter {
 	{
 		typedef typename std::remove_pointer<T>::type pV;
 		typedef typename std::remove_pointer<pV>::type V;
-		auto operand = inst.getOperand (i);
-		// TODO:i cannot be greater than number of operands
-		if (isa<V>(operand)) {
-			*value = dyn_cast<V>(operand);
-			return true && Do(inst, ++i, Fargs...);
+		// Does the following operand exist?
+		if (i + 1 <= inst.getNumOperands()) {
+			auto operand = inst.getOperand (i);
+			// Does the i-th operand have an appropriate type?
+			if (isa<V>(operand)) {
+				*value = dyn_cast<V>(operand);
+				// Check the next operand
+				return true && Do(inst, ++i, Fargs...);
+			}
+			else
+				return false;
 		}
 		else
 			return false;

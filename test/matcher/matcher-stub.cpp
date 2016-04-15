@@ -99,9 +99,8 @@ namespace interpreter {
 
 	void MatcherStub::HandleBranchInst (const llvm::Instruction &inst, const llvm::BasicBlock *jump) {
 		Printer::Do(&inst, jump);
-		FAIL() << "not covered";
-		/*ASSERT_TRUE(isa<Instruction>(inst)
-				and isa<BasicBlock>(jump));*/
+		ASSERT_TRUE(isa<Instruction>(inst)
+				and isa<BasicBlock>(jump));
 	}
 
 	// Cmp
