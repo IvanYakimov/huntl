@@ -79,9 +79,11 @@ namespace interpreter {
 		class CaseHelper {
 		public:
 		// "pattern matching"
+		protected:
 			static bool Do (const llvm::Instruction &inst, unsigned i); // base case
 			template <typename T, typename... Targs>
 			static bool Do (const llvm::Instruction &inst, unsigned i, T value, Targs... Fargs); // inductive case
+			template <typename... Targs> friend bool Matcher::Case (const llvm::Instruction &inst, Targs... Fargs); // inductive casen
 		};
 
 		static inline void DebugInstInfo(const llvm::Instruction &inst);
