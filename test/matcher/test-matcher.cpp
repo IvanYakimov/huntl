@@ -30,7 +30,7 @@ public:
 		return res;
 	}
 
-	ConstantInt* Const32(uint32_t val) {
+	ConstantInt* I32(uint32_t val) {
 		return ConstantInt::get(module_->getContext(), APInt(32, val, true));
 	}
 
@@ -46,6 +46,13 @@ public:
 		return builder_.CreateRet(what);
 	}
 
+	BasicBlock* Block(const char* name) {
+		return BasicBlock::Create(context_, name, func_);
+	}
+
+	void Enter(BasicBlock* block) {
+		builder_.SetInsertPoint(block);
+	}
 	// -->
 
 	//Initializators
@@ -71,8 +78,8 @@ public:
 	// Test confuguration
 	virtual void SetUp() {
 		InitInt32Func();
-		entry_ = BasicBlock::Create(context_, "entry", func_);
-		builder_.SetInsertPoint(entry_);
+		entry_ = Block("entry");
+		Enter(entry_);
 	}
 
 	virtual void TearDown() {
@@ -81,16 +88,27 @@ public:
 };
 
 TEST_F(MatcherTest, ret__const) {
-	auto c1 = Const32(42);
-	auto ret = builder_.CreateRet(c1);
+	auto ret = builder_.CreateRet(I32(42));
 }
 
 TEST_F(MatcherTest, alloca_store_load_ret) {
-	auto c1 = Const32(2);
 	auto x = Alloca32("x");
-	auto store_x = Store(c1, x);
+	auto store_x = Store(I32(2), x);
 	auto load_x = Load(x);
 	auto ret = Ret(load_x);
+}
+
+TEST_F(MatcherTest, if_than_else) {
+	auto true_branch = Block("true-branch");
+	auto false_branch = Block("false-branch");
+	auto x = Alloca32("x");
+	auto load_x = Load(x);
+	auto icmp = builder_.CreateICmpEQ(load_x, I32(2));
+	auto jump = builder_.CreateCondBr(icmp, true_branch, false_branch);
+	Enter(true_branch);
+	Ret(I32(1));
+	Enter(false_branch);
+	Ret(I32(-1));
 }
 
 int main(int argc, char** argv, char **env) {

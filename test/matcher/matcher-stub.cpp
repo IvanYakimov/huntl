@@ -42,6 +42,10 @@ namespace interpreter {
 							return "store";
 						else if (isa<AllocaInst>(val))
 							return "alloca";
+						else if (isa<CmpInst>(val))
+							return "cmp";
+						else if (isa<BranchInst>(val))
+							return "br";
 						else
 							return "an-instruction";
 					}
@@ -88,18 +92,24 @@ namespace interpreter {
 	void MatcherStub::HandleBranchInst (const llvm::Instruction &inst,
 		  const llvm::Value *cond, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse) {
 		Printer::Do(&inst, cond, iftrue, iffalse);
-		FAIL() << "not covered";
+		ASSERT_TRUE(isa<Value>(cond)
+				and isa<BasicBlock>(iftrue)
+				and isa<BasicBlock>(iffalse));
 	}
 
 	void MatcherStub::HandleBranchInst (const llvm::Instruction &inst, const llvm::BasicBlock *jump) {
 		Printer::Do(&inst, jump);
 		FAIL() << "not covered";
+		/*ASSERT_TRUE(isa<Instruction>(inst)
+				and isa<BasicBlock>(jump));*/
 	}
 
 	// Cmp
 	void MatcherStub::HandleICmpInst (const llvm::Instruction &inst, const llvm::Value *lhs, const llvm::Value *rhs) {
 		Printer::Do(&inst, lhs, rhs);
-		FAIL() << "not covered";
+		ASSERT_TRUE(isa<Instruction>(inst)
+				and isa<Value>(lhs)
+				and isa<Value>(rhs));
 	}
 
 	// Alloca
