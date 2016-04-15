@@ -27,6 +27,7 @@ http://www.cplusplus.com/reference/type_traits/remove_pointer/
 
 namespace interpreter {
 	//TODO: refactoring
+	//TODO: handling of unsupporter instructions!
 	class Matcher : public llvm::InstVisitor <Matcher>
 	{
 	public:
