@@ -36,13 +36,13 @@ namespace interpreter {
 		Instruction *ret_inst = NULL;
 		Constant *ret_const = NULL;
 
-		if (Case (inst, 0, &ret_inst))
+		if (Case (inst, &ret_inst))
 			HandleReturnInst(inst, ret_inst);
-		else if (Case (inst, 0, &ret_const))
+		else if (Case (inst, &ret_const))
 			HandleReturnInst(inst, ret_const);
-		else if (Case (inst, 0, &ret_val))
+		else if (Case (inst, &ret_val))
 			HandleReturnInst(inst, ret_val);
-		else if (Case (inst, 0))
+		else if (Case (inst))
 			HandleReturnInst(inst);
 		else
 			; // Matching failure
@@ -56,9 +56,9 @@ namespace interpreter {
 				*jump = NULL;
 		Value *cond = NULL;
 
-		if (Case (inst, 0, &cond, &iftrue, &iffalse))
+		if (Case (inst, &cond, &iftrue, &iffalse))
 			HandleBranchInst(inst, cond, iftrue, iffalse);
-		else if (Case (inst, 0, &jump))
+		else if (Case (inst, &jump))
 			HandleBranchInst(inst, jump);
 		else
 			throw std::logic_error("matching failure"); // Matching failure
@@ -70,7 +70,7 @@ namespace interpreter {
 		Value *lhs = NULL,
 				*rhs = NULL;
 
-		if (Case (inst, 0, &lhs, &rhs))
+		if (Case (inst, &lhs, &rhs))
 			HandleICmpInst(inst, lhs, rhs);
 		else
 			; // Matching Failure
@@ -81,7 +81,7 @@ namespace interpreter {
 		DebugInstInfo(inst);
 
 		Value *allocated = NULL;
-		if (Case (inst, 0, &allocated))
+		if (Case (inst, &allocated))
 			HandleAllocaInst(inst, allocated);
 		else
 			; // Matching Failure
@@ -92,7 +92,7 @@ namespace interpreter {
 		DebugInstInfo(inst);
 
 		Value *ptr= NULL;
-		if (Case (inst, 0, &ptr))
+		if (Case (inst, &ptr))
 			HandleLoadInst(inst, ptr);
 		else
 			; // Matching Failure
@@ -107,11 +107,11 @@ namespace interpreter {
 		Constant *constant = NULL;
 		Value *ptr = NULL;
 
-		if (Case (inst, 0, &instruction, &ptr))
+		if (Case (inst, &instruction, &ptr))
 			HandleStoreInst(inst, instruction, ptr);
-		else if (Case (inst, 0, &constant, &ptr))
+		else if (Case (inst, &constant, &ptr))
 			HandleStoreInst(inst, constant, ptr);
-		else if (Case (inst, 0, &val, &ptr))
+		else if (Case (inst, &val, &ptr))
 			HandleStoreInst(inst, val, ptr);
 		else
 			; // Matching Failure
@@ -119,7 +119,8 @@ namespace interpreter {
 
 	//--------------------
 	// Helper methods
-	bool Matcher::Case (const Instruction &inst, unsigned i)
+
+	bool Matcher::Case__helper (const Instruction &inst, unsigned i)
 	{
 		if (inst.getNumOperands() != i)
 			return false;
@@ -128,17 +129,23 @@ namespace interpreter {
 	}
 
 	template <typename T, typename... Targs>
-	bool Matcher::Case (const Instruction &inst, unsigned i, T value, Targs... Fargs)
+	bool Matcher::Case__helper (const Instruction &inst, unsigned i, T value, Targs... Fargs)
 	{
 		typedef typename std::remove_pointer<T>::type pV;
 		typedef typename std::remove_pointer<pV>::type V;
 		auto operand = inst.getOperand (i);
+		// TODO:i cannot be greater than number of operands
 		if (isa<V>(operand)) {
 			*value = dyn_cast<V>(operand);
-			return true && Case(inst, ++i, Fargs...);
+			return true && Case__helper(inst, ++i, Fargs...);
 		}
 		else
 			return false;
+	}
+
+	template <typename... Targs>
+	bool Matcher::Case(const Instruction &inst, Targs... Fargs) {
+		return Case__helper(inst, 0, Fargs...);
 	}
 }
 

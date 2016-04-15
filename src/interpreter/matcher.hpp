@@ -72,11 +72,14 @@ namespace interpreter {
 		virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Constant *constant, const llvm::Value *ptr) = 0;
 
 	private:
-		//TODO: extract a helper function
 		// "pattern matching"
-		bool Case (const llvm::Instruction &inst, unsigned i); // base case
+		template <typename... Targs>
+		bool Case (const llvm::Instruction &inst, Targs... Fargs); // inductive case
+
+		// "pattern matching"
+		bool Case__helper (const llvm::Instruction &inst, unsigned i); // base case
 		template <typename T, typename... Targs>
-		bool Case (const llvm::Instruction &inst, unsigned i, T value, Targs... Fargs); // inductive case
+		bool Case__helper (const llvm::Instruction &inst, unsigned i, T value, Targs... Fargs); // inductive case
 
 		static inline void DebugInstInfo(const llvm::Instruction &inst);
 		static inline void DebugOpList(const llvm::Instruction &inst);
