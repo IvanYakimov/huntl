@@ -88,18 +88,18 @@ namespace interpreter {
 	void MatcherStub::HandleBranchInst (const llvm::Instruction &inst,
 		  const llvm::Value *cond, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse) {
 		Printer::Do(&inst, cond, iftrue, iffalse);
-		FAIL();
+		FAIL() << "not covered";
 	}
 
 	void MatcherStub::HandleBranchInst (const llvm::Instruction &inst, const llvm::BasicBlock *jump) {
 		Printer::Do(&inst, jump);
-		FAIL();
+		FAIL() << "not covered";
 	}
 
 	// Cmp
 	void MatcherStub::HandleICmpInst (const llvm::Instruction &inst, const llvm::Value *lhs, const llvm::Value *rhs) {
 		Printer::Do(&inst, lhs, rhs);
-		FAIL();
+		FAIL() << "not covered";
 	}
 
 	// Alloca
@@ -119,12 +119,12 @@ namespace interpreter {
 	// Store
 	void MatcherStub::HandleStoreInst (const llvm::Instruction &inst, const llvm::Value *val, const llvm::Value *ptr) {
 		Printer::Do(&inst, val, ptr);
-		FAIL();
+		FAIL() << "not covered";
 	}
 
 	void MatcherStub::HandleStoreInst (const llvm::Instruction &inst, const llvm::Instruction *instruction, const llvm::Value *ptr) {
 		Printer::Do(&inst, instruction, ptr);
-		FAIL();
+		FAIL() << "not covered";
 	}
 
 	void MatcherStub::HandleStoreInst (const llvm::Instruction &inst, const llvm::Constant *constant, const llvm::Value *ptr) {
