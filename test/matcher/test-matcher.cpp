@@ -48,16 +48,16 @@ public:
 	}
 };
 
-TEST_F(MatcherTest, bodyless_function) {
+TEST_F(MatcherTest, bodyless) {
 }
 
-TEST_F(MatcherTest, ret_const) {
+TEST_F(MatcherTest, ret__const) {
 	auto c1 = ConstantInt::get(module_->getContext(), APInt(32, 2, true));
 	//TODO: actually, we work with a void function in the whole test suite (it can't return any value)
 	builder_.CreateRet(c1);
 }
 
-TEST_F(MatcherTest, alloca_store_load__const) {
+TEST_F(MatcherTest, alloca_store_load_ret) {
 	ConstantInt* c1 = ConstantInt::get(module_->getContext(), APInt(32, 2, true));
 	//TODO:refactoring:
 	AllocaInst* x = builder_.CreateAlloca(Type::getInt32Ty(module_->getContext()), 0, "x");
@@ -66,6 +66,7 @@ TEST_F(MatcherTest, alloca_store_load__const) {
 	//y->setAlignment(4);
 	StoreInst* store_x = builder_.CreateStore(c1, x);
 	LoadInst* load_x = builder_.CreateLoad(x);
+	builder_.CreateRet(load_x);
 }
 
 int main(int argc, char** argv, char **env) {

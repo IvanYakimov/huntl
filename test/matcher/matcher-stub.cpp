@@ -63,7 +63,8 @@ namespace interpreter {
 	// Return
 	void MatcherStub::HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst) {
 		Printer::Do(&inst, ret_inst);
-		FAIL();
+		ASSERT_TRUE(isa<Instruction>(inst)
+				and isa<Instruction>(ret_inst));
 	}
 
 	void MatcherStub::HandleReturnInst (const llvm::Instruction &inst, const llvm::Constant *ret_const) {
@@ -74,13 +75,13 @@ namespace interpreter {
 
 	void MatcherStub::HandleReturnInst (const llvm::Instruction &inst, const llvm::Value *ret_val) {
 		Printer::Do(&inst, ret_val);
-		FAIL();
+		ASSERT_TRUE(isa<Instruction>(inst)
+				and isa<Value>(ret_val));
 	}
 
 	void MatcherStub::HandleReturnInst (const llvm::Instruction &inst) {
 		Printer::Do(&inst);
 		ASSERT_TRUE(isa<Instruction>(inst));
-		FAIL();
 	}
 
 	// Branch
