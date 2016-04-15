@@ -61,7 +61,7 @@ namespace interpreter {
 		else if (Case (inst, 0, &jump))
 			HandleBranchInst(inst, jump);
 		else
-			; // Matching failure
+			throw std::logic_error("matching failure"); // Matching failure
 	}
 
 	void Matcher::visitICmpInst(const ICmpInst &inst) {

@@ -68,9 +68,10 @@ public:
 
 	// Matching
 	void MatchOnFunc() {
+		ASSERT_FALSE(verifyFunction(*func_));
 		errs() << *func_ << "\n";
 		// If there are no errors, the function returns false.
-		ASSERT_FALSE(verifyFunction(*func_));
+
 		for (Function::iterator i = func_->begin(), e = func_->end(); i != e; ++i)
 			matcher_.visit(i);
 	}
@@ -109,6 +110,13 @@ TEST_F(MatcherTest, if_than_else) {
 	Ret(I32(1));
 	Enter(false_branch);
 	Ret(I32(-1));
+}
+
+TEST_F(MatcherTest, jump) {
+	auto dest = Block("dest");
+	auto jump = builder_.CreateBr(dest);
+	Enter(dest);
+	Ret(I32(0));
 }
 
 int main(int argc, char** argv, char **env) {
