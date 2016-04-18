@@ -18,6 +18,8 @@ http://www.cplusplus.com/reference/type_traits/remove_pointer/
 # include "llvm/Support/raw_ostream.h"
 # include "llvm/Support/Debug.h"
 
+#include "../utils/object.hpp"
+
 # include <type_traits>
 # include <map>
 # include <string>
@@ -28,9 +30,26 @@ http://www.cplusplus.com/reference/type_traits/remove_pointer/
 namespace interpreter {
 	//TODO: refactoring
 	//TODO: handling of unsupporter instructions!
+
 	class Matcher : public llvm::InstVisitor <Matcher>
 	{
 	public:
+		class Failure : public std::exception {
+			const char* what() const noexcept {return "matching failure";}
+		};
+
+		class LogicError : public std::exception {
+			const char* what() const noexcept {return "logic error";}
+		};
+
+		class Support : public std::exception {
+			const char* what() const noexcept {return "not supported";}
+		};
+
+		class Impl : public std::exception {
+			const char* what() const noexcept {return "not implemented";}
+		};
+
 		Matcher () {}
 		virtual ~Matcher () {}
 
@@ -38,6 +57,7 @@ namespace interpreter {
 		void visitReturnInst (const llvm::ReturnInst &inst);
 		void visitBranchInst (const llvm::BranchInst &inst);
 		// missed instructions
+		void visitBinaryOperator(const llvm::BinaryOperator &inst);
 		void visitICmpInst (const llvm::ICmpInst &inst);
 		// missed instructions
 		void visitAllocaInst (const llvm::AllocaInst &inst);
@@ -56,6 +76,9 @@ namespace interpreter {
 		virtual void HandleBranchInst (const llvm::Instruction &inst,
 			  const llvm::Value *cond, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse) = 0;
 		virtual void HandleBranchInst (const llvm::Instruction &inst, const llvm::BasicBlock *jump) = 0;
+
+		// BinOp
+		virtual void HandleBinOp (const llvm::Instruction &inst, const llvm::Value *lhs, const llvm::Value *rhs) = 0;
 
 		// Cmp
 		virtual void HandleICmpInst (const llvm::Instruction &inst, const llvm::Value *lhs, const llvm::Value *rhs) = 0;

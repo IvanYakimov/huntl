@@ -45,7 +45,7 @@ namespace interpreter {
 		else if (Case (inst))
 			HandleReturnInst(inst);
 		else
-			; // Matching failure
+			throw Failure(); // Matching failure
 	}
 
 	void Matcher::visitBranchInst(const BranchInst &inst) {
@@ -61,7 +61,27 @@ namespace interpreter {
 		else if (Case (inst, &jump))
 			HandleBranchInst(inst, jump);
 		else
-			throw std::logic_error("matching failure"); // Matching failure
+			throw Failure(); // Matching failure
+	}
+
+	void Matcher::visitBinaryOperator(const llvm::BinaryOperator &inst) {
+		DebugInstInfo(inst);
+
+		Value *lhs = NULL,
+				*rhs = NULL;
+
+		if (Case (inst, &lhs, &rhs)) {
+			auto op_code = inst.getOpcode();
+			//TODO: check this code
+			Assert<Support>(not (op_code == Instruction::FAdd or
+					op_code == Instruction::FSub or
+					op_code == Instruction::FMul or
+					op_code == Instruction::FDiv or
+					op_code == Instruction::FRem));
+			HandleBinOp(inst, lhs, rhs);
+		}
+		else
+			throw Failure();
 	}
 
 	void Matcher::visitICmpInst(const ICmpInst &inst) {
@@ -73,7 +93,7 @@ namespace interpreter {
 		if (Case (inst, &lhs, &rhs))
 			HandleICmpInst(inst, lhs, rhs);
 		else
-			; // Matching Failure
+			throw Failure(); // Matching Failure
 	}
 
 	void Matcher::visitAllocaInst (const AllocaInst &inst)
@@ -84,7 +104,7 @@ namespace interpreter {
 		if (Case (inst, &allocated))
 			HandleAllocaInst(inst, allocated);
 		else
-			; // Matching Failure
+			throw Failure(); // Matching Failure
 	}
 
 	void Matcher::visitLoadInst (const LoadInst &inst)
@@ -95,7 +115,7 @@ namespace interpreter {
 		if (Case (inst, &ptr))
 			HandleLoadInst(inst, ptr);
 		else
-			; // Matching Failure
+			throw Failure(); // Matching Failure
 	}
 
 	void Matcher::visitStoreInst (const StoreInst &inst)
@@ -114,7 +134,7 @@ namespace interpreter {
 		else if (Case (inst, &val, &ptr))
 			HandleStoreInst(inst, val, ptr);
 		else
-			; // Matching Failure
+			throw Failure(); // Matching Failure
 	}
 
 	//--------------------

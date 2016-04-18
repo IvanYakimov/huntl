@@ -29,6 +29,11 @@ namespace interpreter {
 	void Executor::HandleBranchInst (const llvm::Instruction &inst, const llvm::BasicBlock *jump) {
 	}
 
+	// BinOp
+	void Executor::HandleBinOp (const llvm::Instruction &inst, const llvm::Value *lhs, const llvm::Value *rhs) {
+
+	}
+
 	// Cmp
 	void Executor::HandleICmpInst (const llvm::Instruction &inst, const llvm::Value *lhs, const llvm::Value *rhs) {
 		auto get_op = [](const llvm::Instruction &inst) {

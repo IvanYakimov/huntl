@@ -21,6 +21,9 @@ namespace interpreter {
 			  const llvm::Value *cond, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse);
 		virtual void HandleBranchInst (const llvm::Instruction &inst, const llvm::BasicBlock *jump);
 
+		// BinOp
+		virtual void HandleBinOp (const llvm::Instruction &inst, const llvm::Value *lhs, const llvm::Value *rhs);
+
 		// Cmp
 		virtual void HandleICmpInst (const llvm::Instruction &inst, const llvm::Value *lhs, const llvm::Value *rhs);
 

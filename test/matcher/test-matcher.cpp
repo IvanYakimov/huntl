@@ -46,6 +46,24 @@ public:
 		return builder_.CreateRet(what);
 	}
 
+	Value* EQ(Value* lhs, Value* rhs) {
+		return builder_.CreateICmpEQ(lhs, rhs);
+	}
+
+	BranchInst* IfThanElse(Value* cond, BasicBlock* iftrue, BasicBlock* iffalse) {
+		return builder_.CreateCondBr(cond, iftrue, iffalse);
+	}
+
+	BranchInst* Jump(BasicBlock* dest) {
+		return builder_.CreateBr(dest);
+	}
+
+	Value* Add(Value* lhs, Value* rhs) {
+		return builder_.CreateAdd(lhs, rhs);
+	}
+
+	// -->
+
 	BasicBlock* Block(const char* name) {
 		return BasicBlock::Create(context_, name, func_);
 	}
@@ -53,7 +71,7 @@ public:
 	void Enter(BasicBlock* block) {
 		builder_.SetInsertPoint(block);
 	}
-	// -->
+
 
 	//Initializators
 	void InitInt32Func() {
@@ -68,8 +86,8 @@ public:
 
 	// Matching
 	void MatchOnFunc() {
-		ASSERT_FALSE(verifyFunction(*func_));
 		errs() << *func_ << "\n";
+		ASSERT_FALSE(verifyFunction(*func_));
 		// If there are no errors, the function returns false.
 
 		for (Function::iterator i = func_->begin(), e = func_->end(); i != e; ++i)
@@ -89,7 +107,7 @@ public:
 };
 
 TEST_F(MatcherTest, ret__const) {
-	auto ret = builder_.CreateRet(I32(42));
+	auto ret = Ret(I32(42));
 }
 
 TEST_F(MatcherTest, alloca_store_load_ret) {
@@ -103,20 +121,35 @@ TEST_F(MatcherTest, if_than_else) {
 	auto true_branch = Block("true-branch");
 	auto false_branch = Block("false-branch");
 	auto x = Alloca32("x");
-	auto load_x = Load(x);
-	auto icmp = builder_.CreateICmpEQ(load_x, I32(2));
-	auto jump = builder_.CreateCondBr(icmp, true_branch, false_branch);
-	Enter(true_branch);
-	Ret(I32(1));
-	Enter(false_branch);
-	Ret(I32(-1));
+	auto icmp = EQ(Load(x), I32(2));
+	auto jump = IfThanElse(icmp, true_branch, false_branch);
+	Enter(true_branch); {
+		Ret(I32(1));
+	}
+	Enter(false_branch); {
+		Ret(I32(-1));
+	}
 }
 
 TEST_F(MatcherTest, jump) {
 	auto dest = Block("dest");
-	auto jump = builder_.CreateBr(dest);
-	Enter(dest);
-	Ret(I32(0));
+	auto jump = Jump(dest);
+	Enter(dest); {
+		Ret(I32(0));
+	}
+}
+
+TEST_F(MatcherTest, binop) {
+	auto x = Alloca32("x");
+	auto y = Alloca32("y");
+	auto binop = Add(Load(x), Load(y));
+	BinaryOperator* tmp = llvm::dyn_cast<BinaryOperator>(binop);
+	Instruction::BinaryOps opcode = tmp->getOpcode();
+	std::string name = tmp->getOpcodeName();
+	Ret(binop);
+}
+
+TEST_F(MatcherTest, phi_node) {
 }
 
 int main(int argc, char** argv, char **env) {
