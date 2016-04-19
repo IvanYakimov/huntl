@@ -4,41 +4,54 @@
 
 using namespace llvm;
 
-//TODO: total refactoring!!!
-class MatcherTest : public ::testing::Test {
-public:
+class Func {
+protected:
 	LLVMContext &context_ ;// = getGlobalContext();
 	IRBuilder<> builder_ ;//(getGlobalContext());
-	Module *module_ = nullptr;
+	Module* module_ = nullptr;
+	FunctionType* func_ty_ = nullptr;
+	Function* func_ = nullptr;
+	BasicBlock* entry_ = nullptr;
 
-	Function *func_ = nullptr;
-	BasicBlock *entry_ = nullptr;
-	interpreter::MatcherStub matcher_;
-
-	MatcherTest() : builder_(getGlobalContext()), context_(getGlobalContext()) {
+public:
+	Func() : builder_(getGlobalContext()), context_(getGlobalContext()) {
 		module_ = new Module("test", context_);
+		entry_ = Block("entry");
+		Enter(entry_);
 	}
 
-	~MatcherTest() {
+	virtual ~Func() {
 		delete module_;
 	}
 
-	// <-- Helpers
+	Function* Get() {
+		return func_;
+	}
+
+	BasicBlock* Block(const char* name) {
+		return BasicBlock::Create(context_, name, func_);
+	}
+
+	void Enter(BasicBlock* block) {
+		builder_.SetInsertPoint(block);
+	}
+
+
 	AllocaInst* Alloca32(const char *name) {
-		AllocaInst* res = builder_.CreateAlloca(Type::getInt32Ty(module_->getContext()), 0, name);
+		AllocaInst* res = builder_.CreateAlloca(Type::getInt32Ty(context_), 0, name);
 		res->setAlignment(4);
 		return res;
 	}
 
 	ConstantInt* I32(uint32_t val) {
-		return ConstantInt::get(module_->getContext(), APInt(32, val, true));
+		return ConstantInt::get(context_, APInt(32, val, true));
 	}
 
 	ConstantInt* I1(bool val) {
 		if (val == true)
-			return ConstantInt::get(module_->getContext(), APInt(1, 1, true));
+			return ConstantInt::get(context_, APInt(1, 1, true));
 		else
-			return ConstantInt::get(module_->getContext(), APInt(1, 0, true));
+			return ConstantInt::get(context_, APInt(1, 0, true));
 	}
 
 	ConstantInt* True() {
@@ -59,6 +72,125 @@ public:
 
 	ReturnInst* Ret(Value *what) {
 		return builder_.CreateRet(what);
+	}
+
+	ReturnInst* RetVoid() {
+		return builder_.CreateRetVoid();
+	}
+
+	Value* EQ(Value* lhs, Value* rhs) {
+		return builder_.CreateICmpEQ(lhs, rhs);
+	}
+
+	Value* NE(Value* lhs, Value* rhs) {
+		return builder_.CreateICmpNE(lhs, rhs);
+	}
+
+	BranchInst* IfThanElse(Value* cond, BasicBlock* iftrue, BasicBlock* iffalse) {
+		return builder_.CreateCondBr(cond, iftrue, iffalse);
+	}
+
+	BranchInst* Jump(BasicBlock* dest) {
+		return builder_.CreateBr(dest);
+	}
+
+	Value* Add(Value* lhs, Value* rhs) {
+		return builder_.CreateAdd(lhs, rhs);
+	}
+
+	//TODO: Make variadic
+	PHINode* Phi(Type* ty) {
+		return builder_.CreatePHI(ty, 0);
+	}
+
+	Value* ZExt(Value* val, Type* ty){
+		return builder_.CreateZExt(val, ty);
+	}
+
+	Type* Int32Ty() {
+		return Type::getInt32Ty(context_);
+	}
+
+	Type* Int1Ty() {
+		return Type::getInt1Ty(context_);
+	}
+};
+
+class Int32Func : public Func {
+	Int32Func() : Func() {
+		func_ty_ = FunctionType::get(Type::getInt32Ty(context_), false);
+		func_= Function::Create(func_ty_, Function::InternalLinkage, "test", module_);
+	}
+};
+
+class VoidFunc : public Func {
+	VoidFunc() : Func() {
+		func_ty_ = FunctionType::get(Type::getVoidTy(context_), false);
+		func_= Function::Create(func_ty_, Function::InternalLinkage, "test", module_);
+	}
+};
+
+//TODO: total refactoring!!!
+class MatcherTest : public ::testing::Test {
+public:
+	LLVMContext &context_ ;// = getGlobalContext();
+	IRBuilder<> builder_ ;//(getGlobalContext());
+	Module *module_ = nullptr;
+
+	Function *func_ = nullptr;
+	Function *func_void_ = nullptr;
+	Function *func_i32_ = nullptr;
+	BasicBlock *entry_ = nullptr;
+	interpreter::MatcherStub matcher_;
+
+	MatcherTest() : builder_(getGlobalContext()), context_(getGlobalContext()) {
+		module_ = new Module("test", context_);
+	}
+
+	~MatcherTest() {
+		delete module_;
+	}
+
+	// <-- Helpers
+	AllocaInst* Alloca32(const char *name) {
+		AllocaInst* res = builder_.CreateAlloca(Type::getInt32Ty(context_), 0, name);
+		res->setAlignment(4);
+		return res;
+	}
+
+	ConstantInt* I32(uint32_t val) {
+		return ConstantInt::get(context_, APInt(32, val, true));
+	}
+
+	ConstantInt* I1(bool val) {
+		if (val == true)
+			return ConstantInt::get(context_, APInt(1, 1, true));
+		else
+			return ConstantInt::get(context_, APInt(1, 0, true));
+	}
+
+	ConstantInt* True() {
+		return I1(true);
+	}
+
+	ConstantInt* False() {
+		return I1(false);
+	}
+
+	StoreInst* Store(Value* what, Value* where) {
+		return builder_.CreateStore(what, where);
+	}
+
+	LoadInst* Load(Value *from) {
+		return builder_.CreateLoad(from);
+	}
+
+	ReturnInst* Ret(Value *what) {
+		return builder_.CreateRet(what);
+	}
+
+	ReturnInst* RetVoid() {
+		return builder_.CreateRetVoid();
 	}
 
 	Value* EQ(Value* lhs, Value* rhs) {
@@ -112,12 +244,20 @@ public:
 	//Initializators
 	void InitInt32Func() {
 		FunctionType *void_func_ty_ = FunctionType::get(Type::getInt32Ty(context_), false);
-		func_ = Function::Create(void_func_ty_, Function::InternalLinkage, "test", module_);
+		func_i32_ = Function::Create(void_func_ty_, Function::InternalLinkage, "test", module_);
 	}
 
 	void InitVoidFunc() {
 		FunctionType *void_func_ty_ = FunctionType::get(Type::getVoidTy(context_), false);
-		func_ = Function::Create(void_func_ty_, Function::InternalLinkage, "test", module_);
+		func_void_ = Function::Create(void_func_ty_, Function::InternalLinkage, "test", module_);
+	}
+
+	void SelectInt32Func() {
+		func_ = func_i32_;
+	}
+
+	void SelectVoidFunc() {
+		func_ = func_void_;
 	}
 
 	// Matching
@@ -133,6 +273,9 @@ public:
 	// Test confuguration
 	virtual void SetUp() {
 		InitInt32Func();
+		InitVoidFunc();
+
+		SelectInt32Func();
 		entry_ = Block("entry");
 		Enter(entry_);
 	}
@@ -141,6 +284,13 @@ public:
 		MatchOnFunc();
 	}
 };
+
+TEST_F(MatcherTest, ret__void) {
+	SelectVoidFunc();
+	auto b0 = Block("b0");
+	Enter(b0);
+	auto ret = RetVoid();
+}
 
 TEST_F(MatcherTest, ret__const) {
 	auto ret = Ret(I32(42));

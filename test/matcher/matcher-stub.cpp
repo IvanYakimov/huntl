@@ -78,6 +78,7 @@ namespace interpreter {
 	}
 
 	void MatcherStub::HandleReturnInst (const llvm::Instruction &inst, const llvm::Value *ret_val) {
+		FAIL();
 		Printer::Do(&inst, ret_val);
 		ASSERT_TRUE(isa<Instruction>(inst)
 				and isa<Value>(ret_val));
