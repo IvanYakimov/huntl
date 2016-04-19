@@ -106,7 +106,7 @@ namespace interpreter {
 	// BinOp
 	void MatcherStub::HandleBinOp (const llvm::Instruction &inst, const llvm::Value *lhs, const llvm::Value *rhs) {
 		Printer::Do(&inst, lhs, rhs);
-		ASSERT_TRUE(isa<instruction>(inst)
+		ASSERT_TRUE(isa<Instruction>(inst)
 				and isa<Value>(lhs)
 				and isa<Value>(rhs));
 	}
