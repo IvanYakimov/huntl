@@ -78,7 +78,7 @@ namespace solver {
 						throw TypeCheckingException();
 					CVC4::Integer cvc4_integer = cvc4_btv.toInteger();
 					uint64_t raw_ulval = cvc4_integer.getUnsignedLong();
-					auto result = GetExprManager()->MkIntVal(int_ty->IsSigned(), int_ty->GetWidth(), raw_ulval);
+					auto result = ExprManager::Get()->MkIntVal(int_ty->IsSigned(), int_ty->GetWidth(), raw_ulval);
 					return result;
 				}
 				else throw ImplementationException();
