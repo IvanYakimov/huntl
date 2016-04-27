@@ -2,14 +2,6 @@
 
 namespace solver {
 
-	ExprManagerPtr GetExprManager() {
-		static ExprManagerPtr em_ (nullptr);
-		if (em_ == nullptr)
-			return em_ = std::make_shared<ExprManager>();
-		else
-			return em_;
-	}
-
 	ExprManager::ExprManager() : type_table_ {
 		std::make_shared<IntTy<int8_t>>(),
 		std::make_shared<IntTy<int16_t>>(),

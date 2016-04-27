@@ -12,7 +12,7 @@ namespace solver {
 	 *  \attention Warning: do not use this helper functions in the main project
 	 *  \note Use them in an appropriate test suites. */
 	static ExprPtr Apply(ExprPtr left, ExprPtr right, Kind kind) {
-		return GetExprManager()->MkBinOp(left, right, kind);
+		return ExprManager::Get()->MkBinOp(left, right, kind);
 	}
 
 	using Func = std::function<ExprPtr(ExprPtr,ExprPtr)>;
@@ -44,11 +44,11 @@ namespace solver {
 	/** Helper function - returns new constant.
 	 *  \attention Warning: do not use this helper functions in the main project
 	 *  \note Use them in an appropriate test suites. */
-	template<typename T> ExprPtr C(T val) { return GetExprManager()->MkConst(GetExprManager()->MkIntVal<T>(val)); }
+	template<typename T> ExprPtr C(T val) { return ExprManager::Get()->MkConst(ExprManager::Get()->MkIntVal<T>(val)); }
 	/** Helper function - returns new variable.
 	 *  \attention Warning: do not use this helper functions in the main project
 	 *  \note Use them in an appropriate test suites. */
-	template<typename T> ExprPtr V(std::string name) { return GetExprManager()->MkVar(name, GetExprManager()->MkIntTy<T>()); }
+	template<typename T> ExprPtr V(std::string name) { return ExprManager::Get()->MkVar(name, ExprManager::Get()->MkIntTy<T>()); }
 }
 
 #endif /* __EXPR_MANAGER_HELPER_HPP__ */

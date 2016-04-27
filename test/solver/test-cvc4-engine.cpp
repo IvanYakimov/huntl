@@ -24,7 +24,7 @@ namespace solver {
 		void TearDown() {
 			try { delete engine_; } catch (Exception &ex) {;}
 		}
-		ExprManagerPtr em_ = GetExprManager();
+		ExprManagerPtr em_ = ExprManager::Get();
 		CVC4Engine *engine_ = nullptr;
 	};
 
@@ -389,7 +389,7 @@ namespace solver {
 			auto l = V<int32_t>("x");
 			auto r = C<int32_t>(42);
 			auto act = f(l, r);
-			auto exp = GetExprManager()->MkBinOp(l, r, k);
+			auto exp = ExprManager::Get()->MkBinOp(l, r, k);
 			ASSERT_EQ(*exp, *act);
 		};
 

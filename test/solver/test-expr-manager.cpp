@@ -7,13 +7,12 @@ namespace solver {
 		ExprManager em;
 	};
 
-	//TODO: find "segmentation fault" problem source!
-
+	//TODO: extract singleton test
 	//Singleton test
 	TEST_F(ExprManagerTest, GetExprManager) {
-		ExprManagerPtr em_1 = GetExprManager();
-		ExprManagerPtr em_2 = GetExprManager();
-		ExprManagerPtr em_3 = GetExprManager();
+		ExprManagerPtr em_1 = ExprManager::Get();
+		ExprManagerPtr em_2 = ExprManager::Get();
+		ExprManagerPtr em_3 = ExprManager::Get();
 		ASSERT_NE(em_1, nullptr);
 		ASSERT_EQ(em_1, em_2); ASSERT_EQ(em_2, em_3); ASSERT_EQ(em_1, em_3);
 	}
@@ -52,7 +51,7 @@ namespace solver {
 	TEST_F(ExprManagerTest, MkIntVal_FromULong) {
 			using namespace std;
 			using Equality = bool;
-			ExprManagerPtr em_ = GetExprManager();
+			ExprManagerPtr em_ = ExprManager::Get();
 			uint64_t val = 42;
 
 			auto i8ty = em_->MkIntVal(true, Width::w8, val);

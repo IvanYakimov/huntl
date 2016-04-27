@@ -6,29 +6,23 @@
 #include "expr.hpp"
 #include <algorithm>
 #include <memory>
+#include "../utils/singleton.hpp"
 
 namespace solver {
+	using utils::Singleton;
 	class ExprManager;
-
 	/** Smart pointer to ExprManager, used in a singleton pattern implementation.
 	 * \see ExprManager
 	 * \see GetExprManager
 	 */
 	using ExprManagerPtr = std::shared_ptr<ExprManager>;
 
-	/** Singleton pattern implementation. There is only one instance of ExprManager in run-time,
-	 * to get (smart pointer to) it use this method.
-	 * \see ExprManager
-	 */
-	ExprManagerPtr GetExprManager();
-
 	/**
 	 * Helps to create smt expressions. Use it to create any run-time instances of any smt expressions,
 	 * (never use corresponding expression's constructors directly!).
 	 * \see ExprManagerHelper
 	 */
-	class ExprManager
-	{
+	class ExprManager : public Singleton<ExprManager> {
 	public:
 		/** Basic constructor, do NOT use it directly! Use GetExprManager to obtain (smart pointer to instance of) expr manager.
 		 * \see GetExprManager
