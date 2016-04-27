@@ -8,19 +8,18 @@
 #include "../utils/object.hpp"
 #include "../utils/index-cache.hpp"
 #include "state.hpp"
+#include "memory-interface.hpp"
 
 namespace interpreter {
-	using Address = uint32_t;
-
 	/** Implementation of copy-on-write idiom for memory management on object-level.
 	 * It is similar to the UNIX copy-on-write algorithm for managing memory among several processes.
 	 * It uses mechanism similar to C++ std::shared_ptr for garbage collection.
 	 * \see Modern Operating Systems (4th Edition) 4th Edition by Andrew S. Tanenbaum (Author), Herbert Bos  (Author)
 	 * \see 2014. Effective Modern C++: 42 Specific Ways to Improve Your Use of C++11 and C++14. ISBN 1-491-90399-6
 	 */
-	class Memory {
-#define MASTER_ID 0
-#define INITIAL_ID 1
+	class Memory final : public MemoryInterface {
+		static const int MASTER_ID = 0;
+		static const int INITIAL_ID = 1;
 	public:
 		enum class Failure {
 					RECORD_NOT_FOUND,
@@ -76,41 +75,41 @@ namespace interpreter {
 	public:
 
 		Memory();
-		~Memory();
+		virtual ~Memory();
 
 		/** read.
 		 * Return the object pointer.
 		 * \param address - address of the object
 		 * \param state_id - state id, the state must be in object's owner list
 		 */
-		ObjectPtr Read(Address address, StateId state_id);
+		virtual ObjectPtr Read(Address address, StateId state_id);
 
 		/** copy-on-write.
 		 * \param address - object's address
 		 * \param state_id - state id, the state must be in object's owner list
 		 * \param object - target object
 		 */
-		Address Write(Address address, StateId state_id, ObjectPtr object);
+		virtual Address Write(Address address, StateId state_id, ObjectPtr object);
 
 		/** Allocate memory for new object.
 		 * \param state_id - owner of a new record
 		 * \return address of allocated object
 		 */
-		Address Allocate(StateId state_id);
+		virtual Address Allocate(StateId state_id);
 
 		/** Allocate memory for new object record and write it.
 		 * \param state_id - owner of a new record
 		 * \param object - object, which should be written to the new record
 		 * \return - address of allocated object
 		 */
-		Address Allocate(StateId state_id, ObjectPtr object);
+		virtual Address Allocate(StateId state_id, ObjectPtr object);
 
 		/** Free memory which not used by a state with the passed state id.
 		 * \remarks
 		 * - Remove state from the object's owner list (by RemoveOwner).
 		 * - Try to delete object record (by TryDelete)
 		 */
-		void Free(Address address, StateId state_id);
+		virtual void Free(Address address, StateId state_id);
 
 		/** Try to share object.
 		 * \remarks
@@ -120,7 +119,7 @@ namespace interpreter {
 		 * \param address - target object address
 		 * \state_id - new owners id
 		 */
-		void Share(Address address, StateId owner, StateId follower);
+		virtual void Share(Address address, StateId owner, StateId follower);
 
 	private:
 		Record GetRecord(Address address);
