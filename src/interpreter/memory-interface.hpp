@@ -1,8 +1,13 @@
+#ifndef __MEMORY_INTERFACE_HPP__
+#define __MEMORY_INTERFACE_HPP__
+
 #include "state.hpp"
 #include "../utils/singleton.hpp"
 
 namespace interpreter {
+	//TODO: Move to MemoryInterface
 	using Address = uint32_t;
+
 	using utils::Singleton;
 
 	class MemoryInterface;
@@ -51,6 +56,7 @@ namespace interpreter {
 	};
 }
 
+#endif /* __MEMORY_INTERFACE_HPP__ */
 
 
 

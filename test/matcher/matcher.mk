@@ -1,7 +1,7 @@
 SHELL = /bin/sh
 
 OBJ = test-matcher.o matcher-stub.o matcher.o \
-	test-executor.o executor.o \
+	test-executor.o executor.o display-stub.o \
 	ir-function-builder.o
 
 CXX = g++  

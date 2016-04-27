@@ -10,6 +10,7 @@
 #include "memory-interface.hpp"
 #include "state.hpp"
 
+//TODO: move all memory (and display) classes to memory namespace
 namespace interpreter {
 	/** Implementation of copy-on-write idiom for memory management on object-level.
 	 * It is similar to the UNIX copy-on-write algorithm for managing memory among several processes.
