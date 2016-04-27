@@ -5,6 +5,8 @@ namespace interpreter {
 	using Address = uint32_t;
 	using utils::Singleton;
 
+	class MemoryInterface;
+
 	using MemoryPtr = std::shared_ptr<MemoryInterface>;
 
 	class MemoryInterface : public Singleton<MemoryInterface> {

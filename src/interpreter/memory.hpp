@@ -7,8 +7,8 @@
 #include <stack>
 #include "../utils/object.hpp"
 #include "../utils/index-cache.hpp"
-#include "state.hpp"
 #include "memory-interface.hpp"
+#include "state.hpp"
 
 namespace interpreter {
 	/** Implementation of copy-on-write idiom for memory management on object-level.
