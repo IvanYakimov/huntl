@@ -1,6 +1,8 @@
 SHELL = /bin/sh
 
-OBJ = test-matcher.o matcher-stub.o matcher.o
+OBJ = test-matcher.o matcher-stub.o matcher.o \
+	test-executor.o executor.o \
+	ir-function-builder.o
 
 CXX = g++  
 CXXFLAGS = -fdiagnostics-color=always -g -std=c++11 -Wno-deprecated
