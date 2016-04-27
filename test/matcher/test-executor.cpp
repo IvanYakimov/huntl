@@ -2,7 +2,11 @@
 
 using namespace interpreter;
 
-class MatcherTest : public ::testing::Test {
+class ExecutorTest : public ::testing::Test {
 public:
 	//Executor executor();
 };
+
+TEST_F(ExecutorTest, basic_allocation) {
+
+}

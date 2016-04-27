@@ -15,15 +15,15 @@ class DisplayStub : interpreter::DisplayInterface {
 private:
 	interpreter::StateId owner_;
 	interpreter::MemoryPtr memory_;
-	std::map <const llvm::Instruction*, interpreter::Address> memory_map_;
+	std::map <const llvm::Value*, interpreter::Address> memory_map_;
 public:
 	DisplayStub(interpreter::MemoryPtr memory, interpreter::StateId owner) : memory_(memory), owner_(owner) {}
 	virtual ~DisplayStub();
-	virtual ObjectPtr Read(const llvm::Instruction* ptr);
-	virtual void Write(const llvm::Instruction* ptr, ObjectPtr val);
-	virtual void Allocate(const llvm::Instruction* ptr);
+	virtual ObjectPtr Read(const llvm::Value* ptr);
+	virtual void Write(const llvm::Value* ptr, ObjectPtr val);
+	virtual void Allocate(const llvm::Value* ptr);
 private:
-	bool LookUp(const llvm::Instruction* ptr);
+	bool LookUp(const llvm::Value* ptr);
 };
 
 #endif

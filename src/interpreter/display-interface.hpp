@@ -17,9 +17,9 @@ namespace interpreter {
 	class DisplayInterface {
 	public:
 		virtual ~DisplayInterface() {}
-		virtual ObjectPtr Read(const llvm::Instruction* ptr) = 0;
-		virtual void Write(const llvm::Instruction* ptr, ObjectPtr val) = 0;
-		virtual void Allocate(const llvm::Instruction* ptr) = 0;
+		virtual ObjectPtr Read(const llvm::Value* ptr) = 0;
+		virtual void Write(const llvm::Value* ptr, ObjectPtr val) = 0;
+		virtual void Allocate(const llvm::Value* ptr) = 0;
 	};
 }
 
