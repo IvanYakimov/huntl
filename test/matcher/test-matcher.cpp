@@ -4,7 +4,6 @@
 
 using namespace llvm;
 
-//TODO: total refactoring!!!
 class MatcherTest : public ::testing::Test {
 public:
 	interpreter::MatcherStub matcher_;

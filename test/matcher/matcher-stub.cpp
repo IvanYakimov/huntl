@@ -78,6 +78,7 @@ namespace interpreter {
 	}
 
 	void MatcherStub::HandleReturnInst (const llvm::Instruction &inst, const llvm::Value *ret_val) {
+		//TODO: add following test or remove
 		FAIL();
 		Printer::Do(&inst, ret_val);
 		ASSERT_TRUE(isa<Instruction>(inst)
@@ -136,11 +137,13 @@ namespace interpreter {
 
 	// Store
 	void MatcherStub::HandleStoreInst (const llvm::Instruction &inst, const llvm::Value *val, const llvm::Value *ptr) {
+		//TODO: add following test
 		Printer::Do(&inst, val, ptr);
 		FAIL() << "not covered";
 	}
 
 	void MatcherStub::HandleStoreInst (const llvm::Instruction &inst, const llvm::Instruction *instruction, const llvm::Value *ptr) {
+		//TODO: add following test
 		Printer::Do(&inst, instruction, ptr);
 		FAIL() << "not covered";
 	}

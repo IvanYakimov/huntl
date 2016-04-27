@@ -51,6 +51,7 @@ namespace interpreter {
 	// Alloca
 	void Executor::HandleAllocaInst (const llvm::Instruction &inst, const llvm::Value *allocated) {
 		// Allocate memory in the current activation record.
+
 	}
 
 	// Load

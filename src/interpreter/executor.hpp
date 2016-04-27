@@ -1,13 +1,13 @@
 # ifndef __EXECUTOR_HPP__
 # define __EXECUTOR_HPP__
 
-// LLVM
-//# include "llvm/IR/Constants.h"
-
 // Project
+#include "matcher.hpp"
+#include "display-interface.hpp"
+
+// STL
 #include <exception>
 
-#include "matcher.hpp"
 //TODO: use -I option to perform headers search instead of ../ (?)
 
 namespace interpreter {
@@ -27,8 +27,11 @@ namespace interpreter {
 		std::unique_ptr<llvm::Instruction> inst_ = NULL;
 	};
 
-	class Executor final : public Matcher
-	{
+	class Executor final : public Matcher {
+	private:
+		DisplayPtr display_;
+	public:
+		Executor(DisplayPtr display) : display_(display) {}
 	private:
 		// Return
 		virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst);

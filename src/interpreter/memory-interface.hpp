@@ -33,6 +33,7 @@ namespace interpreter {
 		 */
 		virtual Address Allocate(StateId state_id) = 0;
 
+		//TODO: extract from the interface
 		/** Allocate memory for new object record and write it.
 		 * \param state_id - owner of a new record
 		 * \param object - object, which should be written to the new record
