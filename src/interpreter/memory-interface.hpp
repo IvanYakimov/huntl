@@ -1,9 +1,13 @@
 #include "state.hpp"
+#include "../utils/singleton.hpp"
 
 namespace interpreter {
 	using Address = uint32_t;
+	using utils::Singleton;
 
-	class MemoryInterface {
+	using MemoryPtr = std::shared_ptr<MemoryInterface>;
+
+	class MemoryInterface : public Singleton<MemoryInterface> {
 	public:
 		virtual ~MemoryInterface() {}
 
