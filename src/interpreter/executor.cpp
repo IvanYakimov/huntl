@@ -51,15 +51,15 @@ namespace interpreter {
 	// Alloca
 	void Executor::HandleAllocaInst (const llvm::Instruction &inst, const llvm::Value *allocated) {
 		// Allocate memory in the current activation record.
-		display_->Allocate(&inst);
+		display_->Alloc(&inst);
 	}
 
 	// Load
 	void Executor::HandleLoadInst (const llvm::Instruction &inst, const llvm::Value *ptr) {
 		// Load object form ptr
-		auto obj = display_->Read(ptr);
+		auto obj = display_->Load(ptr);
 		// Store (associate) object to &inst
-		display_->Write(&inst, obj);
+		display_->Store(&inst, obj);
 	}
 
 	// Store
@@ -85,9 +85,8 @@ namespace interpreter {
 			// Produce new constant
 			// Store it to ptr
 		}
-		else {
-			// Interpretation failure
-		}
+		else
+			; // Interpretation failure
 	}
 }
 
