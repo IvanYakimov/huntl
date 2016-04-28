@@ -6,13 +6,13 @@ DisplayStub::~DisplayStub() {
 	}
 }
 
-ObjectPtr DisplayStub::Read(const llvm::Value* ptr) {
+ObjectPtr DisplayStub::Load(const llvm::Value* ptr) {
 	assert(LookUp(ptr) && "a memory cell with the appropriate addres must exists");
 	auto addr = memory_map_[ptr];
 	return memory_->Read(addr, owner_);
 }
 
-void DisplayStub::Write(const llvm::Value* ptr, ObjectPtr val) {
+void DisplayStub::Store(const llvm::Value* ptr, ObjectPtr val) {
 	assert(LookUp(ptr) && "a memory cell with the appropriate addres must exists");
 	auto addr = memory_map_[ptr];
 	auto res_addr = memory_->Write(addr, owner_, val);
@@ -20,7 +20,7 @@ void DisplayStub::Write(const llvm::Value* ptr, ObjectPtr val) {
 }
 
 void DisplayStub::Alloca(const llvm::Value* ptr) {
-	assert(not LookUp(ptr) && "a memory cell with the appropriate addres mustn't exists");
+	assert(not LookUp(ptr) && "a memory cell with the appropriate addres can't exists");
 	auto addr = memory_map_[ptr];
 }
 

@@ -11,7 +11,7 @@
 #include <cassert>
 
 /** Displays instructions to addresses in bypass mode */
-class DisplayStub : interpreter::DisplayInterface {
+class DisplayStub : public interpreter::DisplayInterface {
 private:
 	interpreter::StateId owner_;
 	interpreter::MemoryPtr memory_;

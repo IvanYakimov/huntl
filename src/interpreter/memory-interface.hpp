@@ -2,19 +2,16 @@
 #define __MEMORY_INTERFACE_HPP__
 
 #include "state.hpp"
-#include "../utils/singleton.hpp"
 
 namespace interpreter {
 	//TODO: Move to MemoryInterface
 	using Address = uint32_t;
 
-	using utils::Singleton;
-
 	class MemoryInterface;
 
 	using MemoryPtr = std::shared_ptr<MemoryInterface>;
 
-	class MemoryInterface : public Singleton<MemoryInterface> {
+	class MemoryInterface {
 	public:
 		virtual ~MemoryInterface() {}
 

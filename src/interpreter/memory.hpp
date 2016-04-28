@@ -9,16 +9,18 @@
 #include "../utils/index-cache.hpp"
 #include "memory-interface.hpp"
 #include "state.hpp"
+#include "../utils/singleton.hpp"
 
 //TODO: move all memory (and display) classes to memory namespace
 namespace interpreter {
+	using utils::VirtualSingleton;;
 	/** Implementation of copy-on-write idiom for memory management on object-level.
 	 * It is similar to the UNIX copy-on-write algorithm for managing memory among several processes.
 	 * It uses mechanism similar to C++ std::shared_ptr for garbage collection.
 	 * \see Modern Operating Systems (4th Edition) 4th Edition by Andrew S. Tanenbaum (Author), Herbert Bos  (Author)
 	 * \see 2014. Effective Modern C++: 42 Specific Ways to Improve Your Use of C++11 and C++14. ISBN 1-491-90399-6
 	 */
-	class Memory final : public MemoryInterface {
+	class Memory final : public VirtualSingleton<Memory, MemoryInterface> {
 		static const int MASTER_ID = 0;
 		static const int INITIAL_ID = 1;
 	public:

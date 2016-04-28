@@ -4,12 +4,12 @@ using namespace interpreter;
 
 class ExecutorTest : public ::testing::Test {
 public:
-	const StateId the_state = 2;
+	const StateId owner_ = 2;
 	DisplayPtr disp_;
 	Executor *exec_ = nullptr;
 
 	ExecutorTest() {
-		disp_ = std::make_shared<DisplayStub>(Memory::Get(), the_state);
+		disp_ = std::make_shared<DisplayStub>(Memory::Get(), owner_);
 		exec_ = new Executor(disp_);
 	}
 
