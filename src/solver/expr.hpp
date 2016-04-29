@@ -42,7 +42,7 @@ namespace solver
 	 * \see ExprPtr
 	 * \see CRTP
 	 */
-	class Expr : public CRTP<Expr, Immutable> {
+	class Expr : public comparable<Expr, Immutable> {
 	public:
 		virtual ~Expr() {}
 	};
@@ -55,7 +55,7 @@ namespace solver
 	 * \see Kind
 	 * \see ExprManager::MkBinOp
 	 */
-	class BinOp : public CRTP<BinOp, Expr>{
+	class BinOp : public comparable<BinOp, Expr>{
 	public:
 		/** Basic constructor.
 		 * \attention Do NOT use it directly! Use ::solver::ExprManager::MkBinOp() instead */
@@ -87,7 +87,7 @@ namespace solver
 	 * \see Type
 	 * \see ExprManager::MkVar
 	 */
-	class Var final : public CRTP <Var, Expr> {
+	class Var final : public comparable <Var, Expr> {
 	public:
 		/** Basic constructor.
 		 * \attention Do NOT use it directly! Use ::solver::ExprManager::MkVar() instead */
@@ -115,7 +115,7 @@ namespace solver
 	 * \see Value
 	 * \see ExprManager::MkConst
 	 */
-	class Const : public CRTP<Const, Expr> {
+	class Const : public comparable<Const, Expr> {
 	public:
 		/** Basic constructor.
 		 * \attention Do NOT use it directly! Use ::solver::ExprManager::MkConst() instead */

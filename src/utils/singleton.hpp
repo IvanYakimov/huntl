@@ -27,9 +27,9 @@ namespace utils {
 	};
 
 	template <class T, class B>
-	class VirtualSingleton : public B {
+	class singleton {
 	public:
-		virtual ~VirtualSingleton(){}
+		virtual ~singleton(){}
 		/**	Returns (smart pointer to) instance T. At the first time it creates new instance,
 		 * and always returns it in futher function calls. */
 		static std::shared_ptr<B> Get() {

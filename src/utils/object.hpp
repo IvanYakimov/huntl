@@ -36,7 +36,7 @@ using ObjectPtr = std::shared_ptr<Object>;
  * \see https://en.wikipedia.org/wiki/Barton%E2%80%93Nackman_trick
  * \see https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern */
 template <class T, class B>
-class CRTP : public B {
+class comparable : public B {
 public:
 	/** Equality operator.
 	 * To provide correct behavior of operator== one should overload Equals method in class T.
@@ -60,14 +60,14 @@ public:
 
 /** Every immutable shared object must be inherited from this.
  */
-class Immutable : public CRTP<Immutable, Object> {
+class Immutable : public comparable<Immutable, Object> {
 public:
 	virtual ~Immutable() {}
 };
 
 /** Evey mutalbe shared object must be inherited from this.
  */
-class Mutable : public CRTP<Mutable, Object> {
+class Mutable : public comparable<Mutable, Object> {
 public:
 	virtual ~Mutable() {}
 	virtual ObjectPtr Clone() = 0;

@@ -18,7 +18,7 @@ namespace interpreter {
 	class ObjectStub;
 	using ObjectStubPtr = std::shared_ptr<ObjectStub>;
 
-	class ObjectStub final : public CRTP<ObjectStub, Immutable> {
+	class ObjectStub final : public comparable<ObjectStub, Immutable> {
 	public:
 		ObjectStub() {
 			id_ = id_cache_.Get();

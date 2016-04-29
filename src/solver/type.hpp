@@ -3,6 +3,7 @@
 
 //PROJECT
 #include "../utils/object.hpp"
+#include "../utils/singleton.hpp"
 #include "width.hpp"
 
 //STL
@@ -14,13 +15,15 @@ namespace solver {
 	class BasicIntTy;
 	template<typename T> class IntTy;
 
+	using utils::singleton;
+
 	using TypePtr = std::shared_ptr<Type>;
 
 	/** Basic type.
 	 * \note Every particular type should be inherited (by CRTP <T,B>) from this.
 	 * \see BasicIntTy
 	 * \see CRTP <T,B>*/
-	class Type : public CRTP <Type, Object> {
+	class Type : public comparable <Type, Object> {
 	public:
 		virtual ~Type() {}
 	};
@@ -28,7 +31,7 @@ namespace solver {
 	/** Basic integer type. Is is useful to make (smart) pointer to particular IntTy.
 	 * \see IntTy
 	 * \see ExprManager::MkIntTy */
-	class BasicIntTy : public CRTP <BasicIntTy, Type> {
+	class BasicIntTy : public comparable <BasicIntTy, Type> {
 	public:
 		virtual ~BasicIntTy() {}
 		/** Returns width (number of bites) of wrapped raw integer type */
@@ -42,7 +45,9 @@ namespace solver {
 	 * int8_t, int16_t, int32_t, int64_t, uint8_t, uint16_t, uint32_t, uint64_t.
 	 */
 	template<typename T>
-	class IntTy : public CRTP <IntTy<T>, BasicIntTy> {
+	class IntTy :
+			public comparable <IntTy<T>, BasicIntTy>,
+			public singleton <IntTy<T>, BasicIntTy> {
 	public:
 		/** Basic constructor.
 		 * \attention Do NOT use int directly! Use ExprManager::MkIntTy instead */
