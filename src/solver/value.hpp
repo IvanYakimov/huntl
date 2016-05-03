@@ -23,7 +23,7 @@ namespace solver {
 	 * \note Every particular value class should be inherited (by CRTP <T,B>) from this.
 	 * \see BasicInt
 	 * \see CRTP <T,B> */
-	class Value : public comparable <Value, Object> {
+	class Value : public shared <Value, Immutable> {
 	public:
 		virtual ~Value() {}
 	};
@@ -32,7 +32,7 @@ namespace solver {
 	 * \see Int
 	 * \see ExprManager::MkIntVal
 	 */
-	class BasicInt : public comparable <BasicInt, Value> {
+	class BasicInt : public shared <BasicInt, Value> {
 	public:
 		/** Returns width (number of bits) in the integer. */
 		virtual Width GetWidth() const = 0;
@@ -57,7 +57,7 @@ namespace solver {
 	 * int8_t, int16_t, int32_t, int64_t, uint8_t, uint16_t, uint32_t, uint64_t.
 	 */
 	template<typename T>
-	class Int : public comparable <Int<T>, BasicInt> {
+	class Int : public shared <Int<T>, BasicInt> {
 	public:
 		/** Basic constructor, do NOT use it directly! Use ExprManager::MkIntVal instead */
 		Int(T value);

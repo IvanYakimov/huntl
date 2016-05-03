@@ -23,7 +23,7 @@ namespace solver {
 	 * \note Every particular type should be inherited (by CRTP <T,B>) from this.
 	 * \see BasicIntTy
 	 * \see CRTP <T,B>*/
-	class Type : public comparable <Type, Object> {
+	class Type : public shared <Type, Immutable> {
 	public:
 		virtual ~Type() {}
 	};
@@ -31,7 +31,7 @@ namespace solver {
 	/** Basic integer type. Is is useful to make (smart) pointer to particular IntTy.
 	 * \see IntTy
 	 * \see ExprManager::MkIntTy */
-	class BasicIntTy : public comparable <BasicIntTy, Type> {
+	class BasicIntTy : public shared <BasicIntTy, Type> {
 	public:
 		virtual ~BasicIntTy() {}
 		/** Returns width (number of bites) of wrapped raw integer type */
@@ -46,7 +46,7 @@ namespace solver {
 	 */
 	template<typename T>
 	class IntTy :
-			public comparable <IntTy<T>, BasicIntTy>,
+			public shared <IntTy<T>, BasicIntTy>,
 			public singleton <IntTy<T>, BasicIntTy> {
 	public:
 		/** Basic constructor.

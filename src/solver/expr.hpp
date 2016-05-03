@@ -42,7 +42,7 @@ namespace solver
 	 * \see ExprPtr
 	 * \see CRTP
 	 */
-	class Expr : public comparable<Expr, Immutable> {
+	class Expr : public shared<Expr, Immutable> {
 	public:
 		virtual ~Expr() {}
 	};
@@ -55,7 +55,7 @@ namespace solver
 	 * \see Kind
 	 * \see ExprManager::MkBinOp
 	 */
-	class BinOp : public comparable<BinOp, Expr>{
+	class BinOp : public shared<BinOp, Expr>{
 	public:
 		/** Basic constructor.
 		 * \attention Do NOT use it directly! Use ::solver::ExprManager::MkBinOp() instead */
@@ -87,7 +87,7 @@ namespace solver
 	 * \see Type
 	 * \see ExprManager::MkVar
 	 */
-	class Var final : public comparable <Var, Expr> {
+	class Var final : public shared <Var, Expr> {
 	public:
 		/** Basic constructor.
 		 * \attention Do NOT use it directly! Use ::solver::ExprManager::MkVar() instead */
@@ -115,7 +115,7 @@ namespace solver
 	 * \see Value
 	 * \see ExprManager::MkConst
 	 */
-	class Const : public comparable<Const, Expr> {
+	class Const : public shared<Const, Expr> {
 	public:
 		/** Basic constructor.
 		 * \attention Do NOT use it directly! Use ::solver::ExprManager::MkConst() instead */
