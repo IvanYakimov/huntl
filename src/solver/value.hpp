@@ -13,12 +13,12 @@
 
 namespace solver {
 	class Value;
-	class BasicInt;
-	template<typename T> class Int;
+	class BasicIntVal;
+	template<typename T> class IntVal;
 
 	using ValuePtr = std::shared_ptr<Value>;
-	using BasicIntPtr = std::shared_ptr<BasicInt>;
-	template<typename T> using IntPtr = std::shared_ptr<Int<T>>;
+	using BasicIntPtr = std::shared_ptr<BasicIntVal>;
+	template<typename T> using IntPtr = std::shared_ptr<IntVal<T>>;
 
 	/** Basic value.
 	 * \note Every particular value class should be inherited (by CRTP <T,B>) from this.
@@ -33,7 +33,7 @@ namespace solver {
 	 * \see Int
 	 * \see ExprManager::MkIntVal
 	 */
-	class BasicInt : public shared <BasicInt, Value> {
+	class BasicIntVal : public shared <BasicIntVal, Value> {
 	public:
 		/** Returns width (number of bits) in the integer. */
 		virtual Width GetWidth() const = 0;
@@ -58,14 +58,14 @@ namespace solver {
 	 * int8_t, int16_t, int32_t, int64_t, uint8_t, uint16_t, uint32_t, uint64_t.
 	 */
 	template<typename T>
-	class Int : public shared <Int<T>, BasicInt> {
+	class IntVal : public shared <IntVal<T>, BasicIntVal> {
 	public:
 		/** Basic constructor, do NOT use it directly! Use ExprManager::MkIntVal instead */
-		Int(T value);
+		IntVal(T value);
 		/** Creates "empty" integer value for further initialization, do NOT use it directly!
 		 * \note Use ExprManager::MkIntVal(bool, Width, uint64_t) instead */
-		Int();
-		virtual ~Int();
+		IntVal();
+		virtual ~IntVal();
 		/** Structural equality of this Int<T> instance and another Object instance.
 		 * Returns true if the rhs is instance of Int<T>,
 		 * their types (template parameter T) must be equivalent, as well as
@@ -92,14 +92,14 @@ namespace solver {
 		const bool initiated_ = false;
 	};
 
-	template class Int<int8_t>;
-	template class Int<int16_t>;
-	template class Int<int32_t>;
-	template class Int<int64_t>;
-	template class Int<uint8_t>;
-	template class Int<uint16_t>;
-	template class Int<uint32_t>;
-	template class Int<uint64_t>;
+	template class IntVal<int8_t>;
+	template class IntVal<int16_t>;
+	template class IntVal<int32_t>;
+	template class IntVal<int64_t>;
+	template class IntVal<uint8_t>;
+	template class IntVal<uint16_t>;
+	template class IntVal<uint32_t>;
+	template class IntVal<uint64_t>;
 }
 
 #endif /* __VALUE_HPP__ */

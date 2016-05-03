@@ -2,47 +2,47 @@
 
 namespace solver {
 	template<typename T>
-	Int<T>::~Int() {
+	IntVal<T>::~IntVal() {
 	}
 
 	template<typename T>
-	Int<T>::Int(T val) : value_(val) {
+	IntVal<T>::IntVal(T val) : value_(val) {
 	}
 
 	template<typename T>
-	Int<T>::Int() {
+	IntVal<T>::IntVal() {
 	}
 
 	template<typename T>
-	bool Int<T>::Equals (const Object& rhs) const {
+	bool IntVal<T>::Equals (const Object& rhs) const {
 		auto cmp = [] (auto lhs, auto rhs) -> bool {
 				return lhs.GetVal() == rhs.GetVal();
 			};
-		return EqualsHelper<Int<T>>(*this, rhs, cmp);
+		return EqualsHelper<IntVal<T>>(*this, rhs, cmp);
 	}
 
 	template<typename T>
-	std::string Int<T>::ToString() const {
+	std::string IntVal<T>::ToString() const {
 		return (IsSigned()?"i":"ui") + to_string(GetWidth()) + " " + std::to_string(GetVal());
 	}
 
 	template<typename T>
-	T Int<T>::GetVal() const {
+	T IntVal<T>::GetVal() const {
 		return value_;
 	}
 
 	template<typename T>
-	Width Int<T>::GetWidth() const {
+	Width IntVal<T>::GetWidth() const {
 		return from_size_t(sizeof(T));
 	}
 
 	template<typename T>
-	bool Int<T>::IsSigned() const {
+	bool IntVal<T>::IsSigned() const {
 		return std::numeric_limits<T>::is_signed;
 	}
 
 	template<typename T>
-	uint64_t Int<T>::GetUInt64() const {
+	uint64_t IntVal<T>::GetUInt64() const {
 #if defined(_M_X64) || defined(__amd64__)
 		uint64_t result = 0L;
 		memcpy(&result, &value_, sizeof(T));
@@ -53,7 +53,7 @@ namespace solver {
 	}
 
 	template<typename T>
-	void Int<T>::SetUInt64(const uint64_t& val) const {
+	void IntVal<T>::SetUInt64(const uint64_t& val) const {
 		if (not initiated_) {
 #if defined(_M_X64) || defined(__amd64__)
 			memcpy(const_cast<T*>(&value_), &val, sizeof(T));

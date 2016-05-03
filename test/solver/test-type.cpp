@@ -109,7 +109,7 @@ namespace solver {
 		ASSERT_FALSE(instanceof<Const>(ty));
 		ASSERT_FALSE(instanceof<BinOp>(ty));
 		ASSERT_FALSE(instanceof<Value>(ty));
-		ASSERT_FALSE(instanceof<BasicInt>(ty));
+		ASSERT_FALSE(instanceof<BasicIntVal>(ty));
 	}
 
 	TEST_F(TypeTest, singleton) {

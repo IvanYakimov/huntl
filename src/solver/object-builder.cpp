@@ -32,20 +32,20 @@ namespace solver {
 		switch (width) {
 		case Width::w8:
 			return is_signed ?
-					setval(make_shared<Int<int8_t>>()) :
-					setval(make_shared<Int<uint8_t>>());
+					setval(make_shared<IntVal<int8_t>>()) :
+					setval(make_shared<IntVal<uint8_t>>());
 		case Width::w16:
 			return is_signed ?
-					setval(make_shared<Int<int16_t>>())	:
-					setval(make_shared<Int<uint16_t>>());
+					setval(make_shared<IntVal<int16_t>>())	:
+					setval(make_shared<IntVal<uint16_t>>());
 		case Width::w32:
 			return is_signed ?
-					setval(make_shared<Int<int32_t>>())	:
-					setval(make_shared<Int<uint32_t>>());
+					setval(make_shared<IntVal<int32_t>>())	:
+					setval(make_shared<IntVal<uint32_t>>());
 		case Width::w64:
 			return is_signed ?
-					setval(make_shared<Int<int64_t>>()):
-					setval(make_shared<Int<uint64_t>>());
+					setval(make_shared<IntVal<int64_t>>()):
+					setval(make_shared<IntVal<uint64_t>>());
 		};
 
 		throw std::logic_error("not implemented");

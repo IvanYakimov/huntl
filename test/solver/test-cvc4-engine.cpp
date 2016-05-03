@@ -274,7 +274,7 @@ namespace solver {
 			CVC4::BitVector cvc4_btv = expr.getConst<CVC4::BitVector>();
 			CVC4::Integer cvc4_int = cvc4_btv.toInteger();
 			uint64_t ulval = cvc4_int.getUnsignedLong();
-			ValuePtr re_conv =  em->MkIntVal(dynamic_pointer_cast<BasicInt>(val_obj)->IsSigned(), from_size_t(sizeof(T)), ulval);
+			ValuePtr re_conv =  em->MkIntVal(dynamic_pointer_cast<BasicIntVal>(val_obj)->IsSigned(), from_size_t(sizeof(T)), ulval);
 			EXPECT_EQ(*val_obj, *re_conv);
 			cvc4engine->Pop();
 		};
@@ -343,7 +343,7 @@ namespace solver {
 				CVC4::Integer cvc4_c_integer = cvc4_c_btv.toInteger();
 				auto actual_raw_ulong = cvc4_c_integer.getUnsignedLong();
 				//cout << "sizeof actual ulong : " << sizeof(actual_raw_ulong) << endl;
-				auto basic_int_val = dynamic_pointer_cast<BasicInt>(int_val);
+				auto basic_int_val = dynamic_pointer_cast<BasicIntVal>(int_val);
 				uint64_t expected_raw_ulong = basic_int_val->GetUInt64();
 				ASSERT_EQ(expected_raw_ulong, actual_raw_ulong);
 			}
@@ -720,8 +720,8 @@ namespace solver {
 				if (engine->CheckSat() == Sat::SAT) {
 					ValuePtr x_val = engine->GetValue(x);
 					ValuePtr y_val = engine->GetValue(y);
-					T raw_x_val = dynamic_pointer_cast<Int<T>>(x_val)->GetVal();
-					T raw_y_val = dynamic_pointer_cast<Int<T>>(y_val)->GetVal();
+					T raw_x_val = dynamic_pointer_cast<IntVal<T>>(x_val)->GetVal();
+					T raw_y_val = dynamic_pointer_cast<IntVal<T>>(y_val)->GetVal();
 					ASSERT_TRUE(ntv_f(raw_x_val, raw_y_val));
 					//< Verbose
 					/*

@@ -66,7 +66,7 @@ namespace solver {
 		 */
 		template<typename T>
 		ValuePtr MkIntVal(T val) {
-			return std::make_shared<Int<T>>(val);
+			return std::make_shared<IntVal<T>>(val);
 		}
 
 		//TODO: rename to GetIntTy

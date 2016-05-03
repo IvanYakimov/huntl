@@ -164,8 +164,8 @@ namespace solver {
 		else if (instanceof<Const>(expr)) {
 			auto cnst = dynamic_pointer_cast<Const>(expr);
 			auto val = cnst->GetValue();
-			if (instanceof<BasicInt>(val)) {
-				auto int_val = dynamic_pointer_cast<BasicInt>(val);
+			if (instanceof<BasicIntVal>(val)) {
+				auto int_val = dynamic_pointer_cast<BasicIntVal>(val);
 				auto width = int_val->GetWidth();
 				auto raw_ulval = int_val->GetUInt64();
 				return expr_manager_.mkConst(CVC4::BitVector(to_int(width), raw_ulval));

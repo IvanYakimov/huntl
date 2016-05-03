@@ -95,7 +95,7 @@ namespace solver {
 	TEST_F(ExprManagerTest, MkIntVal) {
 		int val = 42;
 		auto produced_item = em.MkIntVal<int8_t>(val);
-		auto item = std::make_shared<Int<int8_t>>(val);
+		auto item = std::make_shared<IntVal<int8_t>>(val);
 		ASSERT_EQ(*item, *produced_item);
 	}
 
