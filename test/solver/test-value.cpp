@@ -151,7 +151,6 @@ namespace solver {
 		for_each(val_list.begin(), val_list.end(), checker);
 	}
 
-	//TODO: combinatorial
 	TEST_F(ValueTest, instanceof) {
 		ValuePtr val1 = MkIntVal<std::int32_t>(42);
 
@@ -164,8 +163,16 @@ namespace solver {
 		ASSERT_FALSE(instanceof<Int<int64_t>>(val1));
 	}
 
-	TEST_F(ValueTest, DISABLED_instanceof) {
-		throw std::logic_error("not implemented");
+	TEST_F(ValueTest, immutability) {
+		Int<std::int32_t> x;
+		x.SetUInt64(42);
+		try {
+			x.SetUInt64(28);
+			FAIL();
+		}
+		catch (std::exception &ex) {
+
+		}
 	}
 }
 

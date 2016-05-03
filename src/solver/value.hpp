@@ -9,6 +9,7 @@
 #include <limits>
 #include <memory>
 #include <cstring>
+#include <type_traits>
 
 namespace solver {
 	class Value;
@@ -49,7 +50,7 @@ namespace solver {
 		 * For example: if we have int8_t x = "FF", the val (representing x as uint64_t) should contain "00 00 00 00 00 00 00 FF";
 		 * for int32_t y = "FF FF FF FF" val = "00 00 00 00 FF FF FF FF", etc.
 		 * \see GetUInt64 */
-		virtual void SetUInt64(const uint64_t& val) = 0;
+		virtual void SetUInt64(const uint64_t& val) const = 0;
 	};
 
 	/** Particular integer value.
@@ -84,10 +85,11 @@ namespace solver {
 		/** Returns unsigned long representation. \see BasicInt::GetUInt64 */
 		virtual uint64_t GetUInt64() const final;
 		/** Initialize from unsigned long. \see BasicInt::SetUInt64*/
-		virtual void SetUInt64(const uint64_t& val) final;
+		virtual void SetUInt64(const uint64_t& val) const final;
 	private:
 		//TODO: value MUST be immutable!
-		T value_;
+		const T value_ = 0;
+		const bool initiated_ = false;
 	};
 
 	template class Int<int8_t>;

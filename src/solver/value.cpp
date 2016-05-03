@@ -10,7 +10,7 @@ namespace solver {
 	}
 
 	template<typename T>
-	Int<T>::Int() : value_(0) {
+	Int<T>::Int() {
 	}
 
 	template<typename T>
@@ -53,12 +53,18 @@ namespace solver {
 	}
 
 	template<typename T>
-	void Int<T>::SetUInt64(const uint64_t& val) {
+	void Int<T>::SetUInt64(const uint64_t& val) const {
+		if (not initiated_) {
 #if defined(_M_X64) || defined(__amd64__)
-		memcpy(&value_, &val, sizeof(T));
+			memcpy(const_cast<T*>(&value_), &val, sizeof(T));
 #else
 #error "on amd64 is supported"
 #endif
+		const_cast<bool&>(initiated_) = true;
+		}
+		else {
+			throw std::logic_error("value is immutable!");
+		}
 	}
 }
 
