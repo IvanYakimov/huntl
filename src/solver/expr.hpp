@@ -22,7 +22,7 @@ namespace solver
 	class Expr;
 	class Var;
 	class BinOp;
-	class ExprManager;
+	class ObjectBuilder;
 	class Const;
 
 	/** Smart pointer to an SMT expression.

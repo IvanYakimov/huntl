@@ -1,5 +1,5 @@
-#ifndef __EXPR_MANAGER_HPP__
-#define __EXPR_MANAGER_HPP__
+#ifndef __OBJECT_BUILDER_HPP__
+#define __OBJECT_BUILDER_HPP__
 
 #pragma once
 
@@ -8,28 +8,28 @@
 #include <memory>
 #include "../utils/singleton.hpp"
 #include "type.hpp"
+#include "value.hpp"
 
 namespace solver {
 	using utils::Singleton;
-	class ExprManager;
-	/** Smart pointer to ExprManager, used in a singleton pattern implementation.
-	 * \see ExprManager
-	 * \see GetExprManager
+	class ObjectBuilder;
+	/** Smart pointer to ObjectBuiler, used in a singleton pattern implementation.
+	 * \see ObjectBuilder
 	 */
-	using ExprManagerPtr = std::shared_ptr<ExprManager>;
+	using ObjectBuilderPtr = std::shared_ptr<ObjectBuilder>;
 
 	/**
 	 * Helps to create smt expressions. Use it to create any run-time instances of any smt expressions,
 	 * (never use corresponding expression's constructors directly!).
 	 * \see ExprManagerHelper
 	 */
-	class ExprManager : public Singleton<ExprManager> {
+	class ObjectBuilder : public Singleton<ObjectBuilder> {
 	public:
 		/** Basic constructor, do NOT use it directly! Use GetExprManager to obtain (smart pointer to instance of) expr manager.
 		 * \see GetExprManager
 		 */
-		ExprManager();
-		~ExprManager();
+		ObjectBuilder();
+		~ObjectBuilder();
 		/**
 		 * Creates (smart pointer to) a binary operation.
 		 * @param a, b - (smart pointers to) left and right children, which are arbitrary SMT expressions
@@ -69,6 +69,7 @@ namespace solver {
 			return std::make_shared<Int<T>>(val);
 		}
 
+		//TODO: rename to GetIntTy
 		/** Returns (smart pointer to) integer type.
 		 * @param T - scalar integer type from STL (e.g. int32_t etc.).
 		 * \see IntTy

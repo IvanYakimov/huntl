@@ -3,7 +3,6 @@
 
 // Project
 #include "../../src/solver/expr.hpp"
-#include "../../src/solver/expr-manager.hpp"
 #include "../../src/utils/object.hpp"
 
 // Google Test
@@ -17,13 +16,14 @@
 #include <list>
 #include <tuple>
 #include <functional>
+#include "../../src/solver/object-builder.hpp"
 
 using std::shared_ptr;
 
 namespace solver {
 	class ExprTest : public ::testing::Test {
 		public:
-			ExprManager em;
+			ObjectBuilder em;
 	};
 
 	//-------------------------------------------------------------------

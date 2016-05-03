@@ -1,18 +1,19 @@
 #include "gtest/gtest.h"
-#include "../../src/solver/expr-manager.hpp"
+
+#include "../../src/solver/object-builder.hpp"
 
 namespace solver {
 	class ExprManagerTest : public ::testing::Test {
 	public:
-		ExprManager em;
+		ObjectBuilder em;
 	};
 
 	//TODO: extract singleton test
 	//Singleton test
 	TEST_F(ExprManagerTest, GetExprManager) {
-		ExprManagerPtr em_1 = ExprManager::Get();
-		ExprManagerPtr em_2 = ExprManager::Get();
-		ExprManagerPtr em_3 = ExprManager::Get();
+		ObjectBuilderPtr em_1 = ObjectBuilder::Get();
+		ObjectBuilderPtr em_2 = ObjectBuilder::Get();
+		ObjectBuilderPtr em_3 = ObjectBuilder::Get();
 		ASSERT_NE(em_1, nullptr);
 		ASSERT_EQ(em_1, em_2); ASSERT_EQ(em_2, em_3); ASSERT_EQ(em_1, em_3);
 	}
@@ -51,7 +52,7 @@ namespace solver {
 	TEST_F(ExprManagerTest, MkIntVal_FromULong) {
 			using namespace std;
 			using Equality = bool;
-			ExprManagerPtr em_ = ExprManager::Get();
+			ObjectBuilderPtr em_ = ObjectBuilder::Get();
 			uint64_t val = 42;
 
 			auto i8ty = em_->MkIntVal(true, Width::w8, val);

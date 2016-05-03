@@ -7,6 +7,7 @@
 #include "../utils/object.hpp"
 
 namespace utils {
+	//TODO: rename to singleton
 	/** Singleton pattern implementation. There is only one instance of T in run-time,
 	 * to get (smart pointer to) it use Get () method.
 	 * \tparam T class to be "singletoned"
@@ -26,6 +27,7 @@ namespace utils {
 		}
 	};
 
+	//TODO: rename to virtual_singleton
 	template <class T, class B>
 	class singleton {
 	public:

@@ -1,9 +1,10 @@
 #ifndef __EXPR_MANAGER_HELPER_HPP__
 #define __EXPR_MANAGER_HELPER_HPP__
+
 #pragma once
 
 #include "expr.hpp"
-#include "expr-manager.hpp"
+#include "object-builder.hpp"
 
 #include <functional>
 
@@ -12,7 +13,7 @@ namespace solver {
 	 *  \attention Warning: do not use this helper functions in the main project
 	 *  \note Use them in an appropriate test suites. */
 	static ExprPtr Apply(ExprPtr left, ExprPtr right, Kind kind) {
-		return ExprManager::Get()->MkBinOp(left, right, kind);
+		return ObjectBuilder::Get()->MkBinOp(left, right, kind);
 	}
 
 	using Func = std::function<ExprPtr(ExprPtr,ExprPtr)>;
@@ -44,11 +45,11 @@ namespace solver {
 	/** Helper function - returns new constant.
 	 *  \attention Warning: do not use this helper functions in the main project
 	 *  \note Use them in an appropriate test suites. */
-	template<typename T> ExprPtr C(T val) { return ExprManager::Get()->MkConst(ExprManager::Get()->MkIntVal<T>(val)); }
+	template<typename T> ExprPtr C(T val) { return ObjectBuilder::Get()->MkConst(ObjectBuilder::Get()->MkIntVal<T>(val)); }
 	/** Helper function - returns new variable.
 	 *  \attention Warning: do not use this helper functions in the main project
 	 *  \note Use them in an appropriate test suites. */
-	template<typename T> ExprPtr V(std::string name) { return ExprManager::Get()->MkVar(name, ExprManager::Get()->MkIntTy<T>()); }
+	template<typename T> ExprPtr V(std::string name) { return ObjectBuilder::Get()->MkVar(name, ObjectBuilder::Get()->MkIntTy<T>()); }
 }
 
 #endif /* __EXPR_MANAGER_HELPER_HPP__ */

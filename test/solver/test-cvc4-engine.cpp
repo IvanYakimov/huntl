@@ -4,10 +4,6 @@
 #include "../../src/solver/expr.hpp"
 #include "../../src/solver/ismt-engine.hpp"
 #include "../../src/solver/cvc4-engine.hpp"
-#include "../../src/solver/expr-manager.hpp"
-#include "../../src/solver/expr-manager-helper.hpp"
-
-// Google Test
 #include "gtest/gtest.h"
 
 //STL
@@ -15,6 +11,8 @@
 #include <iostream>
 #include <list>
 #include <vector>
+#include "../../src/solver/object-builder.hpp"
+#include "../../src/solver/object-builder-helper.hpp"
 
 namespace solver {
 	//TODO: global refactoring - make a template class
@@ -24,7 +22,7 @@ namespace solver {
 		void TearDown() {
 			try { delete engine_; } catch (Exception &ex) {;}
 		}
-		ExprManagerPtr em_ = ExprManager::Get();
+		ObjectBuilderPtr em_ = ObjectBuilder::Get();
 		CVC4Engine *engine_ = nullptr;
 	};
 
@@ -108,7 +106,7 @@ namespace solver {
 	}
 
 	template <typename T>
-	void GetValue__helper (CVC4Engine *cvc4engine, ExprManagerPtr em) {
+	void GetValue__helper (CVC4Engine *cvc4engine, ObjectBuilderPtr em) {
 		using namespace std;
 		using the_list = list<T>;
 
@@ -235,7 +233,7 @@ namespace solver {
 	}
 
 	template <typename T>
-	void Prism_Var__helper (CVC4Engine *cvc4_engine, ExprManagerPtr expr_manager) {
+	void Prism_Var__helper (CVC4Engine *cvc4_engine, ObjectBuilderPtr expr_manager) {
 		using namespace std;
 		cvc4_engine->Push(); {
 			auto name = string("x");
@@ -264,7 +262,7 @@ namespace solver {
 	}
 
 	template <typename T>
-	void Prism_Const__helper (CVC4Engine *cvc4engine, ExprManagerPtr em) {
+	void Prism_Const__helper (CVC4Engine *cvc4engine, ObjectBuilderPtr em) {
 		using namespace std;
 		using the_list = list<T>;
 
@@ -308,7 +306,7 @@ namespace solver {
 
 	//TODO: Prism_BinOp testing - implement test case to check work with different Kinds
 	template <typename T>
-	void Prism_BinOp__helper (CVC4Engine *cvc4engine, ExprManagerPtr em) {
+	void Prism_BinOp__helper (CVC4Engine *cvc4engine, ObjectBuilderPtr em) {
 		using namespace std;
 		using the_list = list<T>;
 
@@ -389,7 +387,7 @@ namespace solver {
 			auto l = V<int32_t>("x");
 			auto r = C<int32_t>(42);
 			auto act = f(l, r);
-			auto exp = ExprManager::Get()->MkBinOp(l, r, k);
+			auto exp = ObjectBuilder::Get()->MkBinOp(l, r, k);
 			ASSERT_EQ(*exp, *act);
 		};
 

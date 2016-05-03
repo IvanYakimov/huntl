@@ -1,28 +1,28 @@
-#include "expr-manager.hpp"
+#include "object-builder.hpp"
 
 namespace solver {
 
-	ExprManager::ExprManager() {
+	ObjectBuilder::ObjectBuilder() {
 
 	}
 
-	ExprManager::~ExprManager() {
+	ObjectBuilder::~ObjectBuilder() {
 
 	}
 
-	ExprPtr ExprManager::MkVar(std::string name, TypePtr type) {
+	ExprPtr ObjectBuilder::MkVar(std::string name, TypePtr type) {
 		return std::make_shared<Var>(name, type);
 	}
 
-	ExprPtr ExprManager::MkConst (ValuePtr val) {
+	ExprPtr ObjectBuilder::MkConst (ValuePtr val) {
 		return std::make_shared<Const>(val);
 	}
 
-	ExprPtr ExprManager::MkBinOp (ExprPtr a, ExprPtr b, Kind op_code) {
+	ExprPtr ObjectBuilder::MkBinOp (ExprPtr a, ExprPtr b, Kind op_code) {
 		return std::make_shared <BinOp>(a, b, op_code);
 	}
 
-	ValuePtr ExprManager::MkIntVal(bool is_signed, Width width, uint64_t ulval) {
+	ValuePtr ObjectBuilder::MkIntVal(bool is_signed, Width width, uint64_t ulval) {
 		using std::make_shared;
 		auto setval = [&] (BasicIntPtr int_obj) {
 			int_obj->SetUInt64(ulval);
