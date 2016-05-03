@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <memory>
 #include "../utils/singleton.hpp"
+#include "type.hpp"
 
 namespace solver {
 	using utils::Singleton;
@@ -74,16 +75,8 @@ namespace solver {
 		 */
 		template<class T>
 		TypePtr MkIntTy() {
-			TypePtr tmp = std::make_shared<IntTy<T>>();
-			auto it = std::find_if(type_table_.begin(), type_table_.end(), [&tmp] (const TypePtr &item) {return *item == *tmp;});
-			if (it != type_table_.end())
-				return *it;
-			else
-				throw std::logic_error("type not found");
+			return solver::IntTy<T>::Get();
 		}
-
-	private:
-		std::list<TypePtr> type_table_;
 	};
 
 	//TODO: explicit template class member specialization (if possible)
