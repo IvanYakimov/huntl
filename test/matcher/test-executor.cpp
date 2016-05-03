@@ -5,7 +5,7 @@ using namespace interpreter;
 class ExecutorTest : public ::testing::Test {
 public:
 	const StateId owner_ = 2;
-	DisplayPtr disp_;
+	DisplayPtr disp_ = nullptr;
 	Executor *exec_ = nullptr;
 
 	ExecutorTest() {
@@ -36,6 +36,24 @@ TEST_F(ExecutorTest, ret__const32) {
 	Exec(f);
 }
 
-TEST_F(ExecutorTest, basic_allocation) {
-
+TEST_F(ExecutorTest, DISABLED__basic_allocation) {
+	Int32Func f; {
+		auto x_ptr = f.Alloca32("x");
+		auto store_x = f.Store(f.I32(2), x_ptr);
+		auto load_x = f.Load(x_ptr);
+		auto ret = f.Ret(load_x);
+	}Exec(f);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

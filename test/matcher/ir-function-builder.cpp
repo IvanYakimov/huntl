@@ -54,11 +54,15 @@ ConstantInt* Func::False() {
 }
 
 StoreInst* Func::Store(Value* what, Value* where) {
-	return builder_.CreateStore(what, where);
+	StoreInst* res = builder_.CreateStore(what, where);
+	res->setAlignment(4);
+	return res;
 }
 
 LoadInst* Func::Load(Value *from) {
-	return builder_.CreateLoad(from);
+	LoadInst* res = builder_.CreateLoad(from);
+	res->setAlignment(4);
+	return res;
 }
 
 ReturnInst* Func::Ret(Value *what) {

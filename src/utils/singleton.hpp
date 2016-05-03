@@ -13,9 +13,9 @@ namespace utils {
 	 * \tparam T class to be "singletoned"
 	 */
 	template <class T>
-	class Singleton {
+	class singleton {
 	public:
-		virtual ~Singleton(){}
+		virtual ~singleton(){}
 		/**	Returns (smart pointer to) instance T. At the first time it creates new instance,
 		 * and always returns it in futher function calls. */
 		static std::shared_ptr<T> Get() {
@@ -29,9 +29,9 @@ namespace utils {
 
 	//TODO: rename to virtual_singleton
 	template <class T, class B>
-	class singleton {
+	class virtual_singleton : public shared<T, B> {
 	public:
-		virtual ~singleton(){}
+		virtual ~virtual_singleton() {}
 		/**	Returns (smart pointer to) instance T. At the first time it creates new instance,
 		 * and always returns it in futher function calls. */
 		static std::shared_ptr<B> Get() {
@@ -48,3 +48,18 @@ namespace utils {
 }
 
 #endif /* __SINGLETON_HPP__ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

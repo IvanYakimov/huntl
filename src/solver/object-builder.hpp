@@ -11,7 +11,7 @@
 #include "value.hpp"
 
 namespace solver {
-	using utils::Singleton;
+	using utils::singleton;
 	class ObjectBuilder;
 	/** Smart pointer to ObjectBuiler, used in a singleton pattern implementation.
 	 * \see ObjectBuilder
@@ -23,7 +23,7 @@ namespace solver {
 	 * (never use corresponding expression's constructors directly!).
 	 * \see ExprManagerHelper
 	 */
-	class ObjectBuilder : public Singleton<ObjectBuilder> {
+	class ObjectBuilder : public singleton<ObjectBuilder> {
 	public:
 		/** Basic constructor, do NOT use it directly! Use GetExprManager to obtain (smart pointer to instance of) expr manager.
 		 * \see GetExprManager

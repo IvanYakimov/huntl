@@ -1,8 +1,13 @@
 #ifndef __NUMBER_CACHE_HPP__
 #define __NUMBER_CACHE_HPP__
 
+// project
 #include "../utils/object.hpp"
+
+// std
 #include <limits>
+#include <stack>
+#include <cassert>
 
 //TODO: testing!!!
 template <typename T>
@@ -29,6 +34,8 @@ public:
 	};
 
 	IndexCache(T initial) : counter_(initial){}
+	~IndexCache() {}
+
 	/** Obtain free index.
 	 * \remarks
 	 * if the cache contains not empty, than:

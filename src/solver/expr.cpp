@@ -8,23 +8,29 @@ namespace solver
 		if (not name.empty() and type != nullptr) {
 			name_ = name;
 			type_ = type;
+			id_ = id_cache_.Get();
 		}
 		else
 			throw IllegalArgException();
 	}
 
-	Var::~Var() {}
+	Var::~Var() {
+		id_cache_.PushBack(id_);
+	}
+
+	IndexCache<uint64_t> Var::id_cache_(1);
 
 	bool Var::Equals(const Object& rhs) const {
 		auto cmp = [] (auto lhs, auto rhs) -> bool {
 			return lhs.name_ == rhs.name_
-					and lhs.type_ == rhs.type_;
+					and lhs.type_ == rhs.type_
+					and lhs.id_ == rhs.id_;
 		};
 		return EqualsHelper<Var>(*this, rhs, cmp);
 	}
 
 	std::string Var::ToString() const {
-		return GetType()->ToString() + " " + GetName();
+		return GetType()->ToString() + " " + GetName() + std::to_string(id_);
 	}
 	std::string Var::GetName() const {return name_;}
 	TypePtr Var::GetType() const {return type_;}

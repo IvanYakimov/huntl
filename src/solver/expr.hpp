@@ -16,6 +16,7 @@
 #include "type.hpp"
 #include "value.hpp"
 #include "exception.hpp"
+#include "../utils/index-cache.hpp"
 
 namespace solver
 {
@@ -107,6 +108,8 @@ namespace solver
 	private:
 		std::string name_;
 		TypePtr type_;
+		static IndexCache<uint64_t> id_cache_;
+		uint64_t id_;
 	};
 
 	/**
