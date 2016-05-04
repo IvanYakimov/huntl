@@ -62,7 +62,7 @@ namespace solver {
 	TEST_F(ExprTest, Variable_Accessors) {
 		using namespace std;
 		Var v("x", em.MkIntTy<int32_t>());
-		//EXPECT_EQ("i32 x", v.ToString());
+		EXPECT_EQ("i32 x:s1", v.ToString());
 		EXPECT_EQ("x", v.GetName());
 		EXPECT_EQ(em.MkIntTy<int32_t>(), v.GetType());
 	}
@@ -161,7 +161,7 @@ namespace solver {
 		EXPECT_EQ(left, bin_op.GetLeftChild());
 		EXPECT_EQ(right, bin_op.GetRightChild());
 		EXPECT_EQ(Kind::ADD, bin_op.GetKind());
-		//EXPECT_EQ("(add i32 x i32 y)", bin_op.ToString());
+		EXPECT_EQ("(add i32 x:s1 i32 y:s2)", bin_op.ToString());
 	}
 
 

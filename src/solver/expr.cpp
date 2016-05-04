@@ -30,7 +30,7 @@ namespace solver
 	}
 
 	std::string Var::ToString() const {
-		return GetType()->ToString() + " " + GetName() + std::to_string(id_);
+		return GetType()->ToString() + " " + GetName() + ":s" + std::to_string(id_);
 	}
 	std::string Var::GetName() const {return name_;}
 	TypePtr Var::GetType() const {return type_;}
