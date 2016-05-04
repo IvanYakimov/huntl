@@ -3,7 +3,7 @@ SHELL = /bin/sh
 OBJ = test-matcher.o matcher-stub.o matcher.o \
 	ir-function-builder.o \
 	memory.o \
-	test-executor.o executor.o display-stub.o
+	executor.o display-stub.o test-executor.o
 
 CXX = g++  
 CXXFLAGS = -fdiagnostics-color=always -g -std=c++11 -Wno-deprecated
@@ -13,7 +13,9 @@ SRC = ../../src
 TST = .
 
 vpath %.cpp $(SRC)/interpreter $(TST)
+vpath %.cpp $(SRC)/solver
 vpath %.hpp $(SRC)/interpreter $(TST)
+vpath %.hpp $(SRC)/solver
 		
 test-matcher.out: $(OBJ)
 	$(CXX) $^ -o $@ -pthread -ltinfo -lgtest $(LLVMFLAGS) -ldl

@@ -20,7 +20,9 @@ namespace interpreter {
 	 * \see Modern Operating Systems (4th Edition) 4th Edition by Andrew S. Tanenbaum (Author), Herbert Bos  (Author)
 	 * \see 2014. Effective Modern C++: 42 Specific Ways to Improve Your Use of C++11 and C++14. ISBN 1-491-90399-6
 	 */
-	class Memory final : public virtual_singleton <Memory, MemoryInterface> {
+	class Memory final :
+			public MemoryInterface,
+			public virtual_singleton <Memory, MemoryInterface> {
 		static const int MASTER_ID = 0;
 		static const int INITIAL_ID = 1;
 	public:

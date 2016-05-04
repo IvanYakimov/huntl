@@ -68,6 +68,7 @@ namespace interpreter {
 		auto name = val->getName();
 		if (!name.empty()) {
 			// Produce new variable
+
 			// Store new variable to ptr
 		}
 		else

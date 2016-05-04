@@ -28,8 +28,8 @@ namespace utils {
 	};
 
 	//TODO: rename to virtual_singleton
-	template <class T, class B>
-	class virtual_singleton : public shared<T, B> {
+	template <class T, class B = T>
+	class virtual_singleton {
 	public:
 		virtual ~virtual_singleton() {}
 		/**	Returns (smart pointer to) instance T. At the first time it creates new instance,

@@ -46,7 +46,9 @@ namespace solver {
 	 * int8_t, int16_t, int32_t, int64_t, uint8_t, uint16_t, uint32_t, uint64_t.
 	 */
 	template<typename T>
-	class IntTy : public virtual_singleton <IntTy<T>, BasicIntTy> {
+	class IntTy :
+			public shared<IntTy<T>, BasicIntTy>,
+			public virtual_singleton <IntTy<T>, BasicIntTy> {
 	public:
 		/** Basic constructor.
 		 * \attention Do NOT use int directly! Use ExprManager::MkIntTy instead */
