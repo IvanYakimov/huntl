@@ -5,7 +5,7 @@ OBJ = test-matcher.o matcher-stub.o matcher.o \
 	test-display.o display.o 
 
 CXX = g++ 
-CXXFLAGS = -fdiagnostics-color=always -g -std=c++1y -Wno-deprecated
+CXXFLAGS = -fdiagnostics-color=always -g -std=c++14 -Wno-deprecated
 LLVMFLAGS = $(filter-out -g -fno-exceptions -O2 -std=c++11, $(shell llvm-config --cxxflags --ldflags --libs core))
 
 SRC = ../../src

@@ -18,8 +18,8 @@ namespace interpreter {
 	class DisplayInterface {
 	public:
 		virtual ~DisplayInterface() {}
-		virtual ObjectPtr LookUp(const llvm::Value* ptr) = 0;
-		virtual void Push(const llvm::Value* ptr, ObjectPtr val) = 0;
+		virtual ObjectPtr& LookUp(const llvm::Value* ptr) = 0;
+		virtual void Push(const llvm::Value* ptr, const ObjectPtr &val) = 0;
 	};
 }
 

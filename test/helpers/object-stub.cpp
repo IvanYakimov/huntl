@@ -4,10 +4,14 @@ IndexCache<int> ObjectStub::id_cache_(1);
 
 ObjectStub::ObjectStub() {
 	id_ = id_cache_.Get();
+	std::cout << "<- " << id_ << " id-cache: " << id_cache_.ToString() << "on " << this << "\n";
+	check_sum++;
 }
 
 ObjectStub::~ObjectStub() {
 	id_cache_.PushBack(id_);
+	std::cout << "-> " << id_ << " id-cache: " << id_cache_.ToString() << "on " << this << "\n";
+	check_sum--;
 }
 
 bool ObjectStub::Equals (const Object& rhs) const {
@@ -25,9 +29,12 @@ ObjectStubPtr ObjectStub::Stub(ObjectPtr ptr) {
 	return std::dynamic_pointer_cast<ObjectStub>(ptr);
 }
 
+void ObjectStub::Reset() {
+	id_cache_.Reset();
+}
 
 
-
+int ObjectStub::check_sum = 0;
 
 
 

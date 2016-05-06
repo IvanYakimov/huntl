@@ -12,13 +12,15 @@ using utils::creatable;
 class ObjectStub final : public creatable<ObjectStub, Immutable> {
 public:
 	ObjectStub();
+	//ObjectStub(const ObjectStub& rhs) = delete;
 	~ObjectStub();
 	virtual bool Equals (const Object& rhs) const;
 	virtual std::string ToString() const;
 	static ObjectStubPtr Stub(ObjectPtr ptr);
-private:
+	static void Reset();
 	static IndexCache<int> id_cache_;
 	int id_;
+	static int check_sum;
 };
 
 

@@ -13,22 +13,20 @@ namespace interpreter {
 
 	}
 
-	ObjectPtr Display::LookUp(const llvm::Value* ptr) {
-		cerr << "lookup:\n";
-		errs() << *ptr << "\n";
+	ObjectPtr& Display::LookUp(const llvm::Value* ptr) {
+		errs() << "lookup " << *ptr << " ==> ";
 
 		StackPtr stack = Find(ptr);
-		assert (stack != nullptr && "memory with address 'ptr' must be allocated");
+		assert (stack != nullptr && "attemption to get access to not allocated object");
 
-		cerr << "  " << stack->top()->ToString() << "\n";
+		errs() << stack->top()->ToString() << "\n";
 
 		return stack->top();
 	}
 
-	void Display::Push(const llvm::Value* ptr, ObjectPtr val) {
-		cerr << "push:\n";
-		errs() << *ptr << "\n";
-		cerr << "  " << val->ToString() << "\n";
+	void Display::Push(const llvm::Value* ptr, const ObjectPtr &val) {
+		errs() << "push   "  << *ptr << " ==> ";
+		errs() << val->ToString() << "\n";
 
 		StackPtr stack = Find(ptr);
 		if (stack == nullptr) {

@@ -8,6 +8,7 @@
 #include <limits>
 #include <stack>
 #include <cassert>
+#include <vector>
 
 //TODO: testing!!!
 template <typename T>
@@ -33,8 +34,15 @@ public:
 			}
 	};
 
-	IndexCache(T initial) : counter_(initial){}
+	IndexCache(T initial) : counter_(initial), def_counter_(initial){}
 	~IndexCache() {}
+
+	std::string ToString() {
+		std::string res;
+		for (auto it = cache_.begin(); it != cache_.end(); it++)
+			res += std::to_string(*it) + " ";
+		return res;
+	}
 
 	/** Obtain free index.
 	 * \remarks
@@ -53,8 +61,8 @@ public:
 #endif
 
 		if (not cache_.empty()) {
-			result = cache_.top();
-			cache_.pop();
+			result = cache_.back();
+			cache_.pop_back();
 		}
 		else {
 			result = counter_++;
@@ -68,10 +76,15 @@ public:
 		 * - let n = cache size before call, if n > 0, than after call n' = n - 1
 		 */
 		if (cache_size > 0)
-			Assert<Contract>(cache_.size() == cache_size - 1);
+			assert(cache_.size() == cache_size - 1);
 #endif
 
 		return result;
+	}
+
+	void Reset () {
+		counter_ = def_counter_;
+		cache_.erase(cache_.begin(), cache_.end());
 	}
 
 	/** Push free index to the cache
@@ -79,12 +92,24 @@ public:
 	 * - just push index to the cache
 	 */
 	void PushBack(T number) {
-		cache_.push(number);
+#ifdef PRE
+		auto cache_size = cache_.size();
+#endif
+
+		cache_.push_back(number);
+
+#ifdef POST
+		/** \post
+		 * - let n = cache size before call, if n > 0, than after call n' = n - 1
+		 */
+		assert(cache_.size() == cache_size + 1);
+#endif
 	}
 
 private:
 	T counter_;
-	std::stack<T> cache_;
+	T def_counter_;
+	std::vector<T> cache_;
 };
 
 #endif

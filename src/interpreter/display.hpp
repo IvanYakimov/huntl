@@ -25,8 +25,8 @@ namespace interpreter {
 		virtual ~Display();
 		virtual bool Equals (const Object& rhs) const;
 		virtual std::string ToString() const;
-		virtual ObjectPtr LookUp(const llvm::Value* ptr);
-		virtual void Push(const llvm::Value* ptr, ObjectPtr val);
+		virtual ObjectPtr& LookUp(const llvm::Value* ptr);
+		virtual void Push(const llvm::Value* ptr, const ObjectPtr &val);
 	private:
 		using ObjectStack = std::stack<ObjectPtr>;
 		using StackPtr = std::shared_ptr<ObjectStack>;
