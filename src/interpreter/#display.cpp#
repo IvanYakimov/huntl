@@ -1,0 +1,72 @@
+#include "display.hpp"
+
+namespace interpreter {
+	using std::cerr;
+	using std::cout;
+	using llvm::errs;
+
+	Display::Display() {
+
+	}
+
+	Display::~Display() {
+
+	}
+
+	ObjectPtr Display::Load(const llvm::Value* ptr) {
+		cerr << "load:\n";
+		errs() << *ptr << "\n";
+
+		StackPtr stack = LookUp(ptr);
+		assert (stack != nullptr && "memory with address 'ptr' must be allocated");
+		return stack->top();
+	}
+
+	void Display::Store(const llvm::Value* ptr, ObjectPtr val) {
+		StackPtr stack = LookUp(ptr);
+		assert (stack != nullptr && "memory with address 'ptr' must be allocated");
+		return stack->push(val);
+	}
+
+	void Display::Alloca(const llvm::Value* ptr, ObjectPtr val) {
+		cerr << "alloca:\n";
+		errs() << *ptr << "\n";
+		cerr << val->ToString() << "\n";
+
+		assert (LookUp(ptr) == nullptr && "memory with address 'ptr' can be allocated only once");
+		StackPtr stack = std::make_shared<ObjectStack>();
+		stack->push(val);
+		
+	}
+
+	Display::StackPtr Display::LookUp(Address addr) {
+		Map::iterator res = display_.find(addr);
+		if (res == display_.end())
+			return nullptr;
+		else
+			return res->second;
+	}
+
+	bool Display::Equals (const Object& rhs) const {
+		assert(false && "not implemented");
+		return false;
+	}
+
+	std::string Display::ToString() const {
+		return "display && TODO";
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

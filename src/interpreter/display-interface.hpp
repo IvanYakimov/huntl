@@ -9,6 +9,7 @@
 
 // LLVM
 # include "llvm/IR/Instruction.h"
+# include "llvm/Support/raw_ostream.h"
 
 namespace interpreter {
 	class DisplayInterface;
@@ -17,9 +18,8 @@ namespace interpreter {
 	class DisplayInterface {
 	public:
 		virtual ~DisplayInterface() {}
-		virtual ObjectPtr Load(const llvm::Value* ptr) = 0;
-		virtual void Store(const llvm::Value* ptr, ObjectPtr val) = 0;
-		virtual void Alloca(const llvm::Value* ptr, ObjectPtr val) = 0;
+		virtual ObjectPtr LookUp(const llvm::Value* ptr) = 0;
+		virtual void Push(const llvm::Value* ptr, ObjectPtr val) = 0;
 	};
 }
 

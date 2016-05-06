@@ -2,6 +2,7 @@
 #define __DISPLAY_HPP__
 
 #include "display-interface.hpp"
+#include "../utils/creatable.hpp"
 
 // std
 #include <map>
@@ -9,18 +10,23 @@
 #include <memory>
 #include <cassert>
 
+//llvm
+
 namespace interpreter {
 	class Display;
+	using utils::creatable;
 
 	/**	Memory display for single symbolic state.
 	 * const llvm::Instruction* => stack<ObjectPtr>
 	 */
-	class Display final : public DisplayInterface{
+	class Display : public creatable<Display, DisplayInterface> {
 	public:
+		Display();
 		virtual ~Display();
-		virtual ObjectPtr Load(const llvm::Value* ptr);
-		virtual void Store(const llvm::Value* ptr, ObjectPtr val);
-		virtual void Alloca(const llvm::Value* ptr, ObjectPtr val);
+		virtual bool Equals (const Object& rhs) const;
+		virtual std::string ToString() const;
+		virtual ObjectPtr LookUp(const llvm::Value* ptr);
+		virtual void Push(const llvm::Value* ptr, ObjectPtr val);
 	private:
 		using ObjectStack = std::stack<ObjectPtr>;
 		using StackPtr = std::shared_ptr<ObjectStack>;
@@ -28,7 +34,7 @@ namespace interpreter {
 		using Pair = std::pair<Address, StackPtr>;
 		using Map = std::map<Address, StackPtr>;
 
-		StackPtr LookUp(Address addr);
+		StackPtr Find(Address addr);
 
 		Map display_;
 	};

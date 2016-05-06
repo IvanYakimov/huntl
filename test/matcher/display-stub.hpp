@@ -19,7 +19,7 @@ private:
 public:
 	DisplayStub(interpreter::MemoryPtr memory, interpreter::StateId owner) : memory_(memory), owner_(owner) {}
 	virtual ~DisplayStub();
-	virtual ObjectPtr Load(const llvm::Value* ptr);
+	virtual ObjectPtr LookUp(const llvm::Value* ptr);
 	virtual void Store(const llvm::Value* ptr, ObjectPtr val);
 	virtual void Alloca(const llvm::Value* ptr, ObjectPtr val);
 private:
