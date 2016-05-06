@@ -12,7 +12,7 @@ using utils::creatable;
 class ObjectStub final : public creatable<ObjectStub, Immutable> {
 public:
 	ObjectStub();
-	//ObjectStub(const ObjectStub& rhs) = delete;
+	ObjectStub(const ObjectStub& rhs) = delete;
 	~ObjectStub();
 	virtual bool Equals (const Object& rhs) const;
 	virtual std::string ToString() const;

@@ -5,6 +5,9 @@ using namespace interpreter;
 class DisplayTest : public ::testing::Test {
 public:
 	std::function<ObjectStubPtr (ObjectPtr)> s = ObjectStub::Stub;
+	void tearDown() {
+		ASSERT_EQ(0, ObjectStub::check_sum);
+	}
 };
 
 TEST_F (DisplayTest, basic) {
@@ -46,7 +49,6 @@ TEST_F (DisplayTest, stack) {
 		r = display->LookUp(x);
 		ASSERT_EQ(obj3, r); ASSERT_EQ(*s(obj3), *s(r));
 	}
-	ASSERT_EQ(0, ObjectStub::check_sum);
 }
 
 TEST_F (DisplayTest, blump) {

@@ -15,9 +15,10 @@ ObjectStub::~ObjectStub() {
 }
 
 bool ObjectStub::Equals (const Object& rhs) const {
-	auto cmp = [] (auto lhs, auto rhs) {
+	auto cmp = [&] (const ObjectStub& lhs, const ObjectStub& rhs) -> bool {
 		return lhs.id_ == rhs.id_;
 	};
+
 	return EqualsHelper<ObjectStub>(*this, rhs, cmp);
 }
 
