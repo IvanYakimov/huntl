@@ -4,6 +4,7 @@
 // Project
 #include "matcher.hpp"
 #include "display-interface.hpp"
+#include "../solver/object-builder.hpp"
 
 // STL
 #include <exception>

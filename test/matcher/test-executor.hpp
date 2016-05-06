@@ -9,6 +9,7 @@
 #include "../../src/interpreter/memory.hpp"
 #include "../../src/interpreter/memory-interface.hpp"
 #include "../../src/interpreter/display-interface.hpp"
+#include "../../src/interpreter/display.hpp"
 
 // LLVM
 #include "llvm/IR/Verifier.h"
@@ -19,6 +20,5 @@
 
 // TEST
 #include "ir-function-builder.hpp"
-#include "display-stub.hpp"
 
 #endif /* __TEST_EXECUTOR_HPP__ */

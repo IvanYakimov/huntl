@@ -9,7 +9,7 @@ public:
 	Executor *exec_ = nullptr;
 
 	ExecutorTest() {
-		disp_ = std::make_shared<DisplayStub>(Memory::Get(), owner_);
+		disp_ = Display::Create();
 		exec_ = new Executor(disp_);
 	}
 
@@ -36,7 +36,7 @@ TEST_F(ExecutorTest, ret__const32) {
 	Exec(f);
 }
 
-TEST_F(ExecutorTest, DISABLED__basic_allocation) {
+TEST_F(ExecutorTest, basic_allocation) {
 	Int32Func f; {
 		auto x_ptr = f.Alloca32("x");
 		auto store_x = f.Store(f.I32(2), x_ptr);
