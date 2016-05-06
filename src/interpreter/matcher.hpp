@@ -69,7 +69,6 @@ namespace interpreter {
 		// Return
 		virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst) = 0;
 		virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Constant *ret_const) = 0;
-		virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Value *ret_val) = 0;
 		virtual void HandleReturnInst (const llvm::Instruction &inst) = 0;
 
 		// Branch
@@ -90,7 +89,6 @@ namespace interpreter {
 		virtual void HandleLoadInst (const llvm::Instruction &inst, const llvm::Value *ptr) = 0;
 
 		// Store
-		virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Value *val, const llvm::Value *ptr) = 0;
 		virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Instruction *instruction, const llvm::Value *ptr) = 0;
 		virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Constant *constant, const llvm::Value *ptr) = 0;
 

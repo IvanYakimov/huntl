@@ -40,8 +40,6 @@ namespace interpreter {
 			HandleReturnInst(inst, ret_inst);
 		else if (Case (inst, &ret_const))
 			HandleReturnInst(inst, ret_const);
-		else if (Case (inst, &ret_val))
-			HandleReturnInst(inst, ret_val);
 		else if (Case (inst))
 			HandleReturnInst(inst);
 		else
@@ -131,8 +129,6 @@ namespace interpreter {
 			HandleStoreInst(inst, instruction, ptr);
 		else if (Case (inst, &constant, &ptr))
 			HandleStoreInst(inst, constant, ptr);
-		else if (Case (inst, &val, &ptr))
-			HandleStoreInst(inst, val, ptr);
 		else
 			throw Failure(); // Matching Failure
 	}

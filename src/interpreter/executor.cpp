@@ -16,9 +16,6 @@ namespace interpreter {
 			; // Interpretation failure.
 	}
 
-	void Executor::HandleReturnInst (const llvm::Instruction &inst, const llvm::Value *ret_val) {
-	}
-
 	void Executor::HandleReturnInst (const llvm::Instruction &inst) {
 	}
 
@@ -63,19 +60,16 @@ namespace interpreter {
 	}
 
 	// Store
-	void Executor::HandleStoreInst (const llvm::Instruction &inst, const llvm::Value *val, const llvm::Value *ptr) {
-		//TODO move to pattern-matcher (?)
-		auto name = val->getName();
-		if (!name.empty()) {
-			// Produce new variable
-
-			// Store new variable to ptr
-		}
-		else
-			; // Interpretation Failure
-	}
 
 	void Executor::HandleStoreInst (const llvm::Instruction &inst, const llvm::Instruction *instruction, const llvm::Value *ptr) {
+		//TODO move to pattern-matcher (?)
+		auto name = instruction->getName();
+		if (!name.empty()) {
+			// Produce new variable
+			errs() << *instruction->getType();
+			// Store new variable to ptr
+		}
+		// else
 		// Load expr from instruction
 		// Store expr to ptr
 	}

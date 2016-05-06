@@ -77,14 +77,6 @@ namespace interpreter {
 				and isa<Constant>(ret_const));
 	}
 
-	void MatcherStub::HandleReturnInst (const llvm::Instruction &inst, const llvm::Value *ret_val) {
-		//TODO: add following test or remove
-		FAIL();
-		Printer::Do(&inst, ret_val);
-		ASSERT_TRUE(isa<Instruction>(inst)
-				and isa<Value>(ret_val));
-	}
-
 	void MatcherStub::HandleReturnInst (const llvm::Instruction &inst) {
 		Printer::Do(&inst);
 		ASSERT_TRUE(isa<Instruction>(inst));
@@ -135,20 +127,16 @@ namespace interpreter {
 				and isa<Value>(ptr));
 	}
 
-	// Store
-	void MatcherStub::HandleStoreInst (const llvm::Instruction &inst, const llvm::Value *val, const llvm::Value *ptr) {
-		//TODO: add following test
-		Printer::Do(&inst, val, ptr);
-		FAIL() << "not covered";
-	}
-
 	void MatcherStub::HandleStoreInst (const llvm::Instruction &inst, const llvm::Instruction *instruction, const llvm::Value *ptr) {
-		//TODO: add following test
+		errs() << ptr->getName() << "\n";
 		Printer::Do(&inst, instruction, ptr);
-		FAIL() << "not covered";
+		ASSERT_TRUE(isa<Instruction>(inst)
+				and isa<Instruction>(instruction)
+				and isa<Value>(ptr));
 	}
 
 	void MatcherStub::HandleStoreInst (const llvm::Instruction &inst, const llvm::Constant *constant, const llvm::Value *ptr) {
+		errs() << ptr->getName() << "\n";
 		Printer::Do(&inst, constant, ptr);
 		ASSERT_TRUE(isa<Instruction>(inst)
 				and isa<Constant>(constant)
