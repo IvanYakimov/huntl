@@ -1,0 +1,15 @@
+In file included from /usr/include/c++/4.9/memory:79:0,
+                 from ../helpers/../../src/utils/object.hpp:4,
+                 from ../helpers/object-stub.hpp:4,
+                 from test-display.hpp:4,
+                 from test-display.cpp:1:
+/usr/include/c++/4.9/functional: In substitution of ‘template<class _Functor, class> std::function<_Res(_ArgTypes ...)>::function(_Functor) [with _Functor = ObjectStub::Equals(const Object&) const::<lambda(auto:1, auto:2)>; <template-parameter-1-2> = <missing>]’:
+../helpers/object-stub.hpp:24:51:   recursively required by substitution of ‘template<class T> bool EqualsHelper(const T&, const Object&, std::function<bool(const T&, const T&)>) [with T = ObjectStub]’
+../helpers/object-stub.hpp:24:51:   required from here
+/usr/include/c++/4.9/functional:2225:9: internal compiler error: in strip_typedefs, at cp/tree.c:1326
+         typename = _Requires<_Callable<_Functor>, void>>
+         ^
+Please submit a full bug report,
+with preprocessed source if appropriate.
+See <file:///usr/share/doc/gcc-4.9/README.Bugs> for instructions.
+Preprocessed source stored into /tmp/cch7Wwel.out file, please attach this to your bugreport.
