@@ -107,6 +107,8 @@ namespace solver
 		std::string GetName() const;
 		/** Returns (smart) pointer to a variable type */
 		TypePtr GetType() const;
+		//TODO: move to private
+		static void Reset();
 	private:
 		std::string name_;
 		TypePtr type_;

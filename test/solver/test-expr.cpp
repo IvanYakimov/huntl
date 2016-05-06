@@ -61,6 +61,7 @@ namespace solver {
 
 	TEST_F(ExprTest, Variable_Accessors) {
 		using namespace std;
+		Var::Reset();
 		Var v("x", em.MkIntTy<int32_t>());
 		EXPECT_EQ("i32 x:s1", v.ToString());
 		EXPECT_EQ("x", v.GetName());
@@ -153,6 +154,7 @@ namespace solver {
 
 
 	TEST_F(ExprTest, BinOp_Accessors) {
+		Var::Reset();
 		auto ty = em.MkIntTy<int32_t>();
 		auto left = em.MkVar("x", ty);
 		auto right = em.MkVar("y", ty);

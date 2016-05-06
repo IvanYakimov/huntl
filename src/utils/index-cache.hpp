@@ -6,27 +6,14 @@
 
 // std
 #include <limits>
-#include <stack>
 #include <cassert>
-#include <vector>
+#include <exception>
 
 //TODO: testing!!!
 template <typename T>
 class IndexCache {
 public:
-	class Exception : public std::exception {
-		public: virtual ~Exception () {}
-	};
-
-	class Contract : public Exception {
-		public:
-			Contract() {}
-			virtual const char* what() const noexcept {
-				return "contract failure";
-			}
-	};
-
-	class Overflow : public Exception {
+	class Overflow : public std::exception {
 		public:
 			Overflow() {}
 			virtual const char* what() const noexcept {
@@ -38,78 +25,28 @@ public:
 	~IndexCache() {}
 
 	std::string ToString() {
-		std::string res;
-		for (auto it = cache_.begin(); it != cache_.end(); it++)
-			res += std::to_string(*it) + " ";
-		return res;
+		return "current position at: " + std::to_string(counter_) +
+				" | default value is: " + std::to_string(def_counter_);
 	}
 
-	/** Obtain free index.
-	 * \remarks
-	 * if the cache contains not empty, than:
-	 * - pop and return index from the cache
-	 * \remarks
-	 * if the cache doesn't contain any element
-	 * - increment index counter
-	 * - return appropriate index
+	/** Get free index.
 	 */
 	T Get() throw (Overflow) {
 		T result;
 
-#ifdef PRE
-		auto cache_size = cache_.size();
-#endif
-
-		if (not cache_.empty()) {
-			result = cache_.back();
-			cache_.pop_back();
-		}
-		else {
-			result = counter_++;
-		}
-
 		/** \throws Overflow - if index counter overflows the max<T> */
-		Assert<Overflow>(counter_ < std::numeric_limits<T>::max());
+		Assert<Overflow>(counter_ + 1 < std::numeric_limits<T>::max());
 
-#ifdef POST
-		/** \post
-		 * - let n = cache size before call, if n > 0, than after call n' = n - 1
-		 */
-		if (cache_size > 0)
-			assert(cache_.size() == cache_size - 1);
-#endif
-
-		return result;
+		return counter_++;
 	}
 
 	void Reset () {
 		counter_ = def_counter_;
-		cache_.erase(cache_.begin(), cache_.end());
-	}
-
-	/** Push free index to the cache
-	 * \remark
-	 * - just push index to the cache
-	 */
-	void PushBack(T number) {
-#ifdef PRE
-		auto cache_size = cache_.size();
-#endif
-
-		cache_.push_back(number);
-
-#ifdef POST
-		/** \post
-		 * - let n = cache size before call, if n > 0, than after call n' = n - 1
-		 */
-		assert(cache_.size() == cache_size + 1);
-#endif
 	}
 
 private:
 	T counter_;
 	T def_counter_;
-	std::vector<T> cache_;
 };
 
 #endif

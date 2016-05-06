@@ -4,13 +4,11 @@ IndexCache<int> ObjectStub::id_cache_(1);
 
 ObjectStub::ObjectStub() {
 	id_ = id_cache_.Get();
-	std::cout << "<- " << id_ << " id-cache: " << id_cache_.ToString() << "on " << this << "\n";
+	std::cerr << "<- " << id_ << " id-cache: " << id_cache_.ToString() << " on " << this << "\n";
 	check_sum++;
 }
 
 ObjectStub::~ObjectStub() {
-	id_cache_.PushBack(id_);
-	std::cout << "-> " << id_ << " id-cache: " << id_cache_.ToString() << "on " << this << "\n";
 	check_sum--;
 }
 

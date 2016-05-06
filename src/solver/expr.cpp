@@ -15,7 +15,6 @@ namespace solver
 	}
 
 	Var::~Var() {
-		id_cache_.PushBack(id_);
 	}
 
 	IndexCache<uint64_t> Var::id_cache_(1);
@@ -34,6 +33,7 @@ namespace solver
 	}
 	std::string Var::GetName() const {return name_;}
 	TypePtr Var::GetType() const {return type_;}
+	void Var::Reset() { id_cache_.Reset(); }
 
 	Const::Const(ValuePtr val) throw(IllegalArgException) {
 		if (val != nullptr)
