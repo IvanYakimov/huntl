@@ -5,7 +5,7 @@ SOLVER = kind.o type.o expr.o object-builder.o value.o cvc4-engine.o \
 SOLVER_TEST = test-runner.o test-value.o test-type.o test-expr.o test-object-builder.o test-cvc4-engine.o test-width.o \
 	test-z3-engine.o
 
-INTERPRETER = interpreter.o matcher.o executor.o memory.o state.o voyager-pass.o
+INTERPRETER = interpreter.o matcher.o executor.o memory.o state.o voyager-pass.o display.o
 INTERPRETER_TEST = test-memory.o
 
 UTILS = 
