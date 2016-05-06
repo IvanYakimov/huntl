@@ -19,7 +19,7 @@ void DisplayStub::Store(const llvm::Value* ptr, ObjectPtr val) {
 	assert(addr == res_addr && "bypass mode");
 }
 
-void DisplayStub::Alloca(const llvm::Value* ptr) {
+void DisplayStub::Alloca(const llvm::Value* ptr, ObjectPtr val) {
 	assert(not LookUp(ptr) && "a memory cell with the appropriate addres can't exists");
 	auto addr = memory_map_[ptr];
 }

@@ -19,7 +19,7 @@ namespace interpreter {
 		virtual ~DisplayInterface() {}
 		virtual ObjectPtr Load(const llvm::Value* ptr) = 0;
 		virtual void Store(const llvm::Value* ptr, ObjectPtr val) = 0;
-		virtual void Alloca(const llvm::Value* ptr) = 0;
+		virtual void Alloca(const llvm::Value* ptr, ObjectPtr val) = 0;
 	};
 }
 

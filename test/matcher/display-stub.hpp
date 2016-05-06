@@ -21,7 +21,7 @@ public:
 	virtual ~DisplayStub();
 	virtual ObjectPtr Load(const llvm::Value* ptr);
 	virtual void Store(const llvm::Value* ptr, ObjectPtr val);
-	virtual void Alloca(const llvm::Value* ptr);
+	virtual void Alloca(const llvm::Value* ptr, ObjectPtr val);
 private:
 	bool LookUp(const llvm::Value* ptr);
 };
