@@ -53,6 +53,7 @@ namespace solver {
 		/** Basic constructor.
 		 * \attention Do NOT use int directly! Use ExprManager::MkIntTy instead */
 		IntTy ();
+		IntTy (const IntTy& rhs) = delete;
 		virtual ~IntTy();
 		/** Structural equality of this instance of IntTy and instance of another Object.
 		 * Returns true if rhs is instance of IntTy

@@ -13,7 +13,7 @@ namespace solver {
 
 	template<typename T>
 	bool IntTy<T>::Equals (const Object& rhs) const {
-		auto f = [] (auto l, auto r) -> bool {return true;};
+		auto f = [] (const IntTy<T>& l, const IntTy<T>& r) -> bool {return true;};
 		return EqualsHelper<IntTy<T>>(*this, rhs, f);
 	}
 

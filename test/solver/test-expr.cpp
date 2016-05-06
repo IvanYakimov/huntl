@@ -97,7 +97,7 @@ namespace solver {
 
 	TEST_F(ExprTest, Constant_Accessors) {
 		auto val = em.MkIntVal<int32_t>(42);
-		Const x = Const(val);
+		Const x(val);
 		EXPECT_EQ(*val, *x.GetValue());
 		EXPECT_EQ(val->ToString(), x.ToString());
 	}
@@ -180,10 +180,9 @@ namespace solver {
 		EXPECT_NE(nullptr, &x1);
 	}
 
-
 	TEST_F(ExprTest, BinaryOp_Comparison_Deep) {
-		auto ty = em.MkIntTy<int32_t>();
-		auto x = em.MkVar("x", ty),
+		TypePtr ty = em.MkIntTy<int32_t>();
+		ExprPtr x = em.MkVar("x", ty),
 				y = em.MkVar("y", ty);
 
 		BinOp 	a1(x, x, Kind::ADD),
@@ -195,34 +194,33 @@ namespace solver {
 				d1(y, y, Kind::ADD),
 				d2(y, y, Kind::ADD);
 
-		typedef std::tuple<BinOp, BinOp, bool> test_data;
+		typedef std::tuple<const BinOp*, const BinOp*, bool> test_data;
 		using std::make_tuple;
 		std::list<test_data> l = {
-				make_tuple(a1, a2, true),
-				make_tuple(a1, b1, false),
-				make_tuple(a1, c1, false),
-				make_tuple(a1, d1, false),
-				make_tuple(b1, b2, true),
-				make_tuple(b1, c1, false),
-				make_tuple(b1, d1, false),
-				make_tuple(c1, c2, true),
-				make_tuple(c1, d1, false),
-				make_tuple(d1, d2, true)
+				make_tuple(&a1, &a2, true),
+				make_tuple(&a1, &b1, false),
+				make_tuple(&a1, &c1, false),
+				make_tuple(&a1, &d1, false),
+				make_tuple(&b1, &b2, true),
+				make_tuple(&b1, &c1, false),
+				make_tuple(&b1, &d1, false),
+				make_tuple(&c1, &c2, true),
+				make_tuple(&c1, &d1, false),
+				make_tuple(&d1, &d2, true)
 		};
 
 		auto checker = [] (test_data d) {
-			auto l = std::get<0>(d);
-			auto r = std::get<1>(d);
-			auto equality = std::get<2>(d);
+			const BinOp *l = std::get<0>(d);
+			const BinOp *r = std::get<1>(d);
+			bool equality = std::get<2>(d);
 			if (equality == true)
-				ASSERT_EQ(l, r);
+				ASSERT_EQ(*l, *r);
 			else
-				ASSERT_NE(l, r);
+				ASSERT_NE(*l, *r);
 		};
 
 		std::for_each(l.begin(), l.end(), checker);
 	}
-
 
 	TEST_F(ExprTest, Kind) {
 		typedef std::map <Kind, std::string> map_type;

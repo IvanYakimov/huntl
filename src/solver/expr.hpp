@@ -61,6 +61,7 @@ namespace solver
 		/** Basic constructor.
 		 * \attention Do NOT use it directly! Use ::solver::ExprManager::MkBinOp() instead */
 		BinOp(ExprPtr left_child, ExprPtr right_child, Kind kind) throw (IllegalArgException);
+		BinOp (const BinOp& rhs) = delete;
 		~BinOp();
 		/** Structural equality of this BinOp instance and another object instance. Returns true if rhs is instance of BinOp,
 		 * it has equivalent kind and their left and right children are both structurally equivalent. */
@@ -93,6 +94,7 @@ namespace solver
 		/** Basic constructor.
 		 * \attention Do NOT use it directly! Use ::solver::ExprManager::MkVar() instead */
 		Var (std::string name, TypePtr type) throw(IllegalArgException);
+		Var (const Var& rhs) = delete;
 		virtual ~Var() final;
 		/** Structural equality of this Var instance and another Object instance. Returns true if rhs is instance of Var
 		 * and it has the same type as this.
@@ -123,6 +125,7 @@ namespace solver
 		/** Basic constructor.
 		 * \attention Do NOT use it directly! Use ::solver::ExprManager::MkConst() instead */
 		Const (ValuePtr val) throw(IllegalArgException);
+		Const (const Const& rhs) = delete;
 		virtual ~Const();
 		/** Structural equality of this Const instance and another Object instance. Returns true if Object is instance of Const
 		 * and their values are structurally equivalent.

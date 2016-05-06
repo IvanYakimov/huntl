@@ -65,6 +65,7 @@ namespace solver {
 		/** Creates "empty" integer value for further initialization, do NOT use it directly!
 		 * \note Use ExprManager::MkIntVal(bool, Width, uint64_t) instead */
 		IntVal();
+		IntVal(const IntVal& rhs) = delete;
 		virtual ~IntVal();
 		/** Structural equality of this Int<T> instance and another Object instance.
 		 * Returns true if the rhs is instance of Int<T>,

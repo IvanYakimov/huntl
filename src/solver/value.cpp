@@ -15,7 +15,7 @@ namespace solver {
 
 	template<typename T>
 	bool IntVal<T>::Equals (const Object& rhs) const {
-		auto cmp = [] (auto lhs, auto rhs) -> bool {
+		auto cmp = [] (const IntVal<T> &lhs, const IntVal<T> &rhs) -> bool {
 				return lhs.GetVal() == rhs.GetVal();
 			};
 		return EqualsHelper<IntVal<T>>(*this, rhs, cmp);

@@ -21,7 +21,7 @@ namespace solver
 	IndexCache<uint64_t> Var::id_cache_(1);
 
 	bool Var::Equals(const Object& rhs) const {
-		auto cmp = [] (auto lhs, auto rhs) -> bool {
+		auto cmp = [] (const Var &lhs, const Var &rhs) -> bool {
 			return lhs.name_ == rhs.name_
 					and lhs.type_ == rhs.type_
 					and lhs.id_ == rhs.id_;
@@ -45,7 +45,7 @@ namespace solver
 	Const::~Const() {}
 
 	bool Const::Equals(const Object& rhs) const {
-		auto cmp = [] (auto lhs, auto rhs) -> bool {
+		auto cmp = [] (const Const &lhs, const Const &rhs) -> bool {
 			return lhs.GetValue() == rhs.GetValue();
 		};
 		return EqualsHelper<Const>(*this, rhs, cmp);
@@ -70,7 +70,7 @@ namespace solver
 	BinOp::~BinOp() {}
 
 	bool BinOp::Equals(const Object& rhs) const {
-		auto cmp = [] (auto lhs, auto rhs) -> bool {
+		auto cmp = [] (const BinOp &lhs, const BinOp &rhs) -> bool {
 			return lhs.kind_ == rhs.kind_ &&
 					lhs.left_child_ == rhs.left_child_ &&
 					lhs.right_child_ == rhs.right_child_;
