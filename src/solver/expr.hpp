@@ -65,7 +65,7 @@ namespace solver
 		Kind kind_;
 	};
 
-	class SingleNode : public shared<SingleNode, Expr> {
+	class SingleNode : public shared<SingleNode, Node> {
 		SingleNode(Kind kind, ExprPtr child);
 		SingleNode(const SingleNode& rhs) = delete;
 		~SingleNode();
@@ -109,7 +109,7 @@ namespace solver
 		Kind kind_;
 	};
 
-	class TripleNode : public shared<TripleNode, Expr> {
+	class TripleNode : public shared<TripleNode, Node> {
 		TripleNode(Kind kind, ExprPtr first_child, ExprPtr second_child, ExprPtr third_child);
 		TripleNode(const SingleNode& rhs) = delete;
 		~TripleNode();
