@@ -42,9 +42,9 @@ namespace solver {
 		auto ty = em.MkIntTy<int32_t>();
 		auto v1 = em.MkVar(name1, ty),
 				v2 = em.MkVar(name2, ty);
-		auto expr = em.MkBinOp(v1, v2, Kind::ADD);
-		ASSERT_TRUE(instanceof<BinOp>(expr));
-		auto binop = std::dynamic_pointer_cast<BinOp>(expr);
+		auto expr = em.MkDoubleNode(v1, v2, Kind::ADD);
+		ASSERT_TRUE(instanceof<DoubleNode>(expr));
+		auto binop = std::dynamic_pointer_cast<DoubleNode>(expr);
 		ASSERT_EQ(v1, binop->GetLeftChild());
 		ASSERT_EQ(v2, binop->GetRightChild());
 	}

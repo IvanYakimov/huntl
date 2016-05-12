@@ -13,7 +13,7 @@ namespace solver {
 	 *  \attention Warning: do not use this helper functions in the main project
 	 *  \note Use them in an appropriate test suites. */
 	static ExprPtr Apply(ExprPtr left, ExprPtr right, Kind kind) {
-		return ObjectBuilder::Get()->MkBinOp(left, right, kind);
+		return ObjectBuilder::Get()->MkDoubleNode(left, right, kind);
 	}
 
 	using Func = std::function<ExprPtr(ExprPtr,ExprPtr)>;

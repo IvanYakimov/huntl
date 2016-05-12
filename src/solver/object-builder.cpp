@@ -18,8 +18,8 @@ namespace solver {
 		return std::make_shared<Const>(val);
 	}
 
-	ExprPtr ObjectBuilder::MkBinOp (ExprPtr a, ExprPtr b, Kind op_code) {
-		return std::make_shared <BinOp>(a, b, op_code);
+	ExprPtr ObjectBuilder::MkDoubleNode (ExprPtr a, ExprPtr b, Kind op_code) {
+		return std::make_shared <DoubleNode>(a, b, op_code);
 	}
 
 	ValuePtr ObjectBuilder::MkIntVal(bool is_signed, Width width, uint64_t ulval) {

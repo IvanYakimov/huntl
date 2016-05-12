@@ -122,7 +122,7 @@ namespace solver {
 			}
 			return cvc4var;
 		}
-		else if (instanceof<BinOp>(expr)) {
+		else if (instanceof<DoubleNode>(expr)) {
 			auto op_map = [&] (solver::Kind kind) -> CVC4::Kind {
 				switch (kind) {
 				// arithmetic
@@ -156,7 +156,7 @@ namespace solver {
 				}
 			};
 
-			auto binop = dynamic_pointer_cast<BinOp>(expr);
+			auto binop = dynamic_pointer_cast<DoubleNode>(expr);
 			CVC4::Expr cvc4_binop = expr_manager_.mkExpr(op_map(binop->GetKind()),
 					Prism(binop->GetLeftChild()), Prism(binop->GetRightChild()));
 			return cvc4_binop;

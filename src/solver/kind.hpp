@@ -14,6 +14,8 @@ namespace solver {
 	 * \see https://en.wikipedia.org/wiki/Two%27s_complement
 	 * */
 	enum class Kind{
+		NOT,
+		NEG,
 		  /** Addition ('bvadd' in smt-lib2)*/
   		  ADD,
 		  /** Substruction ('bvsub' in smt-lib2)*/
@@ -59,7 +61,10 @@ namespace solver {
 		  /** Signed less than ('slt' in smt-lib2). Both args should be in two's complement format. */
   		  SLT,
 		  /** Signed less or equal ('sle' in smt-lib2). Both args should be in two's complement format. */
-  		  SLE
+  		  SLE,
+		  CONCAT,
+		  EXTRACT,
+		  IF_THAN_ELSE
   	};
 
 	/** String representation of kind.

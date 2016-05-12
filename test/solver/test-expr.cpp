@@ -127,25 +127,25 @@ namespace solver {
 				s3 = false,
 				s4 = false;
 		try {
-			BinOp b(nullptr, v, Kind::ADD);
+			DoubleNode b(nullptr, v, Kind::ADD);
 			FAIL();
 		}
 		catch (IllegalArgException &e) {}
 
 		try {
-			BinOp b(v, nullptr, Kind::ADD);
+			DoubleNode b(v, nullptr, Kind::ADD);
 			FAIL();
 		}
 		catch (IllegalArgException &e) {}
 
 		try {
-			BinOp b(nullptr, nullptr, Kind::ADD);
+			DoubleNode b(nullptr, nullptr, Kind::ADD);
 			FAIL();
 		}
 		catch (IllegalArgException &e) {}
 
 		try {
-			BinOp b(v, v, Kind::ADD);
+			DoubleNode b(v, v, Kind::ADD);
 		}
 		catch (IllegalArgException &e) {
 			FAIL();
@@ -158,7 +158,7 @@ namespace solver {
 		auto ty = em.MkIntTy<int32_t>();
 		auto left = em.MkVar("x", ty);
 		auto right = em.MkVar("y", ty);
-		BinOp bin_op(left, right, solver::Kind::ADD);
+		DoubleNode bin_op(left, right, solver::Kind::ADD);
 
 		EXPECT_EQ(left, bin_op.GetLeftChild());
 		EXPECT_EQ(right, bin_op.GetRightChild());
@@ -170,7 +170,7 @@ namespace solver {
 	TEST_F(ExprTest, BinaryOp_Comparison_Basic) {
 		auto ty = em.MkIntTy<int32_t>();
 		auto v = em.MkVar("x", ty);
-		BinOp x1(v, v, Kind::ADD),
+		DoubleNode x1(v, v, Kind::ADD),
 				x2(v, v, Kind::ADD),
 				x3(v, v, Kind::ADD),
 				y(v, v, Kind::SUB);
@@ -187,7 +187,7 @@ namespace solver {
 		ExprPtr x = em.MkVar("x", ty),
 				y = em.MkVar("y", ty);
 
-		BinOp 	a1(x, x, Kind::ADD),
+		DoubleNode 	a1(x, x, Kind::ADD),
 				a2(x, x, Kind::ADD),
 				b1(x, y, Kind::ADD),
 				b2(x, y, Kind::ADD),
@@ -196,7 +196,7 @@ namespace solver {
 				d1(y, y, Kind::ADD),
 				d2(y, y, Kind::ADD);
 
-		typedef std::tuple<const BinOp*, const BinOp*, bool> test_data;
+		typedef std::tuple<const DoubleNode*, const DoubleNode*, bool> test_data;
 		using std::make_tuple;
 		std::list<test_data> l = {
 				make_tuple(&a1, &a2, true),
@@ -212,8 +212,8 @@ namespace solver {
 		};
 
 		auto checker = [] (test_data d) {
-			const BinOp *l = std::get<0>(d);
-			const BinOp *r = std::get<1>(d);
+			const DoubleNode *l = std::get<0>(d);
+			const DoubleNode *r = std::get<1>(d);
 			bool equality = std::get<2>(d);
 			if (equality == true)
 				ASSERT_EQ(*l, *r);
@@ -258,7 +258,7 @@ namespace solver {
 		auto ty = em.MkIntTy<int32_t>();
 		auto v = em.MkVar("x", ty);
 		for (it_type it = m.begin(); it != m.end(); it++) {
-			solver::BinOp op(v, v, it->first);
+			solver::DoubleNode op(v, v, it->first);
 			EXPECT_EQ(it->second, op.GetKindName());
 		}
 	}
@@ -298,10 +298,10 @@ namespace solver {
 	TEST_F(ExprTest, SmartPointer_Comparison_BinaryOperation) {
 		auto ty = em.MkIntTy<int32_t>();
 		auto v = em.MkVar("x", ty);
-		auto x1  = em.MkBinOp(v, v, Kind::ADD),
-				x2 = em.MkBinOp(v, v, Kind::ADD),
-				x3 = em.MkBinOp(v, v, Kind::ADD),
-				y = em.MkBinOp(v, v, Kind::SUB);
+		auto x1  = em.MkDoubleNode(v, v, Kind::ADD),
+				x2 = em.MkDoubleNode(v, v, Kind::ADD),
+				x3 = em.MkDoubleNode(v, v, Kind::ADD),
+				y = em.MkDoubleNode(v, v, Kind::SUB);
 		EXPECT_EQ(*x1, *x1);	// reflexivity
 		EXPECT_EQ(*x1, *x2); EXPECT_EQ(*x2, *x1); // symmetric
 		EXPECT_EQ(*x1, *x2); EXPECT_EQ(*x2, *x3); EXPECT_EQ(*x1, *x3); // transivity
@@ -318,7 +318,7 @@ namespace solver {
 				val2 = em.MkIntVal<int32_t>(170);
 		auto c1 = em.MkConst(val1),
 				c2 = em.MkConst(val2);
-		auto op = em.MkBinOp(c1, c2, Kind::ADD);
+		auto op = em.MkDoubleNode(c1, c2, Kind::ADD);
 		EXPECT_NE(*var, *c1);
 		EXPECT_NE(*c1, *var);
 		EXPECT_NE(*var, *op);
@@ -346,19 +346,19 @@ namespace solver {
 		auto val = em.MkIntVal<int32_t>(42);
 		ExprPtr v = em.MkVar("x", ty),
 				c = em.MkConst(val),
-				b = em.MkBinOp(v, c, Kind::EQUAL);
+				b = em.MkDoubleNode(v, c, Kind::EQUAL);
 
 		auto pvv = std::dynamic_pointer_cast<Var>(v);
 		auto pvc = std::dynamic_pointer_cast<Const>(v);
-		auto pvb = std::dynamic_pointer_cast<BinOp>(v);
+		auto pvb = std::dynamic_pointer_cast<DoubleNode>(v);
 
 		auto pcv = std::dynamic_pointer_cast<Var>(c);
 		auto pcc = std::dynamic_pointer_cast<Const>(c);
-		auto pcb = std::dynamic_pointer_cast<BinOp>(c);
+		auto pcb = std::dynamic_pointer_cast<DoubleNode>(c);
 
 		auto pbv = std::dynamic_pointer_cast<Var>(b);
 		auto pbc = std::dynamic_pointer_cast<Const>(b);
-		auto pbb = std::dynamic_pointer_cast<BinOp>(b);
+		auto pbb = std::dynamic_pointer_cast<DoubleNode>(b);
 
 		ASSERT_NE(nullptr, pvv);
 		ASSERT_NE(nullptr, pcc);
@@ -382,7 +382,7 @@ namespace solver {
 		auto val = em.MkIntVal<int32_t>(42);
 		ExprPtr v = em.MkVar("x", ty),
 				c = em.MkConst(val),
-				b = em.MkBinOp(v, c, Kind::EQUAL);
+				b = em.MkDoubleNode(v, c, Kind::EQUAL);
 
 		// Variable
 		ASSERT_TRUE(instanceof<Object>(v));
@@ -391,7 +391,7 @@ namespace solver {
 		ASSERT_TRUE(instanceof<Expr>(v));
 		ASSERT_TRUE(instanceof<Var>(v));
 		ASSERT_FALSE(instanceof<Const>(v));
-		ASSERT_FALSE(instanceof<BinOp>(v));
+		ASSERT_FALSE(instanceof<DoubleNode>(v));
 
 		ASSERT_TRUE(instanceof<Object>(c));
 		ASSERT_TRUE(instanceof<Immutable>(c));
@@ -399,7 +399,7 @@ namespace solver {
 		ASSERT_TRUE(instanceof<Expr>(c));
 		ASSERT_FALSE(instanceof<Var>(c));
 		ASSERT_TRUE(instanceof<Const>(c));
-		ASSERT_FALSE(instanceof<BinOp>(c));
+		ASSERT_FALSE(instanceof<DoubleNode>(c));
 
 		ASSERT_TRUE(instanceof<Object>(b));
 		ASSERT_TRUE(instanceof<Immutable>(b));
@@ -407,7 +407,7 @@ namespace solver {
 		ASSERT_TRUE(instanceof<Expr>(b));
 		ASSERT_FALSE(instanceof<Var>(b));
 		ASSERT_FALSE(instanceof<Const>(b));
-		ASSERT_TRUE(instanceof<BinOp>(b));
+		ASSERT_TRUE(instanceof<DoubleNode>(b));
 	}
 
 }

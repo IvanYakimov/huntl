@@ -115,7 +115,7 @@ namespace solver {
 			auto c = em->MkConst(val_obj);
 			auto ty = em->MkIntTy<T>();
 			auto x = em->MkVar("x", ty);
-			auto binop = em->MkBinOp(x, c, Kind::EQUAL);
+			auto binop = em->MkDoubleNode(x, c, Kind::EQUAL);
 
 			cvc4engine->Push(); {
 				cvc4engine->Assert(binop);
@@ -191,7 +191,7 @@ namespace solver {
 			x_32_unbound();
 			auto orig_val = em_->MkIntVal<int32_t>(42);
 			auto c42 = em_->MkConst(orig_val);
-			auto binop = em_->MkBinOp(x_32, c42, Kind::EQUAL);
+			auto binop = em_->MkDoubleNode(x_32, c42, Kind::EQUAL);
 			engine_->Assert(binop);
 			if (engine_->CheckSat() == Sat::SAT) {
 				auto res_val = engine_->GetValue(x_32);
@@ -316,7 +316,7 @@ namespace solver {
 			auto c = em->MkConst(int_val);
 			auto int_ty = em->MkIntTy<T>();
 			auto x = em->MkVar("x", int_ty);
-			auto binop = em->MkBinOp(x, c, Kind::EQUAL);
+			auto binop = em->MkDoubleNode(x, c, Kind::EQUAL);
 			cvc4engine->Push(); {
 				CVC4::Expr cvc4_expr = cvc4engine->Prism(binop);
 				//cout << "--------" << endl << binop->ToString() << " " << cvc4_expr.toString() << endl;
@@ -387,7 +387,7 @@ namespace solver {
 			auto l = V<int32_t>("x");
 			auto r = C<int32_t>(42);
 			auto act = f(l, r);
-			auto exp = ObjectBuilder::Get()->MkBinOp(l, r, k);
+			auto exp = ObjectBuilder::Get()->MkDoubleNode(l, r, k);
 			ASSERT_EQ(*exp, *act);
 		};
 
