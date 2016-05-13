@@ -5,6 +5,11 @@
 # include <string>
 # include <iostream>
 
+// Original Version
+#define NONCOPYABLE(TypeName) \
+TypeName(const TypeName&) = delete; \
+void operator=(const TypeName&) = delete;
+
 //TODO: VERIFY!!! from_this !
 //TODO: ALL shared objects MUST be IMMUTABLE!
 /** Base class for all shared objects in the program.

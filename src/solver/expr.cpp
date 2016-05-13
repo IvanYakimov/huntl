@@ -58,11 +58,23 @@ namespace solver
 	ValuePtr Const::GetValue() const {
 		return value_;
 	}
+	//-------------------------------------------------------------------------
+	// Node hierachy
+	Node::Node(Kind kind) : kind_(kind) {}
 
-	DoubleNode::DoubleNode(ExprPtr l, ExprPtr r, Kind k) throw (IllegalArgException) {
+	Node::~Node() {}
+
+	Kind Node::GetKind() const {
+		return kind_;
+	}
+
+	std::string Node::GetKindName() const {
+		return to_string(kind_);
+	}
+
+	DoubleNode::DoubleNode(ExprPtr l, ExprPtr r, Kind k) throw (IllegalArgException) : Node(k) {
 		if (l == nullptr or r == nullptr)
 			throw IllegalArgException();
-		kind_ = k;
 		left_child_ = l;
 		right_child_ = r;
 	}
@@ -71,7 +83,7 @@ namespace solver
 
 	bool DoubleNode::Equals(const Object& rhs) const {
 		auto cmp = [] (const DoubleNode &lhs, const DoubleNode &rhs) -> bool {
-			return lhs.kind_ == rhs.kind_ &&
+			return lhs.GetKind() == rhs.GetKind() &&
 					lhs.left_child_ == rhs.left_child_ &&
 					lhs.right_child_ == rhs.right_child_;
 		};
@@ -84,10 +96,6 @@ namespace solver
 
 	ExprPtr DoubleNode::GetLeftChild() const {return left_child_;}
 	ExprPtr DoubleNode::GetRightChild() const {return right_child_;}
-
-	Kind DoubleNode::GetKind() const {return kind_;}
-	std::string DoubleNode::GetKindName() const {return to_string(kind_);}
-
 }
 
 

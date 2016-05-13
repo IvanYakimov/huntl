@@ -56,8 +56,12 @@ namespace solver
 		virtual bool IsIfThanElse() {return false;}
 	};
 
-	class Node : public shared<Node, Expr> {
+	class Node : public Expr {
 	public:
+		NONCOPYABLE(Node);
+
+		Node(Kind kind);
+		virtual ~Node();
 		Kind GetKind() const;
 		/** Returns an appropriate string representation of the binop's kind */
 		std::string GetKindName() const;
@@ -65,13 +69,14 @@ namespace solver
 		Kind kind_;
 	};
 
-	class SingleNode : public shared<SingleNode, Node> {
+	class SingleNode : public Node {
+		NONCOPYABLE(SingleNode);
+
 		SingleNode(Kind kind, ExprPtr child);
-		SingleNode(const SingleNode& rhs) = delete;
 		~SingleNode();
 		bool Equals(const Object& rhs) const final;
 		std::string ToString() const final;
-		ExprPtr GetChild();
+		ExprPtr GetChild() const;
 	};
 
 	/**
@@ -82,12 +87,13 @@ namespace solver
 	 * \see Kind
 	 * \see ExprManager::MkBinOp
 	 */
-	class DoubleNode : public shared<DoubleNode, Expr>{
+	class DoubleNode : public Node {
 	public:
+		NONCOPYABLE(DoubleNode);
+
 		/** Basic constructor.
 		 * \attention Do NOT use it directly! Use ::solver::ExprManager::MkBinOp() instead */
 		DoubleNode(ExprPtr left_child, ExprPtr right_child, Kind kind) throw (IllegalArgException);
-		DoubleNode (const DoubleNode& rhs) = delete;
 		~DoubleNode();
 		/** Structural equality of this BinOp instance and another object instance. Returns true if rhs is instance of BinOp,
 		 * it has equivalent kind and their left and right children are both structurally equivalent. */
@@ -99,19 +105,15 @@ namespace solver
 		ExprPtr GetLeftChild() const;
 		/** Returns (smart) pointer to right children */
 		ExprPtr GetRightChild() const;
-		/** Returns kind of the binop \see ::solver::Kind */
-		Kind GetKind() const;
-		/** Returns an appropriate string representation of the binop's kind */
-		std::string GetKindName() const;
 	private:
 		ExprPtr left_child_;
 		ExprPtr right_child_;
-		Kind kind_;
 	};
 
-	class TripleNode : public shared<TripleNode, Node> {
+	class TripleNode : public Node {
+		NONCOPYABLE(TripleNode);
+
 		TripleNode(Kind kind, ExprPtr first_child, ExprPtr second_child, ExprPtr third_child);
-		TripleNode(const SingleNode& rhs) = delete;
 		~TripleNode();
 		bool Equals(const Object& rhs) const final;
 		std::string ToString() const final;
@@ -126,12 +128,13 @@ namespace solver
 	 * \see Type
 	 * \see ExprManager::MkVar
 	 */
-	class Var final : public shared <Var, Expr> {
+	class Var final : public Expr {
 	public:
+		NONCOPYABLE(Var);
+
 		/** Basic constructor.
 		 * \attention Do NOT use it directly! Use ::solver::ExprManager::MkVar() instead */
 		Var (std::string name, TypePtr type) throw(IllegalArgException);
-		Var (const Var& rhs) = delete;
 		virtual ~Var() final;
 		/** Structural equality of this Var instance and another Object instance. Returns true if rhs is instance of Var
 		 * and it has the same type as this.
@@ -159,12 +162,13 @@ namespace solver
 	 * \see Value
 	 * \see ExprManager::MkConst
 	 */
-	class Const : public shared<Const, Expr> {
+	class Const : public Expr {
 	public:
+		NONCOPYABLE(Const);
+
 		/** Basic constructor.
 		 * \attention Do NOT use it directly! Use ::solver::ExprManager::MkConst() instead */
 		Const (ValuePtr val) throw(IllegalArgException);
-		Const (const Const& rhs) = delete;
 		virtual ~Const();
 		/** Structural equality of this Const instance and another Object instance. Returns true if Object is instance of Const
 		 * and their values are structurally equivalent.
