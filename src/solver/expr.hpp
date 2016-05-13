@@ -82,10 +82,12 @@ namespace solver
 		~SingleNode() {}
 
 		bool Equals(const Object& rhs) const final {
+			assert(false && "not implemented");
 			return false;
 		}
 
 		std::string ToString() const final {
+			assert(false && "not implemented");
 			return "( #unary node# )";
 		}
 
@@ -118,7 +120,7 @@ namespace solver
 
 		/** Basic constructor.
 		 * \attention Do NOT use it directly! Use ::solver::ExprManager::MkBinOp() instead */
-		DoubleNode(X left_child, Y right_child, Kind kind) : Node <BASE, KIND, RES_TY> (kind) {
+		DoubleNode(KIND kind, X left_child, Y right_child) : Node <BASE, KIND, RES_TY> (kind) {
 			left_child_ = left_child;
 			right_child_ = right_child;
 		}
@@ -126,11 +128,13 @@ namespace solver
 		/** Structural equality of this BinOp instance and another object instance. Returns true if rhs is instance of BinOp,
 		 * it has equivalent kind and their left and right children are both structurally equivalent. */
 		bool Equals(const Object &rhs) const final {
+			assert(false && "not implemented");
 			return false;
 		}
 		/** String representation in format "(<kind> <left> <right>)", where kind - string representation of the binop's kind,
 		 * left and right - string representation of the binop's children*/
 		std::string ToString() const final {
+			assert(false && "not implemented");
 			return "( #double_node# )";
 		}
 		/** Returns (smart) pointer to left children */
@@ -162,21 +166,66 @@ namespace solver
 		BVXOR
 	};
 
-	class BinOp : public DoubleNode<BitVec, BinOpKind, BitVecPtr, BitVecPtr, BitVecPtr> {};
+	class BinOp : public DoubleNode<BitVec, BinOpKind, BitVecPtr, BitVecPtr, BitVecPtr> {
+		/*BinOp(BinOpKind kind, BitVecPtr lhs, BitVecPtr rhs) :
+			DoubleNode <BitVec, BinOpKind, BitVecPtr, BitVecPtr, BitVecPtr> (kind, lhs, rhs) {}*/
+	};
 
-	/*
-	class TripleNode : public Node {
+	enum class ComparisonKind {
+		BVULT,
+		BVULE,
+		BVUGT,
+		BVUGE,
+		BVSLT,
+		BVSLE,
+		BVSGT,
+		BVSGE
+	};
+
+	class Bool {
+
+	};
+
+	using BoolPtr = std::shared_ptr<Bool>;
+
+	class Comparison : public DoubleNode<BitVec, ComparisonKind,
+		BitVecPtr, BitVecPtr, BoolPtr> {};
+
+	enum class NoKind {
+		EPSILON
+	};
+
+	class Equality : public DoubleNode<Expr, NoKind,
+		ExprPtr, ExprPtr, BoolPtr> {};
+
+	class Distinct : public DoubleNode<Expr, NoKind,
+		ExprPtr, ExprPtr, BoolPtr> {};
+
+	template <class BASE, class KIND, class X, class Y, class Z, class RES_TY>
+	class TripleNode : public Node<BASE, KIND, RES_TY>  {
+	public:
 		NONCOPYABLE(TripleNode);
 
-		TripleNode(Kind kind, ExprPtr first_child, ExprPtr second_child, ExprPtr third_child);
-		~TripleNode();
-		bool Equals(const Object& rhs) const final;
-		std::string ToString() const final;
-		ExprPtr GetFirstChild();
-		ExprPtr GetSecondChild();
-		ExprPtr GetThirdChild();
+		TripleNode(Kind kind, ExprPtr first_child, ExprPtr second_child, ExprPtr third_child)
+			: Node<BASE, KIND, RES_TY>(kind) {}
+		~TripleNode() {}
+		bool Equals(const Object& rhs) const final {
+			assert(false && "not implemented");
+			return false;
+		}
+
+		std::string ToString() const final {
+			assert(false && "not implemented");
+			return "( #triple node# )";
+		}
+		X GetFirstChild() const { return first_; }
+		Y GetSecondChild() const { return second_; }
+		Z GetThirdChild() const { return third_; }
+	private:
+		X first_;
+		Y second_;
+		Z third_;
 	};
-	*/
 
 	/**
 	 * A variable (constant in terms of SMT-LIB2). Holds variable's name and (smart pointer to) variable's type.

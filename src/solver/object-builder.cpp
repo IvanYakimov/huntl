@@ -19,7 +19,11 @@ namespace solver {
 	}
 
 	ExprPtr ObjectBuilder::MkDoubleNode (ExprPtr a, ExprPtr b, Kind op_code) {
-		return std::make_shared <DoubleNode>(a, b, op_code);
+		assert(false && "not implemented");
+		auto l = std::dynamic_pointer_cast<BitVec>(a);
+		auto r = std::dynamic_pointer_cast<BitVec>(b);
+		return std::make_shared <BinOp>(BinOpKind::BVADD, l, r);
+
 	}
 
 	ValuePtr ObjectBuilder::MkIntVal(bool is_signed, Width width, uint64_t ulval) {
