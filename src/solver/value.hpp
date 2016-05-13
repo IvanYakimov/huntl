@@ -26,6 +26,8 @@ namespace solver {
 	 * \see CRTP <T,B> */
 	class Value : public Immutable  {
 	public:
+		COMPARABLE(Value);
+		PRINTABLE(Value);
 		virtual ~Value() {}
 	};
 

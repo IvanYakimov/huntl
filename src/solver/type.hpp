@@ -26,6 +26,9 @@ namespace solver {
 	 * \see CRTP <T,B>*/
 	class Type : public Immutable {
 	public:
+		COMPARABLE(Type);
+		PRINTABLE(Type);
+
 		virtual ~Type() {}
 	};
 

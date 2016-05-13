@@ -23,7 +23,7 @@ namespace solver
 	class Expr;
 	class Var;
 	class Node;
-	class SingleNode;
+	//class SingleNode;
 	class DoubleNode;
 	class TripleNode;
 	class ObjectBuilder;
@@ -73,14 +73,37 @@ namespace solver
 		Kind kind_;
 	};
 
-	class SingleNode : public Node {
+	template<class KIND, class BASE, class PARAM, class RES_TY>
+	class SingleNode : public BASE {
+	public:
 		NONCOPYABLE(SingleNode);
 
-		SingleNode(Kind kind, ExprPtr child);
+		using ParamPtr = std::shared_ptr<PARAM>;
+
+		SingleNode(KIND kind, ParamPtr child);
 		~SingleNode();
 		bool Equals(const Object& rhs) const final;
 		std::string ToString() const final;
-		ExprPtr GetChild() const;
+		ParamPtr GetChild() const {return child_;}
+		template <class TY>
+		bool HasType() {
+			return typeid(TY) == typeid(RES_TY);
+		}
+		bool HasSameTypeAs(const ObjectPtr &rhs) {
+			return instanceof<RES_TY>(rhs);
+		};
+		KIND GetKind() const {return kind_;}
+	private:
+		KIND kind_;
+		ParamPtr child_;
+	};
+
+	enum class UnOpKind {
+		BVNOT,
+		BVNEG
+	};
+
+	class UnOp : public SingleNode<UnOpKind, Expr, Expr, Expr> {
 	};
 
 	/**
