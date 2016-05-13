@@ -24,7 +24,7 @@ namespace solver {
 	 * \note Every particular type should be inherited (by CRTP <T,B>) from this.
 	 * \see BasicIntTy
 	 * \see CRTP <T,B>*/
-	class Type : public shared <Type, Immutable> {
+	class Type : public Immutable {
 	public:
 		virtual ~Type() {}
 	};
@@ -47,7 +47,7 @@ namespace solver {
 	 */
 	template<typename T>
 	class IntTy :
-			public shared<IntTy<T>, BasicIntTy>,
+			public BasicIntTy,
 			public virtual_singleton <IntTy<T>, BasicIntTy> {
 	public:
 		/** Basic constructor.

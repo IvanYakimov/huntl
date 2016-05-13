@@ -42,8 +42,12 @@ namespace solver
 	 * \note Every particular kind of expression should be inherited (by using CRTP <T,B>) from this.
 	 * \note To create instance of particular kind of expression use ObjectBuilder.
 	 */
-	class Expr : public shared<Expr, Immutable> {
+	class Expr : public Immutable {
+		//TODO: rename to BitVec!
 	public:
+		COMPARABLE(Expr);
+		PRINTABLE(Expr);
+
 		virtual ~Expr() {}
 		virtual bool IsVar() {return false;}
 		virtual bool IsConst() {return false;}

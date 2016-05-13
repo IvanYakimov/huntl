@@ -6,9 +6,21 @@
 # include <iostream>
 
 // Original Version
-#define NONCOPYABLE(TypeName) \
-TypeName(const TypeName&) = delete; \
-void operator=(const TypeName&) = delete;
+#define NONCOPYABLE(T) \
+T(const T&) = delete; \
+void operator=(const T&) = delete;
+
+#define COMPARABLE(T) \
+friend bool operator==(const T& a, const T& b) { return a.Equals(b); } \
+friend bool operator!=(const T& a, const T& b) { return !a.Equals(b); } \
+bool operator==(const T& b) { return this->Equals(b); } \
+bool operator!=(const T& b) { return !this->Equals(b); } \
+
+#define PRINTABLE(T) \
+friend std::ostream& operator<<(std::ostream &os, const T& obj) { \
+	os << obj.ToString(); \
+	return os; \
+}
 
 //TODO: VERIFY!!! from_this !
 //TODO: ALL shared objects MUST be IMMUTABLE!
@@ -65,14 +77,14 @@ public:
 
 /** Every immutable shared object must be inherited from this.
  */
-class Immutable : public shared<Immutable, Object> {
+class Immutable : public Object {
 public:
 	virtual ~Immutable() {}
 };
 
 /** Evey mutalbe shared object must be inherited from this.
  */
-class Mutable : public shared<Mutable, Object> {
+class Mutable : public Object {
 public:
 	virtual ~Mutable() {}
 	virtual ObjectPtr Clone() = 0;
