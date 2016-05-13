@@ -22,10 +22,10 @@ namespace solver
 {
 	class Expr;
 	class Var;
-	class Node;
+	//class Node;
 	//class SingleNode;
-	class DoubleNode;
-	class TripleNode;
+	//class DoubleNode;
+	//class TripleNode;
 	class ObjectBuilder;
 	class Const;
 
@@ -49,53 +49,49 @@ namespace solver
 		PRINTABLE(Expr);
 
 		virtual ~Expr() {}
-		virtual bool IsVar() {return false;}
-		virtual bool IsConst() {return false;}
-		virtual bool IsUnOp() {return false;}
-		virtual bool IsBinOp() {return false;}
-		virtual bool IsComparison() {return false;}
-		virtual bool IsEquality() {return false;}
-		virtual bool IsDistinction() {return false;}
-		virtual bool IsFunction() {return false;}
-		virtual bool IsIfThanElse() {return false;}
 	};
 
-	class Node : public Expr {
+	class BitVec : public Expr {
+	public:
+		virtual ~BitVec() {}
+	};
+
+	using BitVecPtr = std::shared_ptr<BitVec>;
+
+	template <class BASE, class KIND, class RES_TY>
+	class Node : public BASE {
 	public:
 		NONCOPYABLE(Node);
 
-		Node(Kind kind);
-		virtual ~Node();
-		Kind GetKind() const;
-		/** Returns an appropriate string representation of the binop's kind */
-		std::string GetKindName() const;
+		Node(KIND kind) : kind_(kind) {}
+		virtual ~Node() {}
+		KIND GetKind() const { return kind_; }
+		template <class TY>
+		bool HasType() const { return typeid(TY) == typeid(RES_TY); }
+		bool HasSameTypeAs(const ObjectPtr &rhs) const { return instanceof<RES_TY>(rhs); };
 	private:
-		Kind kind_;
+		KIND kind_;
 	};
 
-	template<class KIND, class BASE, class PARAM, class RES_TY>
-	class SingleNode : public BASE {
+	template<class BASE, class KIND, class X, class RES_TY>
+	class SingleNode : public Node <BASE, KIND, RES_TY> {
 	public:
 		NONCOPYABLE(SingleNode);
 
-		using ParamPtr = std::shared_ptr<PARAM>;
+		SingleNode(KIND kind, X child) : Node <BASE, KIND, RES_TY> (kind) {}
+		~SingleNode() {}
 
-		SingleNode(KIND kind, ParamPtr child);
-		~SingleNode();
-		bool Equals(const Object& rhs) const final;
-		std::string ToString() const final;
-		ParamPtr GetChild() const {return child_;}
-		template <class TY>
-		bool HasType() {
-			return typeid(TY) == typeid(RES_TY);
+		bool Equals(const Object& rhs) const final {
+			return false;
 		}
-		bool HasSameTypeAs(const ObjectPtr &rhs) {
-			return instanceof<RES_TY>(rhs);
-		};
-		KIND GetKind() const {return kind_;}
+
+		std::string ToString() const final {
+			return "( #unary node# )";
+		}
+
+		X GetChild() const {return child_;}
 	private:
-		KIND kind_;
-		ParamPtr child_;
+		X child_;
 	};
 
 	enum class UnOpKind {
@@ -103,8 +99,9 @@ namespace solver
 		BVNEG
 	};
 
-	class UnOp : public SingleNode<UnOpKind, Expr, Expr, Expr> {
-	};
+	/// BitVec -> BitVec
+	class UnOp : public SingleNode<BitVec, UnOpKind, BitVecPtr, BitVecPtr> {};
+
 
 	/**
 	 * An arbitrary binary operation. Holds (smart pointers to) left and right children, which are arbitrary smt expressions.
@@ -114,29 +111,60 @@ namespace solver
 	 * \see Kind
 	 * \see ExprManager::MkBinOp
 	 */
-	class DoubleNode : public Node {
+	template <class BASE, class KIND, class X, class Y, class RES_TY>
+	class DoubleNode : public Node<BASE, KIND, RES_TY> {
 	public:
 		NONCOPYABLE(DoubleNode);
 
 		/** Basic constructor.
 		 * \attention Do NOT use it directly! Use ::solver::ExprManager::MkBinOp() instead */
-		DoubleNode(ExprPtr left_child, ExprPtr right_child, Kind kind) throw (IllegalArgException);
-		~DoubleNode();
+		DoubleNode(X left_child, Y right_child, Kind kind) : Node <BASE, KIND, RES_TY> (kind) {
+			left_child_ = left_child;
+			right_child_ = right_child;
+		}
+		~DoubleNode() {}
 		/** Structural equality of this BinOp instance and another object instance. Returns true if rhs is instance of BinOp,
 		 * it has equivalent kind and their left and right children are both structurally equivalent. */
-		bool Equals(const Object &rhs) const final;
+		bool Equals(const Object &rhs) const final {
+			return false;
+		}
 		/** String representation in format "(<kind> <left> <right>)", where kind - string representation of the binop's kind,
 		 * left and right - string representation of the binop's children*/
-		std::string ToString() const final;
+		std::string ToString() const final {
+			return "( #double_node# )";
+		}
 		/** Returns (smart) pointer to left children */
-		ExprPtr GetLeftChild() const;
+		X GetLeftChild() const {
+			return left_child_;
+		}
 		/** Returns (smart) pointer to right children */
-		ExprPtr GetRightChild() const;
+		Y GetRightChild() const {
+			return right_child_;
+		}
 	private:
-		ExprPtr left_child_;
-		ExprPtr right_child_;
+		X left_child_;
+		Y right_child_;
 	};
 
+	enum class BinOpKind {
+		BVADD,
+		BVMUL,
+		BVSUB,
+		BVSDIV,
+		BVSREM,
+		BVUDIV,
+		BVUREM,
+		BVSHL,
+		BVLSHR,
+		BVASHR,
+		BVAND,
+		BVOR,
+		BVXOR
+	};
+
+	class BinOp : public DoubleNode<BitVec, BinOpKind, BitVecPtr, BitVecPtr, BitVecPtr> {};
+
+	/*
 	class TripleNode : public Node {
 		NONCOPYABLE(TripleNode);
 
@@ -148,6 +176,7 @@ namespace solver
 		ExprPtr GetSecondChild();
 		ExprPtr GetThirdChild();
 	};
+	*/
 
 	/**
 	 * A variable (constant in terms of SMT-LIB2). Holds variable's name and (smart pointer to) variable's type.

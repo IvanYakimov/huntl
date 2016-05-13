@@ -60,6 +60,7 @@ namespace solver
 	}
 	//-------------------------------------------------------------------------
 	// Node hierachy
+	/*
 	Node::Node(Kind kind) : kind_(kind) {}
 
 	Node::~Node() {}
@@ -96,6 +97,7 @@ namespace solver
 
 	ExprPtr DoubleNode::GetLeftChild() const {return left_child_;}
 	ExprPtr DoubleNode::GetRightChild() const {return right_child_;}
+	*/
 }
 
 
