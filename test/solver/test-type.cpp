@@ -107,7 +107,7 @@ namespace solver {
 		ASSERT_FALSE(instanceof<Expr>(ty));
 		ASSERT_FALSE(instanceof<Var>(ty));
 		ASSERT_FALSE(instanceof<Const>(ty));
-		ASSERT_FALSE(instanceof<DoubleNode>(ty));
+		ASSERT_FALSE(instanceof<BinOp>(ty));
 		ASSERT_FALSE(instanceof<Value>(ty));
 		ASSERT_FALSE(instanceof<BasicIntVal>(ty));
 	}
