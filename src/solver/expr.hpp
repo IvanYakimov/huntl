@@ -170,8 +170,8 @@ namespace solver
 	public:
 		//NONCOPYABLE(BinOp);
 
-		BinOp(BinOpKind kind, const BitVecPtr& lhs, const BitVecPtr& rhs) :
-			DoubleNode <BitVec, BinOpKind, BitVecPtr, BitVecPtr, BitVecPtr> (kind, lhs, rhs) {}
+		BinOp(BinOpKind kind, const BitVecPtr& lhs, const BitVecPtr& rhs) : DoubleNode <BitVec, BinOpKind, BitVecPtr, BitVecPtr, BitVecPtr> (kind, lhs, rhs)
+		{}
 	};
 
 	enum class ComparisonKind {

@@ -18,9 +18,30 @@ namespace solver {
 		return std::make_shared<Const>(val);
 	}
 
-	ExprPtr ObjectBuilder::MkDoubleNode (const BitVecPtr& a, const BitVecPtr& b, Kind op_code) {
+	ExprPtr ObjectBuilder::MkDoubleNode (const ExprPtr& a, const ExprPtr& b, Kind op_code) {
 		assert(false && "not implemented");
-		auto res = BinOp(BinOpKind::BVADD, a, b);
+
+		switch (op_code){
+		case Kind::ADD:
+			/*
+		case Kind::MUL:
+		case Kind::SUB:
+		case Kind::SDIV:
+		case Kind::SREM:
+		case Kind::UDIV:
+		case Kind::UREM:
+		case Kind::SHL:
+		case Kind::ASHR:
+		case Kind::LSHR:
+		case Kind::AND:
+		case Kind::OR:
+		case Kind::XOR:
+		*/
+			auto l = std::dynamic_pointer_cast<BinOp>(a);
+			auto r = std::dynamic_pointer_cast<BinOp>(b);
+			return std::make_shared<BinOp>(BinOpKind::BVADD, l, r);
+		}
+
 		//return std::make_shared <BinOp>(BinOpKind::BVADD, l, r);
 		return nullptr;
 	}
