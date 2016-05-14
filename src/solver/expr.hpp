@@ -42,7 +42,7 @@ namespace solver
 	 * \note Every particular kind of expression should be inherited (by using CRTP <T,B>) from this.
 	 * \note To create instance of particular kind of expression use ObjectBuilder.
 	 */
-	class Expr : public Immutable {
+	class Expr /*: public Immutable*/ {
 		//TODO: rename to BitVec!
 	public:
 		COMPARABLE(Expr);
@@ -236,7 +236,7 @@ namespace solver
 	 * \see Type
 	 * \see ExprManager::MkVar
 	 */
-	class Var final : public Expr {
+	class Var final : public BitVec {
 	public:
 		NONCOPYABLE(Var);
 
@@ -264,13 +264,14 @@ namespace solver
 		uint64_t id_;
 	};
 
+#ifdef NODEF
 	/**
 	 * A constant. Holds (smart pointer to) an appropriate value.
 	 * \note To create an instance of constant use ExprManager::MkConst.
 	 * \see Value
 	 * \see ExprManager::MkConst
 	 */
-	class Const : public Expr {
+	class Const : public BitVec {
 	public:
 		NONCOPYABLE(Const);
 
@@ -293,6 +294,7 @@ namespace solver
 	private:
 		ValuePtr value_;
 	};
+#endif
 }
 
 # endif /* __EXPR_HPP__ */

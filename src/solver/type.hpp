@@ -35,7 +35,7 @@ namespace solver {
 	/** Basic integer type. Is is useful to make (smart) pointer to particular IntTy.
 	 * \see IntTy
 	 * \see ExprManager::MkIntTy */
-	class BasicIntTy : public shared <BasicIntTy, Type> {
+	class BasicIntTy : public Type {
 	public:
 		virtual ~BasicIntTy() {}
 		/** Returns width (number of bites) of wrapped raw integer type */

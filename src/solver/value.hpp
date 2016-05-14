@@ -35,7 +35,7 @@ namespace solver {
 	 * \see Int
 	 * \see ExprManager::MkIntVal
 	 */
-	class BasicIntVal : public Value {
+	class BasicIntVal : public BitVec {
 	public:
 		/** Returns width (number of bits) in the integer. */
 		virtual Width GetWidth() const = 0;

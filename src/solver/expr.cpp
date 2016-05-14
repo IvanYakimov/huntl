@@ -35,6 +35,7 @@ namespace solver
 	TypePtr Var::GetType() const {return type_;}
 	void Var::Reset() { id_cache_.Reset(); }
 
+#ifdef NODEF
 	Const::Const(ValuePtr val) throw(IllegalArgException) {
 		if (val != nullptr)
 			value_ = val;
@@ -58,6 +59,7 @@ namespace solver
 	ValuePtr Const::GetValue() const {
 		return value_;
 	}
+#nodef
 	//-------------------------------------------------------------------------
 	// Node hierachy
 	/*
