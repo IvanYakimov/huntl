@@ -37,7 +37,7 @@ namespace solver {
 		 * \see BinOp
 		 * \see Kind
 		 */
-		ExprPtr MkDoubleNode (ExprPtr a, ExprPtr b, Kind kind);
+		ExprPtr MkDoubleNode (const BitVecPtr& a, const BitVecPtr& b, Kind kind);
 		/** Creates (smart pointer to) a variable.
 		 * @param name - name of variable, standard string.
 		 * @param type - type of variable, always use ExprManager to obtain (smart pointer to) an appropriate type.

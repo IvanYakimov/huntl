@@ -61,7 +61,7 @@ namespace solver
 	template <class BASE, class KIND, class RES_TY>
 	class Node : public BASE {
 	public:
-		NONCOPYABLE(Node);
+		//NONCOPYABLE(Node);
 
 		Node(KIND kind) : kind_(kind) {}
 		virtual ~Node() {}
@@ -78,7 +78,7 @@ namespace solver
 	public:
 		NONCOPYABLE(SingleNode);
 
-		SingleNode(KIND kind, X child) : Node <BASE, KIND, RES_TY> (kind) {}
+		SingleNode(KIND kind, const X& child) : Node <BASE, KIND, RES_TY> (kind) {}
 		~SingleNode() {}
 
 		bool Equals(const Object& rhs) const final {
@@ -116,11 +116,11 @@ namespace solver
 	template <class BASE, class KIND, class X, class Y, class RES_TY>
 	class DoubleNode : public Node<BASE, KIND, RES_TY> {
 	public:
-		NONCOPYABLE(DoubleNode);
+		//NONCOPYABLE(DoubleNode);
 
 		/** Basic constructor.
 		 * \attention Do NOT use it directly! Use ::solver::ExprManager::MkBinOp() instead */
-		DoubleNode(KIND kind, X left_child, Y right_child) : Node <BASE, KIND, RES_TY> (kind) {
+		DoubleNode(KIND kind, const X& left_child, const Y& right_child) : Node <BASE, KIND, RES_TY> (kind) {
 			left_child_ = left_child;
 			right_child_ = right_child;
 		}
@@ -167,8 +167,11 @@ namespace solver
 	};
 
 	class BinOp : public DoubleNode<BitVec, BinOpKind, BitVecPtr, BitVecPtr, BitVecPtr> {
-		/*BinOp(BinOpKind kind, BitVecPtr lhs, BitVecPtr rhs) :
-			DoubleNode <BitVec, BinOpKind, BitVecPtr, BitVecPtr, BitVecPtr> (kind, lhs, rhs) {}*/
+	public:
+		//NONCOPYABLE(BinOp);
+
+		BinOp(BinOpKind kind, const BitVecPtr& lhs, const BitVecPtr& rhs) :
+			DoubleNode <BitVec, BinOpKind, BitVecPtr, BitVecPtr, BitVecPtr> (kind, lhs, rhs) {}
 	};
 
 	enum class ComparisonKind {
@@ -206,7 +209,7 @@ namespace solver
 	public:
 		NONCOPYABLE(TripleNode);
 
-		TripleNode(Kind kind, ExprPtr first_child, ExprPtr second_child, ExprPtr third_child)
+		TripleNode(Kind kind, const X& first_child, const Y& second_child, const Z& third_child)
 			: Node<BASE, KIND, RES_TY>(kind) {}
 		~TripleNode() {}
 		bool Equals(const Object& rhs) const final {
