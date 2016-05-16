@@ -13,8 +13,6 @@
 // Project
 #include "../utils/object.hpp"
 #include "kind.hpp"
-#include "type.hpp"
-#include "value.hpp"
 #include "exception.hpp"
 #include "../utils/index-cache.hpp"
 
@@ -42,7 +40,7 @@ namespace solver
 	 * \note Every particular kind of expression should be inherited (by using CRTP <T,B>) from this.
 	 * \note To create instance of particular kind of expression use ObjectBuilder.
 	 */
-	class Expr /*: public Immutable*/ {
+	class Expr : public Immutable {
 		//TODO: rename to BitVec!
 	public:
 		COMPARABLE(Expr);
@@ -57,6 +55,47 @@ namespace solver
 	};
 
 	using BitVecPtr = std::shared_ptr<BitVec>;
+
+	class Value;
+	class BasicIntVal;
+	template<typename T> class IntVal;
+
+	using BasicIntPtr = std::shared_ptr<BasicIntVal>;
+	template<typename T> using IntPtr = std::shared_ptr<IntVal<T>>;
+
+	using Width = std::uint16_t;
+	using Alignment = std::uint16_t;
+
+	/** Basic integer value. This is useful to make (smart) pointer for particular integer value
+	 * \see Int
+	 * \see ExprManager::MkIntVal
+	 */
+	class BasicIntVal : public BitVec {
+		using Value = uint64_t;
+	public:
+		virtual ~BasicIntVal();
+		virtual bool Equals(const Object& rhs) const;
+		virtual std::string ToString() const;
+		/** Returns width (number of bits) in the integer. */
+		Width GetWidth() const;
+		/** Returns 64-bit unsigned long representation of the stored integer value.
+		 * This routine copies significant bytes from stored raw integer value to result (in machine dependent order),
+		 * and fills insignificant bytes by zeros.
+		 * \see SetUInt64 */
+		uint64_t GetUInt64() const;
+		/** Set up value from 64-bit unsigned long representation.
+		 * This routine copies significant bytes from argument to stored raw integer value (in machine dependent order),
+		 * and fills insignificant bytes by zeros.
+		 * For example: if we have int8_t x = "FF", the val (representing x as uint64_t) should contain "00 00 00 00 00 00 00 FF";
+		 * for int32_t y = "FF FF FF FF" val = "00 00 00 00 FF FF FF FF", etc.
+		 * \see GetUInt64 */
+		void SetUInt64(const uint64_t& val);
+	private:
+		Value value_;
+		Width width_;
+		Alignment align_;
+
+	};
 
 	template <class BASE, class KIND, class RES_TY>
 	class Node : public BASE {
@@ -230,6 +269,8 @@ namespace solver
 		Z third_;
 	};
 
+	using BitVecWidth = std::uint16_t;
+
 	/**
 	 * A variable (constant in terms of SMT-LIB2). Holds variable's name and (smart pointer to) variable's type.
 	 * \note To create an instance of variable use ExprManager::MkVar.
@@ -242,7 +283,7 @@ namespace solver
 
 		/** Basic constructor.
 		 * \attention Do NOT use it directly! Use ::solver::ExprManager::MkVar() instead */
-		Var (std::string name, TypePtr type) throw(IllegalArgException);
+		Var (std::string name, BitVecWidth type);
 		virtual ~Var() final;
 		/** Structural equality of this Var instance and another Object instance. Returns true if rhs is instance of Var
 		 * and it has the same type as this.
@@ -254,12 +295,12 @@ namespace solver
 		/** Returns name of the variable */
 		std::string GetName() const;
 		/** Returns (smart) pointer to a variable type */
-		TypePtr GetType() const;
+		BitVecWidth GetType() const;
 		//TODO: move to private
 		static void Reset();
 	private:
 		std::string name_;
-		TypePtr type_;
+		BitVecWidth type_;
 		static IndexCache<uint64_t> id_cache_;
 		uint64_t id_;
 	};

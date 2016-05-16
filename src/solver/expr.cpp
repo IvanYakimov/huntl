@@ -4,14 +4,48 @@ using std::function;
 
 namespace solver
 {
-	Var::Var (std::string name, TypePtr type) throw(IllegalArgException) {
-		if (not name.empty() and type != nullptr) {
-			name_ = name;
-			type_ = type;
-			id_ = id_cache_.Get();
-		}
-		else
-			throw IllegalArgException();
+	BasicIntVal::~BasicIntVal() {
+	}
+
+	bool BasicIntVal::Equals (const Object& rhs) const {
+		auto cmp = [] (const BasicIntVal &lhs, const BasicIntVal &rhs) -> bool {
+				//return lhs.GetVal() == rhs.GetVal()
+				assert(false && "not implemented");
+			};
+		return EqualsHelper<BasicIntVal>(*this, rhs, cmp);
+	}
+
+	std::string BasicIntVal::ToString() const {
+		//return "bv" + to_string(GetWidth()) + " " + std::to_string(GetVal());
+		assert(false && "not implemented");
+	}
+
+	Width BasicIntVal::GetWidth() const {
+		return width_;
+	}
+
+	uint64_t BasicIntVal::GetUInt64() const {
+	#if defined(_M_X64) || defined(__amd64__)
+		uint64_t result = 0L;
+		memcpy(&result, &value_, align_);
+		return result;
+	#else
+	#error "on amd64 is supported"
+	#endif
+	}
+
+	void BasicIntVal::SetUInt64(const uint64_t& val) {
+	#if defined(_M_X64) || defined(__amd64__)
+			memcpy(&value_, &val, align_);
+	#else
+	#error "on amd64 is supported"
+	#endif
+	}
+
+	Var::Var (std::string name, BitVecWidth type) {
+		name_ = name;
+		type_ = type;
+		id_ = id_cache_.Get();
 	}
 
 	Var::~Var() {
@@ -29,77 +63,11 @@ namespace solver
 	}
 
 	std::string Var::ToString() const {
-		return GetType()->ToString() + " " + GetName() + ":s" + std::to_string(id_);
+		return "btv" + std::to_string(GetType()) + " " + GetName() + ":s" + std::to_string(id_);
 	}
 	std::string Var::GetName() const {return name_;}
-	TypePtr Var::GetType() const {return type_;}
+	BitVecWidth Var::GetType() const {return type_;}
 	void Var::Reset() { id_cache_.Reset(); }
-
-#ifdef NODEF
-	Const::Const(ValuePtr val) throw(IllegalArgException) {
-		if (val != nullptr)
-			value_ = val;
-		else
-			throw IllegalArgException();
-	}
-
-	Const::~Const() {}
-
-	bool Const::Equals(const Object& rhs) const {
-		auto cmp = [] (const Const &lhs, const Const &rhs) -> bool {
-			return lhs.GetValue() == rhs.GetValue();
-		};
-		return EqualsHelper<Const>(*this, rhs, cmp);
-	}
-
-	std::string Const::ToString() const {
-		return GetValue()->ToString();
-	}
-
-	ValuePtr Const::GetValue() const {
-		return value_;
-	}
-#nodef
-	//-------------------------------------------------------------------------
-	// Node hierachy
-	/*
-	Node::Node(Kind kind) : kind_(kind) {}
-
-	Node::~Node() {}
-
-	Kind Node::GetKind() const {
-		return kind_;
-	}
-
-	std::string Node::GetKindName() const {
-		return to_string(kind_);
-	}
-
-	DoubleNode::DoubleNode(ExprPtr l, ExprPtr r, Kind k) throw (IllegalArgException) : Node(k) {
-		if (l == nullptr or r == nullptr)
-			throw IllegalArgException();
-		left_child_ = l;
-		right_child_ = r;
-	}
-
-	DoubleNode::~DoubleNode() {}
-
-	bool DoubleNode::Equals(const Object& rhs) const {
-		auto cmp = [] (const DoubleNode &lhs, const DoubleNode &rhs) -> bool {
-			return lhs.GetKind() == rhs.GetKind() &&
-					lhs.left_child_ == rhs.left_child_ &&
-					lhs.right_child_ == rhs.right_child_;
-		};
-		return EqualsHelper<DoubleNode>(*this, rhs, cmp);
-	}
-
-	std::string DoubleNode::ToString() const {
-		return "(" + GetKindName() + " " + GetLeftChild()->ToString() + " " + GetRightChild()->ToString() + ")";
-	}
-
-	ExprPtr DoubleNode::GetLeftChild() const {return left_child_;}
-	ExprPtr DoubleNode::GetRightChild() const {return right_child_;}
-	*/
 }
 
 
