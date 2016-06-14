@@ -1,7 +1,7 @@
 SHELL = /bin/sh
 
 SOLVER = kind.o bitvec.o expr.o object-builder.o cvc4-engine.o \
-	object-builder-helper.o exception.o object.o ismt-engine.o
+	object-builder-helper.o exception.o object.o ismt-engine.o core.o
 SOLVER_TEST = test-runner.o test-expr.o test-object-builder.o test-cvc4-engine.o \
 	test-z3-engine.o
 
@@ -65,7 +65,7 @@ clean:
 
 # < helpers ------------------------------------------------
 test.ll: test.c
-	clang -S -emit-llvm $< -Wimplicit-int
+	clang -S -emit-llvm -O0 $< -Wimplicit-int
 
 api-pattern.cpp: test.ll
 	llc -march=cpp $< -o api-pattern.cpp

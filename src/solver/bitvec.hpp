@@ -12,6 +12,7 @@
 
 // project
 #include "expr.hpp"
+#include "sort.hpp"
 #include "core.hpp"
 #include "../utils/index-cache.hpp"
 
@@ -23,6 +24,12 @@ namespace solver {
 	//class TripleNode;
 	class ObjectBuilder;
 	class Const;
+
+	template <size_t arity>
+	class BitVecSort : public Sort {
+		BitVecSort ();
+		size_t GetArity() {return arity;}
+	};
 
 	//TODO: improve docs;
 
@@ -102,7 +109,8 @@ namespace solver {
 	public:
 		//NONCOPYABLE(BinOp);
 
-		BinOp(BinOpKind kind, const BitVecPtr& lhs, const BitVecPtr& rhs) : DoubleNode <BitVec, BinOpKind, BitVecPtr, BitVecPtr, BitVecPtr> (kind, lhs, rhs)
+		BinOp(BinOpKind kind, const BitVecPtr& lhs, const BitVecPtr& rhs) :
+			DoubleNode <BitVec, BinOpKind, BitVecPtr, BitVecPtr, BitVecPtr> (kind, lhs, rhs)
 		{}
 	};
 
