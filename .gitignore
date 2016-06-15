@@ -4,3 +4,4 @@
 docs/
 api-pattern.cpp
 *.ll
+.settings/
