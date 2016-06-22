@@ -3,7 +3,6 @@
 
 // Project
 #include "matcher.hpp"
-#include "display-interface.hpp"
 
 #include <cvc4/cvc4.h>
 
@@ -15,9 +14,8 @@
 namespace interpreter {
 	class Executor final : public Matcher {
 	private:
-		DisplayPtr display_;
 	public:
-		Executor(DisplayPtr display) : display_(display) {}
+
 	private:
 		// Return
 		virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst);

@@ -3,7 +3,7 @@ SHELL = /bin/sh
 SOLVER_TEST = test-runner.o test-expr.o test-object-builder.o test-cvc4-engine.o \
 	test-z3-engine.o
 
-INTERPRETER = interpreter.o matcher.o executor.o voyager-pass.o objec.hpp
+INTERPRETER = interpreter.o matcher.o executor.o voyager-pass.o
 INTERPRETER_TEST = test-memory.o
 
 UTILS = 

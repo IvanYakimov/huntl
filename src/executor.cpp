@@ -50,16 +50,12 @@ namespace interpreter {
 		// (declare-const <name>)
 		// Allocate memory in the current activation record.
 		errs() << "var " << inst.getName() << "\n";
-		ObjectPtr var = solver::ObjectBuilder::Get()->MkVar(inst.getName(),
-				solver::ObjectBuilder::Get()->MkIntTy<std::int32_t>());
-		display_->Push(&inst, var);
 	}
 
 	// Load
 	void Executor::HandleLoadInst (const llvm::Instruction &inst, const llvm::Value *ptr) {
 		// (assert (= v e))
 		// Load object form ptr
-		ObjectPtr expr = display_->LookUp(ptr);
 		// Store (associate) object to &inst
 
 	}
