@@ -349,7 +349,7 @@ namespace solver {
 	TEST_F(ExprTest, PointerCast) {
 		auto ty = em.MkIntTy<int32_t>();
 		auto val = em.MkIntVal<int32_t>(42);
-		ExprPtr v = em.MkVar("x", ty),
+		Expr v = em.MkVar("x", ty),
 				c = em.MkConst(val),
 				b = em.MkDoubleNode(v, c, Kind::ADD);
 
@@ -385,7 +385,7 @@ namespace solver {
 	TEST_F(ExprTest, InstanceOf) {
 		auto ty = em.MkIntTy<int32_t>();
 		auto val = em.MkIntVal<int32_t>(42);
-		ExprPtr v = em.MkVar("x", ty),
+		Expr v = em.MkVar("x", ty),
 				c = em.MkConst(val),
 				b = em.MkDoubleNode(v, c, Kind::EQUAL);
 

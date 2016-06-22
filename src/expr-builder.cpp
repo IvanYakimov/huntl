@@ -5,11 +5,11 @@ namespace solver {
 
 	}
 
-	ExprPtr ExprBuilder::MkExpr(Kind kind, ExprPtr child1) {
-		return em.mkExpr(kind, child1);
+	ExprRef ExprBuilder::MkExpr(Kind kind, ExprRef child1) {
+		return context_.ExprManger().mkExpr(kind, child1);
 	}
 
-	ExprPtr ExprBuilder::MkExpr(Kind kind, ExprPtr child1, ExprPtr child2) {
-
+	ExprRef ExprBuilder::MkExpr(Kind kind, ExprRef child1, ExprRef child2) {
+		return context_.ExprManger(kind, child1, child2);
 	}
 }

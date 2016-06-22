@@ -223,7 +223,7 @@ namespace solver {
 	TEST_F(CVC4EngineTest, Prism_nullptr) {
 		bool nlp_ex = false;
 		try {
-			ExprPtr nlp = nullptr;
+			Expr nlp = nullptr;
 			engine_->Prism(nlp);
 		}
 		catch (std::logic_error &e) {
@@ -379,7 +379,7 @@ namespace solver {
 	TEST_F(CVC4EngineTest, helpers_test) {
 		using namespace std;
 
-		using the_tuple = tuple<function<ExprPtr(ExprPtr, ExprPtr)>, Kind>;
+		using the_tuple = tuple<function<Expr(Expr, Expr)>, Kind>;
 		using the_list = list<the_tuple>;
 		auto checker = [&] (the_tuple tpl) {
 			auto f = get<0>(tpl);
@@ -712,9 +712,9 @@ namespace solver {
 			Func f = get<0>(cnxt);
 			native ntv_f = get<1>(cnxt);
 			string f_name = get<2>(cnxt);
-			ExprPtr x = V<T>("x");
-			ExprPtr y = V<T>("y");
-			ExprPtr x_op_y = f(x, y);
+			Expr x = V<T>("x");
+			Expr y = V<T>("y");
+			Expr x_op_y = f(x, y);
 			engine->Push(); {
 				engine->Assert(x_op_y);
 				if (engine->CheckSat() == Sat::SAT) {
