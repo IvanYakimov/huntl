@@ -29,11 +29,11 @@ namespace interpreter {
 	//TODO: refactoring
 	//TODO: handling of unsupporter instructions!
 
-	class StatementMatcher : public llvm::InstVisitor <StatementMatcher>
+	class Matcher : public llvm::InstVisitor <Matcher>
 	{
 	public:
-		StatementMatcher () {}
-		virtual ~StatementMatcher () {}
+		Matcher () {}
+		virtual ~Matcher () {}
 
 		// Specific Instruction type classes
 		void visitReturnInst (const llvm::ReturnInst &inst);
@@ -86,7 +86,7 @@ namespace interpreter {
 			static bool Do (const llvm::Instruction &inst, unsigned i); // base case
 			template <typename T, typename... Targs>
 			static bool Do (const llvm::Instruction &inst, unsigned i, T value, Targs... Fargs); // inductive case
-			template <typename... Targs> friend bool StatementMatcher::Case (const llvm::Instruction &inst, Targs... Fargs); // inductive casen
+			template <typename... Targs> friend bool Matcher::Case (const llvm::Instruction &inst, Targs... Fargs); // inductive casen
 		};
 
 		static inline void DebugInstInfo(const llvm::Instruction &inst);

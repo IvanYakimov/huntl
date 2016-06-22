@@ -6,12 +6,13 @@
 
 // STL
 #include <exception>
-#include "statement-matcher.hpp"
+
+#include "matcher.hpp"
 
 //TODO: use -I option to perform headers search instead of ../ (?)
 
 namespace interpreter {
-	class StatementEvaluator final : public StatementMatcher {
+	class Evaluator final : public Matcher {
 	private:
 		// Return
 		virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst);

@@ -1,7 +1,6 @@
 SHELL = /bin/sh
 
-INTERPRETER = execution-driver.o matcher.o executor.o voyager-pass.o statement-evaluator.o \
-context.o expr-builder.o
+INTERPRETER = kernel.o matcher.o voyager-pass.o evaluator.o 
 INTERPRETER_TEST = expr-test.o
 
 UTILS = 

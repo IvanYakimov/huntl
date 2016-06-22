@@ -13,10 +13,11 @@
 // Project
 
 
-#include "statement-evaluator.hpp"
+
+#include "evaluator.hpp"
 
 namespace interpreter {
-	class ExecutionDriver {
+	class Kernel {
 		void Do(llvm::Function &func);
 	};
 }
