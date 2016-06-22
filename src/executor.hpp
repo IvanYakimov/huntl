@@ -4,7 +4,8 @@
 // Project
 #include "matcher.hpp"
 #include "display-interface.hpp"
-#include "../solver/object-builder.hpp"
+
+#include <cvc4/cvc4.h>
 
 // STL
 #include <exception>
@@ -12,22 +13,6 @@
 //TODO: use -I option to perform headers search instead of ../ (?)
 
 namespace interpreter {
-	class InterpretationFailure final : public std::exception {
-	public:
-		InterpretationFailure(const llvm::Instruction &inst) {
-			inst_ = std::unique_ptr<llvm::Instruction>(inst.clone());
-		}
-
-		virtual ~InterpretationFailure() {}
-
-		virtual void Print() {
-			llvm::errs() << "\nInterpretation failed on: " << *inst_ << "\n";
-		}
-
-	private:
-		std::unique_ptr<llvm::Instruction> inst_ = NULL;
-	};
-
 	class Executor final : public Matcher {
 	private:
 		DisplayPtr display_;

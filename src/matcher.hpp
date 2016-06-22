@@ -18,8 +18,6 @@ http://www.cplusplus.com/reference/type_traits/remove_pointer/
 # include "llvm/Support/raw_ostream.h"
 # include "llvm/Support/Debug.h"
 
-#include "../utils/object.hpp"
-
 # include <type_traits>
 # include <map>
 # include <string>
@@ -34,22 +32,6 @@ namespace interpreter {
 	class Matcher : public llvm::InstVisitor <Matcher>
 	{
 	public:
-		class Failure : public std::exception {
-			const char* what() const noexcept {return "matching failure";}
-		};
-
-		class LogicError : public std::exception {
-			const char* what() const noexcept {return "logic error";}
-		};
-
-		class Support : public std::exception {
-			const char* what() const noexcept {return "not supported";}
-		};
-
-		class Impl : public std::exception {
-			const char* what() const noexcept {return "not implemented";}
-		};
-
 		Matcher () {}
 		virtual ~Matcher () {}
 

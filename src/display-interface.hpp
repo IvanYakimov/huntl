@@ -2,7 +2,6 @@
 #define __DISPLAY_INTERFACE_HPP__
 
 // PROJECT
-#include "../utils/object.hpp"
 
 // STL
 #include <memory>
