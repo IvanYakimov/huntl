@@ -18,8 +18,6 @@ http://www.cplusplus.com/reference/type_traits/remove_pointer/
 # include "llvm/Support/raw_ostream.h"
 # include "llvm/Support/Debug.h"
 
-#include "../utils/object.hpp"
-
 # include <type_traits>
 # include <map>
 # include <string>
@@ -34,22 +32,6 @@ namespace interpreter {
 	class Matcher : public llvm::InstVisitor <Matcher>
 	{
 	public:
-		class Failure : public std::exception {
-			const char* what() const noexcept {return "matching failure";}
-		};
-
-		class LogicError : public std::exception {
-			const char* what() const noexcept {return "logic error";}
-		};
-
-		class Support : public std::exception {
-			const char* what() const noexcept {return "not supported";}
-		};
-
-		class Impl : public std::exception {
-			const char* what() const noexcept {return "not implemented";}
-		};
-
 		Matcher () {}
 		virtual ~Matcher () {}
 
@@ -69,7 +51,6 @@ namespace interpreter {
 		// Return
 		virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst) = 0;
 		virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Constant *ret_const) = 0;
-		virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Value *ret_val) = 0;
 		virtual void HandleReturnInst (const llvm::Instruction &inst) = 0;
 
 		// Branch
@@ -90,7 +71,6 @@ namespace interpreter {
 		virtual void HandleLoadInst (const llvm::Instruction &inst, const llvm::Value *ptr) = 0;
 
 		// Store
-		virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Value *val, const llvm::Value *ptr) = 0;
 		virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Instruction *instruction, const llvm::Value *ptr) = 0;
 		virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Constant *constant, const llvm::Value *ptr) = 0;
 

@@ -16,9 +16,6 @@ namespace interpreter {
 			; // Interpretation failure.
 	}
 
-	void Executor::HandleReturnInst (const llvm::Instruction &inst, const llvm::Value *ret_val) {
-	}
-
 	void Executor::HandleReturnInst (const llvm::Instruction &inst) {
 	}
 
@@ -50,28 +47,30 @@ namespace interpreter {
 
 	// Alloca
 	void Executor::HandleAllocaInst (const llvm::Instruction &inst, const llvm::Value *allocated) {
+		// (declare-const <name>)
 		// Allocate memory in the current activation record.
+		errs() << "var " << inst.getName() << "\n";
 	}
 
 	// Load
 	void Executor::HandleLoadInst (const llvm::Instruction &inst, const llvm::Value *ptr) {
-		// Load expr form ptr
-		// Store expr to &inst
+		// (assert (= v e))
+		// Load object form ptr
+		// Store (associate) object to &inst
+
 	}
 
 	// Store
-	void Executor::HandleStoreInst (const llvm::Instruction &inst, const llvm::Value *val, const llvm::Value *ptr) {
-		//TODO move to pattern-matcher (?)
-		auto name = val->getName();
-		if (!name.empty()) {
-			// Produce new variable
-			// Store new variable to ptr
-		}
-		else
-			; // Interpretation Failure
-	}
 
 	void Executor::HandleStoreInst (const llvm::Instruction &inst, const llvm::Instruction *instruction, const llvm::Value *ptr) {
+		//TODO move to pattern-matcher (?)
+		auto name = instruction->getName();
+		if (!name.empty()) {
+			// Produce new variable
+			errs() << *instruction->getType();
+			// Store new variable to ptr
+		}
+		// else
 		// Load expr from instruction
 		// Store expr to ptr
 	}
@@ -82,9 +81,8 @@ namespace interpreter {
 			// Produce new constant
 			// Store it to ptr
 		}
-		else {
-			// Interpretation failure
-		}
+		else
+			; // Interpretation failure
 	}
 }
 

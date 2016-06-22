@@ -1,11 +1,9 @@
 SHELL = /bin/sh
 
-SOLVER = kind.o type.o expr.o expr-manager.o value.o cvc4-engine.o \
-	width.o expr-manager-helper.o exception.o object.o ismt-engine.o
-SOLVER_TEST = test-runner.o test-value.o test-type.o test-expr.o test-expr-manager.o test-cvc4-engine.o test-width.o \
+SOLVER_TEST = test-runner.o test-expr.o test-object-builder.o test-cvc4-engine.o \
 	test-z3-engine.o
 
-INTERPRETER = interpreter.o matcher.o executor.o memory.o state.o voyager-pass.o
+INTERPRETER = interpreter.o matcher.o executor.o voyager-pass.o
 INTERPRETER_TEST = test-memory.o
 
 UTILS = 
@@ -26,13 +24,9 @@ DBGFLAGS = -D DBG -U NDEBUG
 SRC = ../src
 TST = ../test
 
-vpath %.cpp $(SRC)/solver $(TST)/solver/
-vpath %.cpp $(SRC)/interpreter $(TST)/interpreter/
-vpath %.cpp $(SRC)/utils
-vpath %.hpp $(SRC)/solver
-vpath %.hpp $(SRC)/interpreter
-vpath %.hpp $(SRC)/utils
-vpath %.c 	$(SRC)/interpreter
+vpath %.cpp $(SRC) $(TST)/solver/ $(TST)/interpreter/
+vpath %.hpp $(SRC)
+vpath %.c 	$(SRC)
 		
 program.so: shared.o 
 	$(CXX) -shared $< -o $@ $(CXXFLAGS) 
@@ -65,7 +59,7 @@ clean:
 
 # < helpers ------------------------------------------------
 test.ll: test.c
-	clang -S -emit-llvm $< -Wimplicit-int
+	clang -S -emit-llvm -O0 $< -Wimplicit-int
 
 api-pattern.cpp: test.ll
 	llc -march=cpp $< -o api-pattern.cpp

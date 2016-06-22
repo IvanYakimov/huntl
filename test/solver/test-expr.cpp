@@ -3,7 +3,6 @@
 
 // Project
 #include "../../src/solver/expr.hpp"
-#include "../../src/solver/expr-manager.hpp"
 #include "../../src/utils/object.hpp"
 
 // Google Test
@@ -17,13 +16,14 @@
 #include <list>
 #include <tuple>
 #include <functional>
+#include "../../src/solver/object-builder.hpp"
 
 using std::shared_ptr;
 
 namespace solver {
 	class ExprTest : public ::testing::Test {
 		public:
-			ExprManager em;
+			ObjectBuilder em;
 	};
 
 	//-------------------------------------------------------------------
@@ -61,8 +61,9 @@ namespace solver {
 
 	TEST_F(ExprTest, Variable_Accessors) {
 		using namespace std;
+		Var::Reset();
 		Var v("x", em.MkIntTy<int32_t>());
-		EXPECT_EQ("i32 x", v.ToString());
+		EXPECT_EQ("i32 x:s1", v.ToString());
 		EXPECT_EQ("x", v.GetName());
 		EXPECT_EQ(em.MkIntTy<int32_t>(), v.GetType());
 	}
@@ -73,12 +74,10 @@ namespace solver {
 		auto i16ty = em.MkIntTy<int16_t>();
 		Var x1("x", i32ty),
 					x2("x", i32ty),
-					x3("x", i32ty),
 					y("y", i32ty),
 					x_16("x",i16ty);
 		EXPECT_EQ(x1, x1); // reflexivity
-		EXPECT_EQ(x1, x2); EXPECT_EQ(x2, x1); // symmetry
-		EXPECT_EQ(x1, x2); EXPECT_EQ(x2, x3); EXPECT_EQ(x1, x3); // transitivity
+		EXPECT_NE(x1, x2); EXPECT_NE(x2, x1);
 		EXPECT_NE(x1, y);
 		EXPECT_NE(x1, x_16);
 		EXPECT_NE(&x1, nullptr);
@@ -99,7 +98,7 @@ namespace solver {
 
 	TEST_F(ExprTest, Constant_Accessors) {
 		auto val = em.MkIntVal<int32_t>(42);
-		Const x = Const(val);
+		Const x(val);
 		EXPECT_EQ(*val, *x.GetValue());
 		EXPECT_EQ(val->ToString(), x.ToString());
 	}
@@ -121,6 +120,7 @@ namespace solver {
 
 	//-------------------------------------------------------------------
 	// BinaryOpration
+	/*
 	TEST_F(ExprTest, BinOp_Creation) {
 		auto v = em.MkVar("x", em.MkIntTy<int32_t>());
 		bool s1 = false,
@@ -128,67 +128,68 @@ namespace solver {
 				s3 = false,
 				s4 = false;
 		try {
-			BinOp b(nullptr, v, Kind::ADD);
+			DoubleNode b(nullptr, v, Kind::ADD);
 			FAIL();
 		}
 		catch (IllegalArgException &e) {}
 
 		try {
-			BinOp b(v, nullptr, Kind::ADD);
+			DoubleNode b(v, nullptr, Kind::ADD);
 			FAIL();
 		}
 		catch (IllegalArgException &e) {}
 
 		try {
-			BinOp b(nullptr, nullptr, Kind::ADD);
+			DoubleNode b(nullptr, nullptr, Kind::ADD);
 			FAIL();
 		}
 		catch (IllegalArgException &e) {}
 
 		try {
-			BinOp b(v, v, Kind::ADD);
+			DoubleNode b(v, v, Kind::ADD);
 		}
 		catch (IllegalArgException &e) {
 			FAIL();
 		}
 	}
-
+	*/
 
 	TEST_F(ExprTest, BinOp_Accessors) {
+		Var::Reset();
 		auto ty = em.MkIntTy<int32_t>();
 		auto left = em.MkVar("x", ty);
 		auto right = em.MkVar("y", ty);
-		BinOp bin_op(left, right, solver::Kind::ADD);
+		auto bin_op = std::dynamic_pointer_cast<BinOp>(em.MkDoubleNode(left, right, solver::Kind::ADD));
 
-		EXPECT_EQ(left, bin_op.GetLeftChild());
-		EXPECT_EQ(right, bin_op.GetRightChild());
-		EXPECT_EQ(Kind::ADD, bin_op.GetKind());
-		EXPECT_EQ("(add i32 x i32 y)", bin_op.ToString());
+		EXPECT_EQ(*left, *bin_op->GetLeftChild());
+		EXPECT_EQ(*right, *bin_op->GetRightChild());
+		EXPECT_EQ(BinOpKind::BVADD, bin_op->GetKind());
+		EXPECT_EQ("(add i32 x:s1 i32 y:s2)", bin_op->ToString());
 	}
 
 
 	TEST_F(ExprTest, BinaryOp_Comparison_Basic) {
 		auto ty = em.MkIntTy<int32_t>();
 		auto v = em.MkVar("x", ty);
-		BinOp x1(v, v, Kind::ADD),
-				x2(v, v, Kind::ADD),
-				x3(v, v, Kind::ADD),
-				y(v, v, Kind::SUB);
-		EXPECT_EQ(x1, x1);
-		EXPECT_EQ(x1, x2); EXPECT_EQ(x2, x1);
-		EXPECT_EQ(x1, x2); EXPECT_EQ(x2, x3); EXPECT_EQ(x1, x3);
-		EXPECT_NE(x1, y);
-		EXPECT_NE(&x1, nullptr);
-		EXPECT_NE(nullptr, &x1);
+		auto x1 = em.MkDoubleNode(v, v, Kind::ADD),
+				x2 = em.MkDoubleNode(v, v, Kind::ADD),
+				x3 = em.MkDoubleNode(v, v, Kind::ADD),
+				y = em.MkDoubleNode(v, v, Kind::SUB);
+		EXPECT_EQ(*x1, *x1);
+		EXPECT_EQ(*x1, *x2); EXPECT_EQ(*x2, *x1);
+		EXPECT_EQ(*x1, *x2); EXPECT_EQ(*x2, *x3); EXPECT_EQ(*x1, *x3);
+		EXPECT_NE(*x1, *y);
+		EXPECT_NE(x1, nullptr);
+		EXPECT_NE(nullptr, x1);
 	}
 
-
+	/*
 	TEST_F(ExprTest, BinaryOp_Comparison_Deep) {
-		auto ty = em.MkIntTy<int32_t>();
-		auto x = em.MkVar("x", ty),
+		TypePtr ty = em.MkIntTy<int32_t>();
+		ExprPtr x = em.MkVar("x", ty),
 				y = em.MkVar("y", ty);
 
-		BinOp 	a1(x, x, Kind::ADD),
+		DoubleNode 	a1(x, x, Kind::ADD),
 				a2(x, x, Kind::ADD),
 				b1(x, y, Kind::ADD),
 				b2(x, y, Kind::ADD),
@@ -197,35 +198,36 @@ namespace solver {
 				d1(y, y, Kind::ADD),
 				d2(y, y, Kind::ADD);
 
-		typedef std::tuple<BinOp, BinOp, bool> test_data;
+		typedef std::tuple<const DoubleNode*, const DoubleNode*, bool> test_data;
 		using std::make_tuple;
 		std::list<test_data> l = {
-				make_tuple(a1, a2, true),
-				make_tuple(a1, b1, false),
-				make_tuple(a1, c1, false),
-				make_tuple(a1, d1, false),
-				make_tuple(b1, b2, true),
-				make_tuple(b1, c1, false),
-				make_tuple(b1, d1, false),
-				make_tuple(c1, c2, true),
-				make_tuple(c1, d1, false),
-				make_tuple(d1, d2, true)
+				make_tuple(&a1, &a2, true),
+				make_tuple(&a1, &b1, false),
+				make_tuple(&a1, &c1, false),
+				make_tuple(&a1, &d1, false),
+				make_tuple(&b1, &b2, true),
+				make_tuple(&b1, &c1, false),
+				make_tuple(&b1, &d1, false),
+				make_tuple(&c1, &c2, true),
+				make_tuple(&c1, &d1, false),
+				make_tuple(&d1, &d2, true)
 		};
 
 		auto checker = [] (test_data d) {
-			auto l = std::get<0>(d);
-			auto r = std::get<1>(d);
-			auto equality = std::get<2>(d);
+			const DoubleNode *l = std::get<0>(d);
+			const DoubleNode *r = std::get<1>(d);
+			bool equality = std::get<2>(d);
 			if (equality == true)
-				ASSERT_EQ(l, r);
+				ASSERT_EQ(*l, *r);
 			else
-				ASSERT_NE(l, r);
+				ASSERT_NE(*l, *r);
 		};
 
 		std::for_each(l.begin(), l.end(), checker);
 	}
+	*/
 
-
+	/*
 	TEST_F(ExprTest, Kind) {
 		typedef std::map <Kind, std::string> map_type;
 		typedef map_type::iterator it_type;
@@ -260,10 +262,11 @@ namespace solver {
 		auto ty = em.MkIntTy<int32_t>();
 		auto v = em.MkVar("x", ty);
 		for (it_type it = m.begin(); it != m.end(); it++) {
-			solver::BinOp op(v, v, it->first);
+			solver::DoubleNode op(v, v, it->first);
 			EXPECT_EQ(it->second, op.GetKindName());
 		}
 	}
+	*/
 
 
 	//-------------------------------------------------------------------
@@ -272,11 +275,9 @@ namespace solver {
 		auto ty = em.MkIntTy<int32_t>();
 		auto x1 = em.MkVar("x", ty),
 				x2 = em.MkVar("x", ty),
-				x3 = em.MkVar("x", ty),
 				y = em.MkVar("y", ty);
-		EXPECT_EQ(*x1, *x1);	// reflexivity
-		EXPECT_EQ(*x1, *x2); EXPECT_EQ(*x2, *x1); // symmetric
-		EXPECT_EQ(*x1, *x2); EXPECT_EQ(*x2, *x3); EXPECT_EQ(*x1, *x3); // transivity
+		EXPECT_EQ(*x1, *x1);
+		EXPECT_NE(*x1, *x2); EXPECT_NE(*x2, *x1);
 		EXPECT_NE(*x1, *y);
 		EXPECT_NE(x1, nullptr);
 		EXPECT_NE(nullptr, x1);
@@ -302,10 +303,10 @@ namespace solver {
 	TEST_F(ExprTest, SmartPointer_Comparison_BinaryOperation) {
 		auto ty = em.MkIntTy<int32_t>();
 		auto v = em.MkVar("x", ty);
-		auto x1  = em.MkBinOp(v, v, Kind::ADD),
-				x2 = em.MkBinOp(v, v, Kind::ADD),
-				x3 = em.MkBinOp(v, v, Kind::ADD),
-				y = em.MkBinOp(v, v, Kind::SUB);
+		auto x1  = em.MkDoubleNode(v, v, Kind::ADD),
+				x2 = em.MkDoubleNode(v, v, Kind::ADD),
+				x3 = em.MkDoubleNode(v, v, Kind::ADD),
+				y = em.MkDoubleNode(v, v, Kind::SUB);
 		EXPECT_EQ(*x1, *x1);	// reflexivity
 		EXPECT_EQ(*x1, *x2); EXPECT_EQ(*x2, *x1); // symmetric
 		EXPECT_EQ(*x1, *x2); EXPECT_EQ(*x2, *x3); EXPECT_EQ(*x1, *x3); // transivity
@@ -322,7 +323,7 @@ namespace solver {
 				val2 = em.MkIntVal<int32_t>(170);
 		auto c1 = em.MkConst(val1),
 				c2 = em.MkConst(val2);
-		auto op = em.MkBinOp(c1, c2, Kind::ADD);
+		auto op = em.MkDoubleNode(c1, c2, Kind::ADD);
 		EXPECT_NE(*var, *c1);
 		EXPECT_NE(*c1, *var);
 		EXPECT_NE(*var, *op);
@@ -350,7 +351,7 @@ namespace solver {
 		auto val = em.MkIntVal<int32_t>(42);
 		ExprPtr v = em.MkVar("x", ty),
 				c = em.MkConst(val),
-				b = em.MkBinOp(v, c, Kind::EQUAL);
+				b = em.MkDoubleNode(v, c, Kind::ADD);
 
 		auto pvv = std::dynamic_pointer_cast<Var>(v);
 		auto pvc = std::dynamic_pointer_cast<Const>(v);
@@ -386,7 +387,7 @@ namespace solver {
 		auto val = em.MkIntVal<int32_t>(42);
 		ExprPtr v = em.MkVar("x", ty),
 				c = em.MkConst(val),
-				b = em.MkBinOp(v, c, Kind::EQUAL);
+				b = em.MkDoubleNode(v, c, Kind::EQUAL);
 
 		// Variable
 		ASSERT_TRUE(instanceof<Object>(v));

@@ -14,12 +14,12 @@ namespace solver {
 	class ValueTest : public ::testing::Test {
 	public:
 		template<typename T>
-		ValuePtr MkIntVal(T val) {return std::make_shared<Int<T>>(val);}
+		ValuePtr MkIntVal(T val) {return std::make_shared<IntVal<T>>(val);}
 	};
 
 	TEST_F(ValueTest, Constructor) {
-		BasicInt *v = new Int<int32_t>();
-		BasicInt *v2 = new Int<int32_t>(0);
+		BasicIntVal *v = new IntVal<int32_t>();
+		BasicIntVal *v2 = new IntVal<int32_t>(0);
 		EXPECT_EQ(*v, *v2);
 		delete v, v2;
 	}
@@ -55,8 +55,8 @@ namespace solver {
 	}
 
 	TEST_F(ValueTest, ToString) {
-		BasicInt *v1 = new Int<int32_t>(42),
-				*v2 = new Int<uint32_t>(42);
+		BasicIntVal *v1 = new IntVal<int32_t>(42),
+				*v2 = new IntVal<uint32_t>(42);
 
 		ASSERT_EQ("i32 42", v1->ToString());
 		ASSERT_EQ("ui32 42", v2->ToString());
@@ -77,8 +77,8 @@ namespace solver {
 			auto min = numeric_limits<T>::min();
 			auto max = numeric_limits<T>::max();
 			auto checker = [&] (T val) -> void {
-				shared_ptr<BasicInt> first = make_shared<Int<T>>(val);
-				shared_ptr<BasicInt> second = make_shared<Int<T>>();
+				shared_ptr<BasicIntVal> first = make_shared<IntVal<T>>(val);
+				shared_ptr<BasicIntVal> second = make_shared<IntVal<T>>();
 
 				//FromUInt64()
 				auto l = first->GetUInt64();
@@ -89,7 +89,7 @@ namespace solver {
 
 				//ToUInt64
 				second->SetUInt64(l);
-				ASSERT_EQ(val, (dynamic_pointer_cast<Int<T>>(second))->GetVal());
+				ASSERT_EQ(val, (dynamic_pointer_cast<IntVal<T>>(second))->GetVal());
 			};
 
 			std::list<T> val_list = {
@@ -129,7 +129,7 @@ namespace solver {
 		using the_list = std::list<the_tuple>;
 
 		auto checker = [] (the_tuple t) -> void {
-			auto val = dynamic_pointer_cast<BasicInt>(get<0>(t));
+			auto val = dynamic_pointer_cast<BasicIntVal>(get<0>(t));
 			auto is_sign = get<1>(t);
 			auto width = get<2>(t);
 			ASSERT_EQ(is_sign, val->IsSigned());
@@ -151,21 +151,28 @@ namespace solver {
 		for_each(val_list.begin(), val_list.end(), checker);
 	}
 
-	//TODO: combinatorial
 	TEST_F(ValueTest, instanceof) {
 		ValuePtr val1 = MkIntVal<std::int32_t>(42);
 
 		ASSERT_TRUE(instanceof<Value>(val1));
-		ASSERT_TRUE(instanceof<BasicInt>(val1));
-		ASSERT_TRUE(instanceof<Int<int32_t>>(val1));
+		ASSERT_TRUE(instanceof<BasicIntVal>(val1));
+		ASSERT_TRUE(instanceof<IntVal<int32_t>>(val1));
 
-		ASSERT_FALSE(instanceof<Int<int8_t>>(val1));
-		ASSERT_FALSE(instanceof<Int<int16_t>>(val1));
-		ASSERT_FALSE(instanceof<Int<int64_t>>(val1));
+		ASSERT_FALSE(instanceof<IntVal<int8_t>>(val1));
+		ASSERT_FALSE(instanceof<IntVal<int16_t>>(val1));
+		ASSERT_FALSE(instanceof<IntVal<int64_t>>(val1));
 	}
 
-	TEST_F(ValueTest, DISABLED_instanceof) {
-		throw std::logic_error("not implemented");
+	TEST_F(ValueTest, immutability) {
+		IntVal<std::int32_t> x;
+		x.SetUInt64(42);
+		try {
+			x.SetUInt64(28);
+			FAIL();
+		}
+		catch (std::exception &ex) {
+
+		}
 	}
 }
 

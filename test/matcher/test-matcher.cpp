@@ -4,138 +4,6 @@
 
 using namespace llvm;
 
-class Func {
-protected:
-	LLVMContext &context_ ;// = getGlobalContext();
-	IRBuilder<> builder_ ;//(getGlobalContext());
-	Module* module_ = nullptr;
-	FunctionType* func_ty_ = nullptr;
-	Function* func_ = nullptr;
-	BasicBlock* entry_ = nullptr;
-
-public:
-	Func(FunctionType* ty, const char* name) : builder_(getGlobalContext()), context_(getGlobalContext()) {
-		module_ = new Module("test", context_);
-		func_= Function::Create(ty, Function::InternalLinkage, name, module_);
-		entry_ = Block("entry");
-		Enter(entry_);
-	}
-
-	virtual ~Func() {
-		delete module_;
-	}
-
-	Function* Get() {
-		return func_;
-	}
-
-	BasicBlock* Entry() {
-		return entry_;
-	}
-
-	BasicBlock* Block(const char* name) {
-		return BasicBlock::Create(context_, name, func_);
-	}
-
-	void Enter(BasicBlock* block) {
-		builder_.SetInsertPoint(block);
-	}
-
-
-	AllocaInst* Alloca32(const char *name) {
-		AllocaInst* res = builder_.CreateAlloca(Type::getInt32Ty(context_), 0, name);
-		res->setAlignment(4);
-		return res;
-	}
-
-	ConstantInt* I32(uint32_t val) {
-		return ConstantInt::get(context_, APInt(32, val, true));
-	}
-
-	ConstantInt* I1(bool val) {
-		if (val == true)
-			return ConstantInt::get(context_, APInt(1, 1, true));
-		else
-			return ConstantInt::get(context_, APInt(1, 0, true));
-	}
-
-	ConstantInt* True() {
-		return I1(true);
-	}
-
-	ConstantInt* False() {
-		return I1(false);
-	}
-
-	StoreInst* Store(Value* what, Value* where) {
-		return builder_.CreateStore(what, where);
-	}
-
-	LoadInst* Load(Value *from) {
-		return builder_.CreateLoad(from);
-	}
-
-	ReturnInst* Ret(Value *what) {
-		return builder_.CreateRet(what);
-	}
-
-	ReturnInst* RetVoid() {
-		return builder_.CreateRetVoid();
-	}
-
-	Value* EQ(Value* lhs, Value* rhs) {
-		return builder_.CreateICmpEQ(lhs, rhs);
-	}
-
-	Value* NE(Value* lhs, Value* rhs) {
-		return builder_.CreateICmpNE(lhs, rhs);
-	}
-
-	BranchInst* IfThanElse(Value* cond, BasicBlock* iftrue, BasicBlock* iffalse) {
-		return builder_.CreateCondBr(cond, iftrue, iffalse);
-	}
-
-	BranchInst* Jump(BasicBlock* dest) {
-		return builder_.CreateBr(dest);
-	}
-
-	Value* Add(Value* lhs, Value* rhs) {
-		return builder_.CreateAdd(lhs, rhs);
-	}
-
-	//TODO: Make variadic
-	PHINode* Phi(Type* ty) {
-		return builder_.CreatePHI(ty, 0);
-	}
-
-	Value* ZExt(Value* val, Type* ty){
-		return builder_.CreateZExt(val, ty);
-	}
-
-	Type* Int32Ty() {
-		return Type::getInt32Ty(context_);
-	}
-
-	Type* Int1Ty() {
-		return Type::getInt1Ty(context_);
-	}
-
-	Type* VoidTy() {
-		return Type::getVoidTy(context_);
-	}
-};
-
-class Int32Func : public Func {
-public:
-	Int32Func(const char* name = "f") : Func(FunctionType::get(Type::getInt32Ty(getGlobalContext()), false), name) {}
-};
-
-class VoidFunc : public Func {
-public:
-	VoidFunc(const char* name = "f") : Func(FunctionType::get(Type::getVoidTy(getGlobalContext()), false), name) {}
-};
-
-//TODO: total refactoring!!!
 class MatcherTest : public ::testing::Test {
 public:
 	interpreter::MatcherStub matcher_;
@@ -208,8 +76,16 @@ TEST_F(MatcherTest, binop) {
 	Int32Func f; {
 		auto x = f.Alloca32("x");
 		auto y = f.Alloca32("y");
-		auto binop = f.Add(f.Load(x), f.Load(y));
-		auto ret = f.Ret(binop);
+		auto res = f.Alloca32("res");
+		auto store_x = f.Store(f.I32(1), x);
+		auto store_y = f.Store(f.I32(2), y);
+		auto store_res = f.Store(f.I32(0), res);
+		auto load_x = f.Load(x);
+		auto load_y = f.Load(y);
+		auto binop = f.Add(load_x, load_y);
+		auto store_binop = f.Store(binop, res);
+		auto load_res = f.Load(res);
+		auto ret = f.Ret(load_res);
 	}
 	Match(f);
 }

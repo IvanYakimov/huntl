@@ -40,12 +40,10 @@ namespace interpreter {
 			HandleReturnInst(inst, ret_inst);
 		else if (Case (inst, &ret_const))
 			HandleReturnInst(inst, ret_const);
-		else if (Case (inst, &ret_val))
-			HandleReturnInst(inst, ret_val);
 		else if (Case (inst))
 			HandleReturnInst(inst);
 		else
-			throw Failure(); // Matching failure
+			assert(false);
 	}
 
 	void Matcher::visitBranchInst(const BranchInst &inst) {
@@ -61,7 +59,7 @@ namespace interpreter {
 		else if (Case (inst, &jump))
 			HandleBranchInst(inst, jump);
 		else
-			throw Failure(); // Matching failure
+			assert(false);
 	}
 
 	void Matcher::visitBinaryOperator(const llvm::BinaryOperator &inst) {
@@ -73,15 +71,15 @@ namespace interpreter {
 		if (Case (inst, &lhs, &rhs)) {
 			auto op_code = inst.getOpcode();
 			//TODO: check this code
-			Assert<Support>(not (op_code == Instruction::FAdd or
+			assert (not (op_code == Instruction::FAdd or
 					op_code == Instruction::FSub or
 					op_code == Instruction::FMul or
 					op_code == Instruction::FDiv or
-					op_code == Instruction::FRem));
+					op_code == Instruction::FRem) && "float not supported");
 			HandleBinOp(inst, lhs, rhs);
 		}
 		else
-			throw Failure();
+			assert(false);
 	}
 
 	void Matcher::visitICmpInst(const ICmpInst &inst) {
@@ -93,7 +91,7 @@ namespace interpreter {
 		if (Case (inst, &lhs, &rhs))
 			HandleICmpInst(inst, lhs, rhs);
 		else
-			throw Failure(); // Matching Failure
+			assert(false);
 	}
 
 	void Matcher::visitAllocaInst (const AllocaInst &inst)
@@ -104,7 +102,7 @@ namespace interpreter {
 		if (Case (inst, &allocated))
 			HandleAllocaInst(inst, allocated);
 		else
-			throw Failure(); // Matching Failure
+			assert(false);
 	}
 
 	void Matcher::visitLoadInst (const LoadInst &inst)
@@ -115,7 +113,7 @@ namespace interpreter {
 		if (Case (inst, &ptr))
 			HandleLoadInst(inst, ptr);
 		else
-			throw Failure(); // Matching Failure
+			assert(false);
 	}
 
 	void Matcher::visitStoreInst (const StoreInst &inst)
@@ -131,10 +129,8 @@ namespace interpreter {
 			HandleStoreInst(inst, instruction, ptr);
 		else if (Case (inst, &constant, &ptr))
 			HandleStoreInst(inst, constant, ptr);
-		else if (Case (inst, &val, &ptr))
-			HandleStoreInst(inst, val, ptr);
 		else
-			throw Failure(); // Matching Failure
+			assert(false);
 	}
 
 	//--------------------

@@ -4,10 +4,6 @@
 #include "../../src/solver/expr.hpp"
 #include "../../src/solver/ismt-engine.hpp"
 #include "../../src/solver/cvc4-engine.hpp"
-#include "../../src/solver/expr-manager.hpp"
-#include "../../src/solver/expr-manager-helper.hpp"
-
-// Google Test
 #include "gtest/gtest.h"
 
 //STL
@@ -15,6 +11,8 @@
 #include <iostream>
 #include <list>
 #include <vector>
+#include "../../src/solver/object-builder.hpp"
+#include "../../src/solver/object-builder-helper.hpp"
 
 namespace solver {
 	//TODO: global refactoring - make a template class
@@ -24,7 +22,7 @@ namespace solver {
 		void TearDown() {
 			try { delete engine_; } catch (Exception &ex) {;}
 		}
-		ExprManagerPtr em_ = GetExprManager();
+		ObjectBuilderPtr em_ = ObjectBuilder::Get();
 		CVC4Engine *engine_ = nullptr;
 	};
 
@@ -108,7 +106,7 @@ namespace solver {
 	}
 
 	template <typename T>
-	void GetValue__helper (CVC4Engine *cvc4engine, ExprManagerPtr em) {
+	void GetValue__helper (CVC4Engine *cvc4engine, ObjectBuilderPtr em) {
 		using namespace std;
 		using the_list = list<T>;
 
@@ -117,7 +115,7 @@ namespace solver {
 			auto c = em->MkConst(val_obj);
 			auto ty = em->MkIntTy<T>();
 			auto x = em->MkVar("x", ty);
-			auto binop = em->MkBinOp(x, c, Kind::EQUAL);
+			auto binop = em->MkDoubleNode(x, c, Kind::EQUAL);
 
 			cvc4engine->Push(); {
 				cvc4engine->Assert(binop);
@@ -193,7 +191,7 @@ namespace solver {
 			x_32_unbound();
 			auto orig_val = em_->MkIntVal<int32_t>(42);
 			auto c42 = em_->MkConst(orig_val);
-			auto binop = em_->MkBinOp(x_32, c42, Kind::EQUAL);
+			auto binop = em_->MkDoubleNode(x_32, c42, Kind::EQUAL);
 			engine_->Assert(binop);
 			if (engine_->CheckSat() == Sat::SAT) {
 				auto res_val = engine_->GetValue(x_32);
@@ -235,7 +233,7 @@ namespace solver {
 	}
 
 	template <typename T>
-	void Prism_Var__helper (CVC4Engine *cvc4_engine, ExprManagerPtr expr_manager) {
+	void Prism_Var__helper (CVC4Engine *cvc4_engine, ObjectBuilderPtr expr_manager) {
 		using namespace std;
 		cvc4_engine->Push(); {
 			auto name = string("x");
@@ -264,7 +262,7 @@ namespace solver {
 	}
 
 	template <typename T>
-	void Prism_Const__helper (CVC4Engine *cvc4engine, ExprManagerPtr em) {
+	void Prism_Const__helper (CVC4Engine *cvc4engine, ObjectBuilderPtr em) {
 		using namespace std;
 		using the_list = list<T>;
 
@@ -276,7 +274,7 @@ namespace solver {
 			CVC4::BitVector cvc4_btv = expr.getConst<CVC4::BitVector>();
 			CVC4::Integer cvc4_int = cvc4_btv.toInteger();
 			uint64_t ulval = cvc4_int.getUnsignedLong();
-			ValuePtr re_conv =  em->MkIntVal(dynamic_pointer_cast<BasicInt>(val_obj)->IsSigned(), from_size_t(sizeof(T)), ulval);
+			ValuePtr re_conv =  em->MkIntVal(dynamic_pointer_cast<BasicIntVal>(val_obj)->IsSigned(), from_size_t(sizeof(T)), ulval);
 			EXPECT_EQ(*val_obj, *re_conv);
 			cvc4engine->Pop();
 		};
@@ -308,7 +306,7 @@ namespace solver {
 
 	//TODO: Prism_BinOp testing - implement test case to check work with different Kinds
 	template <typename T>
-	void Prism_BinOp__helper (CVC4Engine *cvc4engine, ExprManagerPtr em) {
+	void Prism_BinOp__helper (CVC4Engine *cvc4engine, ObjectBuilderPtr em) {
 		using namespace std;
 		using the_list = list<T>;
 
@@ -318,7 +316,7 @@ namespace solver {
 			auto c = em->MkConst(int_val);
 			auto int_ty = em->MkIntTy<T>();
 			auto x = em->MkVar("x", int_ty);
-			auto binop = em->MkBinOp(x, c, Kind::EQUAL);
+			auto binop = em->MkDoubleNode(x, c, Kind::EQUAL);
 			cvc4engine->Push(); {
 				CVC4::Expr cvc4_expr = cvc4engine->Prism(binop);
 				//cout << "--------" << endl << binop->ToString() << " " << cvc4_expr.toString() << endl;
@@ -345,7 +343,7 @@ namespace solver {
 				CVC4::Integer cvc4_c_integer = cvc4_c_btv.toInteger();
 				auto actual_raw_ulong = cvc4_c_integer.getUnsignedLong();
 				//cout << "sizeof actual ulong : " << sizeof(actual_raw_ulong) << endl;
-				auto basic_int_val = dynamic_pointer_cast<BasicInt>(int_val);
+				auto basic_int_val = dynamic_pointer_cast<BasicIntVal>(int_val);
 				uint64_t expected_raw_ulong = basic_int_val->GetUInt64();
 				ASSERT_EQ(expected_raw_ulong, actual_raw_ulong);
 			}
@@ -389,7 +387,7 @@ namespace solver {
 			auto l = V<int32_t>("x");
 			auto r = C<int32_t>(42);
 			auto act = f(l, r);
-			auto exp = GetExprManager()->MkBinOp(l, r, k);
+			auto exp = ObjectBuilder::Get()->MkDoubleNode(l, r, k);
 			ASSERT_EQ(*exp, *act);
 		};
 
@@ -722,8 +720,8 @@ namespace solver {
 				if (engine->CheckSat() == Sat::SAT) {
 					ValuePtr x_val = engine->GetValue(x);
 					ValuePtr y_val = engine->GetValue(y);
-					T raw_x_val = dynamic_pointer_cast<Int<T>>(x_val)->GetVal();
-					T raw_y_val = dynamic_pointer_cast<Int<T>>(y_val)->GetVal();
+					T raw_x_val = dynamic_pointer_cast<IntVal<T>>(x_val)->GetVal();
+					T raw_y_val = dynamic_pointer_cast<IntVal<T>>(y_val)->GetVal();
 					ASSERT_TRUE(ntv_f(raw_x_val, raw_y_val));
 					//< Verbose
 					/*

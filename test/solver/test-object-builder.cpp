@@ -1,19 +1,19 @@
 #include "gtest/gtest.h"
-#include "../../src/solver/expr-manager.hpp"
+
+#include "../../src/solver/object-builder.hpp"
 
 namespace solver {
 	class ExprManagerTest : public ::testing::Test {
 	public:
-		ExprManager em;
+		ObjectBuilder em;
 	};
 
-	//TODO: find "segmentation fault" problem source!
-
+	//TODO: extract singleton test
 	//Singleton test
 	TEST_F(ExprManagerTest, GetExprManager) {
-		ExprManagerPtr em_1 = GetExprManager();
-		ExprManagerPtr em_2 = GetExprManager();
-		ExprManagerPtr em_3 = GetExprManager();
+		ObjectBuilderPtr em_1 = ObjectBuilder::Get();
+		ObjectBuilderPtr em_2 = ObjectBuilder::Get();
+		ObjectBuilderPtr em_3 = ObjectBuilder::Get();
 		ASSERT_NE(em_1, nullptr);
 		ASSERT_EQ(em_1, em_2); ASSERT_EQ(em_2, em_3); ASSERT_EQ(em_1, em_3);
 	}
@@ -42,7 +42,7 @@ namespace solver {
 		auto ty = em.MkIntTy<int32_t>();
 		auto v1 = em.MkVar(name1, ty),
 				v2 = em.MkVar(name2, ty);
-		auto expr = em.MkBinOp(v1, v2, Kind::ADD);
+		auto expr = em.MkDoubleNode(v1, v2, Kind::ADD);
 		ASSERT_TRUE(instanceof<BinOp>(expr));
 		auto binop = std::dynamic_pointer_cast<BinOp>(expr);
 		ASSERT_EQ(v1, binop->GetLeftChild());
@@ -52,7 +52,7 @@ namespace solver {
 	TEST_F(ExprManagerTest, MkIntVal_FromULong) {
 			using namespace std;
 			using Equality = bool;
-			ExprManagerPtr em_ = GetExprManager();
+			ObjectBuilderPtr em_ = ObjectBuilder::Get();
 			uint64_t val = 42;
 
 			auto i8ty = em_->MkIntVal(true, Width::w8, val);
@@ -95,7 +95,7 @@ namespace solver {
 	TEST_F(ExprManagerTest, MkIntVal) {
 		int val = 42;
 		auto produced_item = em.MkIntVal<int8_t>(val);
-		auto item = std::make_shared<Int<int8_t>>(val);
+		auto item = std::make_shared<IntVal<int8_t>>(val);
 		ASSERT_EQ(*item, *produced_item);
 	}
 
