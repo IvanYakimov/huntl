@@ -9,7 +9,7 @@
 
 //TODO: remove from the interpreter namespace
 namespace interpreter {
-	class MatcherStub final : public Matcher {
+	class MatcherStub final : public StatementMatcher {
 	protected:
 		// Return
 		virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst);

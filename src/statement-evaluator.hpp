@@ -1,21 +1,17 @@
-# ifndef __EXECUTOR_HPP__
-# define __EXECUTOR_HPP__
+# ifndef __STATEMENT_EVALUATOR_HPP__
+# define __STATEMENT_EVALUATOR_HPP__
 
 // Project
-#include "matcher.hpp"
-
 #include <cvc4/cvc4.h>
 
 // STL
 #include <exception>
+#include "statement-matcher.hpp"
 
 //TODO: use -I option to perform headers search instead of ../ (?)
 
 namespace interpreter {
-	class Executor final : public Matcher {
-	private:
-	public:
-
+	class StatementEvaluator final : public StatementMatcher {
 	private:
 		// Return
 		virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst);

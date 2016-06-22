@@ -1,4 +1,4 @@
-#include "matcher.hpp"
+#include "statement-matcher.hpp"
 using namespace llvm;
 
 /*
@@ -8,13 +8,13 @@ e-mail: ivan.yakimov.research@yandex.ru
 */
 
 namespace interpreter {
-	void Matcher::DebugInstInfo(const llvm::Instruction &inst) {
+	void StatementMatcher::DebugInstInfo(const llvm::Instruction &inst) {
 	# ifdef DBG
 		errs() << inst << "\n";
 	# endif
 	}
 
-	void Matcher::DebugOpList(const llvm::Instruction &inst) {
+	void StatementMatcher::DebugOpList(const llvm::Instruction &inst) {
 	# ifdef DBG
 		for (auto i = 0; i < inst.getNumOperands(); i++) {
 			auto type = inst.getOperand(i)->getType();
@@ -29,7 +29,7 @@ namespace interpreter {
 	// --------------------------------------------------------
 	// Instruction visitors
 
-	void Matcher::visitReturnInst (const ReturnInst &inst) {
+	void StatementMatcher::visitReturnInst (const ReturnInst &inst) {
 		DebugInstInfo(inst);
 
 		Value *ret_val = NULL;
@@ -46,7 +46,7 @@ namespace interpreter {
 			assert(false);
 	}
 
-	void Matcher::visitBranchInst(const BranchInst &inst) {
+	void StatementMatcher::visitBranchInst(const BranchInst &inst) {
 		DebugInstInfo(inst);
 
 		BasicBlock *iftrue = NULL,
@@ -62,7 +62,7 @@ namespace interpreter {
 			assert(false);
 	}
 
-	void Matcher::visitBinaryOperator(const llvm::BinaryOperator &inst) {
+	void StatementMatcher::visitBinaryOperator(const llvm::BinaryOperator &inst) {
 		DebugInstInfo(inst);
 
 		Value *lhs = NULL,
@@ -82,7 +82,7 @@ namespace interpreter {
 			assert(false);
 	}
 
-	void Matcher::visitICmpInst(const ICmpInst &inst) {
+	void StatementMatcher::visitICmpInst(const ICmpInst &inst) {
 		DebugInstInfo(inst);
 
 		Value *lhs = NULL,
@@ -94,7 +94,7 @@ namespace interpreter {
 			assert(false);
 	}
 
-	void Matcher::visitAllocaInst (const AllocaInst &inst)
+	void StatementMatcher::visitAllocaInst (const AllocaInst &inst)
 	{
 		DebugInstInfo(inst);
 
@@ -105,7 +105,7 @@ namespace interpreter {
 			assert(false);
 	}
 
-	void Matcher::visitLoadInst (const LoadInst &inst)
+	void StatementMatcher::visitLoadInst (const LoadInst &inst)
 	{
 		DebugInstInfo(inst);
 
@@ -116,7 +116,7 @@ namespace interpreter {
 			assert(false);
 	}
 
-	void Matcher::visitStoreInst (const StoreInst &inst)
+	void StatementMatcher::visitStoreInst (const StoreInst &inst)
 	{
 		DebugInstInfo(inst);
 
@@ -136,11 +136,11 @@ namespace interpreter {
 	//--------------------
 	// Case matcher
 	template <typename... Targs>
-	bool Matcher::Case(const Instruction &inst, Targs... Fargs) {
+	bool StatementMatcher::Case(const Instruction &inst, Targs... Fargs) {
 		return CaseHelper::Do(inst, 0, Fargs...);
 	}
 
-	bool Matcher::CaseHelper::Do (const Instruction &inst, unsigned i)
+	bool StatementMatcher::CaseHelper::Do (const Instruction &inst, unsigned i)
 	{
 		if (inst.getNumOperands() != i)
 			return false;
@@ -149,7 +149,7 @@ namespace interpreter {
 	}
 
 	template <typename T, typename... Targs>
-	bool Matcher::CaseHelper::Do (const Instruction &inst, unsigned i, T value, Targs... Fargs)
+	bool StatementMatcher::CaseHelper::Do (const Instruction &inst, unsigned i, T value, Targs... Fargs)
 	{
 		typedef typename std::remove_pointer<T>::type pV;
 		typedef typename std::remove_pointer<pV>::type V;

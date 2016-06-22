@@ -1,10 +1,8 @@
 SHELL = /bin/sh
 
-SOLVER_TEST = test-runner.o test-expr.o test-object-builder.o test-cvc4-engine.o \
-	test-z3-engine.o
-
-INTERPRETER = interpreter.o matcher.o executor.o voyager-pass.o
-INTERPRETER_TEST = test-memory.o
+INTERPRETER = execution-driver.o matcher.o executor.o voyager-pass.o statement-evaluator.o \
+context.o expr-builder.o
+INTERPRETER_TEST = 
 
 UTILS = 
 
@@ -17,7 +15,7 @@ CXXFLAGS = -fdiagnostics-color=always -g -std=c++14 -fpic -rdynamic \
 	-Wno-deprecated
 LDFLAGS = $(CVC4FLAGS) $(Z3FLAGS)
 CVC4FLAGS = -lcvc4 -lgmp  
-Z3FLAGS = /usr/lib/libz3.so
+#Z3FLAGS = /usr/lib/libz3.so
 LLVMFLAGS = $(shell llvm-config --cxxflags)
 DBGFLAGS = -D DBG -U NDEBUG
 
@@ -43,11 +41,8 @@ interpreter-test.out: $(INTERPRETER_TEST) memory.o state.o test-runner.o $(LDFLA
 	
 #INTERPRETERtest.out
 
-$(SOLVER_TEST):
-$(SOLVER):
 $(INTERPRETER_TEST):
 $(INTERPRETER):
-$(UTILS):
 %.o: %.cpp %.hpp
 	$(CXX) -c $< -o $@ $(CXXFLAGS) 
 	

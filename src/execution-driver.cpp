@@ -1,4 +1,4 @@
-#include "interpreter.hpp"
+#include "execution-driver.hpp"
 
 namespace interpreter {
 	using namespace llvm;
@@ -10,7 +10,7 @@ namespace interpreter {
 	}
 
 	/** Run interpreter on function */
-	void Interpreter::Do(llvm::Function &func) {
+	void ExecutionDriver::Do(llvm::Function &func) {
 		DebugFunctionInfo(func);
 
 		// Loop:
@@ -19,7 +19,7 @@ namespace interpreter {
 		// 	- if step is forking - clone this state, update state table
 		//	- else - back to start
 
-		Executor executor;
+		StatementEvaluator executor;
 		for (Function::iterator i = func.begin(), e = func.end(); i != e; ++i) {
 			executor.visit(i);
 		}

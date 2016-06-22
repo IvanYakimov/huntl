@@ -6,11 +6,11 @@ class ExecutorTest : public ::testing::Test {
 public:
 	const StateId owner_ = 2;
 	DisplayPtr disp_ = nullptr;
-	Executor *exec_ = nullptr;
+	StatementEvaluator *exec_ = nullptr;
 
 	ExecutorTest() {
 		disp_ = Display::Create();
-		exec_ = new Executor(disp_);
+		exec_ = new StatementEvaluator(disp_);
 	}
 
 	~ExecutorTest() {

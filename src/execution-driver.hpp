@@ -1,5 +1,5 @@
-#ifndef __INTERPRETER_HPP__
-#define __INTERPRETER_HPP__
+#ifndef __EXECUTION_DRIVER_HPP__
+#define __EXECUTION_DRIVER_HPP__
 
 // LLVM
 //# include "llvm/Pass.h"
@@ -11,10 +11,12 @@
 //# include "llvm/Support/Debug.h"
 
 // Project
-# include "executor.hpp"
+
+
+#include "statement-evaluator.hpp"
 
 namespace interpreter {
-	class Interpreter {
+	class ExecutionDriver {
 		void Do(llvm::Function &func);
 	};
 }
