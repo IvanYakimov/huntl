@@ -26,13 +26,9 @@ DBGFLAGS = -D DBG -U NDEBUG
 SRC = ../src
 TST = ../test
 
-vpath %.cpp $(SRC)/solver $(TST)/solver/
-vpath %.cpp $(SRC)/interpreter $(TST)/interpreter/
-vpath %.cpp $(SRC)/utils
-vpath %.hpp $(SRC)/solver
-vpath %.hpp $(SRC)/interpreter
-vpath %.hpp $(SRC)/utils
-vpath %.c 	$(SRC)/interpreter
+vpath %.cpp $(SRC) $(TST)/solver/ $(TST)/interpreter/
+vpath %.hpp $(SRC)
+vpath %.c 	$(SRC)
 		
 program.so: shared.o 
 	$(CXX) -shared $< -o $@ $(CXXFLAGS) 
