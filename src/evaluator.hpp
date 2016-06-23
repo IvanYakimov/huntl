@@ -7,12 +7,14 @@
 // STL
 #include <exception>
 
+#include "display.hpp"
 #include "matcher.hpp"
 
 //TODO: use -I option to perform headers search instead of ../ (?)
 
 namespace interpreter {
 	class Evaluator final : public Matcher {
+		Display m;
 	private:
 		// Return
 		virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst);
@@ -42,6 +44,9 @@ namespace interpreter {
 }
 
 # endif /* __INTERPRETER_HPP__ */
+
+
+
 
 
 

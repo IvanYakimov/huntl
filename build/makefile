@@ -1,6 +1,6 @@
 SHELL = /bin/sh
 
-INTERPRETER = kernel.o matcher.o voyager-pass.o evaluator.o 
+INTERPRETER = kernel.o matcher.o voyager-pass.o evaluator.o symbol-table.o display.o 
 INTERPRETER_TEST = expr-test.o
 
 UTILS = 

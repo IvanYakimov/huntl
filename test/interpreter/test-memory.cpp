@@ -76,7 +76,7 @@ namespace interpreter {
 	}
 
 	TEST_F(MemoryTest, Creation_Destruction) {
-		Memory m;
+		Display m;
 	}
 
 	TEST_F(MemoryTest, Allocate__basic) {
@@ -85,7 +85,7 @@ namespace interpreter {
 			auto obj_2 = MkObj();
 			StateId s1 = MkSt();
 			StateId s2 = MkSt();
-			Memory m;
+			Display m;
 
 			auto addr_1 = m.Allocate(s1, obj_1);
 			auto addr_2 = m.Allocate(s2, obj_2);
@@ -106,7 +106,7 @@ namespace interpreter {
 			auto obj_1 = MkObj();
 			StateId s1 = MkSt();
 			StateId s2 = MkSt();
-			Memory m;
+			Display m;
 
 			auto addr_1 = m.Allocate(s1, obj_1);
 			m.Share(addr_1, s1, s2);
@@ -131,7 +131,7 @@ namespace interpreter {
 			auto st1 = MkSt();
 			auto st2 = MkSt();
 
-			Memory m;
+			Display m;
 
 			auto ad1 = m.Allocate(st1, ob1);
 			m.Share(ad1, st1, st2);
@@ -151,7 +151,7 @@ namespace interpreter {
 			auto ob1 = MkObj();
 			auto st1 = MkSt();
 
-			Memory m;
+			Display m;
 			auto ad1 = m.Allocate(st1);
 			auto ad2 = m.Write(ad1, st1, ob1);
 

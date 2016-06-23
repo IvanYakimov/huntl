@@ -57,7 +57,8 @@ namespace interpreter {
 		// (assert (= v e))
 		// Load object form ptr
 		// Store (associate) object to &inst
-
+		//auto lhs = m.Read(ptr);
+		//auto rhs = m.Read(&inst);
 	}
 
 	// Store
