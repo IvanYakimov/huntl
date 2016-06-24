@@ -1,12 +1,16 @@
 SHELL = /bin/sh
 
-INTERPRETER = kernel.o matcher.o voyager-pass.o evaluator.o symbol-table.o display.o 
-INTERPRETER_TEST = expr-test.o
+INTERPRETER = kernel.o matcher.o voyager-pass.o evaluator.o 
+INTERPRETER_TEST = expr-test.o test-holder.o
 
-UTILS = 
+MEMORY = display.o holder.o
+MEMORY_TEST = test-holder.o test-display.o $(SOLVER)
 
-OBJ_TEST = $(SOLVER_TEST) $(INTERPRETER_TEST)
-OBJ = $(SOLVER) $(INTERPRETER) $(UTILS)
+SOLVER = solver.o
+SOLVER_TEST = test-solver.o
+
+OBJ = $(INTERPRETER) $(MEMORY) $(SOLVER)
+OBJ_TEST = $(INTERPRETER_TEST) $(MEMORY_TEST) $(SOLVER_TEST)
 
 CXX = g++
 CXXFLAGS = -fdiagnostics-color=always -g -std=c++14 -fpic -rdynamic \
@@ -14,6 +18,7 @@ CXXFLAGS = -fdiagnostics-color=always -g -std=c++14 -fpic -rdynamic \
 	-Wno-deprecated
 LDFLAGS = $(CVC4FLAGS) $(Z3FLAGS)
 CVC4FLAGS = -lcvc4 -lgmp  
+GTESTFLAGS = -lgtest -pthread
 #Z3FLAGS = /usr/lib/libz3.so
 LLVMFLAGS = $(shell llvm-config --cxxflags)
 DBGFLAGS = -D DBG -U NDEBUG
@@ -21,7 +26,7 @@ DBGFLAGS = -D DBG -U NDEBUG
 SRC = ../src
 TST = ../test
 
-vpath %.cpp $(SRC) $(TST)/solver/ $(TST)/interpreter/
+vpath %.cpp $(SRC) $(TST)/solver/ $(TST)/interpreter/ $(TST)
 vpath %.hpp $(SRC)
 vpath %.c 	$(SRC)
 		
@@ -31,17 +36,17 @@ program.so: shared.o
 shared.o: $(INTERPRETER) #$(SOLVER) $(UTILS)
 	ld -r $^ -o $@
 
-solvertest.out: $(SOLVER_TEST) $(SOLVER) $(LDFLAGS)
-	$(CXX) $^ -o $@ -lgtest -pthread $(CXXFLAGS)
+solver-test.out: $(SOLVER_TEST) $(SOLVER) test-runner.o $(LDFLAGS)
+	$(CXX) $^ -o $@ $(GTESTFLAGS) $(CVC4FLAGS) $(CXXFLAGS)
 	
-#//TODO:
-interpreter-test.out: $(INTERPRETER_TEST) memory.o state.o test-runner.o $(LDFLAGS)
-	$(CXX) $^ -o $@ -lgtest -pthread $(CXXFLAGS)
+interpreter-test.out: $(INTERPRETER_TEST) $(INTERPRETER) test-runner.o $(LDFLAGS)
+	$(CXX) $^ -o $@ $(GTESTFLAGS) $(CXXFLAGS)
 	
-#INTERPRETERtest.out
+memory-test.out: $(MEMORY) $(MEMORY_TEST) test-runner.o $(LDFLAGS)
+	$(CXX) $^ -o $@ $(GTESTFLAGS) $(CVC4FLAGS) $(CXXFLAGS)
 
-$(INTERPRETER_TEST):
-$(INTERPRETER):
+$(OBJ_TEST):
+$(OBJ):
 %.o: %.cpp %.hpp
 	$(CXX) -c $< -o $@ $(CXXFLAGS) 
 	

@@ -14,7 +14,7 @@
 
 namespace interpreter {
 	class Evaluator final : public Matcher {
-		Display m;
+		memory::Display m;
 	private:
 		// Return
 		virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst);

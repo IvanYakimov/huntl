@@ -2,45 +2,31 @@
 #define __MEMORY_HPP__
 
 #include "llvm/IR/Instruction.h"
-#include "object.hpp"
-#include <cvc4/cvc4.h>
 
-namespace interpreter {
+#include "holder.hpp"
 
-	class Object;
+#include <map>
+#include <cassert>
 
-	using ObjectPtr = std::shared_ptr<Object>;
-
-	class Object {
-	public:
-		virtual ~Object(){}
-	};
-
-	template <typename T>
-	class ObjectHolder : public Object {
-	public:
-		ObjectHolder(T value) : value_(value) {}
-		virtual ~ObjectHolder() {}
-		T Get() {return value_;}
-		static ObjectPtr Create(T arg) {
-		    return std::make_shared<ObjectHolder<T>>(arg);
-		}
-
-	private:
-		T value_;
-	};
-
-	using SymbolicObject = ObjectHolder<CVC4::Expr>;
-
+namespace memory {
+	/// Display stub
 	class Display {
 	public:
-		void Alloca(const llvm::Value* address);
-		ObjectPtr Read(const llvm::Value* address);
-		void Write(const llvm::Value* address, ObjectPtr object);
+		Display();
+		~Display();
+		using Address = const llvm::Value*;
+		void Alloca(Address address);
+		HolderPtr Read(Address address);
+		void Write(Address address, HolderPtr holder);
+	private:
+		using Pointer = std::pair<Address, HolderPtr>;
+		using MemoryMap = std::map<Address, HolderPtr>;
+		MemoryMap mmap_;
 	};
 }
 
 #endif
+
 
 
 
