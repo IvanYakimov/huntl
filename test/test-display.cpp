@@ -18,9 +18,9 @@ TEST_F (DisplayTest, basic) {
 		d.Alloca(x);
 		auto l_undef = d.Load(x);
 		ASSERT_TRUE(instanceof<Undef>(l_undef));
-		d.Store(x, Wrapper<int32_t>::Create(42));
+		d.Store(x, ObjHolder<int32_t>::Create(42));
 		auto l_42 = d.Load(x);
-		ASSERT_TRUE(instanceof<Wrapper<int32_t>>(l_42));
+		ASSERT_TRUE(instanceof<ObjHolder<int32_t>>(l_42));
 	}
 }
 

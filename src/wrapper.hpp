@@ -2,33 +2,24 @@
 #define __WRAPPER_HPP__
 
 #include "object.hpp"
+#include "creatable.hpp"
 #include <cassert>
 #include <sstream>
 
-namespace meta_smt {
+namespace utils {
 	template <typename T>
 	bool EqualOp(const T& lhs, const T& rhs) {
 		return lhs == rhs;
 	}
 
-	template <typename T>
-	std::string Show(const T& arg) {
-		//std::stringstream ss;
-		//std::cout << arg.toString();
-		//return "";//std::string(ss.str());
-		return "";
-	}
-
 	template <class Base,
 		class Target,
-		std::string (*Show)(const Target&) = Show<Target>,
 		bool (*Compare)(const Target&, const Target&) = EqualOp<Target>>
 	class Wrapper : public Base {
 	public:
-		using TheWrapper = Wrapper<Base,Target,Show,Compare>;
+		using TheWrapper = Wrapper<Base,Target,Compare>;
 
 		COMPARABLE(Wrapper);
-		PRINTABLE(Wrapper);
 		NONCOPYABLE(Wrapper);
 
 		Wrapper(const Target& val) : val_(val) {}
