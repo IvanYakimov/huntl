@@ -12,10 +12,6 @@ namespace memory {
 		return EqualsHelper<Undef>(*this, rhs, cmp);
 	}
 
-	std::string Undef::ToString() const {
-		return "undef";
-	}
-
 	std::ostream& Undef::ToStream(std::ostream &os, const Object& obj) const {
 		os << "undef";
 		return os;

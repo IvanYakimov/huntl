@@ -4,6 +4,7 @@
 # include <memory>
 # include <string>
 # include <iostream>
+# include <sstream>
 
 // Original Version
 #define NONCOPYABLE(T) \
@@ -18,31 +19,18 @@ bool operator!=(const T& b) { return !this->Equals(b); } \
 
 #define PRINTABLE(T) \
 friend std::ostream& operator<<(std::ostream &os, const T& obj) { \
-	os << obj.ToString(); \
-	return os; \
-}
+	return obj.ToStream(os, obj); \
+} \
 
 //TODO: VERIFY!!! from_this !
-//TODO: ALL shared objects MUST be IMMUTABLE!
 /** Base class for all shared objects in the program.
  * \note inheritance from std::enable_shared_from_this<Object> allows
  * to refer to 'this' pointer from code. */
 class Object : public std::enable_shared_from_this<Object> {
 public:
 	virtual ~Object() {}
-	/** Returns true if a and b are structuraly equivalent, and false otherwise.
-	 * \note Use EqualsHelper () to implement equality checking in overloaded functions.
-	 * \see EqualsHelper
-	 * \see operator==(const T& a, const T& b) */
 	virtual bool Equals (const Object& rhs) const = 0;
-	/** Returns string representation in appropriate format.
-	 * Any class, inherited (transitevly) from Object by CRTP <T,B> has streaming operator<<,
-	 * which invokes this  method to put the string representation into a stream.
-	 * \see std::ostream& operator<<(std::ostream &os, const T& obj) */
-	virtual std::string ToString() const = 0;
-	//TODO:
 	virtual std::ostream& ToStream(std::ostream &os, const Object& obj) const = 0;
-
 };
 
 /**

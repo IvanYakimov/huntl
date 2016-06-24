@@ -8,21 +8,20 @@
 
 namespace utils {
 	template <typename T>
-	bool EqualOp(const T& lhs, const T& rhs) {
+	bool _compare_(const T& lhs, const T& rhs) {
 		return lhs == rhs;
 	}
 
 	template <typename T>
-	std::string Show(const T& arg) {
-		std::stringstream ss;
-		ss << arg;
-		return std::string(ss.str());
+	std::ostream& _print_(std::ostream &os, const T& obj) {
+		os << obj;
+		return os;
 	}
 
 	template <class Base,
 		class Target,
-		std::string (*Show)(const Target&) = Show<Target>,
-		bool (*Compare)(const Target&, const Target&) = EqualOp<Target>>
+		std::ostream& (*Show)(std::ostream&, const Target&) = _print_<Target>,
+		bool (*Compare)(const Target&, const Target&) = _compare_<Target>>
 	class Wrapper : public Base {
 	public:
 		using TheWrapper = Wrapper<Base,Target,Show,Compare>;
@@ -45,8 +44,8 @@ namespace utils {
 			return EqualsHelper<TheWrapper>(*this, rhs, cmp);
 		}
 
-		virtual std::string ToString() const {
-			return Show(val_);
+		virtual std::ostream& ToStream(std::ostream &os, const Object& obj) const {
+			return Show(os, val_);
 		}
 
 		static std::shared_ptr<Base> Create(const Target& val) {
