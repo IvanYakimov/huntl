@@ -12,6 +12,10 @@ namespace memory {
 		return EqualsHelper<Undef>(*this, rhs, cmp);
 	}
 
+	std::string Undef::ToString() const {
+		return "undef";
+	}
+
 	bool IsSymbolic(HolderPtr holder) {
 		return utils::instanceof<Symbolic>(holder);
 	}

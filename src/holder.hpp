@@ -14,32 +14,19 @@ namespace memory {
 	class Holder : public Object {
 	public:
 		COMPARABLE(Holder);
+		PRINTABLE(Holder);
 		virtual ~Holder(){}
 	};
 
 	template <typename B>
 	using ObjHolder = utils::Wrapper<Holder, B>;
 
-	/*
-	template <typename T>
-	class ObjHolder : public Holder {
-	public:
-		ObjHolder(T value) : value_(value) {}
-		virtual ~ObjHolder() {}
-		T Get() {return value_;}
-		static HolderPtr Create(T arg) {
-			return std::make_shared<ObjHolder<T>>(arg);
-		}
-
-	private:
-		T value_;
-	};
-	*/
-
 	class Undef : public Holder {
 	public:
 		COMPARABLE(Undef);
+		PRINTABLE(Undef);
 		virtual bool Equals (const Object& rhs) const;
+		virtual std::string ToString() const;
 		Undef();
 		static HolderPtr Create();
 	};

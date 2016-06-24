@@ -39,7 +39,9 @@ public:
 	 * Any class, inherited (transitevly) from Object by CRTP <T,B> has streaming operator<<,
 	 * which invokes this  method to put the string representation into a stream.
 	 * \see std::ostream& operator<<(std::ostream &os, const T& obj) */
-	//virtual std::string ToString() const = 0;
+	virtual std::string ToString() const = 0;
+	//TODO:
+
 };
 
 /**

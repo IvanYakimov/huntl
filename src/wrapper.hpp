@@ -12,12 +12,20 @@ namespace utils {
 		return lhs == rhs;
 	}
 
+	template <typename T>
+	std::string Show(const T& arg) {
+		std::stringstream ss;
+		ss << arg;
+		return std::string(ss.str());
+	}
+
 	template <class Base,
 		class Target,
+		std::string (*Show)(const Target&) = Show<Target>,
 		bool (*Compare)(const Target&, const Target&) = EqualOp<Target>>
 	class Wrapper : public Base {
 	public:
-		using TheWrapper = Wrapper<Base,Target,Compare>;
+		using TheWrapper = Wrapper<Base,Target,Show,Compare>;
 
 		COMPARABLE(Wrapper);
 		NONCOPYABLE(Wrapper);
@@ -37,9 +45,8 @@ namespace utils {
 			return EqualsHelper<TheWrapper>(*this, rhs, cmp);
 		}
 
-		friend std::ostream& operator<<(std::ostream &os, const Target& obj) {
-			os << obj;
-			return os;
+		virtual std::string ToString() const {
+			return Show(val_);
 		}
 
 		static std::shared_ptr<Base> Create(const Target& val) {
