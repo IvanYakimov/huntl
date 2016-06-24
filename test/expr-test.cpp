@@ -10,7 +10,7 @@ public:
 
 	CVC4::BitVectorType bvt;
 };
-
+/*
 int main () {
 	using namespace CVC4;
 	CVC4::ExprManager em;
@@ -25,3 +25,4 @@ int main () {
 	CVC4::Expr x_eq_c = em.mkExpr(CVC4::Kind::BITVECTOR_AND, x, c);
 	std::cout << "x = c: " << sizeof(x_eq_c) << std::endl;
 }
+*/

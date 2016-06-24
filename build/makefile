@@ -1,15 +1,19 @@
 SHELL = /bin/sh
 
-INTERPRETER = kernel.o matcher.o voyager-pass.o evaluator.o 
-INTERPRETER_TEST = expr-test.o test-holder.o
+LLVM_PASS = voyager-pass.o
+
+INTERPRETER = kernel.o matcher.o evaluator.o 
+INTERPRETER_TEST = expr-test.o test-holder.o test-evaluator.o $(SOLVER) $(MEMORY) $(LLVM_TEST_HELPERS) $(TEST_RUNNER)
 
 MEMORY = display.o holder.o
-MEMORY_TEST = test-holder.o test-display.o solver.o
+MEMORY_TEST = test-holder.o test-display.o $(SOLVER) $(LLVM_TEST_HELPERS) $(TEST_RUNNER)
 
 SOLVER = solver.o
-SOLVER_TEST = 
+SOLVER_TEST = $(TEST_RUNNER)
 
 LLVM_TEST_HELPERS = ir-function-builder.o
+
+TEST_RUNNER = test-runner.o
 
 OBJ = $(INTERPRETER) $(MEMORY) $(SOLVER)
 OBJ_TEST = $(INTERPRETER_TEST) $(MEMORY_TEST) $(SOLVER_TEST) $(LLVM_TEST_HELPERS)
@@ -38,13 +42,13 @@ program.so: shared.o
 shared.o: $(INTERPRETER) $(SOLVER) $(MEMORY)
 	ld -r $^ -o $@ $(LLVM_DYNAMIC)
 
-solver-test.out: $(SOLVER_TEST) $(SOLVER) test-runner.o
+solver-test.out: $(SOLVER) $(SOLVER_TEST)
 	$(CXX) $^ -o $@ $(GTESTFLAGS) $(CVC4FLAGS) $(CXXFLAGS) 
 
-interpreter-test.out: $(INTERPRETER_TEST) $(INTERPRETER) test-runner.o $(LDFLAGS)
-	$(CXX) $^ -o $@ $(GTESTFLAGS) $(CXXFLAGS)
+interpreter-test.out: $(INTERPRETER) $(INTERPRETER_TEST) 
+	$(CXX) $^ -o $@ $(GTESTFLAGS) $(CVC4FLAGS) $(CXXFLAGS) $(LLVM_STATIC)
 	
-memory-test.out: $(MEMORY) $(MEMORY_TEST) $(LLVM_TEST_HELPERS) test-runner.o $(LDFLAGS)
+memory-test.out: $(MEMORY) $(MEMORY_TEST)
 	$(CXX) $^ -o $@ $(GTESTFLAGS) $(CVC4FLAGS) $(CXXFLAGS) $(LLVM_STATIC)
 
 $(OBJ_TEST):
