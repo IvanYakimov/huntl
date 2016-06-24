@@ -3,7 +3,13 @@
 namespace memory {
 	Undef::Undef() {}
 	HolderPtr Undef::Create(){
-		return std::make_shared<Undef>();
+		return utils::Create<Holder, Undef>();
+	}
+	bool Undef::Equals (const Object& rhs) const {
+		auto cmp = [] (const Undef& l, const Undef& r) -> bool {
+			return true;
+		};
+		return EqualsHelper<Undef>(*this, rhs, cmp);
 	}
 
 	bool IsSymbolic(HolderPtr holder) {

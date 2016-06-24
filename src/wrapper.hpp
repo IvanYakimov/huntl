@@ -37,8 +37,9 @@ namespace utils {
 			return EqualsHelper<TheWrapper>(*this, rhs, cmp);
 		}
 
-		virtual std::string ToString() const {
-			return Show(val_);
+		friend std::ostream& operator<<(std::ostream &os, const Target& obj) {
+			os << obj;
+			return os;
 		}
 
 		static std::shared_ptr<Base> Create(const Target& val) {

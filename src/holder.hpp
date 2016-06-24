@@ -4,20 +4,23 @@
 #include <cvc4/cvc4.h>
 #include "instanceof.hpp"
 #include "wrapper.hpp"
+#include "creatable.hpp"
 
 namespace memory {
 	class Holder;
 
 	using HolderPtr = std::shared_ptr<Holder>;
 
-	template <typename B>
-	using H = utils::Wrapper<Holder, B>;
-
-	class Holder {
+	class Holder : public Object {
 	public:
+		COMPARABLE(Holder);
 		virtual ~Holder(){}
 	};
 
+	template <typename B>
+	using ObjHolder = utils::Wrapper<Holder, B>;
+
+	/*
 	template <typename T>
 	class ObjHolder : public Holder {
 	public:
@@ -31,9 +34,12 @@ namespace memory {
 	private:
 		T value_;
 	};
+	*/
 
 	class Undef : public Holder {
 	public:
+		COMPARABLE(Undef);
+		virtual bool Equals (const Object& rhs) const;
 		Undef();
 		static HolderPtr Create();
 	};
