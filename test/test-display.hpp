@@ -2,15 +2,14 @@
 #define __TEST_DISPLAY_HPP__
 
 // project
-#include "../../src/interpreter/display.hpp"
+#include "../src/display.hpp"
+#include "../src/instanceof.hpp"
+#include "matcher/ir-function-builder.hpp"
 
 // gtest
 #include "gtest/gtest.h"
 
 // test
-#include "../helpers/object-stub.hpp"
-#include "ir-function-builder.hpp"
-
 #include "llvm/IR/Verifier.h"
 #include "llvm/IR/DerivedTypes.h"
 #include "llvm/IR/IRBuilder.h"

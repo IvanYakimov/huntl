@@ -15,13 +15,13 @@ namespace memory {
 		mmap_.emplace(address, holder);
 	}
 
-	HolderPtr Display::Read(Address address) {
+	HolderPtr Display::Load(Address address) {
 		auto it = mmap_.find(address);
 		assert (it != mmap_.end());
 		return it->second;
 	}
 
-	void Display::Write(Address address, HolderPtr holder) {
+	void Display::Store(Address address, HolderPtr holder) {
 		auto it = mmap_.find(address);
 		assert (it != mmap_.end());
 		it->second = holder;

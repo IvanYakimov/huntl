@@ -4,46 +4,48 @@ INTERPRETER = kernel.o matcher.o voyager-pass.o evaluator.o
 INTERPRETER_TEST = expr-test.o test-holder.o
 
 MEMORY = display.o holder.o
-MEMORY_TEST = test-holder.o test-display.o $(SOLVER)
+MEMORY_TEST = test-holder.o test-display.o solver.o
 
 SOLVER = solver.o
-SOLVER_TEST = test-solver.o
+SOLVER_TEST = 
+
+LLVM_TEST_HELPERS = ir-function-builder.o
 
 OBJ = $(INTERPRETER) $(MEMORY) $(SOLVER)
-OBJ_TEST = $(INTERPRETER_TEST) $(MEMORY_TEST) $(SOLVER_TEST)
+OBJ_TEST = $(INTERPRETER_TEST) $(MEMORY_TEST) $(SOLVER_TEST) $(LLVM_TEST_HELPERS)
 
 CXX = g++
-CXXFLAGS = -fdiagnostics-color=always -g -std=c++14 -fpic -rdynamic \
-	$(filter-out -g -fno-exceptions -O2 -std=c++11, $(LLVMFLAGS)) $(DBGFLAGS) \
-	-Wno-deprecated
-LDFLAGS = $(CVC4FLAGS) $(Z3FLAGS)
+CXXFLAGS = -fdiagnostics-color=always -g -std=c++14 -fpic -rdynamic -Wno-deprecated
+LDFLAGS = 
 CVC4FLAGS = -lcvc4 -lgmp  
 GTESTFLAGS = -lgtest -pthread
 #Z3FLAGS = /usr/lib/libz3.so
-LLVMFLAGS = $(shell llvm-config --cxxflags)
+LLVMF_DYNAMIC = $(filter-out -g -fno-exceptions -O2 -std=c++11, $(shell llvm-config --cxxflags))
+LLVM_STATIC = $(filter-out -g -fno-exceptions -O2 -std=c++11, $(shell llvm-config --cxxflags --ldflags --libs core)) \
+-ltinfo -ldl
 DBGFLAGS = -D DBG -U NDEBUG
 
 SRC = ../src
 TST = ../test
 
-vpath %.cpp $(SRC) $(TST)/solver/ $(TST)/interpreter/ $(TST)
-vpath %.hpp $(SRC)
+vpath %.cpp $(SRC) $(TST) $(TST)/solver/ $(TST)/interpreter $(TST)/matcher
+vpath %.hpp $(SRC) $(TST)/matcher
 vpath %.c 	$(SRC)
 		
 program.so: shared.o 
 	$(CXX) -shared $< -o $@ $(CXXFLAGS) 
 
-shared.o: $(INTERPRETER) #$(SOLVER) $(UTILS)
-	ld -r $^ -o $@
+shared.o: $(INTERPRETER) $(SOLVER) $(MEMORY)
+	ld -r $^ -o $@ $(LLVM_DYNAMIC)
 
-solver-test.out: $(SOLVER_TEST) $(SOLVER) test-runner.o $(LDFLAGS)
-	$(CXX) $^ -o $@ $(GTESTFLAGS) $(CVC4FLAGS) $(CXXFLAGS)
-	
+solver-test.out: $(SOLVER_TEST) $(SOLVER) test-runner.o
+	$(CXX) $^ -o $@ $(GTESTFLAGS) $(CVC4FLAGS) $(CXXFLAGS) 
+
 interpreter-test.out: $(INTERPRETER_TEST) $(INTERPRETER) test-runner.o $(LDFLAGS)
 	$(CXX) $^ -o $@ $(GTESTFLAGS) $(CXXFLAGS)
 	
-memory-test.out: $(MEMORY) $(MEMORY_TEST) test-runner.o $(LDFLAGS)
-	$(CXX) $^ -o $@ $(GTESTFLAGS) $(CVC4FLAGS) $(CXXFLAGS)
+memory-test.out: $(MEMORY) $(MEMORY_TEST) $(LLVM_TEST_HELPERS) test-runner.o $(LDFLAGS)
+	$(CXX) $^ -o $@ $(GTESTFLAGS) $(CVC4FLAGS) $(CXXFLAGS) $(LLVM_STATIC)
 
 $(OBJ_TEST):
 $(OBJ):

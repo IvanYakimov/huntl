@@ -16,8 +16,8 @@ namespace memory {
 		~Display();
 		using Address = const llvm::Value*;
 		void Alloca(Address address);
-		HolderPtr Read(Address address);
-		void Write(Address address, HolderPtr holder);
+		HolderPtr Load(Address address);
+		void Store(Address address, HolderPtr holder);
 	private:
 		using Pointer = std::pair<Address, HolderPtr>;
 		using MemoryMap = std::map<Address, HolderPtr>;
