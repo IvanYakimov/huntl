@@ -41,6 +41,7 @@ public:
 	 * \see std::ostream& operator<<(std::ostream &os, const T& obj) */
 	virtual std::string ToString() const = 0;
 	//TODO:
+	virtual std::ostream& ToStream(std::ostream &os, const Object& obj) const = 0;
 
 };
 

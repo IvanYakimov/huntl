@@ -27,6 +27,7 @@ namespace memory {
 		PRINTABLE(Undef);
 		virtual bool Equals (const Object& rhs) const;
 		virtual std::string ToString() const;
+		virtual std::ostream& ToStream(std::ostream &os, const Object& obj) const;
 		Undef();
 		static HolderPtr Create();
 	};

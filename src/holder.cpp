@@ -16,6 +16,11 @@ namespace memory {
 		return "undef";
 	}
 
+	std::ostream& Undef::ToStream(std::ostream &os, const Object& obj) const {
+		os << "undef";
+		return os;
+	}
+
 	bool IsSymbolic(HolderPtr holder) {
 		return utils::instanceof<Symbolic>(holder);
 	}
