@@ -15,13 +15,13 @@ namespace memory {
 	};
 
 	template <typename T>
-	class ObjectHolder : public Holder {
+	class Wrapper : public Holder {
 	public:
-		ObjectHolder(T value) : value_(value) {}
-		virtual ~ObjectHolder() {}
+		Wrapper(T value) : value_(value) {}
+		virtual ~Wrapper() {}
 		T Get() {return value_;}
 		static HolderPtr Create(T arg) {
-			return std::make_shared<ObjectHolder<T>>(arg);
+			return std::make_shared<Wrapper<T>>(arg);
 		}
 
 	private:
@@ -34,7 +34,7 @@ namespace memory {
 		static HolderPtr Create();
 	};
 
-	using Symbolic = ObjectHolder<CVC4::Expr>;
+	using Symbolic = Wrapper<CVC4::Expr>;
 
 	bool IsSymbolic(HolderPtr holder);
 	bool IsUndef(HolderPtr holder);
@@ -42,6 +42,8 @@ namespace memory {
 }
 
 #endif
+
+
 
 
 
