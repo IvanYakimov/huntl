@@ -1,20 +1,20 @@
 # ifndef __STATEMENT_EVALUATOR_HPP__
 # define __STATEMENT_EVALUATOR_HPP__
 
-// Project
-#include <cvc4/cvc4.h>
-
 // STL
 #include <exception>
 
-#include "display.hpp"
+// Inherited from
 #include "matcher.hpp"
+
+// Uses
+#include "display.hpp"
+#include "path-constraint.hpp"
 
 //TODO: use -I option to perform headers search instead of ../ (?)
 
 namespace interpreter {
 	class Evaluator final : public Matcher {
-		memory::Display m;
 	private:
 		// Return
 		virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst);

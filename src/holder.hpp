@@ -1,7 +1,7 @@
 #ifndef __HOLDER_HPP__
 #define __HOLDER_HPP__
 
-#include <cvc4/cvc4.h>
+#include "expr.hpp"
 #include "instanceof.hpp"
 #include "wrapper.hpp"
 #include "creatable.hpp"
@@ -31,7 +31,7 @@ namespace memory {
 		static HolderPtr Create();
 	};
 
-	using Symbolic = ObjHolder<CVC4::Expr>;
+	using Symbolic = ObjHolder<solver::Expr>;
 
 	bool IsSymbolic(HolderPtr holder);
 	bool IsUndef(HolderPtr holder);

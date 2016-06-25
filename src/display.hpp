@@ -12,6 +12,7 @@ namespace memory {
 	/// Display stub
 	class Display {
 	public:
+		NONCOPYABLE(Display);
 		Display();
 		~Display();
 		using Address = const llvm::Value*;

@@ -4,6 +4,7 @@
 // project
 #include "../src/display.hpp"
 #include "../src/instanceof.hpp"
+#include "../src/singleton.hpp"
 #include "../src/evaluator.hpp"
 #include "matcher/ir-function-builder.hpp"
 
@@ -28,6 +29,7 @@ public:
 };
 
 TEST_F (EvaluatorTest, basic) {
+	auto eval = utils::GetInstance<interpreter::Evaluator>();
 	Int32Func f; {
 		auto x = f.Alloca32("x");
 		auto store_x = f.Store(f.I32(2), x);
@@ -36,6 +38,8 @@ TEST_F (EvaluatorTest, basic) {
 
 		//TODO:
 	}
+	errs() << *f.Get() << "\n";
+	eval->visit(f.Get());
 }
 
 #endif

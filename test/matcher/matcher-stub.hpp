@@ -1,7 +1,7 @@
 #ifndef __MATCHER_STUB_HPP__
 #define __MATCHER_STUB_HPP__
 
-#include "../../src/interpreter/matcher.hpp"
+#include "../src/matcher.hpp"
 
 #include "gtest/gtest.h"
 
@@ -9,7 +9,7 @@
 
 //TODO: remove from the interpreter namespace
 namespace interpreter {
-	class MatcherStub final : public StatementMatcher {
+	class MatcherStub final : public Matcher {
 	protected:
 		// Return
 		virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst);
