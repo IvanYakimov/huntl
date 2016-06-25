@@ -6,7 +6,7 @@
 #include "../src/instanceof.hpp"
 #include "../src/singleton.hpp"
 #include "../src/evaluator.hpp"
-#include "matcher/ir-function-builder.hpp"
+#include "ir-function-builder.hpp"
 
 // gtest
 #include "gtest/gtest.h"

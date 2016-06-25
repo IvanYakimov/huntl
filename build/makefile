@@ -3,7 +3,8 @@ SHELL = /bin/sh
 LLVM_PASS = voyager-pass.o
 
 INTERPRETER = kernel.o matcher.o evaluator.o 
-INTERPRETER_TEST = expr-test.o test-holder.o test-evaluator.o $(SOLVER) $(MEMORY) $(LLVM_TEST_HELPERS) $(TEST_RUNNER)
+INTERPRETER_TEST = expr-test.o test-holder.o test-evaluator.o matcher-stub.o test-matcher.o \
+$(SOLVER) $(MEMORY) $(LLVM_TEST_HELPERS) $(TEST_RUNNER)
 
 MEMORY = display.o holder.o
 MEMORY_TEST = test-holder.o test-display.o $(SOLVER) $(LLVM_TEST_HELPERS) $(TEST_RUNNER)

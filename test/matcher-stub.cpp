@@ -114,10 +114,11 @@ namespace interpreter {
 	}
 
 	// Alloca
-	void MatcherStub::HandleAllocaInst (const llvm::Instruction &inst, const llvm::Value *allocated) {
+	void MatcherStub::HandleAllocaInst (const llvm::Instruction &inst, const llvm::ConstantInt *allocated) {
 		Printer::Do(&inst, allocated);
+		errs() << allocated->getZExtValue() << "\n";
 		ASSERT_TRUE(isa<Instruction>(inst)
-				and isa<Value>(allocated));
+				and isa<ConstantInt>(allocated));
 	}
 
 	// Load

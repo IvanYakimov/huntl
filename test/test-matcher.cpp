@@ -114,11 +114,12 @@ TEST_F(MatcherTest, phi_node) {
 	Match(f);
 }
 
+/*
 int main(int argc, char** argv, char **env) {
 	::testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
 }
-
+*/
 
 
 

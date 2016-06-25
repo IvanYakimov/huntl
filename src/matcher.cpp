@@ -99,10 +99,11 @@ namespace interpreter {
 		DebugInstInfo(inst);
 
 		Value *allocated = NULL;
-		if (Case (inst, &allocated))
-			HandleAllocaInst(inst, allocated);
+		ConstantInt *constant_int = NULL;
+		if (Case (inst, &constant_int))
+			HandleAllocaInst(inst, constant_int);
 		else
-			assert(false);
+			assert(false && "not implemented");
 	}
 
 	void Matcher::visitLoadInst (const LoadInst &inst)

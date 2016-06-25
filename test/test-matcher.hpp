@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "../../src/interpreter/matcher.hpp"
+#include "../src/matcher.hpp"
 #include "matcher-stub.hpp"
 
 #include "llvm/IR/Verifier.h"

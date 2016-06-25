@@ -65,7 +65,7 @@ namespace interpreter {
 		virtual void HandleICmpInst (const llvm::Instruction &inst, const llvm::Value *lhs, const llvm::Value *rhs) = 0;
 
 		// Alloca
-		virtual void HandleAllocaInst (const llvm::Instruction &inst, const llvm::Value *allocated) = 0;
+		virtual void HandleAllocaInst (const llvm::Instruction &inst, const llvm::ConstantInt *allocated) = 0;
 
 		// Load
 		virtual void HandleLoadInst (const llvm::Instruction &inst, const llvm::Value *ptr) = 0;

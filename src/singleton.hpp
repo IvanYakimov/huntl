@@ -4,6 +4,7 @@
 #include <memory>
 
 namespace utils {
+	///TODO: testing
 	template<class T, typename... Args>
 	std::shared_ptr<T> GetInstance(Args&&... args) {
 		static std::shared_ptr<T> instance_ = nullptr;

@@ -110,13 +110,10 @@ namespace interpreter {
 	}
 
 	// Alloca
-	void Evaluator::HandleAllocaInst (const llvm::Instruction &inst, const llvm::Value *allocated) {
-		// (declare-const <name>)
-		// Allocate memory in the current activation record.
-		//llvm::errs() << "var " << inst.getName() << "\n";
-		llvm::errs() << inst << "\n";
-		llvm::errs() << Printer::Do(allocated) << "\n";
-		llvm::errs() << *allocated << "\n";
+	void Evaluator::HandleAllocaInst (const llvm::Instruction &inst, const llvm::ConstantInt *allocated) {
+		llvm::IntegerType* ty = allocated->getType();
+		auto width = ty->getBitWidth();
+		const llvm::APInt& val = allocated->getValue();
 	}
 
 	// Load
