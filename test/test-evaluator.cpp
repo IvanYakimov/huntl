@@ -29,7 +29,8 @@ public:
 };
 
 TEST_F (EvaluatorTest, basic) {
-	auto eval = utils::GetInstance<interpreter::Evaluator>();
+	auto display = memory::Display::Create();
+	interpreter::Evaluator eval(display);
 	Int32Func f; {
 		auto x = f.Alloca32("x");
 		auto store_x = f.Store(f.I32(2), x);
@@ -39,10 +40,12 @@ TEST_F (EvaluatorTest, basic) {
 		//TODO:
 	}
 	errs() << *f.Get() << "\n";
-	eval->visit(f.Get());
+	eval.visit(f.Get());
 }
 
 TEST_F (EvaluatorTest, blah) {
+	auto display = memory::Display::Create();
+	interpreter::Evaluator eval(display);
 	Int32Func f; {
 			auto x = f.Alloca32("x");
 			auto y = f.Alloca32("y");
@@ -58,7 +61,7 @@ TEST_F (EvaluatorTest, blah) {
 			auto ret = f.Ret(load_res);
 		}
 	errs() << *f.Get() << "\n";
-	utils::GetInstance<interpreter::Evaluator>()->visit(f.Get());
+	eval.visit(f.Get());
 }
 
 #endif

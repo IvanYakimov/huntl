@@ -19,9 +19,11 @@ namespace interpreter {
 		// 	- if step is forking - clone this state, update state table
 		//	- else - back to start
 
+		/*
 		Evaluator evaluator;
 		for (Function::iterator i = func.begin(), e = func.end(); i != e; ++i) {
 			evaluator.visit(i);
 		}
+		*/
 	}
 }

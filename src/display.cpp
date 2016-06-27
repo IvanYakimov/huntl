@@ -32,6 +32,10 @@ namespace memory {
 		}
 		std::cout << "-->\n";
 	}
+
+	DisplayPtr Display::Create() {
+		return utils::Create<Display>();
+	}
 }
 
 

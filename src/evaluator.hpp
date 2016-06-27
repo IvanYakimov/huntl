@@ -18,8 +18,12 @@
 
 namespace interpreter {
 	class Evaluator final : public Matcher {
+	public:
+		Evaluator(memory::DisplayPtr display);
+		~Evaluator();
 	private:
 		MetaEvaluator meta_eval_;
+		memory::DisplayPtr display_;
 	private:
 		// Return
 		virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst);

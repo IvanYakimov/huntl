@@ -8,8 +8,11 @@
 
 #include <map>
 #include <cassert>
+#include "creatable.hpp"
 
 namespace memory {
+	class Display;
+	using DisplayPtr = std::shared_ptr<Display>;
 	/// Display stub
 	class Display {
 	public:
@@ -20,6 +23,7 @@ namespace memory {
 		void Alloca(Address address, HolderPtr initial);
 		HolderPtr Load(Address address);
 		void Store(Address address, HolderPtr holder);
+		static DisplayPtr Create();
 		void Print();
 	private:
 		using Pointer = std::pair<Address, HolderPtr>;

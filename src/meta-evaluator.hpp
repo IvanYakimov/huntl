@@ -21,10 +21,12 @@
 namespace interpreter {
 	class MetaEvaluator {
 	public:
-		MetaEvaluator();
+		MetaEvaluator(memory::DisplayPtr display);
 		~MetaEvaluator();
 		void Assign (const llvm::Value *destination, const llvm::ConstantInt *target);
 		void Assign (const llvm::Value *destination, const llvm::Instruction *target);
+	private:
+		memory::DisplayPtr display_;
 	};
 }
 

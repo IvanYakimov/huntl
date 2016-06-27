@@ -4,7 +4,7 @@
 #include <memory>
 
 namespace utils {
-	template<typename B, typename T, typename... Args>
+	template<typename B, typename T = B, typename... Args>
 	std::shared_ptr<B> Create(Args&&... args) {
 		return std::make_shared<T>(std::forward<Args>(args)...);
 	}
