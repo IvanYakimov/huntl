@@ -1,6 +1,6 @@
 #include "bitvec.hpp"
 
-namespace solver {
+namespace interpreter {
 	bool BitVec_compare_(const BitVec& lhs, const BitVec& rhs) {
 		return lhs.eq(rhs);
 	}

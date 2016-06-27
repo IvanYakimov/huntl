@@ -4,7 +4,7 @@
 #include <cvc4/cvc4.h>
 
 namespace solver {
-	using Expr = CVC4::Expr;
+	using SharedExpr = CVC4::Expr;
 }
 
 #endif

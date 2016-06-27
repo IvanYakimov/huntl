@@ -25,7 +25,7 @@ namespace interpreter {
 		auto loaded_rhs = display->Load(target);
 		// Store holder to ptr
 		if (memory::IsConcrete(loaded_rhs)) {
-			solver::BitVec rhs_val = Object::UpCast<memory::Concrete>(loaded_rhs)->Get();
+			interpreter::BitVec rhs_val = Object::UpCast<memory::Concrete>(loaded_rhs)->Get();
 			auto updated_lhs = memory::Concrete::Create(rhs_val);
 			display->Store(destination, updated_lhs);
 		}

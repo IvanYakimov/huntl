@@ -15,12 +15,10 @@ TEST_F (DisplayTest, basic) {
 		auto ret = f.Ret(load_x);
 
 		Display d;
-		d.Alloca(x);
+		auto holder = Concrete::Create(interpreter::BitVec(32, 42));
+		d.Alloca(x, holder);
 		auto l_undef = d.Load(x);
-		ASSERT_TRUE(instanceof<Undef>(l_undef));
-		d.Store(x, ObjHolder<int32_t>::Create(42));
-		auto l_42 = d.Load(x);
-		ASSERT_TRUE(instanceof<ObjHolder<int32_t>>(l_42));
+		ASSERT_TRUE(instanceof<Concrete>(l_undef));
 	}
 }
 

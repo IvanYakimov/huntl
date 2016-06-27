@@ -6,7 +6,7 @@
 #include <list>
 
 namespace solver {
-	using PathConstraint = std::list<Expr>;
+	using PathConstraint = std::list<SharedExpr>;
 }
 
 #endif

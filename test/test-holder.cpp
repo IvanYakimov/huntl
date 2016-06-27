@@ -14,7 +14,7 @@ namespace memory {
 
 	TEST_F(HolderTest, instanceof) {
 		using utils::instanceof;
-		using solver::BitVec;
+		using interpreter::BitVec;
 		auto bv32 = solver.ExprManager().mkBitVectorType(32);
 		auto x = solver.ExprManager().mkVar("x", bv32);
 		auto x_h = Symbolic::Create(x);

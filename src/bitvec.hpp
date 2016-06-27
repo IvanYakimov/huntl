@@ -6,7 +6,7 @@
 #include <string>
 #include <cassert>
 
-namespace solver {
+namespace interpreter {
 	using BitVec = llvm::APInt;
 
 	bool BitVec_compare_(const BitVec& lhs, const BitVec& rhs) ;

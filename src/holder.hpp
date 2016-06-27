@@ -12,8 +12,8 @@ namespace memory {
 
 	using HolderPtr = std::shared_ptr<Holder>;
 
-	using Concrete = utils::Wrapper<Holder, solver::BitVec, solver::BitVec_print_, solver::BitVec_compare_>;
-	using Symbolic = utils::Wrapper<Holder, solver::Expr>;
+	using Concrete = utils::Wrapper<Holder, interpreter::BitVec, interpreter::BitVec_print_, interpreter::BitVec_compare_>;
+	using Symbolic = utils::Wrapper<Holder, solver::SharedExpr>;
 
 	bool IsSymbolic(HolderPtr holder);
 	bool IsConcrete(HolderPtr holder);
