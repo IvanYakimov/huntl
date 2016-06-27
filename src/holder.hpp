@@ -1,6 +1,7 @@
 #ifndef __HOLDER_HPP__
 #define __HOLDER_HPP__
 
+#include "bitvec.hpp"
 #include "expr.hpp"
 #include "instanceof.hpp"
 #include "wrapper.hpp"
@@ -31,6 +32,7 @@ namespace memory {
 		static HolderPtr Create();
 	};
 
+	using Concrete = utils::Wrapper<Holder, solver::BitVec, solver::BitVec_print_, solver::BitVec_compare_>;
 	using Symbolic = ObjHolder<solver::Expr>;
 
 	bool IsSymbolic(HolderPtr holder);

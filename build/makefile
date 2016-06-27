@@ -9,7 +9,7 @@ $(SOLVER) $(MEMORY) $(LLVM_TEST_HELPERS) $(TEST_RUNNER)
 MEMORY = display.o holder.o
 MEMORY_TEST = test-holder.o test-display.o $(SOLVER) $(LLVM_TEST_HELPERS) $(TEST_RUNNER)
 
-SOLVER = solver.o path-constraint.o
+SOLVER = solver.o path-constraint.o bitvec.o
 SOLVER_TEST = $(TEST_RUNNER)
 
 LLVM_TEST_HELPERS = ir-function-builder.o

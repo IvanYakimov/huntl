@@ -114,6 +114,8 @@ namespace interpreter {
 		llvm::IntegerType* ty = allocated->getType();
 		auto width = ty->getBitWidth();
 		const llvm::APInt& val = allocated->getValue();
+		auto holder = memory::Concrete::Create(val);
+		utils::GetInstance<memory::Display>()->Alloca(allocated, holder);
 	}
 
 	// Load
@@ -131,9 +133,8 @@ namespace interpreter {
 		//TODO move to pattern-matcher (?)
 		auto name = instruction->getName();
 		if (!name.empty()) {
-			// Produce new variable
-			llvm::errs() << *instruction->getType();
-			// Store new variable to ptr
+			// Produce new holder
+			// Store it to ptr
 		}
 		// else
 		// Load expr from instruction

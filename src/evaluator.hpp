@@ -4,11 +4,13 @@
 // STL
 #include <exception>
 
+#include "bitvec.hpp"
 // Inherited from
 #include "matcher.hpp"
 
 // Uses
 #include "display.hpp"
+#include "singleton.hpp"
 #include "path-constraint.hpp"
 
 //TODO: use -I option to perform headers search instead of ../ (?)

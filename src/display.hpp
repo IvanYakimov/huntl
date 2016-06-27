@@ -16,7 +16,7 @@ namespace memory {
 		Display();
 		~Display();
 		using Address = const llvm::Value*;
-		void Alloca(Address address);
+		void Alloca(Address address, HolderPtr initial);
 		HolderPtr Load(Address address);
 		void Store(Address address, HolderPtr holder);
 	private:

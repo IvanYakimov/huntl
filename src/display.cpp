@@ -9,10 +9,9 @@ namespace memory {
 
 	}
 
-	void Display::Alloca(Address address) {
-		auto holder = Undef::Create();
+	void Display::Alloca(Address address, HolderPtr initial) {
 		assert (mmap_.find(address) == mmap_.end());
-		mmap_.emplace(address, holder);
+		mmap_.emplace(address, initial);
 	}
 
 	HolderPtr Display::Load(Address address) {

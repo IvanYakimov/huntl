@@ -11,7 +11,7 @@ public:
 	// Matching
 	void Match(Func &func) {
 		Function* f = func.Get();
-		errs() << *f << "\n";
+		//errs() << *f << "\n";
 		ASSERT_FALSE(verifyFunction(*f));
 		// If there are no errors, the function returns false.
 

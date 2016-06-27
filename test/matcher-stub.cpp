@@ -10,7 +10,7 @@ namespace interpreter {
 	public:
 		template<class... Args>
 		static void Do(Args... args) {
-			errs() << "[ " + PrintType(args...) + " ]\n";
+			//errs() << "[ " + PrintType(args...) + " ]\n";
 		}
 
 	private:
@@ -116,7 +116,7 @@ namespace interpreter {
 	// Alloca
 	void MatcherStub::HandleAllocaInst (const llvm::Instruction &inst, const llvm::ConstantInt *allocated) {
 		Printer::Do(&inst, allocated);
-		errs() << allocated->getZExtValue() << "\n";
+		//errs() << allocated->getZExtValue() << "\n";
 		ASSERT_TRUE(isa<Instruction>(inst)
 				and isa<ConstantInt>(allocated));
 	}
@@ -129,7 +129,7 @@ namespace interpreter {
 	}
 
 	void MatcherStub::HandleStoreInst (const llvm::Instruction &inst, const llvm::Instruction *instruction, const llvm::Value *ptr) {
-		errs() << ptr->getName() << "\n";
+		//errs() << ptr->getName() << "\n";
 		Printer::Do(&inst, instruction, ptr);
 		ASSERT_TRUE(isa<Instruction>(inst)
 				and isa<Instruction>(instruction)
@@ -137,7 +137,7 @@ namespace interpreter {
 	}
 
 	void MatcherStub::HandleStoreInst (const llvm::Instruction &inst, const llvm::Constant *constant, const llvm::Value *ptr) {
-		errs() << ptr->getName() << "\n";
+		//errs() << ptr->getName() << "\n";
 		Printer::Do(&inst, constant, ptr);
 		ASSERT_TRUE(isa<Instruction>(inst)
 				and isa<Constant>(constant)
