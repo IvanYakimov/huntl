@@ -111,6 +111,7 @@ namespace interpreter {
 
 	// Alloca
 	void Evaluator::HandleAllocaInst (const llvm::Instruction &inst, const llvm::ConstantInt *allocated) {
+		std::cout << "alloca inst" << "\n";
 		llvm::IntegerType* ty = allocated->getType();
 		auto width = ty->getBitWidth();
 		const llvm::APInt& val = allocated->getValue();
@@ -130,15 +131,19 @@ namespace interpreter {
 	// Store
 
 	void Evaluator::HandleStoreInst (const llvm::Instruction &inst, const llvm::Instruction *instruction, const llvm::Value *ptr) {
-		//TODO move to pattern-matcher (?)
-		auto name = instruction->getName();
-		if (!name.empty()) {
-			// Produce new holder
-			// Store it to ptr
+		std::cout << "store inst" << "\n";
+		// Load holder from instruction
+		auto display = utils::GetInstance<memory::Display>();
+		auto loaded_rhs = display->Load(instruction);
+		// Store holder to ptr
+		if (memory::IsConcrete(loaded_rhs)) {
+			solver::BitVec rhs_val = Object::UpCast<memory::Concrete>(loaded_rhs)->Get();
+			auto updated_lhs = memory::Concrete::Create(rhs_val);
+			display->Store(ptr, updated_lhs);
 		}
-		// else
-		// Load expr from instruction
-		// Store expr to ptr
+		else {
+			assert (false && "not impl");
+		}
 	}
 
 	void Evaluator::HandleStoreInst (const llvm::Instruction &inst, const llvm::Constant *constant, const llvm::Value *ptr) {

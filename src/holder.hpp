@@ -12,6 +12,12 @@ namespace memory {
 
 	using HolderPtr = std::shared_ptr<Holder>;
 
+	using Concrete = utils::Wrapper<Holder, solver::BitVec, solver::BitVec_print_, solver::BitVec_compare_>;
+	using Symbolic = utils::Wrapper<Holder, solver::Expr>;
+
+	bool IsSymbolic(HolderPtr holder);
+	bool IsConcrete(HolderPtr holder);
+
 	class Holder : public Object {
 	public:
 		COMPARABLE(Holder);
@@ -19,25 +25,6 @@ namespace memory {
 		virtual ~Holder(){}
 	};
 
-	template <typename B>
-	using ObjHolder = utils::Wrapper<Holder, B>;
-
-	class Undef : public Holder {
-	public:
-		COMPARABLE(Undef);
-		PRINTABLE(Undef);
-		virtual bool Equals (const Object& rhs) const;
-		virtual std::ostream& ToStream(std::ostream &os, const Object& obj) const;
-		Undef();
-		static HolderPtr Create();
-	};
-
-	using Concrete = utils::Wrapper<Holder, solver::BitVec, solver::BitVec_print_, solver::BitVec_compare_>;
-	using Symbolic = ObjHolder<solver::Expr>;
-
-	bool IsSymbolic(HolderPtr holder);
-	bool IsUndef(HolderPtr holder);
-	bool IsConcrete(HolderPtr holder);
 }
 
 #endif

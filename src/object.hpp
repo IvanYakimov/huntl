@@ -31,6 +31,12 @@ public:
 	virtual ~Object() {}
 	virtual bool Equals (const Object& rhs) const = 0;
 	virtual std::ostream& ToStream(std::ostream &os, const Object& obj) const = 0;
+	template <class T, class B>
+	inline static std::shared_ptr<T> UpCast(std::shared_ptr<B> arg) {
+		auto res = std::dynamic_pointer_cast<T>(arg);
+		assert (res != nullptr);
+		return res;
+	}
 };
 
 /**
