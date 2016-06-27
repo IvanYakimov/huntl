@@ -2,6 +2,7 @@
 #define __MEMORY_HPP__
 
 #include "llvm/IR/Instruction.h"
+#include "llvm/Support/raw_ostream.h"
 
 #include "holder.hpp"
 
@@ -19,6 +20,7 @@ namespace memory {
 		void Alloca(Address address, HolderPtr initial);
 		HolderPtr Load(Address address);
 		void Store(Address address, HolderPtr holder);
+		void Print();
 	private:
 		using Pointer = std::pair<Address, HolderPtr>;
 		using MemoryMap = std::map<Address, HolderPtr>;

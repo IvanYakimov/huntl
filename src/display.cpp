@@ -25,6 +25,15 @@ namespace memory {
 		assert (it != mmap_.end());
 		it->second = holder;
 	}
+
+	void Display::Print() {
+		std::cout << "<--display:\n";
+		for (auto it = mmap_.begin(); it != mmap_.end(); it++) {
+			llvm::outs() << *(it->first) << " -> ";
+			std::cout << *(it->second) << "\n";
+		}
+		std::cout << "-->\n";
+	}
 }
 
 

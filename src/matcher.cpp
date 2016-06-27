@@ -123,13 +123,13 @@ namespace interpreter {
 
 		Value *val = NULL;
 		Instruction *instruction= NULL;
-		Constant *constant = NULL;
+		ConstantInt *constant_int = NULL;
 		Value *ptr = NULL;
 
-		if (Case (inst, &instruction, &ptr))
+		if (Case (inst, &constant_int, &ptr))
+			HandleStoreInst(inst, constant_int, ptr);
+		else if (Case (inst, &instruction, &ptr))
 			HandleStoreInst(inst, instruction, ptr);
-		else if (Case (inst, &constant, &ptr))
-			HandleStoreInst(inst, constant, ptr);
 		else
 			assert(false);
 	}

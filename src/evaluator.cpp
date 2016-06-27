@@ -111,12 +111,16 @@ namespace interpreter {
 
 	// Alloca
 	void Evaluator::HandleAllocaInst (const llvm::Instruction &inst, const llvm::ConstantInt *allocated) {
-		std::cout << "alloca inst" << "\n";
+		errs() << "alloca inst: " << &inst << inst << "\n";
+		// Get 'allocated' value
 		llvm::IntegerType* ty = allocated->getType();
 		auto width = ty->getBitWidth();
 		const llvm::APInt& val = allocated->getValue();
 		auto holder = memory::Concrete::Create(val);
-		utils::GetInstance<memory::Display>()->Alloca(allocated, holder);
+		auto display = utils::GetInstance<memory::Display>();
+		// Alloca to 'inst'
+		display->Alloca(&inst, holder);
+		display->Print();
 	}
 
 	// Load
@@ -129,9 +133,18 @@ namespace interpreter {
 	}
 
 	// Store
+	void Evaluator::HandleStoreInst (const llvm::Instruction &inst, const llvm::ConstantInt *constant_int, const llvm::Value *ptr) {
+		errs() << "store inst: " << ptr << *ptr << "\n";
+		// Get value of 'constant_int'
+		llvm::APInt value = constant_int->getValue();
+		auto holder = memory::Concrete::Create(value);
+		// Store it to 'ptr'
+		auto display = utils::GetInstance<memory::Display>();
+		display->Print();
+		display->Store(ptr, holder);
+	}
 
 	void Evaluator::HandleStoreInst (const llvm::Instruction &inst, const llvm::Instruction *instruction, const llvm::Value *ptr) {
-		std::cout << "store inst" << "\n";
 		// Load holder from instruction
 		auto display = utils::GetInstance<memory::Display>();
 		auto loaded_rhs = display->Load(instruction);
@@ -144,16 +157,6 @@ namespace interpreter {
 		else {
 			assert (false && "not impl");
 		}
-	}
-
-	void Evaluator::HandleStoreInst (const llvm::Instruction &inst, const llvm::Constant *constant, const llvm::Value *ptr) {
-		if (constant->getType()->isIntegerTy()) {
-			auto constant_int = llvm::dyn_cast<llvm::ConstantInt>(constant);
-			// Produce new constant
-			// Store it to ptr
-		}
-		else
-			; // Interpretation failure
 	}
 }
 

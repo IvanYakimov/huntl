@@ -128,19 +128,19 @@ namespace interpreter {
 				and isa<Value>(ptr));
 	}
 
+	void MatcherStub::HandleStoreInst (const llvm::Instruction &inst, const llvm::ConstantInt *constant_int, const llvm::Value *ptr) {
+		//errs() << ptr->getName() << "\n";
+		Printer::Do(&inst, constant_int, ptr);
+		ASSERT_TRUE(isa<Instruction>(inst)
+				and isa<ConstantInt>(constant_int)
+				and isa<Value>(ptr));
+	}
+
 	void MatcherStub::HandleStoreInst (const llvm::Instruction &inst, const llvm::Instruction *instruction, const llvm::Value *ptr) {
 		//errs() << ptr->getName() << "\n";
 		Printer::Do(&inst, instruction, ptr);
 		ASSERT_TRUE(isa<Instruction>(inst)
 				and isa<Instruction>(instruction)
-				and isa<Value>(ptr));
-	}
-
-	void MatcherStub::HandleStoreInst (const llvm::Instruction &inst, const llvm::Constant *constant, const llvm::Value *ptr) {
-		//errs() << ptr->getName() << "\n";
-		Printer::Do(&inst, constant, ptr);
-		ASSERT_TRUE(isa<Instruction>(inst)
-				and isa<Constant>(constant)
 				and isa<Value>(ptr));
 	}
 }
