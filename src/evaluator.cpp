@@ -69,15 +69,15 @@ namespace interpreter {
 
 	// Return
 	void Evaluator::HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst) {
+		// Load holder from '&inst'
+		// Store it to 'ret_inst'
+		llvm::errs() << inst << "\n";
+		meta_eval_.Assign(&inst, ret_inst);
 	}
 
 	void Evaluator::HandleReturnInst (const llvm::Instruction &inst, const llvm::Constant *ret_const) {
-		if (ret_const->getType()->isIntegerTy()) {
-			auto constant_int = llvm::dyn_cast<llvm::ConstantInt>(ret_const);
-			// Produce constant, use ConstantInt::getSExtValue();
-		}
-		else
-			; // Interpretation failure.
+		// Produce	new concrete holder
+		// Store it in 'ret_const'
 	}
 
 	void Evaluator::HandleReturnInst (const llvm::Instruction &inst) {
@@ -111,7 +111,7 @@ namespace interpreter {
 
 	// Alloca
 	void Evaluator::HandleAllocaInst (const llvm::Instruction &inst, const llvm::ConstantInt *allocated) {
-		errs() << "alloca inst: " << &inst << inst << "\n";
+		errs() << inst << "\n";
 		// Get 'allocated' value
 		llvm::IntegerType* ty = allocated->getType();
 		auto width = ty->getBitWidth();
@@ -124,27 +124,48 @@ namespace interpreter {
 	}
 
 	// Load
-	void Evaluator::HandleLoadInst (const llvm::Instruction &inst, const llvm::Value *ptr) {
+	void Evaluator::HandleLoadInst (const llvm::Instruction &inst, const llvm::Instruction *instruction) {
 		// (assert (= v e))
-		// Load object form ptr
-		// Store (associate) object to &inst
-		//auto lhs = m.Read(ptr);
-		//auto rhs = m.Read(&inst);
+		// Load object form 'ptr'
+		// Store (associate) object to '&inst'
+		errs() << inst << "\n";
+		meta_eval_.Assign(&inst, instruction);
+
+		/*
+
+		auto display = utils::GetInstance<memory::Display>();
+		auto loaded_rhs = display->Load(ptr);
+		// Store holder to ptr
+		if (memory::IsConcrete(loaded_rhs)) {
+			solver::BitVec rhs_val = Object::UpCast<memory::Concrete>(loaded_rhs)->Get();
+			auto updated_lhs = memory::Concrete::Create(rhs_val);
+			display->Store(&inst, updated_lhs);
+		}
+		else {
+			assert (false && "not impl");
+		}
+		display->Print();
+		*/
 	}
 
 	// Store
 	void Evaluator::HandleStoreInst (const llvm::Instruction &inst, const llvm::ConstantInt *constant_int, const llvm::Value *ptr) {
-		errs() << "store inst: " << ptr << *ptr << "\n";
+		errs() << inst << "\n";
+		meta_eval_.Assign(ptr, constant_int);
+		/*
 		// Get value of 'constant_int'
 		llvm::APInt value = constant_int->getValue();
 		auto holder = memory::Concrete::Create(value);
 		// Store it to 'ptr'
 		auto display = utils::GetInstance<memory::Display>();
-		display->Print();
 		display->Store(ptr, holder);
+		display->Print();
+		*/
 	}
 
 	void Evaluator::HandleStoreInst (const llvm::Instruction &inst, const llvm::Instruction *instruction, const llvm::Value *ptr) {
+		meta_eval_.Assign(ptr, instruction);
+		/*
 		// Load holder from instruction
 		auto display = utils::GetInstance<memory::Display>();
 		auto loaded_rhs = display->Load(instruction);
@@ -157,6 +178,7 @@ namespace interpreter {
 		else {
 			assert (false && "not impl");
 		}
+		*/
 	}
 }
 

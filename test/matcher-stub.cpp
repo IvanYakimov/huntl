@@ -122,7 +122,7 @@ namespace interpreter {
 	}
 
 	// Load
-	void MatcherStub::HandleLoadInst (const llvm::Instruction &inst, const llvm::Value *ptr) {
+	void MatcherStub::HandleLoadInst (const llvm::Instruction &inst, const llvm::Instruction *ptr) {
 		Printer::Do(&inst, ptr);
 		ASSERT_TRUE(isa<Instruction>(inst)
 				and isa<Value>(ptr));

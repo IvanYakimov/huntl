@@ -21,9 +21,7 @@ namespace memory {
 	}
 
 	void Display::Store(Address address, HolderPtr holder) {
-		auto it = mmap_.find(address);
-		assert (it != mmap_.end());
-		it->second = holder;
+		mmap_[address] = holder;
 	}
 
 	void Display::Print() {

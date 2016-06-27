@@ -12,11 +12,14 @@
 #include "display.hpp"
 #include "singleton.hpp"
 #include "path-constraint.hpp"
+#include "meta-evaluator.hpp"
 
 //TODO: use -I option to perform headers search instead of ../ (?)
 
 namespace interpreter {
 	class Evaluator final : public Matcher {
+	private:
+		MetaEvaluator meta_eval_;
 	private:
 		// Return
 		virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst);
@@ -37,7 +40,7 @@ namespace interpreter {
 		virtual void HandleAllocaInst (const llvm::Instruction &inst, const llvm::ConstantInt *allocated);
 
 		// Load
-		virtual void HandleLoadInst (const llvm::Instruction &inst, const llvm::Value *ptr);
+		virtual void HandleLoadInst (const llvm::Instruction &inst, const llvm::Instruction *instruction);
 
 		// Store
 		virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::ConstantInt *constant_int, const llvm::Value *ptr);

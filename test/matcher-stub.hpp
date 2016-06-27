@@ -31,7 +31,7 @@ namespace interpreter {
 		virtual void HandleAllocaInst (const llvm::Instruction &inst, const llvm::ConstantInt *allocated);
 
 		// Load
-		virtual void HandleLoadInst (const llvm::Instruction &inst, const llvm::Value *ptr);
+		virtual void HandleLoadInst (const llvm::Instruction &inst, const llvm::Instruction *ptr);
 
 		// Store
 		virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::ConstantInt *constant_int, const llvm::Value *ptr);

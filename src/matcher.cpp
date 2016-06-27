@@ -110,9 +110,9 @@ namespace interpreter {
 	{
 		DebugInstInfo(inst);
 
-		Value *ptr= NULL;
-		if (Case (inst, &ptr))
-			HandleLoadInst(inst, ptr);
+		Instruction *instruction = NULL;
+		if (Case (inst, &instruction))
+			HandleLoadInst(inst, instruction);
 		else
 			assert(false);
 	}
