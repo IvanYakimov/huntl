@@ -74,6 +74,15 @@ namespace interpreter {
 
 	}
 
+	auto Evaluator::ProduceHolder(const llvm::ConstantInt* allocated) {
+		// Get 'allocated' value
+		llvm::IntegerType* ty = allocated->getType();
+		auto width = ty->getBitWidth();
+		const llvm::APInt& val = allocated->getValue();
+		auto holder = memory::Concrete::Create(val);
+		return holder;
+	}
+
 	// Return
 	void Evaluator::HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst) {
 		// Load holder from '&inst'
@@ -85,21 +94,39 @@ namespace interpreter {
 	void Evaluator::HandleReturnInst (const llvm::Instruction &inst, const llvm::Constant *ret_const) {
 		// Produce	new concrete holder
 		// Store it in 'ret_const'
+		assert (false && "not implemented");
 	}
 
 	void Evaluator::HandleReturnInst (const llvm::Instruction &inst) {
+		assert (false && "not implemented");
 	}
 
 	// Branch
 	void Evaluator::HandleBranchInst (const llvm::Instruction &inst, const llvm::Value *cond, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse) {
+		assert (false && "not implemented");
 	}
 
 	void Evaluator::HandleBranchInst (const llvm::Instruction &inst, const llvm::BasicBlock *jump) {
+		assert (false && "not implemented");
 	}
 
 	// BinOp
-	void Evaluator::HandleBinOp (const llvm::Instruction &inst, const llvm::Value *lhs, const llvm::Value *rhs) {
+	void Evaluator::HandleBinOp (const llvm::Instruction &inst, const llvm::ConstantInt *left, const llvm::Value *right) {
+		auto left_holder = ProduceHolder(left);
+		auto right_holder = display_->Load(right);
+		meta_eval_.BinOp(&inst, left_holder, right_holder);
+	}
 
+	void Evaluator::HandleBinOp (const llvm::Instruction &inst, const llvm::Value *left, const llvm::ConstantInt *right) {
+		auto left_holder = display_->Load(left);
+		auto right_holder = ProduceHolder(right);
+		meta_eval_.BinOp(&inst, left_holder, right_holder);
+	}
+
+	void Evaluator::HandleBinOp (const llvm::Instruction &inst, const llvm::Value *left, const llvm::Value *right) {
+		auto left_holder = display_->Load(left);
+		auto right_holder = display_->Load(right);
+		meta_eval_.BinOp(&inst, left_holder, right_holder);
 	}
 
 	// Cmp
@@ -114,16 +141,14 @@ namespace interpreter {
 
 		// Load left and right args.
 		// Produce expression, use get_op, defined above
+		assert (false && "not implemented");
 	}
 
 	// Alloca
 	void Evaluator::HandleAllocaInst (const llvm::Instruction &inst, const llvm::ConstantInt *allocated) {
 		errs() << inst << "\n";
 		// Get 'allocated' value
-		llvm::IntegerType* ty = allocated->getType();
-		auto width = ty->getBitWidth();
-		const llvm::APInt& val = allocated->getValue();
-		auto holder = memory::Concrete::Create(val);
+		auto holder = ProduceHolder(allocated);
 		//auto display = utils::GetInstance<memory::Display>();
 		// Alloca to 'inst'
 		display_->Alloca(&inst, holder);

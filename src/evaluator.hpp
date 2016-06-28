@@ -24,6 +24,7 @@ namespace interpreter {
 	private:
 		MetaEvaluator meta_eval_;
 		memory::DisplayPtr display_;
+		auto ProduceHolder(const llvm::ConstantInt* constant_int);
 	private:
 		// Return
 		virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst);
@@ -35,6 +36,8 @@ namespace interpreter {
 		virtual void HandleBranchInst (const llvm::Instruction &inst, const llvm::BasicBlock *jump);
 
 		// BinOp
+		virtual void HandleBinOp (const llvm::Instruction &inst, const llvm::ConstantInt *lhs, const llvm::Value *rhs);
+		virtual void HandleBinOp (const llvm::Instruction &inst, const llvm::Value *lhs, const llvm::ConstantInt *rhs);
 		virtual void HandleBinOp (const llvm::Instruction &inst, const llvm::Value *lhs, const llvm::Value *rhs);
 
 		// Cmp
@@ -49,7 +52,8 @@ namespace interpreter {
 		// Store
 		virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::ConstantInt *constant_int, const llvm::Value *ptr);
 		virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Instruction *instruction, const llvm::Value *ptr);
-	};
+
+};
 }
 
 # endif /* __INTERPRETER_HPP__ */

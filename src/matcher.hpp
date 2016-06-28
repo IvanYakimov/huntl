@@ -59,6 +59,8 @@ namespace interpreter {
 		virtual void HandleBranchInst (const llvm::Instruction &inst, const llvm::BasicBlock *jump) = 0;
 
 		// BinOp
+		virtual void HandleBinOp (const llvm::Instruction &inst, const llvm::ConstantInt *lhs, const llvm::Value *rhs) = 0;
+		virtual void HandleBinOp (const llvm::Instruction &inst, const llvm::Value *lhs, const llvm::ConstantInt *rhs) = 0;
 		virtual void HandleBinOp (const llvm::Instruction &inst, const llvm::Value *lhs, const llvm::Value *rhs) = 0;
 
 		// Cmp

@@ -98,6 +98,14 @@ namespace interpreter {
 	}
 
 	// BinOp
+	void MatcherStub::HandleBinOp (const llvm::Instruction &inst, const llvm::ConstantInt *lhs, const llvm::Value *rhs) {
+		assert(false && "not implemented");
+	}
+
+	void MatcherStub::HandleBinOp (const llvm::Instruction &inst, const llvm::Value *lhs, const llvm::ConstantInt *rhs) {
+		assert (false && "not implemented");
+	}
+
 	void MatcherStub::HandleBinOp (const llvm::Instruction &inst, const llvm::Value *lhs, const llvm::Value *rhs) {
 		Printer::Do(&inst, lhs, rhs);
 		ASSERT_TRUE(isa<Instruction>(inst)

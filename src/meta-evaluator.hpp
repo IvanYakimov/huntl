@@ -16,6 +16,7 @@
 // Uses
 #include "display.hpp"
 #include "singleton.hpp"
+#include "holder.hpp"
 //#include "path-constraint.hpp"
 
 namespace interpreter {
@@ -23,6 +24,7 @@ namespace interpreter {
 	public:
 		MetaEvaluator(memory::DisplayPtr display);
 		~MetaEvaluator();
+		void BinOp (const llvm::Instruction* inst, memory::HolderPtr left, memory::HolderPtr right);
 		void Assign (const llvm::Value *destination, const llvm::ConstantInt *target);
 		void Assign (const llvm::Value *destination, const llvm::Instruction *target);
 	private:

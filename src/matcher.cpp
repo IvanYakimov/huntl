@@ -67,15 +67,19 @@ namespace interpreter {
 
 		Value *lhs = NULL,
 				*rhs = NULL;
+		ConstantInt *constant_int = NULL,
+				*c2 = NULL;
 
-		if (Case (inst, &lhs, &rhs)) {
-			auto op_code = inst.getOpcode();
-			//TODO: check this code
-			assert (not (op_code == Instruction::FAdd or
-					op_code == Instruction::FSub or
-					op_code == Instruction::FMul or
-					op_code == Instruction::FDiv or
-					op_code == Instruction::FRem) && "float not supported");
+		if (Case (inst, &constant_int, &rhs)) {
+			HandleBinOp(inst, constant_int, rhs);
+		}
+		else if (Case (inst, &lhs, &constant_int)) {
+			HandleBinOp(inst, lhs, constant_int);
+		}
+		else if (Case (inst, &constant_int, &c2)) {
+			assert(false && "not implemented");
+		}
+		else if (Case (inst, &lhs, &rhs)) {
 			HandleBinOp(inst, lhs, rhs);
 		}
 		else

@@ -3,6 +3,7 @@
 
 // project
 #include "../src/display.hpp"
+#include "../src/bitvec.hpp"
 #include "../src/instanceof.hpp"
 #include "../src/singleton.hpp"
 #include "../src/evaluator.hpp"
@@ -43,15 +44,15 @@ TEST_F (EvaluatorTest, basic) {
 	eval.visit(f.Get());
 }
 
-TEST_F (EvaluatorTest, blah) {
+TEST_F (EvaluatorTest, binop) {
 	auto display = memory::Display::Create();
 	interpreter::Evaluator eval(display);
 	Int32Func f; {
 			auto x = f.Alloca32("x");
 			auto y = f.Alloca32("y");
 			auto res = f.Alloca32("res");
-			auto store_x = f.Store(f.I32(1), x);
-			auto store_y = f.Store(f.I32(2), y);
+			auto store_x = f.Store(f.I32(3), x);
+			auto store_y = f.Store(f.I32(4), y);
 			auto store_res = f.Store(f.I32(0), res);
 			auto load_x = f.Load(x);
 			auto load_y = f.Load(y);
@@ -59,6 +60,10 @@ TEST_F (EvaluatorTest, blah) {
 			auto store_binop = f.Store(binop, res);
 			auto load_res = f.Load(res);
 			auto ret = f.Ret(load_res);
+
+			display->Print();
+			auto result = Object::UpCast<memory::Concrete>(display->Load(ret))->Get();
+			ASSERT_EQ(result, interpreter::BitVec(32, 7));
 		}
 	errs() << *f.Get() << "\n";
 	eval.visit(f.Get());
