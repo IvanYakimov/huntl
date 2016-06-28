@@ -10,6 +10,7 @@
 #include <iostream>
 
 // Project
+#include "kernel.hpp"
 
 namespace
 {

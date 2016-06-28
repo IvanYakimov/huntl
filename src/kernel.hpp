@@ -18,6 +18,7 @@
 
 namespace interpreter {
 	class Kernel {
+	public:
 		void Do(llvm::Function &func);
 	};
 }

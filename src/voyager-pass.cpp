@@ -1,7 +1,8 @@
 #include "voyager-pass.hpp"
 
 bool VoyagerPass::runOnFunction (llvm::Function &func) {
-	std::cerr << "hello" << std::endl;
+	interpreter::Kernel kernel;
+	kernel.Do(func);
 	//TODO: run interpreter on function
 	// No transformations.
 	return false;

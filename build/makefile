@@ -40,7 +40,7 @@ vpath %.c 	$(SRC)
 program.so: shared.o 
 	$(CXX) -shared $< -o $@ $(CXXFLAGS) 
 
-shared.o: $(INTERPRETER) $(SOLVER) $(MEMORY)
+shared.o: $(INTERPRETER) $(SOLVER) $(MEMORY) $(LLVM_PASS)
 	ld -r $^ -o $@ $(LLVM_DYNAMIC)
 
 solver-test.out: $(SOLVER) $(SOLVER_TEST)
