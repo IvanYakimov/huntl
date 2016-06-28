@@ -66,9 +66,10 @@ namespace interpreter {
 		}
 	};
 
-	Evaluator::Evaluator() {
+	Evaluator::Evaluator(memory::ActivationRecordPtr activation) {
 		display_ = memory::Display::Create();
 		meta_eval_ = interpreter::MetaEvaluator::Create(display_);
+		activation_ = activation;
 	}
 
 	Evaluator::~Evaluator() {
@@ -97,6 +98,7 @@ namespace interpreter {
 		// Store it to 'ret_inst'
 		auto holder = display_->Load(ret_inst);
 		meta_eval_->Assign(&inst, holder);
+		activation_->SetRet(holder);
 		Trace(inst);
 	}
 
@@ -115,12 +117,10 @@ namespace interpreter {
 	// Branch
 	void Evaluator::HandleBranchInst (const llvm::Instruction &inst, const llvm::Value *cond, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse) {
 		assert (false && "not implemented");
-		Trace(inst);
 	}
 
 	void Evaluator::HandleBranchInst (const llvm::Instruction &inst, const llvm::BasicBlock *jump) {
 		assert (false && "not implemented");
-		Trace(inst);
 	}
 
 	// BinOp
@@ -158,7 +158,6 @@ namespace interpreter {
 		// Load left and right args.
 		// Produce expression, use get_op, defined above
 		assert (false && "not implemented");
-		Trace(inst);
 	}
 
 	// Alloca

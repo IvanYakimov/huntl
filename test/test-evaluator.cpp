@@ -7,6 +7,7 @@
 #include "../src/instanceof.hpp"
 #include "../src/singleton.hpp"
 #include "../src/evaluator.hpp"
+#include "../src/activation-record.hpp"
 #include "ir-function-builder.hpp"
 
 // gtest
@@ -23,28 +24,35 @@
 #include <functional>
 
 using namespace memory;
+using namespace interpreter;
 using namespace utils;
 
 class EvaluatorTest : public ::testing::Test {
 public:
+	void RetChecker(ActivationRecordPtr activation, const BitVec& expected) {
+		HolderPtr actual_holder = activation->GetRet();
+		HolderPtr expected_holder = Concrete::Create(expected);
+		ASSERT_EQ(*expected_holder, *actual_holder);
+	}
 };
 
 TEST_F (EvaluatorTest, basic) {
-	interpreter::Evaluator eval;
+	auto act = ActivationRecord::Create();
+	interpreter::Evaluator eval(act);
 	Int32Func f; {
 		auto x = f.Alloca32("x");
 		auto store_x = f.Store(f.I32(2), x);
 		auto load_x = f.Load(x);
 		auto ret = f.Ret(load_x);
-
-		//TODO:
 	}
-	errs() << *f.Get() << "\n";
+	outs() << *f.Get() << "\n";
 	eval.visit(f.Get());
+	RetChecker(act, BitVec(32,2));
 }
 
 TEST_F (EvaluatorTest, binop) {
-	interpreter::Evaluator eval;
+	auto act = ActivationRecord::Create();
+	interpreter::Evaluator eval(act);
 	Int32Func f; {
 			auto x = f.Alloca32("x");
 			auto y = f.Alloca32("y");
@@ -63,8 +71,9 @@ TEST_F (EvaluatorTest, binop) {
 			//auto result = Object::UpCast<memory::Concrete>(display->Load(ret))->Get();
 			//ASSERT_EQ(result, interpreter::BitVec(32, 7));
 		}
-	errs() << *f.Get() << "\n";
+	outs() << *f.Get() << "\n";
 	eval.visit(f.Get());
+	RetChecker(act, BitVec(32, 7));
 }
 
 #endif

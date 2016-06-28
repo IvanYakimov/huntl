@@ -2,11 +2,11 @@ SHELL = /bin/sh
 
 LLVM_PASS = voyager-pass.o
 
-INTERPRETER = kernel.o matcher.o evaluator.o meta-evaluator.o bitvec.o
+INTERPRETER = kernel.o matcher.o evaluator.o meta-evaluator.o bitvec.o 
 INTERPRETER_TEST = expr-test.o test-holder.o test-evaluator.o matcher-stub.o test-matcher.o \
 $(SOLVER) $(MEMORY) $(LLVM_TEST_HELPERS) $(TEST_RUNNER)
 
-MEMORY = display.o holder.o
+MEMORY = display.o holder.o activation-record.o
 MEMORY_TEST = test-holder.o test-display.o $(SOLVER) $(INTERPRETER) $(LLVM_TEST_HELPERS) $(TEST_RUNNER)
 
 SOLVER = solver.o path-constraint.o
