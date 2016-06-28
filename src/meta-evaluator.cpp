@@ -13,6 +13,10 @@ namespace interpreter {
 
 	}
 
+	MetaEvaluatorPtr MetaEvaluator::Create(memory::DisplayPtr display) {
+		return utils::Create<MetaEvaluator>(display);
+	}
+
 	void MetaEvaluator::BinOp (const llvm::Instruction* inst, memory::HolderPtr left, memory::HolderPtr right) {
 		if (memory::IsConcrete(left) and memory::IsConcrete(right)) {
 			interpreter::BitVec left_val = Object::UpCast<Concrete>(left)->Get();

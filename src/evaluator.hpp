@@ -19,10 +19,10 @@
 namespace interpreter {
 	class Evaluator final : public Matcher {
 	public:
-		Evaluator(memory::DisplayPtr display);
+		Evaluator();
 		~Evaluator();
 	private:
-		MetaEvaluator meta_eval_;
+		MetaEvaluatorPtr meta_eval_;
 		memory::DisplayPtr display_;
 		auto ProduceHolder(const llvm::ConstantInt* constant_int);
 		void Trace(const llvm::Instruction& inst);

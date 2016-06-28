@@ -66,8 +66,9 @@ namespace interpreter {
 		}
 	};
 
-	Evaluator::Evaluator(memory::DisplayPtr display) : display_(display), meta_eval_(display) {
-
+	Evaluator::Evaluator() {
+		display_ = memory::Display::Create();
+		meta_eval_ = interpreter::MetaEvaluator::Create(display_);
 	}
 
 	Evaluator::~Evaluator() {
@@ -95,7 +96,7 @@ namespace interpreter {
 		// Load holder from '&inst'
 		// Store it to 'ret_inst'
 		auto holder = display_->Load(ret_inst);
-		meta_eval_.Assign(&inst, holder);
+		meta_eval_->Assign(&inst, holder);
 		Trace(inst);
 	}
 
@@ -126,21 +127,21 @@ namespace interpreter {
 	void Evaluator::HandleBinOp (const llvm::Instruction &inst, const llvm::ConstantInt *left, const llvm::Value *right) {
 		auto left_holder = ProduceHolder(left);
 		auto right_holder = display_->Load(right);
-		meta_eval_.BinOp(&inst, left_holder, right_holder);
+		meta_eval_->BinOp(&inst, left_holder, right_holder);
 		Trace(inst);
 	}
 
 	void Evaluator::HandleBinOp (const llvm::Instruction &inst, const llvm::Value *left, const llvm::ConstantInt *right) {
 		auto left_holder = display_->Load(left);
 		auto right_holder = ProduceHolder(right);
-		meta_eval_.BinOp(&inst, left_holder, right_holder);
+		meta_eval_->BinOp(&inst, left_holder, right_holder);
 		Trace(inst);
 	}
 
 	void Evaluator::HandleBinOp (const llvm::Instruction &inst, const llvm::Value *left, const llvm::Value *right) {
 		auto left_holder = display_->Load(left);
 		auto right_holder = display_->Load(right);
-		meta_eval_.BinOp(&inst, left_holder, right_holder);
+		meta_eval_->BinOp(&inst, left_holder, right_holder);
 		Trace(inst);
 	}
 
@@ -176,20 +177,20 @@ namespace interpreter {
 		// Load object form 'ptr'
 		// Store (associate) object to '&inst'
 		auto holder = display_->Load(instruction);
-		meta_eval_.Assign(&inst, holder);
+		meta_eval_->Assign(&inst, holder);
 		Trace(inst);
 	}
 
 	// Store
 	void Evaluator::HandleStoreInst (const llvm::Instruction &inst, const llvm::ConstantInt *constant_int, const llvm::Value *ptr) {
 		auto holder = ProduceHolder(constant_int);
-		meta_eval_.Assign(ptr, holder);
+		meta_eval_->Assign(ptr, holder);
 		Trace(inst);
 	}
 
 	void Evaluator::HandleStoreInst (const llvm::Instruction &inst, const llvm::Instruction *instruction, const llvm::Value *ptr) {
 		auto holder = display_->Load(instruction);
-		meta_eval_.Assign(ptr, holder);
+		meta_eval_->Assign(ptr, holder);
 		Trace(inst);
 	}
 }
