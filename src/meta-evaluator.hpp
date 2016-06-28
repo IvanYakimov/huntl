@@ -25,8 +25,11 @@ namespace interpreter {
 		MetaEvaluator(memory::DisplayPtr display);
 		~MetaEvaluator();
 		void BinOp (const llvm::Instruction* inst, memory::HolderPtr left, memory::HolderPtr right);
+		void Assign (const llvm::Value *destination, memory::HolderPtr target);
+		/*
 		void Assign (const llvm::Value *destination, const llvm::ConstantInt *target);
 		void Assign (const llvm::Value *destination, const llvm::Instruction *target);
+		*/
 	private:
 		memory::DisplayPtr display_;
 	};

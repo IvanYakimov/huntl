@@ -25,6 +25,7 @@ namespace interpreter {
 		MetaEvaluator meta_eval_;
 		memory::DisplayPtr display_;
 		auto ProduceHolder(const llvm::ConstantInt* constant_int);
+		void Trace(const llvm::Instruction& inst);
 	private:
 		// Return
 		virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst);
