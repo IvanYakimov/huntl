@@ -3,6 +3,7 @@
 
 // STL
 #include <exception>
+#include <memory>
 
 # include "llvm/IR/InstVisitor.h"
 # include "llvm/IR/Instruction.h"
@@ -17,16 +18,19 @@
 #include "display.hpp"
 #include "singleton.hpp"
 #include "holder.hpp"
+#include "creatable.hpp"
 //#include "path-constraint.hpp"
 
 namespace interpreter {
+	class MetaEvaluator;
+	using MetaEvaluatorPtr = std::shared_ptr<MetaEvaluator>;
 	class MetaEvaluator {
 	public:
 		MetaEvaluator(memory::DisplayPtr display);
 		~MetaEvaluator();
 		void BinOp (const llvm::Instruction* inst, memory::HolderPtr left, memory::HolderPtr right);
-		void Assign (const llvm::Value *destination, const llvm::ConstantInt *target);
-		void Assign (const llvm::Value *destination, const llvm::Instruction *target);
+		void Assign (const llvm::Value *destination, memory::HolderPtr target);
+		static MetaEvaluatorPtr Create(memory::DisplayPtr display);
 	private:
 		memory::DisplayPtr display_;
 	};

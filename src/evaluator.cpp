@@ -66,8 +66,9 @@ namespace interpreter {
 		}
 	};
 
-	Evaluator::Evaluator(memory::DisplayPtr display) : display_(display), meta_eval_(display) {
-
+	Evaluator::Evaluator() {
+		display_ = memory::Display::Create();
+		meta_eval_ = interpreter::MetaEvaluator::Create(display_);
 	}
 
 	Evaluator::~Evaluator() {
@@ -83,50 +84,65 @@ namespace interpreter {
 		return holder;
 	}
 
+	void Evaluator::Trace(const llvm::Instruction& inst) {
+		llvm::outs() << "Trace start:\n";
+		llvm::outs() << inst << "\n";
+		display_->Print();
+		llvm::outs() << "Trace end.\n";
+	}
+
 	// Return
 	void Evaluator::HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst) {
 		// Load holder from '&inst'
 		// Store it to 'ret_inst'
-		llvm::errs() << inst << "\n";
-		meta_eval_.Assign(&inst, ret_inst);
+		auto holder = display_->Load(ret_inst);
+		meta_eval_->Assign(&inst, holder);
+		Trace(inst);
 	}
 
 	void Evaluator::HandleReturnInst (const llvm::Instruction &inst, const llvm::Constant *ret_const) {
 		// Produce	new concrete holder
 		// Store it in 'ret_const'
 		assert (false && "not implemented");
+		Trace(inst);
 	}
 
 	void Evaluator::HandleReturnInst (const llvm::Instruction &inst) {
 		assert (false && "not implemented");
+		Trace(inst);
 	}
 
 	// Branch
 	void Evaluator::HandleBranchInst (const llvm::Instruction &inst, const llvm::Value *cond, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse) {
 		assert (false && "not implemented");
+		Trace(inst);
 	}
 
 	void Evaluator::HandleBranchInst (const llvm::Instruction &inst, const llvm::BasicBlock *jump) {
 		assert (false && "not implemented");
+		Trace(inst);
 	}
 
 	// BinOp
 	void Evaluator::HandleBinOp (const llvm::Instruction &inst, const llvm::ConstantInt *left, const llvm::Value *right) {
 		auto left_holder = ProduceHolder(left);
 		auto right_holder = display_->Load(right);
-		meta_eval_.BinOp(&inst, left_holder, right_holder);
+		meta_eval_->BinOp(&inst, left_holder, right_holder);
+		Trace(inst);
 	}
 
 	void Evaluator::HandleBinOp (const llvm::Instruction &inst, const llvm::Value *left, const llvm::ConstantInt *right) {
 		auto left_holder = display_->Load(left);
 		auto right_holder = ProduceHolder(right);
-		meta_eval_.BinOp(&inst, left_holder, right_holder);
+		meta_eval_->BinOp(&inst, left_holder, right_holder);
+		Trace(inst);
 	}
 
 	void Evaluator::HandleBinOp (const llvm::Instruction &inst, const llvm::Value *left, const llvm::Value *right) {
 		auto left_holder = display_->Load(left);
 		auto right_holder = display_->Load(right);
-		meta_eval_.BinOp(&inst, left_holder, right_holder);
+		meta_eval_->BinOp(&inst, left_holder, right_holder);
+		Trace(inst);
 	}
 
 	// Cmp
@@ -142,17 +158,17 @@ namespace interpreter {
 		// Load left and right args.
 		// Produce expression, use get_op, defined above
 		assert (false && "not implemented");
+		Trace(inst);
 	}
 
 	// Alloca
 	void Evaluator::HandleAllocaInst (const llvm::Instruction &inst, const llvm::ConstantInt *allocated) {
-		errs() << inst << "\n";
 		// Get 'allocated' value
 		auto holder = ProduceHolder(allocated);
 		//auto display = utils::GetInstance<memory::Display>();
 		// Alloca to 'inst'
 		display_->Alloca(&inst, holder);
-		display_->Print();
+		Trace(inst);
 	}
 
 	// Load
@@ -160,18 +176,22 @@ namespace interpreter {
 		// (assert (= v e))
 		// Load object form 'ptr'
 		// Store (associate) object to '&inst'
-		errs() << inst << "\n";
-		meta_eval_.Assign(&inst, instruction);
+		auto holder = display_->Load(instruction);
+		meta_eval_->Assign(&inst, holder);
+		Trace(inst);
 	}
 
 	// Store
 	void Evaluator::HandleStoreInst (const llvm::Instruction &inst, const llvm::ConstantInt *constant_int, const llvm::Value *ptr) {
-		errs() << inst << "\n";
-		meta_eval_.Assign(ptr, constant_int);
+		auto holder = ProduceHolder(constant_int);
+		meta_eval_->Assign(ptr, holder);
+		Trace(inst);
 	}
 
 	void Evaluator::HandleStoreInst (const llvm::Instruction &inst, const llvm::Instruction *instruction, const llvm::Value *ptr) {
-		meta_eval_.Assign(ptr, instruction);
+		auto holder = display_->Load(instruction);
+		meta_eval_->Assign(ptr, holder);
+		Trace(inst);
 	}
 }
 

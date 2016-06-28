@@ -13,6 +13,10 @@ namespace interpreter {
 
 	}
 
+	MetaEvaluatorPtr MetaEvaluator::Create(memory::DisplayPtr display) {
+		return utils::Create<MetaEvaluator>(display);
+	}
+
 	void MetaEvaluator::BinOp (const llvm::Instruction* inst, memory::HolderPtr left, memory::HolderPtr right) {
 		if (memory::IsConcrete(left) and memory::IsConcrete(right)) {
 			interpreter::BitVec left_val = Object::UpCast<Concrete>(left)->Get();
@@ -22,7 +26,7 @@ namespace interpreter {
 			case llvm::Instruction::Add:
 				result = left_val.operator +(right_val);
 				break;
-			default: assert (false && "not implemented");
+			default: assert (false && "this binary operator not implemented");
 			}
 			auto result_holder = Concrete::Create(result);
 			display_->Store(inst, result_holder);
@@ -32,27 +36,13 @@ namespace interpreter {
 		}
 	}
 
-	void MetaEvaluator::Assign(const llvm::Value *destination, const llvm::ConstantInt *target) {
-		// Get value of 'constant_int'
-		llvm::APInt value = target->getValue();
-		auto holder = memory::Concrete::Create(value);
-		// Store it to 'ptr'
-		display_->Store(destination, holder);
-		display_->Print();
-	}
-
-	void MetaEvaluator::Assign (const llvm::Value *destination, const llvm::Instruction *target) {
-		// Load holder from instruction
-		auto loaded_rhs = display_->Load(target);
-		// Store holder to ptr
-		if (memory::IsConcrete(loaded_rhs)) {
-			interpreter::BitVec rhs_val = Object::UpCast<memory::Concrete>(loaded_rhs)->Get();
-			auto updated_lhs = memory::Concrete::Create(rhs_val);
-			display_->Store(destination, updated_lhs);
+	void MetaEvaluator::Assign (const llvm::Value *destination, memory::HolderPtr target) {
+		if (memory::IsConcrete(target)) {
+			//interpreter::BitVec rhs_val = Object::UpCast<memory::Concrete>(loaded_rhs)->Get();
+			//auto updated_lhs = memory::Concrete::Create(rhs_val);
+			display_->Store(destination, target);
 		}
-		else {
-			assert (false && "not impl");
-		}
-		display_->Print();
+		else
+			assert (false && "not implemented");
 	}
 }
