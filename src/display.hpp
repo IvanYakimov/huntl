@@ -13,7 +13,7 @@
 namespace memory {
 	class Display;
 	using DisplayPtr = std::shared_ptr<Display>;
-	/// Display stub
+	/// Display stub. This is rather a local memory than a display.
 	class Display {
 	public:
 		NONCOPYABLE(Display);
