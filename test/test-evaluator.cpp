@@ -87,6 +87,7 @@ TEST_F(EvaluatorTest, func) {
 	llvm::Function::arg_iterator args = raw_func->arg_begin();
 	llvm::Value* a = args++;
 	a->setName("a");
+	act->SetArg(a, Concrete::Create(BitVec(32, 2)));
 	Func f(raw_func); {
 		auto x = f.Alloca32("x");
 		auto store_x = f.Store(a, x);

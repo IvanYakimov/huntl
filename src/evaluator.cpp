@@ -192,7 +192,26 @@ namespace interpreter {
 		meta_eval_->Assign(ptr, holder);
 		Trace(inst);
 	}
+
+	void Evaluator::HandleStoreInst (const llvm::Instruction &inst, const llvm::Argument *arg, const llvm::Value *ptr) {
+		auto holder = activation_->GetArg(arg);
+		meta_eval_->Assign(ptr, holder);
+		Trace(inst);
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

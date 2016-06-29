@@ -23,7 +23,21 @@ namespace memory {
 		assert (ret_ == nullptr);
 		ret_ = ret;
 	}
+
+	memory::HolderPtr ActivationRecord::GetArg(Address address) {
+		assert (llvm::isa<llvm::Argument>(address));
+		auto res = arg_map_.find(address);
+		assert (res != arg_map_.end());
+		return res->second;
+	}
+
+	void ActivationRecord::SetArg(Address address, memory::HolderPtr value) {
+		assert (llvm::isa<llvm::Argument>(address));
+		assert (arg_map_.find(address) == arg_map_.end());
+		arg_map_.emplace(address, value);
+	}
 }
+
 
 
 

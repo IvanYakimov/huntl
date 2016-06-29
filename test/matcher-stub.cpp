@@ -151,6 +151,13 @@ namespace interpreter {
 				and isa<Instruction>(instruction)
 				and isa<Value>(ptr));
 	}
+
+	void MatcherStub::HandleStoreInst (const llvm::Instruction &inst, const llvm::Argument *arg, const llvm::Value *ptr) {
+		Printer::Do(&inst, arg, ptr);
+		ASSERT_TRUE(isa<Instruction>(inst)
+				and isa<Argument>(arg)
+				and isa<Value>(ptr));
+	}
 }
 
 

@@ -129,11 +129,14 @@ namespace interpreter {
 		Instruction *instruction= NULL;
 		ConstantInt *constant_int = NULL;
 		Value *ptr = NULL;
+		Argument *arg = NULL;
 
 		if (Case (inst, &constant_int, &ptr))
 			HandleStoreInst(inst, constant_int, ptr);
 		else if (Case (inst, &instruction, &ptr))
 			HandleStoreInst(inst, instruction, ptr);
+		else if (Case (inst, &arg, &ptr))
+			HandleStoreInst(inst, arg, ptr);
 		else
 			assert(false);
 	}
