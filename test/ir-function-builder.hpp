@@ -12,6 +12,7 @@ using namespace llvm;
 
 class Func {
 public:
+	Func(Function* func);
 	Func(FunctionType* ty, const char* name);
 	virtual ~Func();
 	Function* Get();

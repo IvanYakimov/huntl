@@ -76,6 +76,19 @@ TEST_F (EvaluatorTest, binop) {
 	RetChecker(act, BitVec(32, 7));
 }
 
+TEST_F(EvaluatorTest, func) {
+	auto act = ActivationRecord::Create();
+	interpreter::Evaluator eval(act);
+	llvm::Module m("the module", llvm::getGlobalContext());
+	auto raw_func = llvm::Function::Create(FunctionType::get(Type::getVoidTy(getGlobalContext()), false), Function::InternalLinkage, "func", &m);
+	Func f(raw_func); {
+		auto ret = f.Ret(f.I32(42));
+	}
+	outs() << *f.Get() << "\n";
+	eval.visit(f.Get());
+	RetChecker(act, BitVec(32,2));
+}
+
 #endif
 
 
