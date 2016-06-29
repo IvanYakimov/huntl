@@ -10,6 +10,7 @@
 
 #include "../src/holder.hpp"
 #include "../src/activation-record.hpp"
+#include "../src/creatable.hpp"
 
 #include <tuple>
 
@@ -53,6 +54,19 @@ protected:
 	BasicBlock* entry_ = nullptr;
 };
 
+struct IntArg;
+
+using IntArgPtr = std::shared_ptr<IntArg>;
+
+struct IntArg {
+	unsigned width_;
+	std::string name_;
+	memory::HolderPtr holder_;
+	llvm::Value* address_;
+	IntArg(unsigned width, std::string name, memory::HolderPtr holder, llvm::Value* address);
+	static std::shared_ptr<IntArg> Create(unsigned width, std::string name, memory::HolderPtr holder, llvm::Value* address);
+};
+
 llvm::Function* MkIntFunc(llvm::Module* module, memory::ActivationRecordPtr act, const char* name, std::vector<std::tuple<unsigned, const char*, memory::HolderPtr>> int_args, unsigned ret_size);
 
 class Int32Func : public Func {
@@ -66,3 +80,16 @@ public:
 };
 
 #endif /* __IR_FUNCTION_BUILDER_HPP__ */
+
+
+
+
+
+
+
+
+
+
+
+
+

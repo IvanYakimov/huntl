@@ -123,6 +123,18 @@ Type* Func::VoidTy() {
 Int32Func::Int32Func(const char* name) : Func(FunctionType::get(Type::getInt32Ty(getGlobalContext()), false), name) {}
 VoidFunc::VoidFunc(const char* name) : Func(FunctionType::get(Type::getVoidTy(getGlobalContext()), false), name) {}
 
+IntArg::IntArg(unsigned width, std::string name, memory::HolderPtr holder, llvm::Value* address) :
+		width_(width),
+		name_(name),
+		holder_(holder),
+		address_(address) {
+
+}
+
+std::shared_ptr<IntArg> IntArg::Create(unsigned width, std::string name, memory::HolderPtr holder, llvm::Value* address) {
+	return utils::Create<IntArg>(width, name, holder, address);
+}
+
 llvm::Function* MkIntFunc(llvm::Module* module, memory::ActivationRecordPtr act, const char* name, std::vector<std::tuple<unsigned, const char*, memory::HolderPtr>> int_args, unsigned ret_size) {
 	std::vector<Type*> f_args;
 	for (auto i = int_args.begin(); i != int_args.end(); i++) {
