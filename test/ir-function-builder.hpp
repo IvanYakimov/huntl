@@ -8,6 +8,11 @@
 #include "llvm/IR/Module.h"
 # include "llvm/Support/raw_ostream.h"
 
+#include "../src/holder.hpp"
+#include "../src/activation-record.hpp"
+
+#include <tuple>
+
 using namespace llvm;
 
 class Func {
@@ -47,6 +52,8 @@ protected:
 	Function* func_ = nullptr;
 	BasicBlock* entry_ = nullptr;
 };
+
+llvm::Function* MkIntFunc(llvm::Module* module, memory::ActivationRecordPtr act, const char* name, std::vector<std::tuple<unsigned, const char*, memory::HolderPtr>> int_args, unsigned ret_size);
 
 class Int32Func : public Func {
 public:

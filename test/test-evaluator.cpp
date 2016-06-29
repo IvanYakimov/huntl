@@ -72,7 +72,7 @@ TEST_F (EvaluatorTest, binop) {
 	RetChecker(act, BitVec(32, 7));
 }
 
-TEST_F(EvaluatorTest, func) {
+TEST_F(EvaluatorTest, funcPwith_args) {
 	auto act = ActivationRecord::Create();
 	interpreter::Evaluator eval(act);
 	llvm::Module m("the module", llvm::getGlobalContext());
@@ -88,6 +88,23 @@ TEST_F(EvaluatorTest, func) {
 	llvm::Value* a = args++;
 	a->setName("a");
 	act->SetArg(a, Concrete::Create(BitVec(32, 2)));
+	Func f(raw_func); {
+		auto x = f.Alloca32("x");
+		auto store_x = f.Store(a, x);
+		auto load_x = f.Load(x);
+		auto ret = f.Ret(load_x);
+	}
+	outs() << *f.Get() << "\n";
+	eval.visit(f.Get());
+	RetChecker(act, BitVec(32,2));
+}
+
+TEST_F(EvaluatorTest, func) {
+	auto act = ActivationRecord::Create();
+	interpreter::Evaluator eval(act);
+	llvm::Module m("the module", llvm::getGlobalContext());
+	auto raw_func = MkIntFunc(&m, act, "f", {std::make_tuple(32, "a", memory::Concrete::Create(BitVec(32,2)))}, 32);
+	auto a = raw_func->arg_begin();
 	Func f(raw_func); {
 		auto x = f.Alloca32("x");
 		auto store_x = f.Store(a, x);

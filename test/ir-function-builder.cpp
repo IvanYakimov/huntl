@@ -123,6 +123,29 @@ Type* Func::VoidTy() {
 Int32Func::Int32Func(const char* name) : Func(FunctionType::get(Type::getInt32Ty(getGlobalContext()), false), name) {}
 VoidFunc::VoidFunc(const char* name) : Func(FunctionType::get(Type::getVoidTy(getGlobalContext()), false), name) {}
 
+llvm::Function* MkIntFunc(llvm::Module* module, memory::ActivationRecordPtr act, const char* name, std::vector<std::tuple<unsigned, const char*, memory::HolderPtr>> int_args, unsigned ret_size) {
+	std::vector<Type*> f_args;
+	for (auto i = int_args.begin(); i != int_args.end(); i++) {
+		unsigned width = std::get<0>(*i);
+		f_args.push_back(IntegerType::get(module->getContext(), width));
+	}
+
+	llvm::FunctionType* f_type = llvm::FunctionType::get(
+			IntegerType::get(module->getContext(), ret_size),
+			f_args,
+			false
+			);
+
+	auto raw_func = llvm::Function::Create(f_type, Function::InternalLinkage, name, module);
+	int index = 0;
+	for (auto args_it = raw_func->arg_begin(); args_it != raw_func->arg_end(); args_it++) {
+		llvm::Value* arg = args_it;
+		arg->setName(std::get<1>(int_args[index]));
+		act->SetArg(arg, std::get<2>(int_args[index]));
+		index++;
+	}
+	return raw_func;
+}
 
 
 
