@@ -66,10 +66,6 @@ TEST_F (EvaluatorTest, binop) {
 			auto store_binop = f.Store(binop, res);
 			auto load_res = f.Load(res);
 			auto ret = f.Ret(load_res);
-
-			//display->Print();
-			//auto result = Object::UpCast<memory::Concrete>(display->Load(ret))->Get();
-			//ASSERT_EQ(result, interpreter::BitVec(32, 7));
 		}
 	outs() << *f.Get() << "\n";
 	eval.visit(f.Get());
@@ -80,9 +76,22 @@ TEST_F(EvaluatorTest, func) {
 	auto act = ActivationRecord::Create();
 	interpreter::Evaluator eval(act);
 	llvm::Module m("the module", llvm::getGlobalContext());
-	auto raw_func = llvm::Function::Create(FunctionType::get(Type::getVoidTy(getGlobalContext()), false), Function::InternalLinkage, "func", &m);
+	std::vector<Type*>f_args;
+	f_args.push_back(IntegerType::get(m.getContext(), 8));
+	llvm::FunctionType* f_type = llvm::FunctionType::get(
+			IntegerType::get(m.getContext(), 32),
+			f_args,
+			false
+			);
+	auto raw_func = llvm::Function::Create(f_type, Function::InternalLinkage, "func", &m);
+	llvm::Function::arg_iterator args = raw_func->arg_begin();
+	llvm::Value* a = args++;
+	a->setName("a");
 	Func f(raw_func); {
-		auto ret = f.Ret(f.I32(42));
+		auto x = f.Alloca32("x");
+		auto store_x = f.Store(a, x);
+		auto load_x = f.Load(x);
+		auto ret = f.Ret(load_x);
 	}
 	outs() << *f.Get() << "\n";
 	eval.visit(f.Get());

@@ -5,6 +5,7 @@ Func::Func(Function* func) : context_(getGlobalContext()), builder_(context_), f
 	Enter(entry_);
 }
 
+//TODO: refactoring - use module context instead of getGlobalContext
 Func::Func(FunctionType* ty, const char* name) : builder_(getGlobalContext()), context_(getGlobalContext()) {
 	module_ = new Module("test", context_);
 	func_= Function::Create(ty, Function::InternalLinkage, name, module_);
