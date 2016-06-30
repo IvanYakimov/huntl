@@ -11,21 +11,21 @@
 // Uses
 #include "display.hpp"
 #include "activation-record.hpp"
-#include "singleton.hpp"
-#include "path-constraint.hpp"
 #include "meta-evaluator.hpp"
+#include "solver.hpp"
 
 //TODO: use -I option to perform headers search instead of ../ (?)
 
 namespace interpreter {
 	class Evaluator final : public Matcher {
 	public:
-		Evaluator(memory::ActivationRecordPtr activation);
+		Evaluator(memory::ActivationRecordPtr activation, solver::SolverPtr solver = nullptr);
 		~Evaluator();
 	private:
 		MetaEvaluatorPtr meta_eval_;
 		memory::DisplayPtr display_;
 		memory::ActivationRecordPtr activation_;
+		solver::SolverPtr solver_;
 		auto ProduceHolder(const llvm::ConstantInt* constant_int);
 		void Trace(const llvm::Instruction& inst);
 	private:

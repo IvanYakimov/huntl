@@ -66,10 +66,11 @@ namespace interpreter {
 		}
 	};
 
-	Evaluator::Evaluator(memory::ActivationRecordPtr activation) {
+	Evaluator::Evaluator(memory::ActivationRecordPtr activation, solver::SolverPtr solver) {
 		display_ = memory::Display::Create();
 		meta_eval_ = interpreter::MetaEvaluator::Create(display_);
 		activation_ = activation;
+		solver_ = solver;
 	}
 
 	Evaluator::~Evaluator() {

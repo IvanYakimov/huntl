@@ -26,7 +26,7 @@ using namespace memory;
 using namespace interpreter;
 using namespace utils;
 
-class EvaluatorTest : public ::testing::Test {
+class SymEvalTest : public ::testing::Test {
 public:
 	void RetChecker(ActivationRecordPtr activation, const BitVec& expected) {
 		HolderPtr actual_holder = activation->GetRet();
@@ -35,7 +35,7 @@ public:
 	}
 };
 
-TEST_F (EvaluatorTest, assign) {
+TEST_F (SymEvalTest, assign) {
 	auto act = ActivationRecord::Create();
 	interpreter::Evaluator eval(act);
 	llvm::Module m("the module", llvm::getGlobalContext());

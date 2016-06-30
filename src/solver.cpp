@@ -2,11 +2,22 @@
 
 namespace solver {
 	Solver::Solver() : expr_manager_(), smt_engine_(&expr_manager_), symbol_table_() {
-
+		path_constraint_ = utils::Create<PathConstraint>();
 	}
 
 	Solver::~Solver() {
 
+	}
+
+	SolverPtr Solver::Create() {
+		return utils::Create<Solver>();
+	}
+
+	void Solver::Constraint(memory::HolderPtr holder) {
+		assert (memory::IsSymbolic(holder) and "only a symbolic expression is allowed to be joined to the path-constraint");
+		SharedExpr sym_expr = Object::UpCast<memory::Symbolic>(holder)->Get();
+		SmtEngine().assertFormula(sym_expr);
+		path_constraint_->push_back(holder);
 	}
 
 	CVC4::ExprManager& Solver::ExprManager() {
