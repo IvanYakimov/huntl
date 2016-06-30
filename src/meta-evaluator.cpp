@@ -32,7 +32,7 @@ namespace interpreter {
 			display_->Store(inst, result_holder);
 		}
 		else {
-			assert (false && "not implemented");
+			assert (false && "symbolic operation");
 		}
 	}
 
@@ -42,7 +42,21 @@ namespace interpreter {
 			//auto updated_lhs = memory::Concrete::Create(rhs_val);
 			display_->Store(destination, target);
 		}
+		else if (memory::IsSymbolic(target)) {
+
+		}
 		else
-			assert (false && "not implemented");
+			assert (false && "not implemented behavior");
 	}
 }
+
+
+
+
+
+
+
+
+
+
+

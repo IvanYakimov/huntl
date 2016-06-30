@@ -19,6 +19,8 @@
 #include "singleton.hpp"
 #include "holder.hpp"
 #include "creatable.hpp"
+#include "solver.hpp"
+#include "expr.hpp"
 //#include "path-constraint.hpp"
 
 namespace interpreter {
