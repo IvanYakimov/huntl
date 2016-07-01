@@ -10,7 +10,7 @@ MEMORY = display.o holder.o activation-record.o
 MEMORY_TEST = test-holder.o test-display.o $(SOLVER) $(INTERPRETER) $(LLVM_TEST_HELPERS) $(TEST_RUNNER)
 
 SOLVER = solver.o path-constraint.o
-SOLVER_TEST = $(TEST_RUNNER)
+SOLVER_TEST = $(TEST_RUNNER) $(MEMORY)
 
 LLVM_TEST_HELPERS = ir-function-builder.o
 
@@ -44,7 +44,7 @@ shared.o: $(INTERPRETER) $(SOLVER) $(MEMORY) $(LLVM_PASS)
 	ld -r $^ -o $@ $(LLVM_DYNAMIC)
 
 solver-test.out: $(SOLVER) $(SOLVER_TEST)
-	$(CXX) $^ -o $@ $(GTESTFLAGS) $(CVC4FLAGS) $(CXXFLAGS) 
+	$(CXX) $^ -o $@ $(GTESTFLAGS) $(CVC4FLAGS) $(CXXFLAGS) $(LLVM_STATIC) 
 
 interpreter-test.out: $(INTERPRETER) $(INTERPRETER_TEST) 
 	$(CXX) $^ -o $@ $(GTESTFLAGS) $(CVC4FLAGS) $(CXXFLAGS) $(LLVM_STATIC)

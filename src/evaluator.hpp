@@ -4,14 +4,13 @@
 // STL
 #include <exception>
 
-#include "bitvec.hpp"
-// Inherited from
 #include "matcher.hpp"
 
 // Uses
 #include "display.hpp"
 #include "activation-record.hpp"
 #include "meta-evaluator.hpp"
+#include "meta-int.hpp"
 #include "solver.hpp"
 
 //TODO: use -I option to perform headers search instead of ../ (?)

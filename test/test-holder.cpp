@@ -14,14 +14,14 @@ namespace memory {
 
 	TEST_F(HolderTest, instanceof) {
 		using utils::instanceof;
-		using interpreter::BitVec;
+		using interpreter::MetaInt;
 		auto bv32 = solver.ExprManager().mkBitVectorType(32);
 		auto x = solver.ExprManager().mkVar("x", bv32);
 		auto x_h = Symbolic::Create(x);
 		auto x_h2 = Symbolic::Create(x);
-		auto i32_h1 = Concrete::Create(BitVec(32, 42));
-		auto i32_h2 = Concrete::Create(BitVec(32, 42));
-		auto i32_hx = Concrete::Create(BitVec(32, 28));
+		auto i32_h1 = Concrete::Create(MetaInt(32, 42));
+		auto i32_h2 = Concrete::Create(MetaInt(32, 42));
+		auto i32_hx = Concrete::Create(MetaInt(32, 28));
 
 		// Comparison
 		ASSERT_EQ(*i32_h1, *i32_h2);

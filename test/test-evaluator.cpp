@@ -29,7 +29,7 @@ using namespace utils;
 
 class EvaluatorTest : public ::testing::Test {
 public:
-	void RetChecker(ActivationRecordPtr activation, const BitVec& expected) {
+	void RetChecker(ActivationRecordPtr activation, const MetaInt& expected) {
 		HolderPtr actual_holder = activation->GetRet();
 		HolderPtr expected_holder = Concrete::Create(expected);
 		ASSERT_EQ(*expected_holder, *actual_holder);
@@ -47,7 +47,7 @@ TEST_F (EvaluatorTest, basic) {
 	}
 	outs() << *f.Get() << "\n";
 	eval.visit(f.Get());
-	RetChecker(act, BitVec(32,2));
+	RetChecker(act, MetaInt(32,2));
 }
 
 TEST_F (EvaluatorTest, binop) {
@@ -69,7 +69,7 @@ TEST_F (EvaluatorTest, binop) {
 		}
 	outs() << *f.Get() << "\n";
 	eval.visit(f.Get());
-	RetChecker(act, BitVec(32, 7));
+	RetChecker(act, MetaInt(32, 7));
 }
 
 TEST_F(EvaluatorTest, funcPwith_args) {
@@ -87,7 +87,7 @@ TEST_F(EvaluatorTest, funcPwith_args) {
 	llvm::Function::arg_iterator args = raw_func->arg_begin();
 	llvm::Value* a = args++;
 	a->setName("a");
-	act->SetArg(a, Concrete::Create(BitVec(32, 2)));
+	act->SetArg(a, Concrete::Create(MetaInt(32, 2)));
 	Func f(raw_func); {
 		auto x = f.Alloca32("x");
 		auto store_x = f.Store(a, x);
@@ -96,14 +96,14 @@ TEST_F(EvaluatorTest, funcPwith_args) {
 	}
 	outs() << *f.Get() << "\n";
 	eval.visit(f.Get());
-	RetChecker(act, BitVec(32,2));
+	RetChecker(act, MetaInt(32,2));
 }
 
 TEST_F(EvaluatorTest, func) {
 	auto act = ActivationRecord::Create();
 	interpreter::Evaluator eval(act);
 	llvm::Module m("the module", llvm::getGlobalContext());
-	auto raw_func = MkIntFunc(&m, act, "f", {std::make_tuple(32, "a", memory::Concrete::Create(BitVec(32,2)))}, 32);
+	auto raw_func = MkIntFunc(&m, act, "f", {std::make_tuple(32, "a", memory::Concrete::Create(MetaInt(32,2)))}, 32);
 	auto a = raw_func->arg_begin();
 	Func f(raw_func); {
 		auto x = f.Alloca32("x");
@@ -113,7 +113,7 @@ TEST_F(EvaluatorTest, func) {
 	}
 	outs() << *f.Get() << "\n";
 	eval.visit(f.Get());
-	RetChecker(act, BitVec(32,2));
+	RetChecker(act, MetaInt(32,2));
 }
 
 #endif

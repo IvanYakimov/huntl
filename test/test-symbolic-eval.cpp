@@ -28,7 +28,7 @@ using namespace utils;
 
 class SymEvalTest : public ::testing::Test {
 public:
-	void RetChecker(ActivationRecordPtr activation, const BitVec& expected) {
+	void RetChecker(ActivationRecordPtr activation, const MetaInt& expected) {
 		HolderPtr actual_holder = activation->GetRet();
 		HolderPtr expected_holder = Concrete::Create(expected);
 		ASSERT_EQ(*expected_holder, *actual_holder);
@@ -52,7 +52,7 @@ TEST_F (SymEvalTest, assign) {
 	}
 	outs() << *f.Get() << "\n";
 	eval.visit(f.Get());
-	RetChecker(act, BitVec(32,2));
+	RetChecker(act, MetaInt(32,2));
 }
 
 

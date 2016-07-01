@@ -17,7 +17,7 @@ namespace solver {
 		return utils::Create<Solver>();
 	}
 
-	CVC4::Expr GetExpr(memory::HolderPtr& holder) {
+	CVC4::Expr GetExpr(memory::HolderPtr holder) {
 		assert(memory::IsSymbolic(holder)
 						and "only a symbolic expression is allowed to be joined to the path-constraint");
 		CVC4::Expr sym_expr = Object::UpCast<memory::Symbolic>(holder)->Get();
@@ -50,7 +50,7 @@ namespace solver {
 		assert (false and "not implemented");
 	}
 
-	interpreter::BitVec Solver::GetValue(memory::HolderPtr holder) {
+	interpreter::MetaInt Solver::GetValue(memory::HolderPtr holder) {
 		CVC4::Expr sym_expr = GetExpr(holder);
 		CVC4::Expr res = smt_engine_.getValue(sym_expr);
 		CVC4::BitVector val = res.getConst<CVC4::BitVector>();

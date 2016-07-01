@@ -19,9 +19,9 @@ namespace interpreter {
 
 	void MetaEvaluator::BinOp (const llvm::Instruction* inst, memory::HolderPtr left, memory::HolderPtr right) {
 		if (memory::IsConcrete(left) and memory::IsConcrete(right)) {
-			interpreter::BitVec left_val = Object::UpCast<Concrete>(left)->Get();
-			interpreter::BitVec right_val = Object::UpCast<Concrete>(right)->Get();
-			interpreter::BitVec result;
+			interpreter::MetaInt left_val = Object::UpCast<Concrete>(left)->Get();
+			interpreter::MetaInt right_val = Object::UpCast<Concrete>(right)->Get();
+			interpreter::MetaInt result;
 			switch (inst->getOpcode()) {
 			case llvm::Instruction::Add:
 				result = left_val.operator +(right_val);

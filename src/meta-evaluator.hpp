@@ -10,17 +10,13 @@
 # include "llvm/Support/raw_ostream.h"
 # include "llvm/Support/Debug.h"
 
-#include "bitvec.hpp"
-// Inherited from
-//#include "matcher.hpp"
-
-// Uses
 #include "display.hpp"
 #include "singleton.hpp"
 #include "holder.hpp"
 #include "creatable.hpp"
 #include "solver.hpp"
 #include "expr.hpp"
+#include "meta-int.hpp"
 //#include "path-constraint.hpp"
 
 namespace interpreter {

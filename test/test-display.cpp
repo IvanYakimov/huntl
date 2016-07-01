@@ -15,7 +15,7 @@ TEST_F (DisplayTest, basic) {
 		auto ret = f.Ret(load_x);
 
 		Display d;
-		auto holder = Concrete::Create(interpreter::BitVec(32, 42));
+		auto holder = Concrete::Create(interpreter::MetaInt(32, 42));
 		d.Alloca(x, holder);
 		auto l_undef = d.Load(x);
 		ASSERT_TRUE(instanceof<Concrete>(l_undef));
