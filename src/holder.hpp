@@ -25,6 +25,8 @@ namespace memory {
 		virtual ~Holder(){}
 	};
 
+	solver::SharedExpr GetExpr(memory::HolderPtr holder);
+	interpreter::MetaInt GetValue(memory::HolderPtr holder);
 }
 
 #endif

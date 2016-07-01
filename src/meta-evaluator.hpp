@@ -24,13 +24,14 @@ namespace interpreter {
 	using MetaEvaluatorPtr = std::shared_ptr<MetaEvaluator>;
 	class MetaEvaluator {
 	public:
-		MetaEvaluator(memory::DisplayPtr display);
+		MetaEvaluator(memory::DisplayPtr display, solver::SolverPtr solver = nullptr);
 		~MetaEvaluator();
 		void BinOp (const llvm::Instruction* inst, memory::HolderPtr left, memory::HolderPtr right);
 		void Assign (const llvm::Value *destination, memory::HolderPtr target);
-		static MetaEvaluatorPtr Create(memory::DisplayPtr display);
+		static MetaEvaluatorPtr Create(memory::DisplayPtr display, solver::SolverPtr solver = nullptr);
 	private:
 		memory::DisplayPtr display_;
+		solver::SolverPtr solver_;
 	};
 }
 

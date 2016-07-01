@@ -1,8 +1,7 @@
 #include "solver.hpp"
 
 namespace solver {
-	Solver::Solver() : expr_manager_(), smt_engine_(&expr_manager_), symbol_table_() {
-		path_constraint_ = utils::Create<PathConstraint>();
+	Solver::Solver() : expr_manager_(), smt_engine_(&expr_manager_), symbol_table_(), path_constraint_() {
 		smt_engine_.setOption("incremental", CVC4::SExpr("true"));
 		smt_engine_.setOption("produce-models", CVC4::SExpr("true"));
 		smt_engine_.setOption("rewrite-divk", CVC4::SExpr("true"));
@@ -17,17 +16,10 @@ namespace solver {
 		return utils::Create<Solver>();
 	}
 
-	CVC4::Expr GetExpr(memory::HolderPtr holder) {
-		assert(memory::IsSymbolic(holder)
-						and "only a symbolic expression is allowed to be joined to the path-constraint");
-		CVC4::Expr sym_expr = Object::UpCast<memory::Symbolic>(holder)->Get();
-		return sym_expr;
-	}
-
 	void Solver::Constraint(memory::HolderPtr holder) {
 		CVC4::Expr sym_expr = GetExpr(holder);
 		SmtEngine().assertFormula(sym_expr);
-		path_constraint_->push_back(holder);
+		path_constraint_.push_back(holder);
 	}
 
 	CVC4::ExprManager& Solver::ExprManager() {
@@ -52,6 +44,14 @@ namespace solver {
 		CVC4::BitVector val = res.getConst<CVC4::BitVector>();
 		interpreter::MetaInt meta_int = interpreter::BitVec_To_MetaInt(val);
 		return memory::Concrete::Create(meta_int);
+	}
+
+	void Solver::Print() {
+		std::cout << "PC: \n";
+		for (auto i = path_constraint_.begin(); i != path_constraint_.end(); i++) {
+			std::cout << "(" << **i << ")" << "\n\t/\\ ";
+		}
+		std::cout << " true \n";
 	}
 }
 

@@ -25,12 +25,12 @@ namespace memory {
 	}
 
 	void Display::Print() {
-		std::cout << "<--display:\n";
+		std::cout << "<-- Display:\n";
 		for (auto it = mmap_.begin(); it != mmap_.end(); it++) {
-			llvm::outs() << *(it->first) << " -> ";
+			llvm::outs() << *(it->first) << " --> ";
 			std::cout << *(it->second) << "\n";
 		}
-		std::cout << "-->\n";
+		std::cout << "--> \n";
 	}
 
 	DisplayPtr Display::Create() {

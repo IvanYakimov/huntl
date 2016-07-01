@@ -1,6 +1,6 @@
 // project
 #include "../src/display.hpp"
-#include "../src/bitvec.hpp"
+#include "../src/meta-int.hpp"
 #include "../src/instanceof.hpp"
 #include "../src/singleton.hpp"
 #include "../src/evaluator.hpp"
@@ -21,6 +21,7 @@
 
 // std
 #include <functional>
+#include <iostream>
 
 using namespace memory;
 using namespace interpreter;
@@ -36,23 +37,33 @@ public:
 };
 
 TEST_F (SymEvalTest, assign) {
+	int expected = -28;
 	auto act = ActivationRecord::Create();
-	interpreter::Evaluator eval(act);
+	auto solver = solver::Solver::Create();
+	interpreter::Evaluator eval(act, solver);
 	llvm::Module m("the module", llvm::getGlobalContext());
-	solver::Solver solver;
-	auto a_sym = solver.ExprManager().mkVar(solver.ExprManager().mkBitVectorType(32));
-	auto a_sym_holder = memory::Symbolic::Create(a_sym);
-	auto raw_func = MkIntFunc(&m, act, "f", {std::make_tuple(32, "a", a_sym_holder)}, 32);
-	auto a = raw_func->arg_begin();
+	auto a = solver->ExprManager().mkVar(solver->ExprManager().mkBitVectorType(32));
+	auto c = solver->ExprManager().mkConst(solver::BitVec(32, solver::InfiniteInt(expected)));
+	auto a_eq_c = solver->ExprManager().mkExpr(solver::Kind::EQUAL, a, c);
+	auto a_eq_c_holder = memory::Symbolic::Create(a_eq_c);
+	solver->Constraint(a_eq_c_holder);
+	auto a_holder = memory::Symbolic::Create(a);
+	auto raw_func = MkIntFunc(&m, act, "f", {std::make_tuple(32, "a", a_holder)}, 32);
+	auto a_addr = raw_func->arg_begin();
+	llvm::errs() << *a_addr << " --> ";
+	std::cout << *a_holder << "\n";
 	Func f(raw_func); {
 		auto x = f.Alloca32("x");
-		auto store_x = f.Store(a, x);
+		auto store_x = f.Store(a_addr, x);
 		auto load_x = f.Load(x);
 		auto ret = f.Ret(load_x);
 	}
 	outs() << *f.Get() << "\n";
 	eval.visit(f.Get());
-	RetChecker(act, MetaInt(32,2));
+	ASSERT_TRUE(solver->CheckSat());
+	auto val = solver->GetValue(act->GetRet());
+	auto meta_int = memory::GetValue(val);
+	ASSERT_EQ(meta_int, MetaInt(32, expected));
 }
 
 

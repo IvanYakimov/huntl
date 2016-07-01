@@ -3,7 +3,7 @@
 
 // project
 #include "../src/display.hpp"
-#include "../src/bitvec.hpp"
+#include "../src/meta-int.hpp"
 #include "../src/instanceof.hpp"
 #include "../src/singleton.hpp"
 #include "../src/evaluator.hpp"

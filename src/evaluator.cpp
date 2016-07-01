@@ -68,9 +68,9 @@ namespace interpreter {
 
 	Evaluator::Evaluator(memory::ActivationRecordPtr activation, solver::SolverPtr solver) {
 		display_ = memory::Display::Create();
-		meta_eval_ = interpreter::MetaEvaluator::Create(display_);
-		activation_ = activation;
 		solver_ = solver;
+		activation_ = activation;
+		meta_eval_ = interpreter::MetaEvaluator::Create(display_, solver_);
 	}
 
 	Evaluator::~Evaluator() {
@@ -87,10 +87,13 @@ namespace interpreter {
 	}
 
 	void Evaluator::Trace(const llvm::Instruction& inst) {
-		llvm::outs() << "Trace start:\n";
+		llvm::outs() << "------------------------------------\n";
+		llvm::outs() << "{\n";
 		llvm::outs() << inst << "\n";
 		display_->Print();
-		llvm::outs() << "Trace end.\n";
+		if (solver_)
+			solver_->Print();
+		llvm::outs() << "}\n";
 	}
 
 	// Return
