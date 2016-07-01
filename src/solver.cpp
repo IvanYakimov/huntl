@@ -43,18 +43,15 @@ namespace solver {
 	}
 
 	bool Solver::CheckSat() {
-		assert (false and "not implemented");
+		return smt_engine_.checkSat().isSat();
 	}
 
-	void Solver::ProduceModel() {
-		assert (false and "not implemented");
-	}
-
-	interpreter::MetaInt Solver::GetValue(memory::HolderPtr holder) {
+	memory::HolderPtr Solver::GetValue(memory::HolderPtr holder) {
 		CVC4::Expr sym_expr = GetExpr(holder);
 		CVC4::Expr res = smt_engine_.getValue(sym_expr);
 		CVC4::BitVector val = res.getConst<CVC4::BitVector>();
-		assert (false and "not implemented");
+		interpreter::MetaInt meta_int = interpreter::BitVec_To_MetaInt(val);
+		return memory::Concrete::Create(meta_int);
 	}
 }
 

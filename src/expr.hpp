@@ -5,6 +5,8 @@
 
 namespace solver {
 	using SharedExpr = CVC4::Expr;
+	using BitVec = CVC4::BitVector;
+	using InfiniteInt = CVC4::Integer;
 }
 
 #endif
