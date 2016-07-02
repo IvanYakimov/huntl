@@ -10,7 +10,7 @@ MEMORY = display.o holder.o activation-record.o
 MEMORY_TEST = test-holder.o test-display.o $(SOLVER) $(INTERPRETER) $(LLVM_TEST_HELPERS) $(TEST_RUNNER)
 
 SOLVER = solver.o path-constraint.o
-SOLVER_TEST = $(TEST_RUNNER) $(MEMORY)
+SOLVER_TEST = $(TEST_RUNNER) $(MEMORY) $(INTERPRETER)
 
 LLVM_TEST_HELPERS = ir-function-builder.o
 

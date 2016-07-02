@@ -6,7 +6,7 @@
 #include "../src/instanceof.hpp"
 #include "ir-function-builder.hpp"
 #include "../src/holder.hpp"
-#include "../src/bitvec.hpp"
+#include "../src/meta-int.hpp"
 
 // gtest
 #include "gtest/gtest.h"

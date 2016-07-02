@@ -59,6 +59,9 @@ void PrintSymVar(const llvm::Value* a_addr, memory::HolderPtr a_holder) {
 	std::cout << *a_holder << "\n";
 }
 
+/// a = 2
+/// ret := a
+/// (ret = 2)
 TEST_F (SymEvalTest, assign) {
 	int expected = -28;
 	auto act = ActivationRecord::Create();
@@ -80,8 +83,28 @@ TEST_F (SymEvalTest, assign) {
 	CheckSymRet(solver, act, MetaInt(32, expected));
 }
 
+/// a = 2
+/// ret := a + 2
+/// (ret = 4)
 TEST_F (SymEvalTest, mixed_addition) {
-
+	auto act = ActivationRecord::Create();
+	auto solver = solver::Solver::Create();
+	interpreter::Evaluator eval(act, solver);
+	llvm::Module m("the module", llvm::getGlobalContext());
+	auto a_holder = DefineSymVar(solver, solver::BitVec(32, solver::InfiniteInt(2)));
+	auto raw_func = MkIntFunc(&m, act, "g", {std::make_tuple(32, "a", a_holder)}, 32);
+	auto a_addr = raw_func->arg_begin();
+	PrintSymVar(a_addr, a_holder);
+	Func f(raw_func); {
+		auto t1 = f.Alloca32("t1");
+		f.Store(a_addr, t1);
+		auto t2 = f.Load(t1);
+		auto t3 = f.Add(t2, f.I32(2));
+		auto ret = f.Ret(t3);
+	}
+	outs() << *f.Get() << "\n";
+	eval.visit(f.Get());
+	CheckSymRet(solver, act, MetaInt(32, 4));
 }
 
 

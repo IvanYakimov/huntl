@@ -32,6 +32,9 @@ namespace interpreter {
 	private:
 		memory::DisplayPtr display_;
 		solver::SolverPtr solver_;
+		solver::SharedExpr Concrete_To_Symbolic(interpreter::MetaInt concrete_val);
+		solver::Kind ExtractKindFromInst(const llvm::Instruction* inst);
+		MetaInt PerformConcreteBinOp(const llvm::Instruction* inst, MetaInt left_val, MetaInt right_val);
 	};
 }
 
