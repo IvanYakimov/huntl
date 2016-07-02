@@ -36,22 +36,39 @@ public:
 	}
 };
 
+memory::HolderPtr DefineSymVar(solver::SolverPtr solver, solver::BitVec value) {
+	auto width = value.getSize();
+	auto a = solver->ExprManager().mkVar(solver->ExprManager().mkBitVectorType(width));
+	auto c = solver->ExprManager().mkConst(value);
+	auto a_eq_c = solver->ExprManager().mkExpr(solver::Kind::EQUAL, a, c);
+	auto a_eq_c_holder = memory::Symbolic::Create(a_eq_c);
+	solver->Constraint(a_eq_c_holder);
+	auto a_holder = memory::Symbolic::Create(a);
+	return a_holder;
+}
+
+void CheckSymRet(solver::SolverPtr solver, memory::ActivationRecordPtr act, MetaInt exp) {
+	ASSERT_TRUE(solver->CheckSat());
+	auto val = solver->GetValue(act->GetRet());
+	auto meta_int = memory::GetValue(val);
+	ASSERT_EQ(meta_int, exp);
+}
+
+void PrintSymVar(const llvm::Value* a_addr, memory::HolderPtr a_holder) {
+	llvm::errs() << *a_addr << " --> ";
+	std::cout << *a_holder << "\n";
+}
+
 TEST_F (SymEvalTest, assign) {
 	int expected = -28;
 	auto act = ActivationRecord::Create();
 	auto solver = solver::Solver::Create();
 	interpreter::Evaluator eval(act, solver);
 	llvm::Module m("the module", llvm::getGlobalContext());
-	auto a = solver->ExprManager().mkVar(solver->ExprManager().mkBitVectorType(32));
-	auto c = solver->ExprManager().mkConst(solver::BitVec(32, solver::InfiniteInt(expected)));
-	auto a_eq_c = solver->ExprManager().mkExpr(solver::Kind::EQUAL, a, c);
-	auto a_eq_c_holder = memory::Symbolic::Create(a_eq_c);
-	solver->Constraint(a_eq_c_holder);
-	auto a_holder = memory::Symbolic::Create(a);
+	auto a_holder = DefineSymVar(solver, solver::BitVec(32, solver::InfiniteInt(expected)));
 	auto raw_func = MkIntFunc(&m, act, "f", {std::make_tuple(32, "a", a_holder)}, 32);
 	auto a_addr = raw_func->arg_begin();
-	llvm::errs() << *a_addr << " --> ";
-	std::cout << *a_holder << "\n";
+	PrintSymVar(a_addr, a_holder);
 	Func f(raw_func); {
 		auto x = f.Alloca32("x");
 		auto store_x = f.Store(a_addr, x);
@@ -60,10 +77,11 @@ TEST_F (SymEvalTest, assign) {
 	}
 	outs() << *f.Get() << "\n";
 	eval.visit(f.Get());
-	ASSERT_TRUE(solver->CheckSat());
-	auto val = solver->GetValue(act->GetRet());
-	auto meta_int = memory::GetValue(val);
-	ASSERT_EQ(meta_int, MetaInt(32, expected));
+	CheckSymRet(solver, act, MetaInt(32, expected));
+}
+
+TEST_F (SymEvalTest, mixed_addition) {
+
 }
 
 
