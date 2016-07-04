@@ -2,7 +2,6 @@
 #define __TEST_EVALUATOR_HPP__
 
 // project
-#include "../src/display.hpp"
 #include "../src/meta-int.hpp"
 #include "../src/instanceof.hpp"
 #include "../src/singleton.hpp"
@@ -22,6 +21,7 @@
 
 // std
 #include <functional>
+#include "../src/local-memory.hpp"
 
 using namespace memory;
 using namespace interpreter;

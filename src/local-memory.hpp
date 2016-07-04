@@ -11,19 +11,18 @@
 #include "creatable.hpp"
 
 namespace memory {
-	class Display;
-	using DisplayPtr = std::shared_ptr<Display>;
-	/// Display stub. This is rather a local memory than a display.
-	class Display {
+	class LocalMemory;
+	using LocalMemoryPtr = std::shared_ptr<LocalMemory>;
+	class LocalMemory {
 	public:
-		NONCOPYABLE(Display);
-		Display();
-		~Display();
+		NONCOPYABLE(LocalMemory);
+		LocalMemory();
+		~LocalMemory();
 		using Address = const llvm::Value*;
 		void Alloca(Address address, HolderPtr initial);
 		HolderPtr Load(Address address);
 		void Store(Address address, HolderPtr holder);
-		static DisplayPtr Create();
+		static LocalMemoryPtr Create();
 		void Print();
 	private:
 		using Pointer = std::pair<Address, HolderPtr>;

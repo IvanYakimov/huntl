@@ -67,7 +67,7 @@ namespace interpreter {
 	};
 
 	Evaluator::Evaluator(memory::ActivationPtr activation, solver::SolverPtr solver) {
-		display_ = memory::Display::Create();
+		display_ = memory::LocalMemory::Create();
 		solver_ = solver;
 		activation_ = activation;
 		meta_eval_ = interpreter::MetaEvaluator::Create(display_, solver_);

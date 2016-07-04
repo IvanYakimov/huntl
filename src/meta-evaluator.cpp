@@ -7,14 +7,14 @@ namespace interpreter {
 	using memory::IsConcrete;
 	using memory::IsSymbolic;
 
-	MetaEvaluator::MetaEvaluator(memory::DisplayPtr display, solver::SolverPtr solver) :
+	MetaEvaluator::MetaEvaluator(memory::LocalMemoryPtr display, solver::SolverPtr solver) :
 			display_(display), solver_(solver) {
 	}
 
 	MetaEvaluator::~MetaEvaluator() {
 	}
 
-	MetaEvaluatorPtr MetaEvaluator::Create(memory::DisplayPtr display, solver::SolverPtr solver) {
+	MetaEvaluatorPtr MetaEvaluator::Create(memory::LocalMemoryPtr display, solver::SolverPtr solver) {
 		return utils::Create<MetaEvaluator>(display, solver);
 	}
 

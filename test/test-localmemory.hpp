@@ -2,7 +2,6 @@
 #define __TEST_DISPLAY_HPP__
 
 // project
-#include "../src/display.hpp"
 #include "../src/instanceof.hpp"
 #include "ir-function-builder.hpp"
 #include "../src/holder.hpp"
@@ -20,5 +19,7 @@
 
 // std
 #include <functional>
+
+#include "../src/local-memory.hpp"
 
 #endif

@@ -10,12 +10,12 @@
 # include "llvm/Support/raw_ostream.h"
 # include "llvm/Support/Debug.h"
 
-#include "display.hpp"
 #include "singleton.hpp"
 #include "holder.hpp"
 #include "creatable.hpp"
 #include "solver.hpp"
 #include "expr.hpp"
+#include "local-memory.hpp"
 #include "meta-int.hpp"
 //#include "path-constraint.hpp"
 
@@ -24,13 +24,13 @@ namespace interpreter {
 	using MetaEvaluatorPtr = std::shared_ptr<MetaEvaluator>;
 	class MetaEvaluator {
 	public:
-		MetaEvaluator(memory::DisplayPtr display, solver::SolverPtr solver = nullptr);
+		MetaEvaluator(memory::LocalMemoryPtr display, solver::SolverPtr solver = nullptr);
 		~MetaEvaluator();
 		void BinOp (const llvm::Instruction* inst, memory::HolderPtr left, memory::HolderPtr right);
 		void Assign (const llvm::Value *destination, memory::HolderPtr target);
-		static MetaEvaluatorPtr Create(memory::DisplayPtr display, solver::SolverPtr solver = nullptr);
+		static MetaEvaluatorPtr Create(memory::LocalMemoryPtr display, solver::SolverPtr solver = nullptr);
 	private:
-		memory::DisplayPtr display_;
+		memory::LocalMemoryPtr display_;
 		solver::SolverPtr solver_;
 		solver::SharedExpr Concrete_To_Symbolic(interpreter::MetaInt concrete_val);
 		solver::Kind ExtractKindFromInst(const llvm::Instruction* inst);

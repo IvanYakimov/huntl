@@ -6,10 +6,10 @@
 #include <string>
 
 #include "activation.hpp"
+#include "local-memory.hpp"
 #include "matcher.hpp"
 
 // Uses
-#include "display.hpp"
 #include "meta-evaluator.hpp"
 #include "meta-int.hpp"
 #include "solver.hpp"
@@ -27,7 +27,7 @@ namespace interpreter {
 
 	private:
 		MetaEvaluatorPtr meta_eval_;
-		memory::DisplayPtr display_;
+		memory::LocalMemoryPtr display_;
 		memory::ActivationPtr activation_;
 		solver::SolverPtr solver_;
 		auto ProduceHolder(const llvm::ConstantInt* constant_int);

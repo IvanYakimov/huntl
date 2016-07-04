@@ -1,4 +1,4 @@
-#include "test-display.hpp"
+#include "test-localmemory.hpp"
 
 using namespace memory;
 using namespace utils;
@@ -14,7 +14,7 @@ TEST_F (DisplayTest, basic) {
 		auto load_x = f.Load(x);
 		auto ret = f.Ret(load_x);
 
-		Display d;
+		LocalMemory d;
 		auto holder = Concrete::Create(interpreter::MetaInt(32, 42));
 		d.Alloca(x, holder);
 		auto l_undef = d.Load(x);

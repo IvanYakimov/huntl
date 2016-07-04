@@ -1,30 +1,30 @@
-#include "display.hpp"
+#include "local-memory.hpp"
 
 namespace memory {
-	Display::Display() : mmap_() {
+	LocalMemory::LocalMemory() : mmap_() {
 
 	}
 
-	Display::~Display() {
+	LocalMemory::~LocalMemory() {
 
 	}
 
-	void Display::Alloca(Address address, HolderPtr initial) {
+	void LocalMemory::Alloca(Address address, HolderPtr initial) {
 		assert (mmap_.find(address) == mmap_.end());
 		mmap_.emplace(address, initial);
 	}
 
-	HolderPtr Display::Load(Address address) {
+	HolderPtr LocalMemory::Load(Address address) {
 		auto it = mmap_.find(address);
 		assert (it != mmap_.end());
 		return it->second;
 	}
 
-	void Display::Store(Address address, HolderPtr holder) {
+	void LocalMemory::Store(Address address, HolderPtr holder) {
 		mmap_[address] = holder;
 	}
 
-	void Display::Print() {
+	void LocalMemory::Print() {
 		std::cout << "<-- Display:\n";
 		for (auto it = mmap_.begin(); it != mmap_.end(); it++) {
 			llvm::outs() << *(it->first) << " --> ";
@@ -33,8 +33,8 @@ namespace memory {
 		std::cout << "--> \n";
 	}
 
-	DisplayPtr Display::Create() {
-		return utils::Create<Display>();
+	LocalMemoryPtr LocalMemory::Create() {
+		return utils::Create<LocalMemory>();
 	}
 }
 
