@@ -141,6 +141,10 @@ namespace interpreter {
 			assert(false);
 	}
 
+	void Matcher::visitCallInst(const llvm::CallInst &inst) {
+
+	}
+
 	//--------------------
 	// Case matcher
 	template <typename... Targs>

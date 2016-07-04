@@ -23,7 +23,7 @@ namespace interpreter {
 		~Evaluator();
 
 		void Do(llvm::Module *m);
-		void Do(llvm::Function *func, memory::ActivationRecordPtr activation);
+		void Do(llvm::Function *func);
 
 	private:
 		MetaEvaluatorPtr meta_eval_;
@@ -61,6 +61,7 @@ namespace interpreter {
 		virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Instruction *instruction, const llvm::Value *ptr);
 		virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Argument *arg, const llvm::Value *ptr);
 
+		virtual void HandleCallInst(const llvm::CallInst &inst);
 };
 }
 

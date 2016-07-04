@@ -46,6 +46,7 @@ namespace interpreter {
 		void visitLoadInst (const llvm::LoadInst &inst);
 		void visitStoreInst (const llvm::StoreInst &inst);
 		// missed instructions
+		void visitCallInst(const llvm::CallInst &inst);
 
 	protected:
 		// Return
@@ -77,6 +78,7 @@ namespace interpreter {
 		virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Instruction *instruction, const llvm::Value *ptr) = 0;
 		virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Argument *arg, const llvm::Value *ptr) = 0;
 
+		virtual void HandleCallInst(const llvm::CallInst &inst) = 0;
 	private:
 		// "pattern matching"
 		template <typename... Targs>

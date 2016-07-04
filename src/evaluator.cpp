@@ -87,16 +87,13 @@ namespace interpreter {
 		visit (m);
 	}
 
-	void Evaluator::Do(llvm::Function *f, memory::ActivationRecordPtr activation) {
+	void Evaluator::Do(llvm::Function *f) {
 		const std::string mksym_ = "mksym_";
 		const std::string test_ = "test_";
 		std::string name = f->getName().str();
 		if (name.substr(mksym_.length()) == mksym_) {
 			if (name == "mksym_i32") {
-				auto type = solver_->ExprManager().mkBitVectorType(32);
-				auto expr = solver_->ExprManager().mkVar(type);
-				memory::HolderPtr holder = memory::Symbolic::Create(expr);
-				activation->SetRet(holder);
+				assert (false and "make symbolic call");
 			}
 			else
 				assert (false and "not implemented");
@@ -233,6 +230,10 @@ namespace interpreter {
 		auto holder = activation_->GetArg(arg);
 		meta_eval_->Assign(ptr, holder);
 		Trace(inst);
+	}
+
+	void Evaluator::HandleCallInst(const llvm::CallInst &inst) {
+
 	}
 }
 
