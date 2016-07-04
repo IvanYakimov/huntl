@@ -3,6 +3,7 @@
 
 // STL
 #include <exception>
+#include <string>
 
 #include "matcher.hpp"
 

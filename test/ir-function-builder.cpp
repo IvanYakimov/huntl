@@ -135,6 +135,12 @@ std::shared_ptr<IntArg> IntArg::Create(unsigned width, std::string name, memory:
 	return utils::Create<IntArg>(width, name, holder, address);
 }
 
+llvm::Function* MkSymI32(llvm::Module* module) {
+	llvm::FunctionType* f_type = FunctionType::get(Type::getInt32Ty(getGlobalContext()), false);
+	auto raw_func = llvm::Function::Create(f_type, Function::ExternalLinkage, "mksym_i32", module);
+	return raw_func;
+}
+
 llvm::Function* MkIntFunc(llvm::Module* module, memory::ActivationRecordPtr act, const char* name, std::vector<std::tuple<unsigned, const char*, memory::HolderPtr>> int_args, unsigned ret_size) {
 	std::vector<Type*> f_args;
 	for (auto i = int_args.begin(); i != int_args.end(); i++) {

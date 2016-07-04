@@ -46,7 +46,7 @@ TEST_F (EvaluatorTest, basic) {
 		auto ret = f.Ret(load_x);
 	}
 	outs() << *f.Get() << "\n";
-	eval.Do(f.Get(), act);
+	eval.visit(f.Get());
 	RetChecker(act, MetaInt(32,2));
 }
 
@@ -68,7 +68,7 @@ TEST_F (EvaluatorTest, binop) {
 			auto ret = f.Ret(load_res);
 		}
 	outs() << *f.Get() << "\n";
-	eval.Do(f.Get(), act);
+	eval.visit(f.Get());
 	RetChecker(act, MetaInt(32, 7));
 }
 
@@ -95,7 +95,7 @@ TEST_F(EvaluatorTest, funcPwith_args) {
 		auto ret = f.Ret(load_x);
 	}
 	outs() << *f.Get() << "\n";
-	eval.Do(f.Get(), act);
+	eval.visit(f.Get());
 	RetChecker(act, MetaInt(32,2));
 }
 
@@ -112,7 +112,7 @@ TEST_F(EvaluatorTest, func) {
 		auto ret = f.Ret(load_x);
 	}
 	outs() << *f.Get() << "\n";
-	eval.Do(&m);
+	eval.visit(f.Get());
 	RetChecker(act, MetaInt(32,2));
 }
 

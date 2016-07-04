@@ -88,9 +88,21 @@ namespace interpreter {
 	}
 
 	void Evaluator::Do(llvm::Function *f, memory::ActivationRecordPtr activation) {
-		if (f->getName() == "mk_sym_val") {
-			assert (f->arg_size() == 1);
-			auto val = activation->GetArg(f->arg_begin());
+		const std::string mksym_ = "mksym_";
+		const std::string test_ = "test_";
+		std::string name = f->getName().str();
+		if (name.substr(mksym_.length()) == mksym_) {
+			if (name == "mksym_i32") {
+				auto type = solver_->ExprManager().mkBitVectorType(32);
+				auto expr = solver_->ExprManager().mkVar(type);
+				memory::HolderPtr holder = memory::Symbolic::Create(expr);
+				activation->SetRet(holder);
+			}
+			else
+				assert (false and "not implemented");
+		}
+		else if (name.substr(test_.length()) == test_) {
+
 		}
 		else {
 			visit (f);

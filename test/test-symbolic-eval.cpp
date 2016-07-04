@@ -107,8 +107,12 @@ TEST_F (SymEvalTest, mixed_addition) {
 	CheckSymRet(solver, act, MetaInt(32, 4));
 }
 
-TEST_F(SymEvalTest, mk_sym) {
-
+TEST_F(SymEvalTest, mksym) {
+	auto act = ActivationRecord::Create();
+	auto solver = solver::Solver::Create();
+	interpreter::Evaluator eval(act, solver);
+	llvm::Module mod("mksym_test", llvm::getGlobalContext());
+	MkSymI32(&mod);
 }
 
 
