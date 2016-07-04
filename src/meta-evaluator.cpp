@@ -25,9 +25,17 @@ namespace interpreter {
 	}
 
 	solver::Kind MetaEvaluator::ExtractKindFromInst(const llvm::Instruction* inst) {
+		using llvm::Instruction;
+		using solver::Kind;
 		switch (inst->getOpcode()) {
-		case llvm::Instruction::Add:
-			return solver::Kind::BITVECTOR_PLUS;
+		case Instruction::Add:
+			return Kind::BITVECTOR_PLUS;
+		case Instruction::Sub:
+			return Kind::BITVECTOR_SUB;
+		case Instruction::And:
+			return Kind::BITVECTOR_AND;
+		case Instruction::LShr:
+			return Kind::BITVECTOR_LSHR;
 		}
 		assert (false and "not implemented");
 	}
@@ -36,6 +44,12 @@ namespace interpreter {
 		switch (inst->getOpcode()) {
 		case llvm::Instruction::Add:
 			return left_val.operator +(right_val);
+		case llvm::Instruction::Sub:
+			return left_val.operator -(right_val);
+		case llvm::Instruction::And:
+			return left_val.And(right_val);
+		case llvm::Instruction::LShr:
+			return left_val.lshr(right_val);
 		}
 		assert (false && "not implemented");
 	}
