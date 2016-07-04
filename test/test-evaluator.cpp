@@ -7,7 +7,7 @@
 #include "../src/instanceof.hpp"
 #include "../src/singleton.hpp"
 #include "../src/evaluator.hpp"
-#include "../src/activation-record.hpp"
+#include "../src/activation.hpp"
 #include "ir-function-builder.hpp"
 
 // gtest
@@ -29,7 +29,7 @@ using namespace utils;
 
 class EvaluatorTest : public ::testing::Test {
 public:
-	void RetChecker(ActivationRecordPtr activation, const MetaInt& expected) {
+	void RetChecker(ActivationPtr activation, const MetaInt& expected) {
 		HolderPtr actual_holder = activation->GetRet();
 		HolderPtr expected_holder = Concrete::Create(expected);
 		ASSERT_EQ(*expected_holder, *actual_holder);
@@ -37,7 +37,7 @@ public:
 };
 
 TEST_F (EvaluatorTest, basic) {
-	auto act = ActivationRecord::Create();
+	auto act = Activation::Create();
 	interpreter::Evaluator eval(act);
 	Int32Func f; {
 		auto x = f.Alloca32("x");
@@ -51,7 +51,7 @@ TEST_F (EvaluatorTest, basic) {
 }
 
 TEST_F (EvaluatorTest, binop) {
-	auto act = ActivationRecord::Create();
+	auto act = Activation::Create();
 	interpreter::Evaluator eval(act);
 	Int32Func f; {
 			auto x = f.Alloca32("x");
@@ -73,7 +73,7 @@ TEST_F (EvaluatorTest, binop) {
 }
 
 TEST_F(EvaluatorTest, funcPwith_args) {
-	auto act = ActivationRecord::Create();
+	auto act = Activation::Create();
 	interpreter::Evaluator eval(act);
 	llvm::Module m("the module", llvm::getGlobalContext());
 	std::vector<Type*>f_args;
@@ -100,7 +100,7 @@ TEST_F(EvaluatorTest, funcPwith_args) {
 }
 
 TEST_F(EvaluatorTest, func) {
-	auto act = ActivationRecord::Create();
+	auto act = Activation::Create();
 	interpreter::Evaluator eval(act);
 	llvm::Module m("the module", llvm::getGlobalContext());
 	auto raw_func = MkIntFunc(&m, act, "func", {std::make_tuple(32, "a", memory::Concrete::Create(MetaInt(32,2)))}, 32);

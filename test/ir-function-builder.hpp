@@ -9,10 +9,10 @@
 # include "llvm/Support/raw_ostream.h"
 
 #include "../src/holder.hpp"
-#include "../src/activation-record.hpp"
 #include "../src/creatable.hpp"
 
 #include <tuple>
+#include "../src/activation.hpp"
 
 using namespace llvm;
 
@@ -69,7 +69,7 @@ struct IntArg {
 
 llvm::Function* MkSymI32(llvm::Module* module);
 
-llvm::Function* MkIntFunc(llvm::Module* module, memory::ActivationRecordPtr act, const char* name, std::vector<std::tuple<unsigned, const char*, memory::HolderPtr>> int_args, unsigned ret_size);
+llvm::Function* MkIntFunc(llvm::Module* module, memory::ActivationPtr act, const char* name, std::vector<std::tuple<unsigned, const char*, memory::HolderPtr>> int_args, unsigned ret_size);
 
 class Int32Func : public Func {
 public:

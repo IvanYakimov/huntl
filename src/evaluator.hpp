@@ -5,11 +5,11 @@
 #include <exception>
 #include <string>
 
+#include "activation.hpp"
 #include "matcher.hpp"
 
 // Uses
 #include "display.hpp"
-#include "activation-record.hpp"
 #include "meta-evaluator.hpp"
 #include "meta-int.hpp"
 #include "solver.hpp"
@@ -19,7 +19,7 @@
 namespace interpreter {
 	class Evaluator final : public Matcher {
 	public:
-		Evaluator(memory::ActivationRecordPtr activation, solver::SolverPtr solver = nullptr);
+		Evaluator(memory::ActivationPtr activation, solver::SolverPtr solver = nullptr);
 		~Evaluator();
 
 		void Do(llvm::Module *m);
@@ -28,7 +28,7 @@ namespace interpreter {
 	private:
 		MetaEvaluatorPtr meta_eval_;
 		memory::DisplayPtr display_;
-		memory::ActivationRecordPtr activation_;
+		memory::ActivationPtr activation_;
 		solver::SolverPtr solver_;
 		auto ProduceHolder(const llvm::ConstantInt* constant_int);
 		void Trace(const llvm::Instruction& inst);

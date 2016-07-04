@@ -66,7 +66,7 @@ namespace interpreter {
 		}
 	};
 
-	Evaluator::Evaluator(memory::ActivationRecordPtr activation, solver::SolverPtr solver) {
+	Evaluator::Evaluator(memory::ActivationPtr activation, solver::SolverPtr solver) {
 		display_ = memory::Display::Create();
 		solver_ = solver;
 		activation_ = activation;

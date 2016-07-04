@@ -4,7 +4,7 @@
 #include "../src/instanceof.hpp"
 #include "../src/singleton.hpp"
 #include "../src/evaluator.hpp"
-#include "../src/activation-record.hpp"
+#include "../src/activation.hpp"
 #include "../src/expr.hpp"
 #include "../src/solver.hpp"
 #include "ir-function-builder.hpp"
@@ -29,7 +29,7 @@ using namespace utils;
 
 class SymEvalTest : public ::testing::Test {
 public:
-	void RetChecker(ActivationRecordPtr activation, const MetaInt& expected) {
+	void RetChecker(ActivationPtr activation, const MetaInt& expected) {
 		HolderPtr actual_holder = activation->GetRet();
 		HolderPtr expected_holder = Concrete::Create(expected);
 		ASSERT_EQ(*expected_holder, *actual_holder);
@@ -47,7 +47,7 @@ memory::HolderPtr DefineSymVar(solver::SolverPtr solver, solver::BitVec value) {
 	return a_holder;
 }
 
-void CheckSymRet(solver::SolverPtr solver, memory::ActivationRecordPtr act, MetaInt exp) {
+void CheckSymRet(solver::SolverPtr solver, memory::ActivationPtr act, MetaInt exp) {
 	ASSERT_TRUE(solver->CheckSat());
 	auto val = solver->GetValue(act->GetRet());
 	auto meta_int = memory::GetValue(val);
@@ -64,7 +64,7 @@ void PrintSymVar(const llvm::Value* a_addr, memory::HolderPtr a_holder) {
 /// (ret = 2)
 TEST_F (SymEvalTest, assign) {
 	int expected = -28;
-	auto act = ActivationRecord::Create();
+	auto act = Activation::Create();
 	auto solver = solver::Solver::Create();
 	interpreter::Evaluator eval(act, solver);
 	llvm::Module m("the module", llvm::getGlobalContext());
@@ -87,7 +87,7 @@ TEST_F (SymEvalTest, assign) {
 /// ret := a + 2
 /// (ret = 4)
 TEST_F (SymEvalTest, mixed_addition) {
-	auto act = ActivationRecord::Create();
+	auto act = Activation::Create();
 	auto solver = solver::Solver::Create();
 	interpreter::Evaluator eval(act, solver);
 	llvm::Module m("the module", llvm::getGlobalContext());
@@ -108,7 +108,7 @@ TEST_F (SymEvalTest, mixed_addition) {
 }
 
 TEST_F(SymEvalTest, mksym) {
-	auto act = ActivationRecord::Create();
+	auto act = Activation::Create();
 	auto solver = solver::Solver::Create();
 	interpreter::Evaluator eval(act, solver);
 	llvm::Module mod("mksym_test", llvm::getGlobalContext());

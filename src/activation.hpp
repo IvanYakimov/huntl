@@ -1,5 +1,5 @@
-#ifndef __ACTIVATION_RECORD_HPP__
-#define __ACTIVATION_RECORD_HPP__
+#ifndef __ACTIVATION_HPP__
+#define __ACTIVATION_HPP__
 
 #include "llvm/IR/Instruction.h"
 
@@ -12,15 +12,15 @@
 #include "holder.hpp"
 
 namespace memory {
-	class ActivationRecord;
-	using ActivationRecordPtr = std::shared_ptr<ActivationRecord>;
-	class ActivationRecord {
+	class Activation;
+	using ActivationPtr = std::shared_ptr<Activation>;
+	class Activation {
 	public:
 		using Address = const llvm::Value*;
-		NONCOPYABLE(ActivationRecord);
-		ActivationRecord();
-		~ActivationRecord();
-		static ActivationRecordPtr Create();
+		NONCOPYABLE(Activation);
+		Activation();
+		~Activation();
+		static ActivationPtr Create();
 		memory::HolderPtr GetArg(Address address);
 		void SetArg(Address, memory::HolderPtr value);
 		memory::HolderPtr GetRet();
