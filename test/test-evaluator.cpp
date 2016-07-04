@@ -46,7 +46,7 @@ TEST_F (EvaluatorTest, basic) {
 		auto ret = f.Ret(load_x);
 	}
 	outs() << *f.Get() << "\n";
-	eval.visit(f.Get());
+	eval.Do(f.Get(), act);
 	RetChecker(act, MetaInt(32,2));
 }
 
@@ -68,7 +68,7 @@ TEST_F (EvaluatorTest, binop) {
 			auto ret = f.Ret(load_res);
 		}
 	outs() << *f.Get() << "\n";
-	eval.visit(f.Get());
+	eval.Do(f.Get(), act);
 	RetChecker(act, MetaInt(32, 7));
 }
 
@@ -95,7 +95,7 @@ TEST_F(EvaluatorTest, funcPwith_args) {
 		auto ret = f.Ret(load_x);
 	}
 	outs() << *f.Get() << "\n";
-	eval.visit(f.Get());
+	eval.Do(f.Get(), act);
 	RetChecker(act, MetaInt(32,2));
 }
 
@@ -103,7 +103,7 @@ TEST_F(EvaluatorTest, func) {
 	auto act = ActivationRecord::Create();
 	interpreter::Evaluator eval(act);
 	llvm::Module m("the module", llvm::getGlobalContext());
-	auto raw_func = MkIntFunc(&m, act, "f", {std::make_tuple(32, "a", memory::Concrete::Create(MetaInt(32,2)))}, 32);
+	auto raw_func = MkIntFunc(&m, act, "func", {std::make_tuple(32, "a", memory::Concrete::Create(MetaInt(32,2)))}, 32);
 	auto a = raw_func->arg_begin();
 	Func f(raw_func); {
 		auto x = f.Alloca32("x");
@@ -112,7 +112,7 @@ TEST_F(EvaluatorTest, func) {
 		auto ret = f.Ret(load_x);
 	}
 	outs() << *f.Get() << "\n";
-	eval.visit(f.Get());
+	eval.Do(&m);
 	RetChecker(act, MetaInt(32,2));
 }
 

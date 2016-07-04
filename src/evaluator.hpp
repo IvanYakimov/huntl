@@ -20,6 +20,10 @@ namespace interpreter {
 	public:
 		Evaluator(memory::ActivationRecordPtr activation, solver::SolverPtr solver = nullptr);
 		~Evaluator();
+
+		void Do(llvm::Module *m);
+		void Do(llvm::Function *func, memory::ActivationRecordPtr activation);
+
 	private:
 		MetaEvaluatorPtr meta_eval_;
 		memory::DisplayPtr display_;

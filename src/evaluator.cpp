@@ -77,6 +77,26 @@ namespace interpreter {
 
 	}
 
+
+	void Evaluator::Do(llvm::Module *m) {
+		errs() << "$$$$$$$$$$$$$$$$$$$$$$$$$$$\nvisit module:\n";
+		errs() << "funcs in module: \n";
+		for (auto f_it = m->begin(); f_it != m->end(); f_it++) {
+			errs() << f_it->getName() << "\n";
+		}
+		visit (m);
+	}
+
+	void Evaluator::Do(llvm::Function *f, memory::ActivationRecordPtr activation) {
+		if (f->getName() == "mk_sym_val") {
+			assert (f->arg_size() == 1);
+			auto val = activation->GetArg(f->arg_begin());
+		}
+		else {
+			visit (f);
+		}
+	}
+
 	auto Evaluator::ProduceHolder(const llvm::ConstantInt* allocated) {
 		// Get 'allocated' value
 		llvm::IntegerType* ty = allocated->getType();

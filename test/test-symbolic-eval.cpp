@@ -107,6 +107,10 @@ TEST_F (SymEvalTest, mixed_addition) {
 	CheckSymRet(solver, act, MetaInt(32, 4));
 }
 
+TEST_F(SymEvalTest, mk_sym) {
+
+}
+
 
 
 

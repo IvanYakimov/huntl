@@ -22,7 +22,7 @@ namespace interpreter {
 			if (type->isPointerTy())
 				errs() << "ptr";
 		}
-		errs() << "\n";
+		errs() << "s\n";
 	# endif
 	}
 

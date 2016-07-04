@@ -14,11 +14,12 @@
 
 namespace
 {
-  struct VoyagerPass : public llvm::FunctionPass
+  struct VoyagerPass : public llvm::ModulePass
   {
     static char ID;
-    VoyagerPass() : FunctionPass (ID) {}
-    bool runOnFunction (llvm::Function &F) override;
+    VoyagerPass() : ModulePass (ID) {}
+    //bool runOnFunction(llvm::Function &F) override;
+    bool runOnModule(llvm::Module &M) override;
   };
 }
 

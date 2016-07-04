@@ -20,6 +20,7 @@ namespace interpreter {
 	class Kernel {
 	public:
 		void Do(llvm::Function &func);
+		void Do(llvm::Module &mod);
 	};
 }
 

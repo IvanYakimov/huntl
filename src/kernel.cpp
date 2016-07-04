@@ -9,8 +9,15 @@ namespace interpreter {
 	# endif
 	}
 
+	void Kernel::Do(llvm::Module &mod) {
+		errs() << "module pass\n";
+		for (auto f = mod.begin(); f != mod.end(); f++)
+			errs() << f->getName() << "\n";
+	}
+
 	/** Run interpreter on function */
 	void Kernel::Do(llvm::Function &func) {
+		errs() << "function pass\n";
 		DebugFunctionInfo(func);
 		errs() << func.getName() << "\n";
 		errs() << "arg size: " << func.arg_size() << "\n";
