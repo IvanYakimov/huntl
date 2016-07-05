@@ -66,11 +66,9 @@ namespace interpreter {
 		}
 	};
 
-	Evaluator::Evaluator(memory::ActivationPtr activation, solver::SolverPtr solver) {
-		display_ = memory::LocalMemory::Create();
-		solver_ = solver;
-		activation_ = activation;
-		meta_eval_ = interpreter::MetaEvaluator::Create(display_, solver_);
+	Evaluator::Evaluator(interpreter::ContextRef context) :
+			context_(context),
+			meta_eval_(context) {
 	}
 
 	Evaluator::~Evaluator() {
@@ -119,9 +117,8 @@ namespace interpreter {
 		llvm::outs() << "------------------------------------\n";
 		llvm::outs() << "{\n";
 		llvm::outs() << inst << "\n";
-		display_->Print();
-		if (solver_)
-			solver_->Print();
+		context_.Top()->Print();
+		context_.Solver().Print();
 		llvm::outs() << "}\n";
 	}
 
@@ -129,9 +126,9 @@ namespace interpreter {
 	void Evaluator::HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst) {
 		// Load holder from '&inst'
 		// Store it to 'ret_inst'
-		auto holder = display_->Load(ret_inst);
-		meta_eval_->Assign(&inst, holder);
-		activation_->SetRet(holder);
+		auto holder = context_.Top()->Load(ret_inst);
+		meta_eval_.Assign(&inst, holder);
+		context_.Top()->SetRet(holder);
 		Trace(inst);
 	}
 
@@ -159,22 +156,22 @@ namespace interpreter {
 	// BinOp
 	void Evaluator::HandleBinOp (const llvm::Instruction &inst, const llvm::ConstantInt *left, const llvm::Value *right) {
 		auto left_holder = ProduceHolder(left);
-		auto right_holder = display_->Load(right);
-		meta_eval_->BinOp(&inst, left_holder, right_holder);
+		auto right_holder = context_.Top()->Load(right);
+		meta_eval_.BinOp(&inst, left_holder, right_holder);
 		Trace(inst);
 	}
 
 	void Evaluator::HandleBinOp (const llvm::Instruction &inst, const llvm::Value *left, const llvm::ConstantInt *right) {
-		auto left_holder = display_->Load(left);
+		auto left_holder = context_.Top()->Load(left);
 		auto right_holder = ProduceHolder(right);
-		meta_eval_->BinOp(&inst, left_holder, right_holder);
+		meta_eval_.BinOp(&inst, left_holder, right_holder);
 		Trace(inst);
 	}
 
 	void Evaluator::HandleBinOp (const llvm::Instruction &inst, const llvm::Value *left, const llvm::Value *right) {
-		auto left_holder = display_->Load(left);
-		auto right_holder = display_->Load(right);
-		meta_eval_->BinOp(&inst, left_holder, right_holder);
+		auto left_holder = context_.Top()->Load(left);
+		auto right_holder = context_.Top()->Load(right);
+		meta_eval_.BinOp(&inst, left_holder, right_holder);
 		Trace(inst);
 	}
 
@@ -199,7 +196,7 @@ namespace interpreter {
 		auto holder = ProduceHolder(allocated);
 		//auto display = utils::GetInstance<memory::Display>();
 		// Alloca to 'inst'
-		display_->Alloca(&inst, holder);
+		context_.Top()->Alloca(&inst, holder);
 		Trace(inst);
 	}
 
@@ -208,27 +205,27 @@ namespace interpreter {
 		// (assert (= v e))
 		// Load object form 'ptr'
 		// Store (associate) object to '&inst'
-		auto holder = display_->Load(instruction);
-		meta_eval_->Assign(&inst, holder);
+		auto holder = context_.Top()->Load(instruction);
+		meta_eval_.Assign(&inst, holder);
 		Trace(inst);
 	}
 
 	// Store
 	void Evaluator::HandleStoreInst (const llvm::Instruction &inst, const llvm::ConstantInt *constant_int, const llvm::Value *ptr) {
 		auto holder = ProduceHolder(constant_int);
-		meta_eval_->Assign(ptr, holder);
+		meta_eval_.Assign(ptr, holder);
 		Trace(inst);
 	}
 
 	void Evaluator::HandleStoreInst (const llvm::Instruction &inst, const llvm::Instruction *instruction, const llvm::Value *ptr) {
-		auto holder = display_->Load(instruction);
-		meta_eval_->Assign(ptr, holder);
+		auto holder = context_.Top()->Load(instruction);
+		meta_eval_.Assign(ptr, holder);
 		Trace(inst);
 	}
 
 	void Evaluator::HandleStoreInst (const llvm::Instruction &inst, const llvm::Argument *arg, const llvm::Value *ptr) {
-		auto holder = activation_->GetArg(arg);
-		meta_eval_->Assign(ptr, holder);
+		auto holder = context_.Top()->GetArg(arg);
+		meta_eval_.Assign(ptr, holder);
 		Trace(inst);
 	}
 

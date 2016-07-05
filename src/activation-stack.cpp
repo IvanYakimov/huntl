@@ -1,17 +1,23 @@
 #include "activation-stack.hpp"
 
 namespace memory {
-	void ActivationStack::operator++() {
-		auto activation = memory::Activation::Create();
+	ActivationStack::ActivationStack() {
+	}
+
+	ActivationStack::~ActivationStack() {
+		assert(stack_.size() == 0);
+	}
+
+	void ActivationStack::Push(memory::ActivationPtr activation) {
 		stack_.push(activation);
 	}
 
-	void ActivationStack::operator--() {
+	void ActivationStack::Pop() {
 		assert (stack_.size() > 0);
 		stack_.pop();
 	}
 
-	memory::ActivationPtr ActivationStack::activation() {
+	memory::ActivationPtr ActivationStack::top() {
 		assert (stack_.size() > 0);
 		return stack_.top();
 	}

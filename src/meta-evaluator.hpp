@@ -17,6 +17,7 @@
 #include "expr.hpp"
 #include "local-memory.hpp"
 #include "meta-int.hpp"
+#include "context.hpp"
 //#include "path-constraint.hpp"
 
 namespace interpreter {
@@ -24,14 +25,13 @@ namespace interpreter {
 	using MetaEvaluatorPtr = std::shared_ptr<MetaEvaluator>;
 	class MetaEvaluator {
 	public:
-		MetaEvaluator(memory::LocalMemoryPtr display, solver::SolverPtr solver = nullptr);
+		MetaEvaluator(interpreter::ContextRef context);
 		~MetaEvaluator();
 		void BinOp (const llvm::Instruction* inst, memory::HolderPtr left, memory::HolderPtr right);
 		void Assign (const llvm::Value *destination, memory::HolderPtr target);
-		static MetaEvaluatorPtr Create(memory::LocalMemoryPtr display, solver::SolverPtr solver = nullptr);
+		static MetaEvaluatorPtr Create(interpreter::ContextRef context);
 	private:
-		memory::LocalMemoryPtr display_;
-		solver::SolverPtr solver_;
+		interpreter::ContextRef context_;
 		solver::SharedExpr Concrete_To_Symbolic(interpreter::MetaInt concrete_val);
 		solver::Kind ExtractKindFromInst(const llvm::Instruction* inst);
 		MetaInt PerformConcreteBinOp(const llvm::Instruction* inst, MetaInt left_val, MetaInt right_val);

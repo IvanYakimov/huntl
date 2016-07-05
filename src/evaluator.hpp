@@ -13,23 +13,22 @@
 #include "meta-evaluator.hpp"
 #include "meta-int.hpp"
 #include "solver.hpp"
+#include "context.hpp"
 
 //TODO: use -I option to perform headers search instead of ../ (?)
 
 namespace interpreter {
 	class Evaluator final : public Matcher {
 	public:
-		Evaluator(memory::ActivationPtr activation, solver::SolverPtr solver = nullptr);
+		Evaluator(interpreter::ContextRef context);
 		~Evaluator();
 
 		void Do(llvm::Module *m);
 		void Do(llvm::Function *func);
 
 	private:
-		MetaEvaluatorPtr meta_eval_;
-		memory::LocalMemoryPtr display_;
-		memory::ActivationPtr activation_;
-		solver::SolverPtr solver_;
+		MetaEvaluator meta_eval_;
+		interpreter::ContextRef context_;
 		auto ProduceHolder(const llvm::ConstantInt* constant_int);
 		void Trace(const llvm::Instruction& inst);
 	private:

@@ -9,16 +9,17 @@
 #include <map>
 #include <cassert>
 #include "creatable.hpp"
+#include "memory-map-interface.hpp"
 
 namespace memory {
 	class LocalMemory;
 	using LocalMemoryPtr = std::shared_ptr<LocalMemory>;
-	class LocalMemory {
+	class LocalMemory : public memory::MemoryMapInterface {
 	public:
 		NONCOPYABLE(LocalMemory);
 		LocalMemory();
 		~LocalMemory();
-		using Address = const llvm::Value*;
+		//using Address = const llvm::Value*;
 		void Alloca(Address address, HolderPtr initial);
 		HolderPtr Load(Address address);
 		void Store(Address address, HolderPtr holder);

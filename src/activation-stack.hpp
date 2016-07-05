@@ -8,9 +8,11 @@
 namespace memory {
 	class ActivationStack {
 	public:
-		void operator++();
-		void operator--();
-		memory::ActivationPtr activation();
+		ActivationStack();
+		~ActivationStack();
+		void Push(memory::ActivationPtr activation);
+		void Pop();
+		memory::ActivationPtr top();
 	private:
 		std::stack<memory::ActivationPtr> stack_;
 	};

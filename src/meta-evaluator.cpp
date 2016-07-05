@@ -7,20 +7,19 @@ namespace interpreter {
 	using memory::IsConcrete;
 	using memory::IsSymbolic;
 
-	MetaEvaluator::MetaEvaluator(memory::LocalMemoryPtr display, solver::SolverPtr solver) :
-			display_(display), solver_(solver) {
+	MetaEvaluator::MetaEvaluator(interpreter::ContextRef context) : context_(context) {
 	}
 
 	MetaEvaluator::~MetaEvaluator() {
 	}
 
-	MetaEvaluatorPtr MetaEvaluator::Create(memory::LocalMemoryPtr display, solver::SolverPtr solver) {
-		return utils::Create<MetaEvaluator>(display, solver);
+	MetaEvaluatorPtr MetaEvaluator::Create(interpreter::ContextRef context) {
+		return utils::Create<MetaEvaluator>(context);
 	}
 
 	solver::SharedExpr MetaEvaluator::Concrete_To_Symbolic(interpreter::MetaInt concrete_val) {
 		auto bv_val = interpreter::MetaInt_To_BitVec(concrete_val);
-		auto c_sym = solver_->ExprManager().mkConst(bv_val);
+		auto c_sym = context_.Solver().MkConst(bv_val);
 		return c_sym;
 	}
 
@@ -57,7 +56,7 @@ namespace interpreter {
 	void MetaEvaluator::BinOp (const llvm::Instruction* inst, memory::HolderPtr left, memory::HolderPtr right) {
 		auto process_sym_binop = [&] (const llvm::Instruction* inst, solver::SharedExpr a, solver::SharedExpr b) {
 			auto kind = ExtractKindFromInst(inst);
-			auto constraint = solver_->ExprManager().mkExpr(kind, a, b);
+			auto constraint = context_.Solver().MkExpr(kind, a, b);
 			auto constraint_holder = memory::Symbolic::Create(constraint);
 			Assign(inst, constraint_holder);
 		};
@@ -67,7 +66,7 @@ namespace interpreter {
 			auto right_val = Object::UpCast<Concrete>(right)->Get();
 			auto result = PerformConcreteBinOp(inst, left_val, right_val);
 			auto result_holder = Concrete::Create(result);
-			display_->Store(inst, result_holder);
+			context_.Top()->Store(inst, result_holder);
 		}
 		else if (IsConcrete(left) and IsSymbolic(right)) {
 			auto left_sym = Concrete_To_Symbolic(memory::GetValue(left));
@@ -90,19 +89,17 @@ namespace interpreter {
 
 	void MetaEvaluator::Assign (const llvm::Value *destination, memory::HolderPtr target) {
 		if (memory::IsConcrete(target)) {
-			display_->Store(destination, target);
+			context_.Top()->Store(destination, target);
 		}
 		else if (memory::IsSymbolic(target)) {
-			//TODO: refactoring:
-			assert (solver_ != nullptr);
 			auto e = memory::GetExpr(target);
 			auto e_type = e.getType();
-			auto v = solver_->ExprManager().mkVar(e_type);
+			auto v = context_.Solver().MkVar(e_type);
 			auto v_holder = memory::Symbolic::Create(v);
-			auto v_eq_e = solver_->ExprManager().mkExpr(solver::Kind::EQUAL, v, e);
+			auto v_eq_e = context_.Solver().MkExpr(solver::Kind::EQUAL, v, e);
 			auto v_eq_e_holder = memory::Symbolic::Create(v_eq_e);
-			solver_->Constraint(v_eq_e_holder);
-			display_->Store(destination, v_holder);
+			context_.Solver().Constraint(v_eq_e_holder);
+			context_.Top()->Store(destination, v_holder);
 		}
 		else
 			assert (false and "unexpected behavior");

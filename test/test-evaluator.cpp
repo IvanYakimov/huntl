@@ -22,6 +22,7 @@
 // std
 #include <functional>
 #include "../src/local-memory.hpp"
+#include "../src/context.hpp"
 
 using namespace memory;
 using namespace interpreter;
@@ -29,30 +30,37 @@ using namespace utils;
 
 class EvaluatorTest : public ::testing::Test {
 public:
-	void RetChecker(ActivationPtr activation, const MetaInt& expected) {
+	void RetChecker(ContextRef c, const MetaInt& expected) {
+		auto activation = c.Top();
 		HolderPtr actual_holder = activation->GetRet();
 		HolderPtr expected_holder = Concrete::Create(expected);
 		ASSERT_EQ(*expected_holder, *actual_holder);
 	}
+
+	void Eval(llvm::Function* f, MetaInt expected) {
+		outs() << *f << "\n";
+		interpreter::Context context;
+		interpreter::Evaluator eval(context);
+		ArgMap noargs;
+		auto activation = memory::Activation::Create(noargs);
+		context.Push(activation);
+		eval.visit(f);
+		RetChecker(context, expected);
+		context.Pop();
+	}
 };
 
 TEST_F (EvaluatorTest, basic) {
-	auto act = Activation::Create();
-	interpreter::Evaluator eval(act);
 	Int32Func f; {
 		auto x = f.Alloca32("x");
 		auto store_x = f.Store(f.I32(2), x);
 		auto load_x = f.Load(x);
 		auto ret = f.Ret(load_x);
 	}
-	outs() << *f.Get() << "\n";
-	eval.visit(f.Get());
-	RetChecker(act, MetaInt(32,2));
+	Eval(f.Get(), MetaInt(32,2));
 }
 
 TEST_F (EvaluatorTest, binop) {
-	auto act = Activation::Create();
-	interpreter::Evaluator eval(act);
 	Int32Func f; {
 			auto x = f.Alloca32("x");
 			auto y = f.Alloca32("y");
@@ -67,54 +75,25 @@ TEST_F (EvaluatorTest, binop) {
 			auto load_res = f.Load(res);
 			auto ret = f.Ret(load_res);
 		}
-	outs() << *f.Get() << "\n";
-	eval.visit(f.Get());
-	RetChecker(act, MetaInt(32, 7));
+	Eval(f.Get(), MetaInt(32,7));
 }
 
-TEST_F(EvaluatorTest, funcPwith_args) {
-	auto act = Activation::Create();
-	interpreter::Evaluator eval(act);
-	llvm::Module m("the module", llvm::getGlobalContext());
-	std::vector<Type*>f_args;
-	f_args.push_back(IntegerType::get(m.getContext(), 8));
-	llvm::FunctionType* f_type = llvm::FunctionType::get(
-			IntegerType::get(m.getContext(), 32),
-			f_args,
-			false
-			);
-	auto raw_func = llvm::Function::Create(f_type, Function::InternalLinkage, "func", &m);
-	llvm::Function::arg_iterator args = raw_func->arg_begin();
-	llvm::Value* a = args++;
-	a->setName("a");
-	act->SetArg(a, Concrete::Create(MetaInt(32, 2)));
-	Func f(raw_func); {
-		auto x = f.Alloca32("x");
-		auto store_x = f.Store(a, x);
-		auto load_x = f.Load(x);
-		auto ret = f.Ret(load_x);
-	}
-	outs() << *f.Get() << "\n";
-	eval.visit(f.Get());
-	RetChecker(act, MetaInt(32,2));
-}
-
+/*
 TEST_F(EvaluatorTest, func) {
-	auto act = Activation::Create();
-	interpreter::Evaluator eval(act);
 	llvm::Module m("the module", llvm::getGlobalContext());
-	auto raw_func = MkIntFunc(&m, act, "func", {std::make_tuple(32, "a", memory::Concrete::Create(MetaInt(32,2)))}, 32);
+	memory::ArgMap arg_map;
+	auto raw_func = MkIntFunc(&m, context, "func", {std::make_tuple(32, "a")}, 32);
 	auto a = raw_func->arg_begin();
+	arg_map.emplace(a, memory::Concrete::Create(interpreter::MetaInt(32, 2)));
 	Func f(raw_func); {
 		auto x = f.Alloca32("x");
 		auto store_x = f.Store(a, x);
 		auto load_x = f.Load(x);
 		auto ret = f.Ret(load_x);
 	}
-	outs() << *f.Get() << "\n";
-	eval.visit(f.Get());
-	RetChecker(act, MetaInt(32,2));
+	Eval(f.Get(), MetaInt(32,2), arg_map);
 }
+*/
 
 #endif
 

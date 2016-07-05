@@ -141,7 +141,7 @@ llvm::Function* MkSymI32(llvm::Module* module) {
 	return raw_func;
 }
 
-llvm::Function* MkIntFunc(llvm::Module* module, memory::ActivationPtr act, const char* name, std::vector<std::tuple<unsigned, const char*, memory::HolderPtr>> int_args, unsigned ret_size) {
+llvm::Function* MkIntFunc(llvm::Module* module, interpreter::ContextRef context, const char* name, std::vector<std::tuple<unsigned, const char*>> int_args, unsigned ret_size) {
 	std::vector<Type*> f_args;
 	for (auto i = int_args.begin(); i != int_args.end(); i++) {
 		unsigned width = std::get<0>(*i);
@@ -155,13 +155,7 @@ llvm::Function* MkIntFunc(llvm::Module* module, memory::ActivationPtr act, const
 			);
 
 	auto raw_func = llvm::Function::Create(f_type, Function::InternalLinkage, name, module);
-	int index = 0;
-	for (auto args_it = raw_func->arg_begin(); args_it != raw_func->arg_end(); args_it++) {
-		llvm::Value* arg = args_it;
-		arg->setName(std::get<1>(int_args[index]));
-		act->SetArg(arg, std::get<2>(int_args[index]));
-		index++;
-	}
+
 	return raw_func;
 }
 

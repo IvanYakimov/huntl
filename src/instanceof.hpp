@@ -1,6 +1,8 @@
 #ifndef __INSTANCE_OF_HPP__
 #define __INSTANCE_OF_HPP__
 
+#include <memory>
+
 namespace utils {
 	/** Check whether its param is instance of T.
 	 * It is something like Java instanceof keyword.

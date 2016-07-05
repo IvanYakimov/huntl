@@ -4,14 +4,17 @@
 namespace memory {
 	class MemoryMapInterface;
 	using MemoryMapPtr = std::shared_ptr<MemoryMapInterface>;
+	using MemoryMapRef = MemoryMapInterface&;
+	using Address = const llvm::Value*;
 	/// Display stub. This is rather a local memory than a display.
 	class MemoryMapInterface{
 	public:
-		NONCOPYABLE(MemoryMapInterface);
+		//NONCOPYABLE(MemoryMapInterface);
 		virtual ~MemoryMapInterface() {}
-		using Address = const llvm::Value*;
+
 		virtual HolderPtr Load(Address address) = 0;
 		virtual void Store(Address address, HolderPtr holder) = 0;
+		virtual void Print() = 0;
 	};
 }
 

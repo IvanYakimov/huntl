@@ -53,6 +53,22 @@ namespace solver {
 		}
 		std::cout << " true \n";
 	}
+
+	Type Solver::MkBitVectorType(unsigned size) {
+		return expr_manager_.mkBitVectorType(size);
+	}
+
+	SharedExpr Solver::MkConst(BitVec val) {
+		return expr_manager_.mkConst(val);
+	}
+
+	SharedExpr Solver::MkVar(Type type) {
+		return expr_manager_.mkVar(type);
+	}
+
+	SharedExpr Solver::MkExpr(Kind kind, SharedExpr left, SharedExpr right) {
+		return expr_manager_.mkExpr(kind, left, right);
+	}
 }
 
 

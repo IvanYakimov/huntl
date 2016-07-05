@@ -1,4 +1,4 @@
-#include "test-localmemory.hpp"
+#include "test-local-memory.hpp"
 
 using namespace memory;
 using namespace utils;
@@ -17,8 +17,8 @@ TEST_F (DisplayTest, basic) {
 		LocalMemory d;
 		auto holder = Concrete::Create(interpreter::MetaInt(32, 42));
 		d.Alloca(x, holder);
-		auto l_undef = d.Load(x);
-		ASSERT_TRUE(instanceof<Concrete>(l_undef));
+		auto c = d.Load(x);
+		ASSERT_TRUE(instanceof<Concrete>(c));
 	}
 }
 
