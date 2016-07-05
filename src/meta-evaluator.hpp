@@ -23,21 +23,17 @@
 //#include "path-constraint.hpp"
 
 namespace interpreter {
-	class MetaEvaluator;
-	using MetaEvaluatorPtr = std::shared_ptr<MetaEvaluator>;
 	class MetaEvaluator {
 	public:
 		MetaEvaluator(interpreter::ContextRef context);
 		~MetaEvaluator();
 		void BinOp (const llvm::Instruction* inst, memory::HolderPtr left, memory::HolderPtr right);
 		void Assign (const llvm::Value *destination, memory::HolderPtr target);
-		static MetaEvaluatorPtr Create(interpreter::ContextRef context);
 	private:
 		interpreter::ContextRef context_;
 		ConcreteEval concrete_eval_;
 		SymbolicEval symbolic_eval_;
-		solver::SharedExpr Concrete_To_Symbolic(interpreter::MetaInt concrete_val);
-		solver::Kind ExtractKindFromInst(const llvm::Instruction* inst);
+		solver::SharedExpr Symbolize(interpreter::MetaIntRef concrete_val);
 	};
 }
 
