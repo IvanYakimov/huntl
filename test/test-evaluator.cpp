@@ -37,12 +37,11 @@ public:
 		ASSERT_EQ(*expected_holder, *actual_holder);
 	}
 
-	void Eval(llvm::Function* f, MetaInt expected) {
+	void Eval(llvm::Function* f, MetaInt expected, memory::ArgMapPtr args = utils::Create<memory::ArgMap>()) {
 		outs() << *f << "\n";
 		interpreter::Context context;
 		interpreter::Evaluator eval(context);
-		ArgMap noargs;
-		auto activation = memory::Activation::Create(noargs);
+		auto activation = memory::Activation::Create(args);
 		context.Push(activation);
 		eval.visit(f);
 		RetChecker(context, expected);
@@ -78,13 +77,12 @@ TEST_F (EvaluatorTest, binop) {
 	Eval(f.Get(), MetaInt(32,7));
 }
 
-/*
-TEST_F(EvaluatorTest, func) {
+TEST_F(EvaluatorTest, func_with_args) {
 	llvm::Module m("the module", llvm::getGlobalContext());
-	memory::ArgMap arg_map;
-	auto raw_func = MkIntFunc(&m, context, "func", {std::make_tuple(32, "a")}, 32);
+	memory::ArgMapPtr arg_map = utils::Create<memory::ArgMap>();
+	auto raw_func = MkIntFunc(&m, "func", {std::make_tuple(32, "a")}, 32);
 	auto a = raw_func->arg_begin();
-	arg_map.emplace(a, memory::Concrete::Create(interpreter::MetaInt(32, 2)));
+	arg_map->emplace(a, memory::Concrete::Create(interpreter::MetaInt(32, 2)));
 	Func f(raw_func); {
 		auto x = f.Alloca32("x");
 		auto store_x = f.Store(a, x);
@@ -93,7 +91,6 @@ TEST_F(EvaluatorTest, func) {
 	}
 	Eval(f.Get(), MetaInt(32,2), arg_map);
 }
-*/
 
 #endif
 

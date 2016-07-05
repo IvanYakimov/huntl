@@ -141,7 +141,7 @@ llvm::Function* MkSymI32(llvm::Module* module) {
 	return raw_func;
 }
 
-llvm::Function* MkIntFunc(llvm::Module* module, interpreter::ContextRef context, const char* name, std::vector<std::tuple<unsigned, const char*>> int_args, unsigned ret_size) {
+llvm::Function* MkIntFunc(llvm::Module* module, const char* name, std::vector<std::tuple<unsigned, const char*>> int_args, unsigned ret_size) {
 	std::vector<Type*> f_args;
 	for (auto i = int_args.begin(); i != int_args.end(); i++) {
 		unsigned width = std::get<0>(*i);

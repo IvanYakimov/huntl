@@ -70,7 +70,7 @@ struct IntArg {
 
 llvm::Function* MkSymI32(llvm::Module* module);
 
-llvm::Function* MkIntFunc(llvm::Module* module, interpreter::ContextRef act, const char* name, std::vector<std::tuple<unsigned, const char*>> int_args, unsigned ret_size);
+llvm::Function* MkIntFunc(llvm::Module* module, const char* name, std::vector<std::tuple<unsigned, const char*>> int_args, unsigned ret_size);
 
 class Int32Func : public Func {
 public:

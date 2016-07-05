@@ -3,7 +3,10 @@
 namespace memory {
 	using memory::HolderPtr;
 
-	Activation::Activation(ArgMap arg_map) : arg_map_(arg_map), ret_(nullptr), local_memory_() {
+	Activation::Activation(ArgMapPtr arg_map) {
+		assert (arg_map != nullptr);
+		arg_map_ = arg_map;
+		ret_ = nullptr;
 		local_memory_ = memory::LocalMemory::Create();
 	}
 
@@ -11,7 +14,7 @@ namespace memory {
 
 	}
 
-	ActivationPtr Activation::Create(ArgMap arg_map) {
+	ActivationPtr Activation::Create(ArgMapPtr arg_map) {
 		return utils::Create<Activation>(arg_map);
 	}
 
@@ -27,15 +30,15 @@ namespace memory {
 
 	memory::HolderPtr Activation::GetArg(Address address) {
 		assert (llvm::isa<llvm::Argument>(address));
-		auto res = arg_map_.find(address);
-		assert (res != arg_map_.end());
+		auto res = arg_map_->find(address);
+		assert (res != arg_map_->end());
 		return res->second;
 	}
 
 	void Activation::SetArg(Address address, memory::HolderPtr value) {
 		assert (llvm::isa<llvm::Argument>(address));
-		assert (arg_map_.find(address) == arg_map_.end());
-		arg_map_.emplace(address, value);
+		assert (arg_map_->find(address) == arg_map_->end());
+		arg_map_->emplace(address, value);
 	}
 
 	void Activation::Alloca(Address address, HolderPtr initial) {

@@ -18,13 +18,13 @@ namespace memory {
 	using ActivationPtr = std::shared_ptr<Activation>;
 	//TODO: customize :(
 	using ArgMap = std::map<Address, memory::HolderPtr>;
-	//using ArgMapPtr = std::shared_ptr<ArgMap>;
+	using ArgMapPtr = std::shared_ptr<ArgMap>;
 	class Activation {
 	public:
 		NONCOPYABLE(Activation);
-		Activation(ArgMap arg_map);
+		Activation(ArgMapPtr arg_map);
 		~Activation();
-		static ActivationPtr Create(ArgMap arg_map);
+		static ActivationPtr Create(ArgMapPtr arg_map);
 		memory::HolderPtr GetArg(Address address);
 		void SetArg(Address, memory::HolderPtr value);
 		memory::HolderPtr GetRet();
@@ -36,7 +36,7 @@ namespace memory {
 		memory::LocalMemoryPtr GetLocalMemoryPtr();
 	private:
 		memory::LocalMemoryPtr local_memory_;
-		ArgMap arg_map_;
+		ArgMapPtr arg_map_;
 		memory::HolderPtr ret_;
 	};
 }
