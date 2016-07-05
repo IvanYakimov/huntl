@@ -9,6 +9,7 @@
 
 namespace interpreter {
 	using MetaInt = llvm::APInt;
+	using MetaIntRef = const MetaInt&;
 
 	bool MetaInt_compare_(const MetaInt& lhs, const MetaInt& rhs);
 	std::ostream& MetaInt_print_(std::ostream &os, const MetaInt& obj);

@@ -18,6 +18,8 @@
 #include "local-memory.hpp"
 #include "meta-int.hpp"
 #include "context.hpp"
+#include "concrete-eval.hpp"
+#include "symbolic-eval.hpp"
 //#include "path-constraint.hpp"
 
 namespace interpreter {
@@ -32,9 +34,10 @@ namespace interpreter {
 		static MetaEvaluatorPtr Create(interpreter::ContextRef context);
 	private:
 		interpreter::ContextRef context_;
+		ConcreteEval concrete_eval_;
+		SymbolicEval symbolic_eval_;
 		solver::SharedExpr Concrete_To_Symbolic(interpreter::MetaInt concrete_val);
 		solver::Kind ExtractKindFromInst(const llvm::Instruction* inst);
-		MetaInt PerformConcreteBinOp(const llvm::Instruction* inst, MetaInt left_val, MetaInt right_val);
 	};
 }
 

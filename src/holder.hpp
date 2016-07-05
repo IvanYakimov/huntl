@@ -15,6 +15,9 @@ namespace memory {
 	using Concrete = utils::Wrapper<Holder, interpreter::MetaInt, interpreter::MetaInt_print_, interpreter::MetaInt_compare_>;
 	using Symbolic = utils::Wrapper<Holder, solver::SharedExpr>;
 
+	using ConcretePtr = std::shared_ptr<Concrete>;
+	using SymbolicPtr = std::shared_ptr<Symbolic>;
+
 	bool IsSymbolic(HolderPtr holder);
 	bool IsConcrete(HolderPtr holder);
 
@@ -25,8 +28,8 @@ namespace memory {
 		virtual ~Holder(){}
 	};
 
-	solver::SharedExpr GetExpr(memory::HolderPtr holder);
-	interpreter::MetaInt GetValue(memory::HolderPtr holder);
+	const solver::SharedExpr& GetExpr(memory::HolderPtr holder);
+	const interpreter::MetaInt& GetValue(memory::HolderPtr holder);
 }
 
 #endif

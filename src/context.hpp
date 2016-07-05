@@ -9,7 +9,7 @@
 namespace interpreter {
 	struct Context;
 
-	using ContextPtr = std::shared_ptr<Context>;
+	//using ContextPtr = std::shared_ptr<Context>;
 	using ContextRef = Context&;
 
 	class Context {

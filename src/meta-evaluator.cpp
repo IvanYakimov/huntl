@@ -7,7 +7,10 @@ namespace interpreter {
 	using memory::IsConcrete;
 	using memory::IsSymbolic;
 
-	MetaEvaluator::MetaEvaluator(interpreter::ContextRef context) : context_(context) {
+	MetaEvaluator::MetaEvaluator(interpreter::ContextRef context) :
+			context_(context),
+			concrete_eval_(context),
+			symbolic_eval_(context){
 	}
 
 	MetaEvaluator::~MetaEvaluator() {
@@ -39,20 +42,6 @@ namespace interpreter {
 		assert (false and "not implemented");
 	}
 
-	MetaInt MetaEvaluator::PerformConcreteBinOp(const llvm::Instruction* inst, MetaInt left_val, MetaInt right_val) {
-		switch (inst->getOpcode()) {
-		case llvm::Instruction::Add:
-			return left_val.operator +(right_val);
-		case llvm::Instruction::Sub:
-			return left_val.operator -(right_val);
-		case llvm::Instruction::And:
-			return left_val.And(right_val);
-		case llvm::Instruction::LShr:
-			return left_val.lshr(right_val);
-		}
-		assert (false && "not implemented");
-	}
-
 	void MetaEvaluator::BinOp (const llvm::Instruction* inst, memory::HolderPtr left, memory::HolderPtr right) {
 		auto process_sym_binop = [&] (const llvm::Instruction* inst, solver::SharedExpr a, solver::SharedExpr b) {
 			auto kind = ExtractKindFromInst(inst);
@@ -64,9 +53,7 @@ namespace interpreter {
 		if (IsConcrete(left) and IsConcrete(right)) {
 			auto left_val = Object::UpCast<Concrete>(left)->Get();
 			auto right_val = Object::UpCast<Concrete>(right)->Get();
-			auto result = PerformConcreteBinOp(inst, left_val, right_val);
-			auto result_holder = Concrete::Create(result);
-			context_.Top()->Store(inst, result_holder);
+			concrete_eval_.BinOp(inst, left_val, right_val);
 		}
 		else if (IsConcrete(left) and IsSymbolic(right)) {
 			auto left_sym = Concrete_To_Symbolic(memory::GetValue(left));
@@ -89,7 +76,7 @@ namespace interpreter {
 
 	void MetaEvaluator::Assign (const llvm::Value *destination, memory::HolderPtr target) {
 		if (memory::IsConcrete(target)) {
-			context_.Top()->Store(destination, target);
+			concrete_eval_.Assign(destination, memory::GetValue(target));
 		}
 		else if (memory::IsSymbolic(target)) {
 			auto e = memory::GetExpr(target);
