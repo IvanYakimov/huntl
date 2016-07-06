@@ -142,7 +142,7 @@ namespace interpreter {
 	}
 
 	void Matcher::visitCallInst(const llvm::CallInst &inst) {
-
+		HandleCallInst(inst);
 	}
 
 	//--------------------

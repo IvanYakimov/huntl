@@ -229,7 +229,11 @@ namespace interpreter {
 	}
 
 	void Evaluator::HandleCallInst(const llvm::CallInst &inst) {
-
+		auto called = inst.getCalledFunction();
+		auto atts = inst.getAttributes();
+		assert (called != nullptr and "indirect function invocation");
+		outs() << "call: \n";
+		outs() << *called << "\n";
 	}
 }
 

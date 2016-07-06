@@ -46,6 +46,7 @@ public:
 	BranchInst* IfThanElse(Value* cond, BasicBlock* iftrue, BasicBlock* iffalse);
 	BranchInst* Jump(BasicBlock* dest);
 	Value* Add(Value* lhs, Value* rhs);
+	CallInst* Call(Value* f, Value *arg);
 	//TODO: Make variadic
 	PHINode* Phi(Type* ty);
 	Value* ZExt(Value* val, Type* ty);

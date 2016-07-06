@@ -4,9 +4,10 @@ LLVM_PASS = voyager-pass.o
 
 INTERPRETER = kernel.o matcher.o evaluator.o meta-evaluator.o meta-int.o context.o concrete-eval.o symbolic-eval.o
  
-#INTERPRETER_TEST = expr-test.o test-holder.o test-evaluator.o test-symbolic-eval.o test-regex.o \
+INTERPRETER_TEST = expr-test.o test-holder.o test-evaluator.o test-symbolic-eval.o test-regex.o \
+$(SOLVER) $(MEMORY) $(LLVM_TEST_HELPERS) $(TEST_RUNNER)
 
-INTERPRETER_TEST = test-regex.o \
+#INTERPRETER_TEST = test-regex.o \
 $(SOLVER) $(MEMORY) $(LLVM_TEST_HELPERS) $(TEST_RUNNER) 
 # matcher-stub.o test-matcher.o 
 

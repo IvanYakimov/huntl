@@ -128,6 +128,17 @@ Value* Func::Add(Value* lhs, Value* rhs) {
 	return builder_.CreateAdd(lhs, rhs);
 }
 
+void SetupCCall(llvm::CallInst* call) {
+	call->setCallingConv(CallingConv::C);
+	call->setTailCall(false);
+}
+
+CallInst* Func::Call(Value* f, Value* arg) {
+	auto call = builder_.CreateCall(f, arg);
+	SetupCCall(call);
+	return call;
+}
+
 //TODO: Make variadic
 PHINode* Func::Phi(Type* ty) {
 	return builder_.CreatePHI(ty, 0);
