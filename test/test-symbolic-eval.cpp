@@ -93,18 +93,18 @@ TEST_F (SymEvalTest, assign) {
 	Eval(context, f.Get(), arg_map, MetaInt(32, expected));
 }
 
-/*
+
 /// a = 2
 /// ret := a + 2
 /// (ret = 4)
 TEST_F (SymEvalTest, mixed_addition) {
-	auto act = Activation::Create();
-	auto solver = solver::Solver::Create();
-	interpreter::Evaluator eval(act, solver);
+	Context context;
+	auto arg_map = utils::Create<ArgMap>();
 	llvm::Module m("the module", llvm::getGlobalContext());
-	auto a_holder = DefineSymVar(solver, solver::BitVec(32, solver::InfiniteInt(2)));
-	auto raw_func = MkIntFunc(&m, act, "g", {std::make_tuple(32, "a", a_holder)}, 32);
+	auto a_holder = DefineSymVar(context, solver::BitVec(32, solver::InfiniteInt(2)));
+	auto raw_func = MkIntFunc(&m, "g", {std::make_tuple(32, "a")}, 32);
 	auto a_addr = raw_func->arg_begin();
+	arg_map->emplace(a_addr, a_holder);
 	PrintSymVar(a_addr, a_holder);
 	Func f(raw_func); {
 		auto t1 = f.Alloca32("t1");
@@ -113,20 +113,8 @@ TEST_F (SymEvalTest, mixed_addition) {
 		auto t3 = f.Add(t2, f.I32(2));
 		auto ret = f.Ret(t3);
 	}
-	outs() << *f.Get() << "\n";
-	eval.visit(f.Get());
-	CheckSymRet(solver, act, MetaInt(32, 4));
+	Eval(context, f.Get(), arg_map, MetaInt(32, 4));
 }
-
-TEST_F(SymEvalTest, mksym) {
-	auto act = Activation::Create();
-	auto solver = solver::Solver::Create();
-	interpreter::Evaluator eval(act, solver);
-	llvm::Module mod("mksym_test", llvm::getGlobalContext());
-	MkSymI32(&mod);
-}
-*/
-
 
 
 
