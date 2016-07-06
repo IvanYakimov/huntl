@@ -75,7 +75,6 @@ namespace interpreter {
 
 	}
 
-
 	void Evaluator::Do(llvm::Module *m) {
 		errs() << "$$$$$$$$$$$$$$$$$$$$$$$$$$$\nvisit module:\n";
 		errs() << "funcs in module: \n";
