@@ -234,6 +234,7 @@ namespace interpreter {
 		assert (called != nullptr and "indirect function invocation");
 		outs() << "call: \n";
 		outs() << *called << "\n";
+		assert (false and "stop");
 	}
 }
 
