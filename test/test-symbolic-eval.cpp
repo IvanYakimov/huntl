@@ -30,13 +30,13 @@ using namespace utils;
 
 class SymEvalTest : public ::testing::Test {
 public:
-	void RetChecker(ActivationPtr activation, const MetaInt& expected) {
+	void RetChecker(ActivationPtr activation, interpreter::MetaIntRef expected) {
 		HolderPtr actual_holder = activation->GetRet();
 		HolderPtr expected_holder = Concrete::Create(expected);
 		ASSERT_EQ(*expected_holder, *actual_holder);
 	}
 
-	void CheckSymRet(interpreter::ContextRef context, MetaInt exp) {
+	void CheckSymRet(interpreter::ContextRef context, MetaIntRef exp) {
 		ASSERT_TRUE(context.Solver().CheckSat());
 		auto val = context.Solver().GetValue(context.Top()->GetRet());
 		auto meta_int = memory::GetValue(val);
@@ -58,6 +58,16 @@ public:
 		llvm::errs() << *a_addr << " --> ";
 		std::cout << *a_holder << "\n";
 	}
+
+	void Eval(ContextRef context, llvm::Function *function, ArgMapPtr arg_map, MetaIntRef exp_mint) {
+		outs() << *function << "\n";
+		interpreter::Evaluator eval(context);
+		auto activation = memory::Activation::Create(arg_map);
+		context.Push(activation);
+		eval.visit(function);
+		CheckSymRet(context, exp_mint);
+		context.Pop();
+	}
 };
 
 /// a = 2
@@ -66,7 +76,6 @@ public:
 TEST_F (SymEvalTest, assign) {
 	int expected = -28;
 	interpreter::Context context;
-	interpreter::Evaluator eval(context);
 	memory::ArgMapPtr arg_map = utils::Create<memory::ArgMap>();
 	llvm::Module m("the module", llvm::getGlobalContext());
 	auto a_holder = DefineSymVar(context, solver::BitVec(32, solver::InfiniteInt(expected)));
@@ -80,12 +89,8 @@ TEST_F (SymEvalTest, assign) {
 		auto load_x = f.Load(x);
 		auto ret = f.Ret(load_x);
 	}
-	outs() << *f.Get() << "\n";
-	auto activation = memory::Activation::Create(arg_map);
-	context.Push(activation);
-	eval.visit(f.Get());
-	CheckSymRet(context, MetaInt(32, expected));
-	context.Pop();
+
+	Eval(context, f.Get(), arg_map, MetaInt(32, expected));
 }
 
 /*
