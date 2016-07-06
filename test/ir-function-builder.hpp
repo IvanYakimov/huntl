@@ -26,8 +26,14 @@ public:
 	BasicBlock* Entry();
 	BasicBlock* Block(const char* name);
 	void Enter(BasicBlock* block);
+	AllocaInst* Alloca8(const char *name);
+	AllocaInst* Alloca16(const char *name);
 	AllocaInst* Alloca32(const char *name);
+	AllocaInst* Alloca64(const char *name);
+	ConstantInt* I8(uint8_t val);
+	ConstantInt* I16(uint16_t val);
 	ConstantInt* I32(uint32_t val);
+	ConstantInt* I64(uint64_t val);
 	ConstantInt* I1(bool val);
 	ConstantInt* True();
 	ConstantInt* False();

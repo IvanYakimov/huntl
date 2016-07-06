@@ -33,6 +33,17 @@ void Func::Enter(BasicBlock* block) {
 	builder_.SetInsertPoint(block);
 }
 
+AllocaInst* Func::Alloca8(const char *name) {
+	AllocaInst* res = builder_.CreateAlloca(Type::getInt8Ty(context_), 0, name);
+	res->setAlignment(1);
+	return res;
+}
+
+AllocaInst* Func::Alloca16(const char *name) {
+	AllocaInst* res = builder_.CreateAlloca(Type::getInt16Ty(context_), 0, name);
+	res->setAlignment(2);
+	return res;
+}
 
 AllocaInst* Func::Alloca32(const char *name) {
 	AllocaInst* res = builder_.CreateAlloca(Type::getInt32Ty(context_), 0, name);
@@ -40,8 +51,26 @@ AllocaInst* Func::Alloca32(const char *name) {
 	return res;
 }
 
+AllocaInst* Func::Alloca64(const char *name) {
+	AllocaInst* res = builder_.CreateAlloca(Type::getInt64Ty(context_), 0, name);
+	res->setAlignment(8);
+	return res;
+}
+
+ConstantInt* Func::I8(uint8_t val) {
+	return ConstantInt::get(context_, APInt(8, val, true));
+}
+
+ConstantInt* Func::I16(uint16_t val) {
+	return ConstantInt::get(context_, APInt(16, val, true));
+}
+
 ConstantInt* Func::I32(uint32_t val) {
 	return ConstantInt::get(context_, APInt(32, val, true));
+}
+
+ConstantInt* Func::I64(uint64_t val) {
+	return ConstantInt::get(context_, APInt(64, val, true));
 }
 
 ConstantInt* Func::I1(bool val) {

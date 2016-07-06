@@ -80,16 +80,16 @@ TEST_F (EvaluatorTest, binop) {
 TEST_F(EvaluatorTest, func_with_args) {
 	llvm::Module m("the module", llvm::getGlobalContext());
 	memory::ArgMapPtr arg_map = utils::Create<memory::ArgMap>();
-	auto raw_func = MkIntFunc(&m, "func", {std::make_tuple(32, "a")}, 32);
+	auto raw_func = MkIntFunc(&m, "func", {std::make_tuple(16, "a")}, 16);
 	auto a = raw_func->arg_begin();
-	arg_map->emplace(a, memory::Concrete::Create(interpreter::MetaInt(32, 2)));
+	arg_map->emplace(a, memory::Concrete::Create(interpreter::MetaInt(16, 2)));
 	Func f(raw_func); {
-		auto x = f.Alloca32("x");
+		auto x = f.Alloca16("x");
 		auto store_x = f.Store(a, x);
 		auto load_x = f.Load(x);
 		auto ret = f.Ret(load_x);
 	}
-	Eval(f.Get(), MetaInt(32,2), arg_map);
+	Eval(f.Get(), MetaInt(16,2), arg_map);
 }
 
 #endif

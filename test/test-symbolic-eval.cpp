@@ -78,19 +78,19 @@ TEST_F (SymEvalTest, assign) {
 	interpreter::Context context;
 	memory::ArgMapPtr arg_map = utils::Create<memory::ArgMap>();
 	llvm::Module m("the module", llvm::getGlobalContext());
-	auto a_holder = DefineSymVar(context, solver::BitVec(32, solver::InfiniteInt(expected)));
-	auto raw_func = MkIntFunc(&m, "f", {std::make_tuple(32, "a")}, 32);
+	auto a_holder = DefineSymVar(context, solver::BitVec(16, solver::InfiniteInt(expected)));
+	auto raw_func = MkIntFunc(&m, "f", {std::make_tuple(16, "a")}, 16);
 	auto a_addr = raw_func->arg_begin();
 	arg_map->emplace(a_addr, a_holder);
 	PrintSymVar(a_addr, a_holder);
 	Func f(raw_func); {
-		auto x = f.Alloca32("x");
+		auto x = f.Alloca16("x");
 		auto store_x = f.Store(a_addr, x);
 		auto load_x = f.Load(x);
 		auto ret = f.Ret(load_x);
 	}
 
-	Eval(context, f.Get(), arg_map, MetaInt(32, expected));
+	Eval(context, f.Get(), arg_map, MetaInt(16, expected));
 }
 
 
@@ -101,19 +101,19 @@ TEST_F (SymEvalTest, mixed_addition) {
 	Context context;
 	auto arg_map = utils::Create<ArgMap>();
 	llvm::Module m("the module", llvm::getGlobalContext());
-	auto a_holder = DefineSymVar(context, solver::BitVec(32, solver::InfiniteInt(2)));
-	auto raw_func = MkIntFunc(&m, "g", {std::make_tuple(32, "a")}, 32);
+	auto a_holder = DefineSymVar(context, solver::BitVec(16, solver::InfiniteInt(2)));
+	auto raw_func = MkIntFunc(&m, "g", {std::make_tuple(16, "a")}, 16);
 	auto a_addr = raw_func->arg_begin();
 	arg_map->emplace(a_addr, a_holder);
 	PrintSymVar(a_addr, a_holder);
 	Func f(raw_func); {
-		auto t1 = f.Alloca32("t1");
+		auto t1 = f.Alloca16("t1");
 		f.Store(a_addr, t1);
 		auto t2 = f.Load(t1);
-		auto t3 = f.Add(t2, f.I32(2));
+		auto t3 = f.Add(t2, f.I16(2));
 		auto ret = f.Ret(t3);
 	}
-	Eval(context, f.Get(), arg_map, MetaInt(32, 4));
+	Eval(context, f.Get(), arg_map, MetaInt(16, 4));
 }
 
 
