@@ -5,10 +5,10 @@
 #include "expr.hpp"
 #include <list>
 #include <vector>
-#include "holder.hpp"
+//#include "holder.hpp"
 
 namespace solver {
-	using PathConstraint = std::vector<memory::HolderPtr>;
+	using PathConstraint = std::vector<solver::SharedExpr>;
 	using PathConstraintPtr = std::shared_ptr<PathConstraint>;
 }
 

@@ -15,8 +15,8 @@ namespace memory {
 	TEST_F(HolderTest, instanceof) {
 		using utils::instanceof;
 		using interpreter::MetaInt;
-		auto bv32 = solver.ExprManager().mkBitVectorType(32);
-		auto x = solver.ExprManager().mkVar("x", bv32);
+		auto bv32 = solver.MkBitVectorType(32);
+		auto x = solver.MkVar(bv32);
 		auto x_h = Symbolic::Create(x);
 		auto x_h2 = Symbolic::Create(x);
 		auto i32_h1 = Concrete::Create(MetaInt(32, 42));
@@ -30,7 +30,7 @@ namespace memory {
 
 		// Showing
 		ASSERT_EQ(utils::to_string(*i32_h1), "42");
-		ASSERT_EQ(utils::to_string(*x_h), "x");
+		ASSERT_EQ(utils::to_string(*x_h), "var_161");
 
 		// Type Checking
 		ASSERT_TRUE(instanceof<Holder>(x_h));

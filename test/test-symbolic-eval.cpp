@@ -38,8 +38,10 @@ public:
 
 	void CheckSymRet(interpreter::ContextRef context, MetaIntRef exp) {
 		ASSERT_TRUE(context.Solver().CheckSat());
-		auto val = context.Solver().GetValue(context.Top()->GetRet());
-		auto meta_int = memory::GetValue(val);
+		auto ret_holder = context.Top()->GetRet();
+		ASSERT_TRUE(memory::IsSymbolic(ret_holder));
+		auto ret_expr = memory::GetExpr(ret_holder);
+		auto meta_int = context.Solver().GetValue(ret_expr);
 		ASSERT_EQ(meta_int, exp);
 	}
 
@@ -48,8 +50,7 @@ public:
 		auto a = context.Solver().MkVar(context.Solver().MkBitVectorType(width));
 		auto c = context.Solver().MkConst(value);
 		auto a_eq_c = context.Solver().MkExpr(solver::Kind::EQUAL, a, c);
-		auto a_eq_c_holder = memory::Symbolic::Create(a_eq_c);
-		context.Solver().Constraint(a_eq_c_holder);
+		context.Solver().Constraint(a_eq_c);
 		auto a_holder = memory::Symbolic::Create(a);
 		return a_holder;
 	}
