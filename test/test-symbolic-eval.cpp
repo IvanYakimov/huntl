@@ -7,6 +7,7 @@
 #include "../src/expr.hpp"
 #include "../src/solver.hpp"
 #include "ir-function-builder.hpp"
+#include "../src/context.hpp"
 
 // gtest
 #include "gtest/gtest.h"
@@ -34,43 +35,44 @@ public:
 		HolderPtr expected_holder = Concrete::Create(expected);
 		ASSERT_EQ(*expected_holder, *actual_holder);
 	}
+
+	void CheckSymRet(interpreter::ContextRef context, MetaInt exp) {
+		ASSERT_TRUE(context.Solver().CheckSat());
+		auto val = context.Solver().GetValue(context.Top()->GetRet());
+		auto meta_int = memory::GetValue(val);
+		ASSERT_EQ(meta_int, exp);
+	}
+
+	memory::HolderPtr DefineSymVar(interpreter::ContextRef context, solver::BitVec value) {
+		auto width = value.getSize();
+		auto a = context.Solver().MkVar(context.Solver().MkBitVectorType(width));
+		auto c = context.Solver().MkConst(value);
+		auto a_eq_c = context.Solver().MkExpr(solver::Kind::EQUAL, a, c);
+		auto a_eq_c_holder = memory::Symbolic::Create(a_eq_c);
+		context.Solver().Constraint(a_eq_c_holder);
+		auto a_holder = memory::Symbolic::Create(a);
+		return a_holder;
+	}
+
+	void PrintSymVar(const llvm::Value* a_addr, memory::HolderPtr a_holder) {
+		llvm::errs() << *a_addr << " --> ";
+		std::cout << *a_holder << "\n";
+	}
 };
-
-memory::HolderPtr DefineSymVar(solver::SolverPtr solver, solver::BitVec value) {
-	auto width = value.getSize();
-	auto a = solver->ExprManager().mkVar(solver->ExprManager().mkBitVectorType(width));
-	auto c = solver->ExprManager().mkConst(value);
-	auto a_eq_c = solver->ExprManager().mkExpr(solver::Kind::EQUAL, a, c);
-	auto a_eq_c_holder = memory::Symbolic::Create(a_eq_c);
-	solver->Constraint(a_eq_c_holder);
-	auto a_holder = memory::Symbolic::Create(a);
-	return a_holder;
-}
-
-void CheckSymRet(solver::SolverPtr solver, memory::ActivationPtr act, MetaInt exp) {
-	ASSERT_TRUE(solver->CheckSat());
-	auto val = solver->GetValue(act->GetRet());
-	auto meta_int = memory::GetValue(val);
-	ASSERT_EQ(meta_int, exp);
-}
-
-void PrintSymVar(const llvm::Value* a_addr, memory::HolderPtr a_holder) {
-	llvm::errs() << *a_addr << " --> ";
-	std::cout << *a_holder << "\n";
-}
 
 /// a = 2
 /// ret := a
 /// (ret = 2)
 TEST_F (SymEvalTest, assign) {
 	int expected = -28;
-	auto act = Activation::Create();
-	auto solver = solver::Solver::Create();
-	interpreter::Evaluator eval(act, solver);
+	interpreter::Context context;
+	interpreter::Evaluator eval(context);
+	memory::ArgMapPtr arg_map = utils::Create<memory::ArgMap>();
 	llvm::Module m("the module", llvm::getGlobalContext());
-	auto a_holder = DefineSymVar(solver, solver::BitVec(32, solver::InfiniteInt(expected)));
-	auto raw_func = MkIntFunc(&m, act, "f", {std::make_tuple(32, "a", a_holder)}, 32);
+	auto a_holder = DefineSymVar(context, solver::BitVec(32, solver::InfiniteInt(expected)));
+	auto raw_func = MkIntFunc(&m, "f", {std::make_tuple(32, "a")}, 32);
 	auto a_addr = raw_func->arg_begin();
+	arg_map->emplace(a_addr, a_holder);
 	PrintSymVar(a_addr, a_holder);
 	Func f(raw_func); {
 		auto x = f.Alloca32("x");
@@ -79,10 +81,14 @@ TEST_F (SymEvalTest, assign) {
 		auto ret = f.Ret(load_x);
 	}
 	outs() << *f.Get() << "\n";
+	auto activation = memory::Activation::Create(arg_map);
+	context.Push(activation);
 	eval.visit(f.Get());
-	CheckSymRet(solver, act, MetaInt(32, expected));
+	CheckSymRet(context, MetaInt(32, expected));
+	context.Pop();
 }
 
+/*
 /// a = 2
 /// ret := a + 2
 /// (ret = 4)
@@ -114,7 +120,7 @@ TEST_F(SymEvalTest, mksym) {
 	llvm::Module mod("mksym_test", llvm::getGlobalContext());
 	MkSymI32(&mod);
 }
-
+*/
 
 
 
