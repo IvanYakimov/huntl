@@ -98,20 +98,24 @@ int inc(int x) {
 	return x + 1;
 }
 
-int f(int y) {
+int f() {
+	int y = 12;
 	return inc(y);
 }
+
+// res == 13
  */
 TEST_F(EvaluatorTest, func_call) {
 	llvm::Module m("func_call", llvm::getGlobalContext());
 	memory::ArgMapPtr caller_args = utils::Create<memory::ArgMap>();
-	auto caller = MkIntFunc(&m, "caller", {std::make_tuple(16, "y")}, 16);
+	auto caller = MkIntFunc(&m, "caller", {}, 16);
+			//MkIntFunc(&m, "caller", {std::make_tuple(16, "y")}, 16);
 	auto inc = MkIntFunc(&m, "inc", {std::make_tuple(16, "x")}, 16);
 
 	auto x = inc->arg_begin();
 	Func g (inc); {
 		auto t1 = g.Alloca16("t1");
-		auto store_x = g.Store(x, t1);
+		g.Store(x, t1);
 		auto t2 = g.Load(t1);
 		auto t3 = g.Add(t2, g.I16(1));
 		g.Ret(t3);
@@ -122,7 +126,7 @@ TEST_F(EvaluatorTest, func_call) {
 
 	Func f(caller); {
 		auto t1 = f.Alloca16("t1");
-		auto store_y = f.Store(y, t1);
+		f.Store(f.I16(12), t1);
 		auto t2 = f.Load(t1);
 		auto t3 = f.Call(inc, t2);
 		f.Ret(t3);

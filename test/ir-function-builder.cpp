@@ -188,8 +188,14 @@ llvm::Function* MkIntFunc(llvm::Module* module, const char* name, std::vector<st
 		f_args.push_back(IntegerType::get(module->getContext(), width));
 	}
 
+	llvm::Type* ret_ty = nullptr;
+	if (ret_size == 0)
+		ret_ty = llvm::Type::getVoidTy(module->getContext());
+	else
+		ret_ty = IntegerType::get(module->getContext(), ret_size);
+
 	llvm::FunctionType* f_type = llvm::FunctionType::get(
-			IntegerType::get(module->getContext(), ret_size),
+			ret_ty /*IntegerType::get(module->getContext(), ret_size)*/,
 			f_args,
 			false
 			);

@@ -230,10 +230,27 @@ namespace interpreter {
 
 	void Evaluator::HandleCallInst(const llvm::CallInst &inst) {
 		auto called = inst.getCalledFunction();
-		auto atts = inst.getAttributes();
 		assert (called != nullptr and "indirect function invocation");
-		outs() << "call: \n";
+		outs() << "--called: \n";
 		outs() << *called << "\n";
+		// problem with auto, try:
+		// auto args = called->getArgumentList();
+		std::cout << inst.getNumArgOperands();
+		for (auto i = 0; i != inst.getNumArgOperands(); i++) {
+			outs() << *inst.getArgOperand(i) << " --> ";
+			std::cout << " " << *context_.Top()->Load(inst.getArgOperand(i)) << "\n";
+		}
+		/*
+		const llvm::iplist<llvm::Argument> &args = called->getArgumentList();
+
+		outs() << "---with args: \n";
+		for (auto i = args.begin(); i != args.end(); i++) {
+			outs() << *i << "\n";
+			auto val = context_.Top()->Load(i);
+			std::cout << "-->" << *val << "\n";
+		}
+		*/
+
 		assert (false and "stop");
 	}
 }
