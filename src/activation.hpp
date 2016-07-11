@@ -45,7 +45,7 @@ namespace memory {
 	private:
 		memory::LocalMemoryPtr local_memory_;
 		//ArgMapPtr arg_map_;
-		memory::HolderPtr ret_;
+		//memory::HolderPtr ret_;
 	};
 }
 

@@ -30,11 +30,9 @@ using namespace utils;
 
 class EvaluatorTest : public ::testing::Test {
 public:
-	void RetChecker(ContextRef c, const MetaInt& expected) {
-		auto activation = c.Top();
-		HolderPtr actual_holder = activation->RetVal.Get();
+	void RetChecker(memory::HolderPtr ret, const MetaInt& expected) {
 		HolderPtr expected_holder = Concrete::Create(expected);
-		ASSERT_EQ(*expected_holder, *actual_holder);
+		ASSERT_EQ(*ret, *expected_holder);
 	}
 
 	void Eval(llvm::Function* f, MetaInt expected, memory::ArgMapPtr args = utils::Create<memory::ArgMap>()) {
@@ -42,11 +40,7 @@ public:
 		outs() << *f << "\n";
 		interpreter::Context context;
 		interpreter::Evaluator eval(context);
-		auto activation = memory::Activation::Create(args);
-		context.Push(activation);
-		eval.visit(f);
-		RetChecker(context, expected);
-		context.Pop();
+		auto ret = eval.Do(f, args);
 	}
 };
 
@@ -94,14 +88,16 @@ TEST_F(EvaluatorTest, func_with_args) {
 }
 
 /**
+
+int caller() {
+	int y = 12;
+	return inc(y);
+}
 int inc(int x) {
 	return x + 1;
 }
 
-int f() {
-	int y = 12;
-	return inc(y);
-}
+
 
 // res == 13
  */
@@ -120,9 +116,6 @@ TEST_F(EvaluatorTest, func_call) {
 		auto t3 = g.Add(t2, g.I16(1));
 		g.Ret(t3);
 	}
-
-	auto y = caller->arg_begin();
-	caller_args->emplace(y, memory::Concrete::Create(interpreter::MetaInt(16, 12)));
 
 	Func f(caller); {
 		auto t1 = f.Alloca16("t1");

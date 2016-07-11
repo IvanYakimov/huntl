@@ -24,7 +24,7 @@ namespace interpreter {
 		~Evaluator();
 
 		void Do(llvm::Module *m);
-		void Do(llvm::Function *func);
+		memory::HolderPtr Do(llvm::Function *func, memory::ArgMapPtr args);
 
 	private:
 		MetaEvaluator meta_eval_;

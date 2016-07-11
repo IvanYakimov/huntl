@@ -5,6 +5,10 @@
 using namespace llvm;
 
 namespace interpreter {
+	using utils::Create;
+	using memory::ArgMap;
+	using memory::HolderPtr;
+
 	class Printer {
 	//template<class... Args>
 	//std::string PrintType(const llvm::Value *val, Args... args);
@@ -84,23 +88,22 @@ namespace interpreter {
 		visit (m);
 	}
 
-	void Evaluator::Do(llvm::Function *f) {
-		const std::string mksym_ = "mksym_";
-		const std::string test_ = "test_";
-		std::string name = f->getName().str();
-		if (name.substr(mksym_.length()) == mksym_) {
-			if (name == "mksym_i32") {
-				assert (false and "make symbolic call");
-			}
-			else
-				assert (false and "not implemented");
-		}
-		else if (name.substr(test_.length()) == test_) {
-
-		}
-		else {
+	memory::HolderPtr Evaluator::Do(llvm::Function *f, memory::ArgMapPtr args) {
+		memory::HolderPtr ret_val = nullptr;
+		// push and initiate
+		context_.Push(); {
+			for_each(args->begin(), args->end(), [&](auto pair){
+				auto addr = pair.first;
+				auto hldr = pair.second;
+				// assign
+				meta_eval_.Assign(addr, hldr);
+			});
 			visit (f);
+
+			ret_val = context_.Top()->RetVal.Get();
 		}
+		context_.Pop(); // pop
+		return ret_val;
 	}
 
 	auto Evaluator::ProduceHolder(const llvm::ConstantInt* allocated) {
@@ -224,6 +227,7 @@ namespace interpreter {
 
 	void Evaluator::HandleStoreInst (const llvm::Instruction &inst, const llvm::Argument *arg, const llvm::Value *ptr) {
 		//auto holder = context_.Top()->GetArg(arg);
+		llvm::errs() << "###########store inst: " << *arg << "\n";
 		auto holder = context_.Top()->Load(arg);
 		meta_eval_.Assign(ptr, holder);
 		Trace(inst);
@@ -233,15 +237,29 @@ namespace interpreter {
 		//TODO: meta_eval_.Assign(...) for all operand values
 		auto called = inst.getCalledFunction();
 		assert (called != nullptr and "indirect function invocation");
-		outs() << "--called: \n";
+		outs() << "\n$$$$$$$$$$$$$$$\ncalled: \n";
 		outs() << *called << "\n";
-		// problem with auto, try:
-		// auto args = called->getArgumentList();
-		std::cout << inst.getNumArgOperands();
+		outs() << "with args:\n";
+		memory::ArgMapPtr argmap = utils::Create<ArgMap>();
+		auto args = called->arg_begin();
+		//std::cout << inst.getNumArgOperands();
 		for (auto i = 0; i != inst.getNumArgOperands(); i++) {
+			auto address = inst.getArgOperand(i);
+			auto holder = context_.Top()->Load(address);
+			argmap->emplace(args, holder);
 			outs() << *inst.getArgOperand(i) << " --> ";
 			std::cout << " " << *context_.Top()->Load(inst.getArgOperand(i)) << "\n";
+			args++;
 		}
+
+		outs() << "\n$$$$$$$$$$$$$$$\ncall starg\n";
+		memory::HolderPtr ret_holder = Do(called, argmap);
+		assert (ret_holder != nullptr);
+
+		outs() << "\n$$$$$$$$$$$$$$$\ncall end\nretrun value:\n";
+		std::cout << "ret val: "<< *ret_holder << std::endl;
+		outs() << "\n$$$$$$$$$$$$$$$\ndone\n";
+		meta_eval_.Assign(&inst, ret_holder);
 
 		/*
 		const llvm::iplist<llvm::Argument> &args = called->getArgumentList();
@@ -254,7 +272,7 @@ namespace interpreter {
 		}
 		*/
 
-		assert (false and "stop");
+
 	}
 }
 

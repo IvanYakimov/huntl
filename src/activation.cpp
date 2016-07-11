@@ -3,8 +3,7 @@
 namespace memory {
 	using memory::HolderPtr;
 
-	Activation::Activation() {
-		ret_ = nullptr;
+	Activation::Activation() : RetVal() {
 		local_memory_ = memory::LocalMemory::Create();
 	}
 
@@ -68,7 +67,7 @@ namespace memory {
 	}
 
 	void Activation::Store(Address address, HolderPtr holder) {
-		assert (not llvm::isa<llvm::Argument>(address) and "unexpected behavior");
+		//assert (not llvm::isa<llvm::Argument>(address) and "unexpected behavior");
 		local_memory_->Store(address, holder);
 	}
 

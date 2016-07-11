@@ -16,9 +16,16 @@ namespace interpreter {
 		return activation_stack.top();
 	}
 
+	void Context::Push() {
+		auto new_activation = memory::Activation::Create();
+		activation_stack.Push(new_activation);
+	}
+
+	/*
 	void Context::Push(memory::ActivationPtr activation) {
 		activation_stack.Push(activation);
 	}
+	*/
 
 	void Context::Pop() {
 		activation_stack.Pop();

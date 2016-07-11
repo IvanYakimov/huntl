@@ -18,7 +18,8 @@ namespace interpreter {
 		~Context();
 		NONCOPYABLE(Context);
 		solver::SolverRef Solver();
-		void Push(memory::ActivationPtr activation);
+		//void Push(memory::ActivationPtr activation);
+		void Push();
 		void Pop();
 		memory::ActivationPtr Top();
 	private:
