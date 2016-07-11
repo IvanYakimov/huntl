@@ -133,6 +133,12 @@ void SetupCCall(llvm::CallInst* call) {
 	call->setTailCall(false);
 }
 
+CallInst* Func::Call(Value* f) {
+	auto call = builder_.CreateCall(f);
+	SetupCCall(call);
+	return call;
+}
+
 CallInst* Func::Call(Value* f, Value* arg) {
 	auto call = builder_.CreateCall(f, arg);
 	SetupCCall(call);

@@ -79,30 +79,64 @@ namespace interpreter {
 
 	}
 
+	Evaluator::MkSym::MkSym(ContextRef context, unsigned size) : context_(context), size_(size) {}
+	memory::HolderPtr Evaluator::MkSym::operator()(llvm::Function* f, memory::ArgMapPtr args) {
+		//assert (args->empty() == true);
+		return memory::Symbolic::Create(context_.Solver().MkVar(context_.Solver().MkBitVectorType(size_)));
+	}
+
 	void Evaluator::Do(llvm::Module *m) {
-		errs() << "$$$$$$$$$$$$$$$$$$$$$$$$$$$\nvisit module:\n";
+		errs() << "------------------------\nvisit module:\n";
 		errs() << "funcs in module: \n";
 		for (auto f_it = m->begin(); f_it != m->end(); f_it++) {
-			errs() << f_it->getName() << "\n";
+			std::string name = f_it->getName().str();
+			std::cout << name << std::endl;
+			/* check for mksym_uiN */ {
+				std::regex mksym_regex("mksym_");
+				std::smatch mksym_matches;
+				auto matched_mksym = std::regex_search(name, mksym_matches, mksym_regex);
+				if (matched_mksym == 1) {
+					std::string suffix = mksym_matches.suffix();
+					std::regex iuN_regex("[[:digit:]]+");
+					std::smatch iuN_match;
+					auto matched_iuN = std::regex_search(suffix, iuN_match, iuN_regex);
+					if (matched_iuN == 1) {
+						std::string subtype = iuN_match.prefix();
+						std::string bitwidth_str = *iuN_match.begin();
+						int bitwidth_val = std::stoi(bitwidth_str);
+						builtins_.emplace(f_it, MkSym(context_, bitwidth_val));
+					}
+				}
+			}
 		}
-		visit (m);
+		//Do()
+		//visit (m);
 	}
 
 	memory::HolderPtr Evaluator::Do(llvm::Function *f, memory::ArgMapPtr args) {
 		memory::HolderPtr ret_val = nullptr;
-		// push
-		context_.Push(); {
-			for_each(args->begin(), args->end(), [&](auto pair){
-				auto addr = pair.first;
-				auto hldr = pair.second;
-				// assign
-				meta_eval_.Assign(addr, hldr);
-			});
-			visit (f);
-
-			ret_val = context_.Top()->RetVal.Get();
+		auto is_builtin = builtins_.find(f);
+		if (is_builtin != builtins_.end()) {
+			context_.Push(); {
+			ret_val = is_builtin->second(f, args);
+			}
+			context_.Pop();
 		}
-		context_.Pop(); // pop
+		else {
+			// push
+			context_.Push(); {
+				for_each(args->begin(), args->end(), [&](auto pair){
+					auto addr = pair.first;
+					auto hldr = pair.second;
+					// assign
+					meta_eval_.Assign(addr, hldr);
+				});
+				visit (f);
+
+				ret_val = context_.Top()->RetVal.Get();
+			}
+			context_.Pop(); // pop
+		}
 		return ret_val;
 	}
 

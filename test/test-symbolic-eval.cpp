@@ -115,7 +115,31 @@ TEST_F (SymEvalTest, mixed_addition) {
 	Eval(context, f.Get(), arg_map, MetaInt(16, 4));
 }
 
+TEST_F (SymEvalTest, mksym_uiN) {
+	interpreter::Context c;
+	llvm::Module m("the module", llvm::getGlobalContext());
+	auto mksym_16 = MkIntFunc(&m, "mksym_i16", {}, 16);
+	interpreter::Evaluator eval(c);
+	memory::ArgMapPtr caller_args = utils::Create<memory::ArgMap>();
 
+	auto caller = MkIntFunc(&m, "caller", {}, 16);
+
+	Func f(caller); {
+		auto x = f.Alloca16("x");
+		auto t1 = f.Call(mksym_16);
+		f.Store(t1, x);
+		auto t2 = f.Load(x);
+		auto t3 = f.Add(t2, f.I16(2));
+		f.Store(t3, x);
+		auto t4 = f.Load(x);
+		f.Ret(t4);
+	}
+
+	eval.Do(&m);
+	//Eval(c, caller, caller_args, MetaInt(16,4));
+	auto ret_holder = eval.Do(caller, caller_args);
+	ASSERT_TRUE(c.Solver().CheckSat());
+}
 
 
 
