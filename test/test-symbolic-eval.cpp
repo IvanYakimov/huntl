@@ -137,6 +137,7 @@ TEST_F (SymEvalTest, mksym_uiN) {
 
 	eval.Do(&m);
 	//Eval(c, caller, caller_args, MetaInt(16,4));
+	// get x value:
 	auto ret_holder = eval.Do(caller, caller_args);
 	ASSERT_TRUE(c.Solver().CheckSat());
 }
