@@ -32,7 +32,7 @@ class EvaluatorTest : public ::testing::Test {
 public:
 	void RetChecker(ContextRef c, const MetaInt& expected) {
 		auto activation = c.Top();
-		HolderPtr actual_holder = activation->GetRet();
+		HolderPtr actual_holder = activation->RetVal.Get();
 		HolderPtr expected_holder = Concrete::Create(expected);
 		ASSERT_EQ(*expected_holder, *actual_holder);
 	}

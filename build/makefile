@@ -4,12 +4,10 @@ LLVM_PASS = voyager-pass.o
 
 INTERPRETER = kernel.o matcher.o evaluator.o meta-evaluator.o meta-int.o context.o concrete-eval.o symbolic-eval.o
  
-INTERPRETER_TEST = expr-test.o test-holder.o test-evaluator.o test-symbolic-eval.o test-regex.o \
-$(SOLVER) $(MEMORY) $(LLVM_TEST_HELPERS) $(TEST_RUNNER)
-
-#INTERPRETER_TEST = test-regex.o \
-$(SOLVER) $(MEMORY) $(LLVM_TEST_HELPERS) $(TEST_RUNNER) 
-# matcher-stub.o test-matcher.o 
+INTERPRETER_TEST = $(SOLVER) $(MEMORY) $(LLVM_TEST_HELPERS) $(TEST_RUNNER) \
+test-holder.o test-regex.o
+# test-evaluator.o test-symbolic-eval.o
+# expr-test.o
 
 MEMORY = local-memory.o holder.o activation.o activation-stack.o
 MEMORY_TEST = test-holder.o test-local-memory.o $(SOLVER) $(INTERPRETER) $(LLVM_TEST_HELPERS) $(TEST_RUNNER)
@@ -52,6 +50,9 @@ shared.o: $(INTERPRETER) $(SOLVER) $(MEMORY) $(LLVM_PASS)
 
 solver-test.out: $(SOLVER) $(SOLVER_TEST)
 	$(CXX) $^ -o $@ $(GTESTFLAGS) $(CVC4FLAGS) $(CXXFLAGS) $(LLVM_STATIC) 
+
+interpreter.out: $(INTERPRETER)
+	$(CXX) $^ -o $@ $(CVC4FLAGS) $(CXXFLAGS) $(LLVM_STATIC)
 
 interpreter-test.out: $(INTERPRETER) $(INTERPRETER_TEST) 
 	$(CXX) $^ -o $@ $(GTESTFLAGS) $(CVC4FLAGS) $(CXXFLAGS) $(LLVM_STATIC)

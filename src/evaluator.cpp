@@ -127,7 +127,7 @@ namespace interpreter {
 		// Store it to 'ret_inst'
 		auto holder = context_.Top()->Load(ret_inst);
 		meta_eval_.Assign(&inst, holder);
-		context_.Top()->SetRet(holder);
+		context_.Top()->RetVal.Set(holder);
 		Trace(inst);
 	}
 
@@ -223,12 +223,14 @@ namespace interpreter {
 	}
 
 	void Evaluator::HandleStoreInst (const llvm::Instruction &inst, const llvm::Argument *arg, const llvm::Value *ptr) {
-		auto holder = context_.Top()->GetArg(arg);
+		//auto holder = context_.Top()->GetArg(arg);
+		auto holder = context_.Top()->Load(arg);
 		meta_eval_.Assign(ptr, holder);
 		Trace(inst);
 	}
 
 	void Evaluator::HandleCallInst(const llvm::CallInst &inst) {
+		//TODO: meta_eval_.Assign(...) for all operand values
 		auto called = inst.getCalledFunction();
 		assert (called != nullptr and "indirect function invocation");
 		outs() << "--called: \n";
@@ -240,6 +242,7 @@ namespace interpreter {
 			outs() << *inst.getArgOperand(i) << " --> ";
 			std::cout << " " << *context_.Top()->Load(inst.getArgOperand(i)) << "\n";
 		}
+
 		/*
 		const llvm::iplist<llvm::Argument> &args = called->getArgumentList();
 

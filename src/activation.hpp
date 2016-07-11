@@ -22,21 +22,29 @@ namespace memory {
 	class Activation {
 	public:
 		NONCOPYABLE(Activation);
-		Activation(ArgMapPtr arg_map);
+		//Activation(ArgMapPtr arg_map);
+		Activation();
 		~Activation();
-		static ActivationPtr Create(ArgMapPtr arg_map);
+		//static ActivationPtr Create(ArgMapPtr arg_map);
+		static ActivationPtr Create();
 		memory::HolderPtr GetArg(Address address);
-		void SetArg(Address, memory::HolderPtr value);
-		memory::HolderPtr GetRet();
-		void SetRet(memory::HolderPtr ret);
+		//void SetArg(Address, memory::HolderPtr value);
+		class ReturnValue {
+		public:
+			void Set(memory::HolderPtr value);
+			memory::HolderPtr Get();
+		private:
+			memory::HolderPtr ret_ = nullptr;
+		} RetVal;
+		//memory::HolderPtr GetRet();
+		//void SetRet(memory::HolderPtr ret);
 		void Alloca(Address address, HolderPtr initial);
 		HolderPtr Load(Address address);
 		void Store(Address address, HolderPtr holder);
 		void Print();
-		memory::LocalMemoryPtr GetLocalMemoryPtr();
 	private:
 		memory::LocalMemoryPtr local_memory_;
-		ArgMapPtr arg_map_;
+		//ArgMapPtr arg_map_;
 		memory::HolderPtr ret_;
 	};
 }
