@@ -90,7 +90,7 @@ namespace interpreter {
 
 	memory::HolderPtr Evaluator::Do(llvm::Function *f, memory::ArgMapPtr args) {
 		memory::HolderPtr ret_val = nullptr;
-		// push and initiate
+		// push
 		context_.Push(); {
 			for_each(args->begin(), args->end(), [&](auto pair){
 				auto addr = pair.first;
@@ -198,6 +198,7 @@ namespace interpreter {
 		auto holder = ProduceHolder(allocated);
 		//auto display = utils::GetInstance<memory::Display>();
 		// Alloca to 'inst'
+		//TODO: move to meta_eval_
 		context_.Top()->Alloca(&inst, holder);
 		Trace(inst);
 	}
@@ -226,8 +227,6 @@ namespace interpreter {
 	}
 
 	void Evaluator::HandleStoreInst (const llvm::Instruction &inst, const llvm::Argument *arg, const llvm::Value *ptr) {
-		//auto holder = context_.Top()->GetArg(arg);
-		llvm::errs() << "###########store inst: " << *arg << "\n";
 		auto holder = context_.Top()->Load(arg);
 		meta_eval_.Assign(ptr, holder);
 		Trace(inst);
@@ -236,43 +235,20 @@ namespace interpreter {
 	void Evaluator::HandleCallInst(const llvm::CallInst &inst) {
 		//TODO: meta_eval_.Assign(...) for all operand values
 		auto called = inst.getCalledFunction();
-		assert (called != nullptr and "indirect function invocation");
-		outs() << "\n$$$$$$$$$$$$$$$\ncalled: \n";
-		outs() << *called << "\n";
-		outs() << "with args:\n";
+		assert (called != nullptr and "indirect function invocation not supported");
 		memory::ArgMapPtr argmap = utils::Create<ArgMap>();
 		auto args = called->arg_begin();
-		//std::cout << inst.getNumArgOperands();
 		for (auto i = 0; i != inst.getNumArgOperands(); i++) {
 			auto address = inst.getArgOperand(i);
 			auto holder = context_.Top()->Load(address);
 			argmap->emplace(args, holder);
-			outs() << *inst.getArgOperand(i) << " --> ";
-			std::cout << " " << *context_.Top()->Load(inst.getArgOperand(i)) << "\n";
 			args++;
 		}
 
-		outs() << "\n$$$$$$$$$$$$$$$\ncall starg\n";
 		memory::HolderPtr ret_holder = Do(called, argmap);
 		assert (ret_holder != nullptr);
 
-		outs() << "\n$$$$$$$$$$$$$$$\ncall end\nretrun value:\n";
-		std::cout << "ret val: "<< *ret_holder << std::endl;
-		outs() << "\n$$$$$$$$$$$$$$$\ndone\n";
 		meta_eval_.Assign(&inst, ret_holder);
-
-		/*
-		const llvm::iplist<llvm::Argument> &args = called->getArgumentList();
-
-		outs() << "---with args: \n";
-		for (auto i = args.begin(); i != args.end(); i++) {
-			outs() << *i << "\n";
-			auto val = context_.Top()->Load(i);
-			std::cout << "-->" << *val << "\n";
-		}
-		*/
-
-
 	}
 }
 

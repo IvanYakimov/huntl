@@ -30,15 +30,13 @@ using namespace utils;
 
 class SymEvalTest : public ::testing::Test {
 public:
-	void RetChecker(ActivationPtr activation, interpreter::MetaIntRef expected) {
-		HolderPtr actual_holder = activation->GetRet();
+	void RetChecker(memory::HolderPtr ret, const MetaInt& expected) {
 		HolderPtr expected_holder = Concrete::Create(expected);
-		ASSERT_EQ(*expected_holder, *actual_holder);
+		ASSERT_EQ(*ret, *expected_holder);
 	}
 
-	void CheckSymRet(interpreter::ContextRef context, MetaIntRef exp) {
+	void CheckSymRet(ContextRef context, memory::HolderPtr ret_holder, MetaIntRef exp) {
 		ASSERT_TRUE(context.Solver().CheckSat());
-		auto ret_holder = context.Top()->GetRet();
 		ASSERT_TRUE(memory::IsSymbolic(ret_holder));
 		auto ret_expr = memory::GetExpr(ret_holder);
 		auto meta_int = context.Solver().GetValue(ret_expr);
@@ -63,10 +61,10 @@ public:
 	void Eval(ContextRef context, llvm::Function *function, ArgMapPtr arg_map, MetaIntRef exp_mint) {
 		outs() << *function << "\n";
 		interpreter::Evaluator eval(context);
-		auto activation = memory::Activation::Create(arg_map);
-		context.Push(activation);
-		eval.visit(function);
-		CheckSymRet(context, exp_mint);
+		auto activation = memory::Activation::Create();
+		context.Push();
+		auto ret = eval.Do(function, arg_map);
+		CheckSymRet(context, ret, exp_mint);
 		context.Pop();
 	}
 };
