@@ -88,11 +88,47 @@ namespace interpreter {
 	Evaluator::Gen::Gen(ContextRef context, llvm::Function* target) : context_(context), target_(target) {}
 	memory::HolderPtr Evaluator::Gen::operator()(llvm::Function* f, memory::ArgMapPtr args) {
 		//TODO:
-		std::cerr << "with (" << args->size() << ") args:\n";
-		for_each(args->begin(), args->end(), [&](auto pair) {
-			std::cerr << *pair.second << "\n";
+		//std::cerr << "with (" << args->size() << ") args:\n";
+		std::list<memory::ConcretePtr> arg_sol_list;
+		memory::ConcretePtr ret_sol;
+
+		if (context_.Solver().CheckSat() == true) {
+			for(auto pair = args->begin(); pair != args->end(); pair++) {
+				//std::cerr << *pair.second << "\n";
+				HolderPtr holder = pair->second;
+				if (memory::IsConcrete(holder)) {
+
+				}
+				else if (memory::IsSymbolic(holder)) {
+					solver::SharedExpr e = memory::GetExpr(holder);
+					interpreter::MetaInt val = context_.Solver().GetValue(e);
+					holder = memory::Concrete::Create(val);
+				}
+				else
+					assert (false and "unexpected behavior");
+
+
+				auto ch = std::dynamic_pointer_cast<memory::Concrete>(holder);
+				assert(ch != nullptr);
+				if (std::next(pair,1) != args->end())
+					arg_sol_list.push_back(ch);
+				else
+					ret_sol = ch;
+			}
+		}
+		else
+			assert (false and "not implemented");
+		std::cerr << "// AUTOMATICALLY GENERATED TEST CASE FOR:\n";
+		std::cerr << f->getName().str() << ":\n";
+		for_each(arg_sol_list.begin(), arg_sol_list.end(), [&](auto arg_sol) {
+			std::cerr << *arg_sol << " ";
 		});
-		assert (false and "not implemented");
+
+		std::cerr << " --> ";
+		std::cerr << *ret_sol << "\n";
+		std::cerr << "//END." << "\n";
+		exit(0);
+		//assert (false and "not implemented");
 	}
 
 	void Evaluator::ProcessModule(llvm::Module *m) {
@@ -135,6 +171,7 @@ namespace interpreter {
 			else if (matched_gen_TARGETs == 1) {
 				errs() << "gen matched: " << name << "\n";
 				std::string target_name = gen_TARGET_matches.suffix();
+				errs() << "with target: " << target_name << "\n";
 				StringRef llvm_styled_target_name(target_name.c_str());
 				llvm::Function* target = m->getFunction(llvm_styled_target_name);
 				if (target == nullptr) {
