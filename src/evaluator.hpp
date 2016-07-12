@@ -51,10 +51,11 @@ namespace interpreter {
 
 		class Gen {
 		public:
-			Gen(ContextRef context);
+			Gen(ContextRef context, llvm::Function* target);
 			memory::HolderPtr operator()(llvm::Function* f, memory::ArgMapPtr args);
 		private:
 			ContextRef context_;
+			llvm::Function* target_;
 		};
 
 	private:

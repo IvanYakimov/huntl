@@ -85,7 +85,7 @@ namespace interpreter {
 		return memory::Symbolic::Create(context_.Solver().MkVar(context_.Solver().MkBitVectorType(size_)));
 	}
 
-	Evaluator::Gen::Gen(ContextRef context) : context_(context) {}
+	Evaluator::Gen::Gen(ContextRef context, llvm::Function* target) : context_(context), target_(target) {}
 	memory::HolderPtr Evaluator::Gen::operator()(llvm::Function* f, memory::ArgMapPtr args) {
 		//TODO:
 		std::cerr << "with (" << args->size() << ") args:\n";
@@ -111,6 +111,10 @@ namespace interpreter {
 			std::smatch test_NAME_matches;
 			auto matched_test_NAMEs = std::regex_search(name, test_NAME_matches, test_NAME_regex);
 
+			std::regex gen_TARGET_regex("gen_");
+			std::smatch gen_TARGET_matches;
+			auto matched_gen_TARGETs = std::regex_search(name, gen_TARGET_matches, gen_TARGET_regex);
+
 			if (matched_mksym == 1) {
 				std::string suffix = mksym_matches.suffix();
 				std::regex iuN_regex("[[:digit:]]+");
@@ -128,9 +132,16 @@ namespace interpreter {
 					errs() << "test matched: " << name << "\n";
 					test_functions.push_back(f_it);
 			}
-			else if (name == "gen") {
-				errs() << "gen matched\n";
-				builtins_.emplace(f_it, Gen(context_));
+			else if (matched_gen_TARGETs == 1) {
+				errs() << "gen matched: " << name << "\n";
+				std::string target_name = gen_TARGET_matches.suffix();
+				StringRef llvm_styled_target_name(target_name.c_str());
+				llvm::Function* target = m->getFunction(llvm_styled_target_name);
+				if (target == nullptr) {
+					errs() << "no " << llvm_styled_target_name << " target found. stop." << "\n";
+					exit(!0);
+				}
+				builtins_.emplace(f_it, Gen(context_, target));
 			}
 			else {
 				//this is ordinary function
@@ -313,6 +324,7 @@ namespace interpreter {
 	}
 
 	void Evaluator::HandleCallInst(const llvm::CallInst &inst) {
+		llvm::errs() << "call " << inst.getCalledFunction()->getName() << "\n";
 		//TODO: meta_eval_.Assign(...) for all operand values
 		auto called = inst.getCalledFunction();
 		assert (called != nullptr and "indirect function invocation not supported");
@@ -333,6 +345,7 @@ namespace interpreter {
 			argmap->emplace(args, holder);
 			args++;
 		}
+		assert (args == called->arg_end());
 
 		//TODO: Put constrains for args x1,x2...xn back to the caller!!!?????????
 
