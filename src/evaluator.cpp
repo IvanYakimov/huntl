@@ -85,7 +85,7 @@ namespace interpreter {
 		return memory::Symbolic::Create(context_.Solver().MkVar(context_.Solver().MkBitVectorType(size_)));
 	}
 
-	void Evaluator::Do(llvm::Module *m) {
+	void Evaluator::ProcessModule(llvm::Module *m) {
 		errs() << "------------------------\nvisit module:\n";
 		errs() << "funcs in module: \n";
 		for (auto f_it = m->begin(); f_it != m->end(); f_it++) {
@@ -113,7 +113,7 @@ namespace interpreter {
 		//visit (m);
 	}
 
-	memory::HolderPtr Evaluator::Do(llvm::Function *f, memory::ArgMapPtr args) {
+	memory::HolderPtr Evaluator::CallFunction(llvm::Function *f, memory::ArgMapPtr args) {
 		memory::HolderPtr ret_val = nullptr;
 		auto is_builtin = builtins_.find(f);
 		if (is_builtin != builtins_.end()) {
@@ -125,13 +125,22 @@ namespace interpreter {
 		else {
 			// push
 			context_.Push(); {
+				// initiate args
 				for_each(args->begin(), args->end(), [&](auto pair){
 					auto addr = pair.first;
 					auto hldr = pair.second;
 					// assign
 					meta_eval_.Assign(addr, hldr);
 				});
+
 				visit (f);
+
+				/*
+				// save new arg valuesy (it is useful for test generation purposes)
+				for_each(args->begin(), args->end(), [&](auto pair) {
+					pair.second = context_.Top()->Load(pair.first);
+				});
+				*/
 
 				ret_val = context_.Top()->RetVal.Get();
 			}
@@ -279,7 +288,9 @@ namespace interpreter {
 			args++;
 		}
 
-		memory::HolderPtr ret_holder = Do(called, argmap);
+		//TODO: Put constrains for args x1,x2...xn back to the caller!!!?????????
+
+		memory::HolderPtr ret_holder = CallFunction(called, argmap);
 		assert (ret_holder != nullptr);
 
 		meta_eval_.Assign(&inst, ret_holder);

@@ -40,7 +40,7 @@ public:
 		outs() << *f << "\n";
 		interpreter::Context context;
 		interpreter::Evaluator eval(context);
-		auto ret = eval.Do(f, args);
+		auto ret = eval.CallFunction(f, args);
 	}
 };
 

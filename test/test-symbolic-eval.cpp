@@ -63,7 +63,7 @@ public:
 		interpreter::Evaluator eval(context);
 		auto activation = memory::Activation::Create();
 		context.Push();
-		auto ret = eval.Do(function, arg_map);
+		auto ret = eval.CallFunction(function, arg_map);
 		CheckSymRet(context, ret, exp_mint);
 		context.Pop();
 	}
@@ -135,10 +135,10 @@ TEST_F (SymEvalTest, mksym_uiN) {
 		f.Ret(t4);
 	}
 
-	eval.Do(&m);
+	eval.ProcessModule(&m);
 	//Eval(c, caller, caller_args, MetaInt(16,4));
 	// get x value:
-	auto ret_holder = eval.Do(caller, caller_args);
+	auto ret_holder = eval.CallFunction(caller, caller_args);
 	ASSERT_TRUE(c.Solver().CheckSat());
 }
 

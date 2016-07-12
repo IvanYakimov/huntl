@@ -25,8 +25,8 @@ namespace interpreter {
 		Evaluator(interpreter::ContextRef context);
 		~Evaluator();
 
-		void Do(llvm::Module *m);
-		memory::HolderPtr Do(llvm::Function *func, memory::ArgMapPtr args);
+		void ProcessModule(llvm::Module *m);
+		memory::HolderPtr CallFunction(llvm::Function *func, memory::ArgMapPtr args);
 
 	private:
 		MetaEvaluator meta_eval_;
