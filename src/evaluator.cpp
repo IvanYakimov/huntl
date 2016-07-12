@@ -119,7 +119,7 @@ namespace interpreter {
 		else
 			assert (false and "not implemented");
 		std::cerr << "// AUTOMATICALLY GENERATED TEST CASE FOR:\n";
-		std::cerr << f->getName().str() << ":\n";
+		std::cerr << target_->getName().str() << ":\n";
 		for_each(arg_sol_list.begin(), arg_sol_list.end(), [&](auto arg_sol) {
 			std::cerr << *arg_sol << " ";
 		});
@@ -169,20 +169,22 @@ namespace interpreter {
 					test_functions.push_back(f_it);
 			}
 			else if (matched_gen_TARGETs == 1) {
-				errs() << "gen matched: " << name << "\n";
+				errs() << "gen matched: " << name << "; ";
 				std::string target_name = gen_TARGET_matches.suffix();
-				errs() << "with target: " << target_name << "\n";
+
 				StringRef llvm_styled_target_name(target_name.c_str());
 				llvm::Function* target = m->getFunction(llvm_styled_target_name);
+				errs() << "with target: " << target->getName() << "\n";
 				if (target == nullptr) {
 					errs() << "no " << llvm_styled_target_name << " target found. stop." << "\n";
-					exit(!0);
+					exit(0);
 				}
 				builtins_.emplace(f_it, Gen(context_, target));
 			}
 			else {
 				//this is ordinary function
 			}
+			//exit(0);
 		}
 
 		for (auto it = test_functions.begin(); it != test_functions.end(); it++) {
