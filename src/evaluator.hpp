@@ -6,6 +6,7 @@
 #include <string>
 #include <regex>
 #include <functional>
+#include <list>
 
 #include "activation.hpp"
 #include "local-memory.hpp"
@@ -16,6 +17,8 @@
 #include "meta-int.hpp"
 #include "solver.hpp"
 #include "context.hpp"
+
+//#include "llvm/IR/Module.h"
 
 //TODO: use -I option to perform headers search instead of ../ (?)
 
@@ -50,7 +53,7 @@ namespace interpreter {
 	private:
 		// Return
 		virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst);
-		virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Constant *ret_const);
+		virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::ConstantInt *ret_const);
 		virtual void HandleReturnInst (const llvm::Instruction &inst);
 
 		// Branch

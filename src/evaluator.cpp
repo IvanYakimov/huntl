@@ -88,29 +88,45 @@ namespace interpreter {
 	void Evaluator::ProcessModule(llvm::Module *m) {
 		errs() << "------------------------\nvisit module:\n";
 		errs() << "funcs in module: \n";
+		assert (m->begin() != m->end());
+		std::list<llvm::Function*> test_functions;
 		for (auto f_it = m->begin(); f_it != m->end(); f_it++) {
 			std::string name = f_it->getName().str();
-			std::cout << name << std::endl;
-			/* check for mksym_uiN */ {
-				std::regex mksym_regex("mksym_");
-				std::smatch mksym_matches;
-				auto matched_mksym = std::regex_search(name, mksym_matches, mksym_regex);
-				if (matched_mksym == 1) {
-					std::string suffix = mksym_matches.suffix();
-					std::regex iuN_regex("[[:digit:]]+");
-					std::smatch iuN_match;
-					auto matched_iuN = std::regex_search(suffix, iuN_match, iuN_regex);
-					if (matched_iuN == 1) {
-						std::string subtype = iuN_match.prefix();
-						std::string bitwidth_str = *iuN_match.begin();
-						int bitwidth_val = std::stoi(bitwidth_str);
-						builtins_.emplace(f_it, MkSym(context_, bitwidth_val));
-					}
+
+			std::regex mksym_regex("mksym_");
+			std::smatch mksym_matches;
+			auto matched_mksym = std::regex_search(name, mksym_matches, mksym_regex);
+
+			std::regex test_NAME_regex("test_");
+			std::smatch test_NAME_matches;
+			auto matched_test_NAMEs = std::regex_search(name, test_NAME_matches, test_NAME_regex);
+
+			if (matched_mksym == 1) {
+				std::string suffix = mksym_matches.suffix();
+				std::regex iuN_regex("[[:digit:]]+");
+				std::smatch iuN_match;
+				auto matched_iuN = std::regex_search(suffix, iuN_match, iuN_regex);
+				if (matched_iuN == 1) {
+					std::string subtype = iuN_match.prefix();
+					std::string bitwidth_str = *iuN_match.begin();
+					int bitwidth_val = std::stoi(bitwidth_str);
+					builtins_.emplace(f_it, MkSym(context_, bitwidth_val));
+					errs() << "builtint matched: " << name << "\n";
 				}
 			}
+			else if (matched_test_NAMEs == 1) {
+					errs() << "test matched: " << name << "\n";
+					test_functions.push_back(f_it);
+			}
+			else {
+				errs() << "ordinary function: " << name << "\n";
+			}
 		}
-		//Do()
-		//visit (m);
+
+		for (auto it = test_functions.begin(); it != test_functions.end(); it++) {
+			auto args = utils::Create<interpreter::ArgMap>();
+			auto ret = CallFunction(*it,args);
+		}
 	}
 
 	memory::HolderPtr Evaluator::CallFunction(llvm::Function *f, memory::ArgMapPtr args) {
@@ -159,12 +175,13 @@ namespace interpreter {
 	}
 
 	void Evaluator::Trace(const llvm::Instruction& inst) {
-		llvm::outs() << "------------------------------------\n";
-		llvm::outs() << "{\n";
-		llvm::outs() << inst << "\n";
+
+		llvm::errs() << "------------------------------------\n";
+		llvm::errs() << "{\n";
+		llvm::errs() << inst << "\n";
 		context_.Top()->Print();
 		context_.Solver().Print();
-		llvm::outs() << "}\n";
+		llvm::errs() << "}\n";
 	}
 
 	// Return
@@ -177,10 +194,13 @@ namespace interpreter {
 		Trace(inst);
 	}
 
-	void Evaluator::HandleReturnInst (const llvm::Instruction &inst, const llvm::Constant *ret_const) {
+	void Evaluator::HandleReturnInst (const llvm::Instruction &inst, const llvm::ConstantInt *ret_const) {
 		// Produce	new concrete holder
+		auto holder = ProduceHolder(ret_const);
 		// Store it in 'ret_const'
-		assert (false && "not implemented");
+		meta_eval_.Assign(&inst, holder);
+		context_.Top()->RetVal.Set(holder);
+		//assert (false && "not implemented");
 		Trace(inst);
 	}
 

@@ -25,12 +25,12 @@ namespace memory {
 	}
 
 	void LocalMemory::Print() {
-		std::cout << "<-- Display:\n";
+		std::cerr << "<-- Display:\n";
 		for (auto it = mmap_.begin(); it != mmap_.end(); it++) {
-			llvm::outs() << *(it->first) << " --> ";
-			std::cout << *(it->second) << "\n";
+			llvm::errs() << *(it->first) << " --> ";
+			std::cerr << *(it->second) << "\n";
 		}
-		std::cout << "--> \n";
+		std::cerr << "--> \n";
 	}
 
 	LocalMemoryPtr LocalMemory::Create() {

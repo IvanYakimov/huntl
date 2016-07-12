@@ -49,11 +49,11 @@ namespace solver {
 	}
 
 	void Solver::Print() {
-		std::cout << "PC: \n";
+		std::cerr << "PC: \n";
 		for (auto i = path_constraint_.begin(); i != path_constraint_.end(); i++) {
-			std::cout << "(" << *i << ")" << "\n\t/\\ ";
+			std::cerr << "(" << *i << ")" << "\n\t/\\ ";
 		}
-		std::cout << " true \n";
+		std::cerr << " true \n";
 	}
 
 	Type Solver::MkBitVectorType(unsigned size) {

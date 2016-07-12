@@ -11,7 +11,7 @@
 //# include "llvm/Support/Debug.h"
 
 // Project
-
+#include "evaluator.hpp"
 
 
 #include "evaluator.hpp"
@@ -19,8 +19,13 @@
 namespace interpreter {
 	class Kernel {
 	public:
+		Kernel();
+		~Kernel();
 		void Do(llvm::Function &func);
 		void Do(llvm::Module &mod);
+	private:
+		Context context_;
+		Evaluator eval_;
 	};
 }
 

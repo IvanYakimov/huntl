@@ -43,7 +43,7 @@ vpath %.hpp $(SRC) $(TST)/matcher
 vpath %.c 	$(SRC) ../benchmarks
 		
 program.so: shared.o 
-	$(CXX) -shared $< -o $@ $(CXXFLAGS) 
+	$(CXX) -shared $< -o $@ $(CXXFLAGS) $(CVC4FLAGS) 
 
 shared.o: $(INTERPRETER) $(SOLVER) $(MEMORY) $(LLVM_PASS)
 	ld -r $^ -o $@ $(LLVM_DYNAMIC)

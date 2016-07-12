@@ -34,7 +34,7 @@ namespace interpreter {
 
 		Value *ret_val = NULL;
 		Instruction *ret_inst = NULL;
-		Constant *ret_const = NULL;
+		ConstantInt *ret_const = NULL;
 
 		if (Case (inst, &ret_inst))
 			HandleReturnInst(inst, ret_inst);

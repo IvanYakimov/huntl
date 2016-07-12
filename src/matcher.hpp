@@ -15,6 +15,7 @@ http://www.cplusplus.com/reference/type_traits/remove_pointer/
 
 # include "llvm/IR/InstVisitor.h"
 # include "llvm/IR/Instruction.h"
+#include "llvm/IR/Module.h"
 # include "llvm/Support/raw_ostream.h"
 # include "llvm/Support/Debug.h"
 
@@ -51,7 +52,7 @@ namespace interpreter {
 	protected:
 		// Return
 		virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst) = 0;
-		virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Constant *ret_const) = 0;
+		virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::ConstantInt *ret_const) = 0;
 		virtual void HandleReturnInst (const llvm::Instruction &inst) = 0;
 
 		// Branch

@@ -9,10 +9,18 @@ namespace interpreter {
 	# endif
 	}
 
+	Kernel::Kernel() : context_(), eval_(context_){
+
+	}
+
+	Kernel::~Kernel() {
+
+	}
+
 	void Kernel::Do(llvm::Module &mod) {
 		errs() << "module pass\n";
-		for (auto f = mod.begin(); f != mod.end(); f++)
-			errs() << f->getName() << "\n";
+		eval_.ProcessModule(&mod);
+
 	}
 
 	/** Run interpreter on function */
