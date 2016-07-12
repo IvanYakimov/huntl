@@ -88,6 +88,10 @@ namespace interpreter {
 	Evaluator::Gen::Gen(ContextRef context) : context_(context) {}
 	memory::HolderPtr Evaluator::Gen::operator()(llvm::Function* f, memory::ArgMapPtr args) {
 		//TODO:
+		std::cerr << "with (" << args->size() << ") args:\n";
+		for_each(args->begin(), args->end(), [&](auto pair) {
+			std::cerr << *pair.second << "\n";
+		});
 		assert (false and "not implemented");
 	}
 
@@ -124,7 +128,8 @@ namespace interpreter {
 					errs() << "test matched: " << name << "\n";
 					test_functions.push_back(f_it);
 			}
-			else if (name == "get") {
+			else if (name == "gen") {
+				errs() << "gen matched\n";
 				builtins_.emplace(f_it, Gen(context_));
 			}
 			else {
@@ -314,8 +319,17 @@ namespace interpreter {
 		memory::ArgMapPtr argmap = utils::Create<ArgMap>();
 		auto args = called->arg_begin();
 		for (auto i = 0; i != inst.getNumArgOperands(); i++) {
-			auto address = inst.getArgOperand(i);
-			auto holder = context_.Top()->Load(address);
+			auto operand = inst.getArgOperand(i);
+			HolderPtr holder = nullptr;
+
+			if (llvm::isa<llvm::ConstantInt>(operand)) {
+				holder = ProduceHolder(llvm::dyn_cast<llvm::ConstantInt>(operand));
+			}
+			else {
+				holder = context_.Top()->Load(operand);
+			}
+
+			assert (holder != nullptr);
 			argmap->emplace(args, holder);
 			args++;
 		}
