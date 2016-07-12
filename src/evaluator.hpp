@@ -18,7 +18,8 @@
 #include "solver.hpp"
 #include "context.hpp"
 
-//#include "llvm/IR/Module.h"
+#include "llvm/ExecutionEngine/ExecutionEngine.h"
+#include "llvm/ExecutionEngine/GenericValue.h"
 
 //TODO: use -I option to perform headers search instead of ../ (?)
 
@@ -51,11 +52,12 @@ namespace interpreter {
 
 		class Gen {
 		public:
-			Gen(ContextRef context, llvm::Function* target);
+			Gen(ContextRef context, llvm::Function* target, llvm::Module* module);
 			memory::HolderPtr operator()(llvm::Function* f, memory::ArgMapPtr args);
 		private:
 			ContextRef context_;
 			llvm::Function* target_;
+			llvm::Module* module_;
 		};
 
 	private:

@@ -85,7 +85,8 @@ namespace interpreter {
 		return memory::Symbolic::Create(context_.Solver().MkVar(context_.Solver().MkBitVectorType(size_)));
 	}
 
-	Evaluator::Gen::Gen(ContextRef context, llvm::Function* target) : context_(context), target_(target) {}
+	Evaluator::Gen::Gen(ContextRef context, llvm::Function* target, llvm::Module* module) :
+			context_(context), target_(target), module_(module) {}
 	memory::HolderPtr Evaluator::Gen::operator()(llvm::Function* f, memory::ArgMapPtr args) {
 		//TODO:
 		//std::cerr << "with (" << args->size() << ") args:\n";
@@ -118,7 +119,7 @@ namespace interpreter {
 		}
 		else
 			assert (false and "not implemented");
-		std::cerr << "// AUTOMATICALLY GENERATED TEST CASE FOR:\n";
+		std::cerr << "//----------------------------\n AUTOMATICALLY GENERATED TEST CASE FOR:\n\n";
 		std::cerr << target_->getName().str() << ":\n";
 		for_each(arg_sol_list.begin(), arg_sol_list.end(), [&](auto arg_sol) {
 			std::cerr << *arg_sol << " ";
@@ -126,6 +127,24 @@ namespace interpreter {
 
 		std::cerr << " --> ";
 		std::cerr << *ret_sol << "\n";
+
+		//---------------------------------------------------------------------------
+		// JIT:
+		llvm::ExecutionEngine* jit = llvm::EngineBuilder(module_).create();
+		std::vector<llvm::GenericValue> jit_args;
+
+		for_each(arg_sol_list.begin(), arg_sol_list.end(), [&](auto arg_sol) {
+			llvm::GenericValue gval;
+			gval.IntVal = memory::GetValue(arg_sol);
+			jit_args.push_back(gval);
+		});
+
+		llvm::GenericValue gres = jit->runFunction(target_, jit_args);
+
+		errs() << "\n//JIT verification - DONE. Result: " << gres.IntVal << "\n";
+
+		assert(memory::GetValue(ret_sol) == gres.IntVal and "generated ret-value MUST be equivalent to one returned from JIT!");
+
 		std::cerr << "//END." << "\n";
 		exit(0);
 		//assert (false and "not implemented");
@@ -179,7 +198,7 @@ namespace interpreter {
 					errs() << "no " << llvm_styled_target_name << " target found. stop." << "\n";
 					exit(0);
 				}
-				builtins_.emplace(f_it, Gen(context_, target));
+				builtins_.emplace(f_it, Gen(context_, target, m));
 			}
 			else {
 				//this is ordinary function
