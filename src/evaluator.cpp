@@ -85,6 +85,12 @@ namespace interpreter {
 		return memory::Symbolic::Create(context_.Solver().MkVar(context_.Solver().MkBitVectorType(size_)));
 	}
 
+	Evaluator::Gen::Gen(ContextRef context) : context_(context) {}
+	memory::HolderPtr Evaluator::Gen::operator()(llvm::Function* f, memory::ArgMapPtr args) {
+		//TODO:
+		assert (false and "not implemented");
+	}
+
 	void Evaluator::ProcessModule(llvm::Module *m) {
 		errs() << "------------------------\nvisit module:\n";
 		errs() << "funcs in module: \n";
@@ -118,8 +124,11 @@ namespace interpreter {
 					errs() << "test matched: " << name << "\n";
 					test_functions.push_back(f_it);
 			}
+			else if (name == "get") {
+				builtins_.emplace(f_it, Gen(context_));
+			}
 			else {
-				errs() << "ordinary function: " << name << "\n";
+				//this is ordinary function
 			}
 		}
 
@@ -130,9 +139,11 @@ namespace interpreter {
 	}
 
 	memory::HolderPtr Evaluator::CallFunction(llvm::Function *f, memory::ArgMapPtr args) {
+		llvm::errs() << "call function " << f->getName() << "\n";
 		memory::HolderPtr ret_val = nullptr;
 		auto is_builtin = builtins_.find(f);
 		if (is_builtin != builtins_.end()) {
+			llvm::errs() << "this is a builtin function!\n";
 			context_.Push(); {
 			ret_val = is_builtin->second(f, args);
 			}
@@ -161,6 +172,7 @@ namespace interpreter {
 				ret_val = context_.Top()->RetVal.Get();
 			}
 			context_.Pop(); // pop
+			llvm::errs() << "return from function " << f->getName() << "\n";
 		}
 		return ret_val;
 	}

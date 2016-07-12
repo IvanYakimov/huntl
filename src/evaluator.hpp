@@ -40,7 +40,6 @@ namespace interpreter {
 		using BuiltInPtr = std::shared_ptr<BuiltIn>;
 		using BuiltInMap = std::map<llvm::Function*, BuiltIn>;
 		BuiltInMap builtins_;
-		//TODO: refactoring - replace by functor
 		class MkSym {
 		public:
 			MkSym(ContextRef context_, unsigned size);
@@ -48,6 +47,14 @@ namespace interpreter {
 		private:
 			ContextRef context_;
 			const unsigned size_;
+		};
+
+		class Gen {
+		public:
+			Gen(ContextRef context);
+			memory::HolderPtr operator()(llvm::Function* f, memory::ArgMapPtr args);
+		private:
+			ContextRef context_;
 		};
 
 	private:
