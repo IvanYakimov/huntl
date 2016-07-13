@@ -80,8 +80,10 @@ namespace interpreter {
 			assert (false and "unexpected behavior");
 	}
 
-	void ICmpInst (const llvm::Instruction* inst, memory::HolderPtr left, memory::HolderPtr right) {
-
+	void MetaEvaluator::ICmpInst (const llvm::Instruction* inst, memory::HolderPtr left, memory::HolderPtr right) {
+		ConcreteFunc2 concrete_comparison = std::bind(&ConcreteEval::ICmpInst, &concrete_eval_, _1, _2, _3);
+		SymbolicFunc2 symbolic_comparison = std::bind(&SymbolicEval::ICmpInst, &symbolic_eval_, _1, _2, _3);
+		MixedEval2(inst, left, right, concrete_comparison, symbolic_comparison);
 	}
 
 	void MetaEvaluator::Assign (const llvm::Value *destination, memory::HolderPtr target) {
