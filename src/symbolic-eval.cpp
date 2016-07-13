@@ -79,11 +79,7 @@ namespace interpreter {
 	}
 
 	void SymbolicEval::ICmpInst (const llvm::Instruction* inst, solver::SharedExpr left, solver::SharedExpr right) {
-		assert (llvm::isa<ICmpInst*>(inst));
-		auto icmp_inst = llvm::dyn_cast<ICmpInst>(inst);
-		auto kind = ExtractKindFromICmpInst(icmp_inst);
-		auto constraint = context_.Solver().MkExpr(kind, left, right);
-		Assign(inst, constraint);
+		assert (false and "not implemented");
 	}
 
 	void SymbolicEval::Assign (const llvm::Value *destination, solver::SharedExpr e) {

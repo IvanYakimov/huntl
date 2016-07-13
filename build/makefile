@@ -31,7 +31,7 @@ CVC4FLAGS = -lcvc4 -lgmp
 GTESTFLAGS = -lgtest -pthread
 #Z3FLAGS = /usr/lib/libz3.so
 LLVMF_DYNAMIC = $(filter-out -g -fno-exceptions -O2 -std=c++11, $(shell llvm-config --cxxflags))
-LLVM_STATIC = $(filter-out -g -fno-exceptions -O2 -std=c++11, $(shell llvm-config --cxxflags --ldflags --libs core)) \
+LLVM_STATIC = $(filter-out -g -fno-exceptions -O2 -std=c++11, $(shell llvm-config --cxxflags --ldflags --libs core engine)) \
 -ltinfo -ldl
 DBGFLAGS = -D DBG -U NDEBUG
 

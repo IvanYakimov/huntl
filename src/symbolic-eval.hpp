@@ -3,7 +3,7 @@
 
 #include "context.hpp"
 #include "meta-int.hpp"
-#include "llvm/IR/Instruction.h"
+# include "llvm/IR/Instructions.h"
 #include "expr.hpp"
 
 namespace interpreter {

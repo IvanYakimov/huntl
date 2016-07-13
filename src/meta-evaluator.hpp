@@ -6,8 +6,7 @@
 #include <memory>
 #include <functional>
 
-# include "llvm/IR/InstVisitor.h"
-# include "llvm/IR/Instruction.h"
+# include "llvm/IR/Instructions.h"
 # include "llvm/Support/raw_ostream.h"
 # include "llvm/Support/Debug.h"
 
