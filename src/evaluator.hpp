@@ -8,6 +8,10 @@
 #include <functional>
 #include <list>
 
+#include <unistd.h>
+#include <sys/wait.h>
+#include <sys/types.h>
+
 #include "activation.hpp"
 #include "local-memory.hpp"
 #include "matcher.hpp"
