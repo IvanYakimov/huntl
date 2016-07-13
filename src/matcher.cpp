@@ -91,11 +91,17 @@ namespace interpreter {
 
 		Value *lhs = NULL,
 				*rhs = NULL;
+		ConstantInt *c1 = NULL,
+				*c2 = NULL;
 
-		if (Case (inst, &lhs, &rhs))
+		if (Case (inst, &lhs, &c2))
+			HandleICmpInst(inst, lhs, c2);
+		else if (Case (inst, &c1, &rhs))
+			HandleICmpInst(inst, c1, rhs);
+		else if (Case (inst, &lhs, &rhs))
 			HandleICmpInst(inst, lhs, rhs);
 		else
-			assert(false);
+			assert(false and "unexpected behavior");
 	}
 
 	void Matcher::visitAllocaInst (const AllocaInst &inst)

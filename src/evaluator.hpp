@@ -30,9 +30,10 @@
 namespace interpreter {
 	class Evaluator final : public Matcher {
 	public:
+
 		Evaluator(interpreter::ContextRef context);
 		~Evaluator();
-
+		NONCOPYABLE(Evaluator);
 		void ProcessModule(llvm::Module *m);
 		memory::HolderPtr CallFunction(llvm::Function *func, memory::ArgMapPtr args);
 
@@ -80,6 +81,8 @@ namespace interpreter {
 		virtual void HandleBinOp (const llvm::Instruction &inst, const llvm::Value *lhs, const llvm::Value *rhs);
 
 		// Cmp
+		virtual void HandleICmpInst (const llvm::Instruction &inst, const llvm::ConstantInt *lhs, const llvm::Value *rhs);
+		virtual void HandleICmpInst (const llvm::Instruction &inst, const llvm::Value *lhs, const llvm::ConstantInt *rhs);
 		virtual void HandleICmpInst (const llvm::Instruction &inst, const llvm::Value *lhs, const llvm::Value *rhs);
 
 		// Alloca

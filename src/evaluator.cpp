@@ -339,7 +339,33 @@ namespace interpreter {
 	}
 
 	// Cmp
-	void Evaluator::HandleICmpInst (const llvm::Instruction &inst, const llvm::Value *lhs, const llvm::Value *rhs) {
+	void Evaluator::HandleICmpInst (const llvm::Instruction &inst, const llvm::ConstantInt *left, const llvm::Value *right) {
+		auto left_holder = ProduceHolder(left);
+		auto right_holder = context_.Top()->Load(right);
+		meta_eval_.ICmpInst(&inst, left_holder, right_holder);
+
+		// Load left and right args.
+		// Produce expression, use get_op, defined above
+		Trace(inst);
+		assert (false && "not implemented");
+	}
+
+	void Evaluator::HandleICmpInst (const llvm::Instruction &inst, const llvm::Value *left, const llvm::ConstantInt *right) {
+		auto left_holder = context_.Top()->Load(left);
+		auto right_holder = ProduceHolder(right);
+
+		meta_eval_.ICmpInst(&inst, left_holder, right_holder);
+		// Load left and right args.
+		// Produce expression, use get_op, defined above
+		Trace(inst);
+		assert (false && "not implemented");
+	}
+
+	void Evaluator::HandleICmpInst (const llvm::Instruction &inst, const llvm::Value *left, const llvm::Value *right) {
+		auto left_holder = context_.Top()->Load(left);
+		auto right_holder = context_.Top()->Load(right);
+
+		/*
 		auto get_op = [](const llvm::Instruction &inst) {
 			auto icmp_inst = llvm::dyn_cast<llvm::ICmpInst>(&inst);
 			switch (icmp_inst->getPredicate()) {
@@ -347,7 +373,10 @@ namespace interpreter {
 				//default: InterruptionHandler::Do(new InterpretationFailure(inst));
 			};
 		};
+		*/
 
+		meta_eval_.ICmpInst(&inst, left_holder, right_holder);
+		Trace(inst);
 		// Load left and right args.
 		// Produce expression, use get_op, defined above
 		assert (false && "not implemented");
