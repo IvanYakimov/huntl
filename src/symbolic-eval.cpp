@@ -46,7 +46,8 @@ namespace interpreter {
 	}
 
 	solver::Kind SymbolicEval::ExtractKindFromICmpInst(const llvm::ICmpInst* inst) {
-		switch(inst->getOpcode()) {
+		llvm::errs() << "inst opcode is:" << inst->getInversePredicate() << "\n";
+		switch(inst->getPredicate()) {
 		case ICmpInst::ICMP_EQ:
 			return Kind::EQUAL;
 		case ICmpInst::ICMP_NE:
@@ -78,16 +79,25 @@ namespace interpreter {
 		Assign(inst, constraint);
 	}
 
-	void SymbolicEval::ICmpInst (const llvm::Instruction* inst, solver::SharedExpr left, solver::SharedExpr right) {
-		assert (false and "not implemented");
+	void SymbolicEval::IntComparison (const llvm::Instruction* inst, solver::SharedExpr left, solver::SharedExpr right) {
+		assert (llvm::isa<llvm::ICmpInst>(inst));
+		const llvm::ICmpInst *icmp_inst = llvm::dyn_cast<llvm::ICmpInst>(inst);
+		auto kind = ExtractKindFromICmpInst(icmp_inst);
+		auto constraint = context_.Solver().MkExpr(kind, left, right);
+		Assign(inst, constraint);
 	}
 
 	void SymbolicEval::Assign (const llvm::Value *destination, solver::SharedExpr e) {
 		auto e_type = e.getType();
 		auto v = context_.Solver().MkVar(e_type);
-		auto v_eq_e = context_.Solver().MkExpr(solver::Kind::EQUAL, v, e);
+		solver::Kind kind;
+		if (e_type.isBitVector())
+			kind = solver::Kind::EQUAL;
+		else if (e_type.isBoolean())
+			kind = solver::Kind::IFF;
+		auto constraint = context_.Solver().MkExpr(kind, v, e);
 		// Add constraint to PC
-		context_.Solver().Constraint(v_eq_e);
+		context_.Solver().Constraint(constraint);
 		auto v_holder = memory::Symbolic::Create(v);
 		// Store fresh constrained variable v to the memory
 		context_.Top()->Store(destination, v_holder);

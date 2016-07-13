@@ -3,6 +3,7 @@
 
 #include "context.hpp"
 #include "meta-int.hpp"
+#include "llvm/Support/Casting.h"
 # include "llvm/IR/Instructions.h"
 #include "expr.hpp"
 
@@ -11,7 +12,7 @@ namespace interpreter {
 	public:
 		SymbolicEval(ContextRef context);
 		void BinOp (const llvm::Instruction* inst, solver::SharedExpr left, solver::SharedExpr right);
-		void ICmpInst (const llvm::Instruction* inst, solver::SharedExpr left, solver::SharedExpr right);
+		void IntComparison (const llvm::Instruction* inst, solver::SharedExpr left, solver::SharedExpr right);
 		void Assign (const llvm::Value *destination, solver::SharedExpr target);
 	private:
 		//solver::SharedExpr Concrete_To_Symbolic(interpreter::MetaIntRef concrete_val);

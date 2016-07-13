@@ -7,6 +7,7 @@ namespace interpreter {
 	using memory::Concrete;
 	using interpreter::ContextRef;
 	using memory::HolderPtr;
+	using llvm::ICmpInst;
 
 	ConcreteEval::ConcreteEval(ContextRef context) : context_(context) {
 
@@ -78,11 +79,21 @@ namespace interpreter {
 
 	void ConcreteEval::BinOp (const llvm::Instruction* inst, MetaIntRef left_val, MetaIntRef right_val) {
 		auto result = PerformConcreteBinOp(inst, left_val, right_val);
-		auto result_holder = Concrete::Create(result);
-		context_.Top()->Store(inst, result_holder);
+		//auto result_holder = Concrete::Create(result);
+		//context_.Top()->Store(inst, result_holder);
+		Assign(inst, result);
 	}
 
-	void ConcreteEval::ICmpInst(const llvm::Instruction* inst, interpreter::MetaIntRef left_val, interpreter::MetaIntRef right_val) {
+	void ConcreteEval::IntComparison(const llvm::Instruction* inst, interpreter::MetaIntRef left_val, interpreter::MetaIntRef right_val) {
+		assert (llvm::isa<llvm::ICmpInst>(inst));
+		const llvm::ICmpInst *icmp_inst = llvm::dyn_cast<llvm::ICmpInst>(inst);
+		bool result = PerformConcreteICmpInst(icmp_inst, left_val, right_val);
+		MetaInt casted_result;
+		if (result == true)
+			casted_result = MetaInt(1, 1);
+		else
+			casted_result = MetaInt(1, 0);
+		Assign(inst, casted_result);
 	}
 }
 

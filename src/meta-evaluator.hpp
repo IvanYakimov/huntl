@@ -28,7 +28,7 @@ namespace interpreter {
 		~MetaEvaluator();
 		NONCOPYABLE(MetaEvaluator);
 		void BinOp (const llvm::Instruction* inst, memory::HolderPtr left, memory::HolderPtr right);
-		void ICmpInst (const llvm::Instruction* inst, memory::HolderPtr left, memory::HolderPtr right);
+		void IntComparison (const llvm::Instruction* inst, memory::HolderPtr left, memory::HolderPtr right);
 		void Assign (const llvm::Value *destination, memory::HolderPtr target);
 	private:
 		ContextRef context_;
