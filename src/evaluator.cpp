@@ -119,7 +119,7 @@ namespace interpreter {
 		}
 		else
 			assert (false and "not implemented");
-		std::cerr << "\n//----------------------------\n AUTOMATICALLY GENERATED TEST CASE FOR:\n\n";
+		std::cerr << "\n//----------------------------\nAUTOMATICALLY GENERATED TEST CASE FOR\n";
 		std::cerr << target_->getName().str() << ":\n";
 		for_each(arg_sol_list.begin(), arg_sol_list.end(), [&](auto arg_sol) {
 			std::cerr << *arg_sol << " ";
@@ -141,7 +141,7 @@ namespace interpreter {
 
 		llvm::GenericValue gres = jit->runFunction(target_, jit_args);
 
-		errs() << "\n//JIT verification - DONE. Result: " << gres.IntVal << "\n";
+		//errs() << "\n//JIT verification - DONE. Result: " << gres.IntVal << "\n";
 
 		assert(memory::GetValue(ret_sol) == gres.IntVal and "generated ret-value MUST be equivalent to one returned from JIT!");
 
@@ -233,7 +233,7 @@ namespace interpreter {
 	}
 
 	memory::HolderPtr Evaluator::CallFunction(llvm::Function *f, memory::ArgMapPtr args) {
-		llvm::errs() << "call function " << f->getName() << "\n";
+		//llvm::errs() << "call function " << f->getName() << "\n";
 		memory::HolderPtr ret_val = nullptr;
 		auto is_builtin = builtins_.find(f);
 		if (is_builtin != builtins_.end()) {
@@ -266,7 +266,7 @@ namespace interpreter {
 				ret_val = context_.Top()->RetVal.Get();
 			}
 			context_.Pop(); // pop
-			llvm::errs() << "return from function " << f->getName() << "\n";
+			//llvm::errs() << "return from function " << f->getName() << "\n";
 		}
 		return ret_val;
 	}
@@ -285,7 +285,7 @@ namespace interpreter {
 		llvm::errs() << "------------------------------------\n";
 		llvm::errs() << "{\n";
 		*/
-		llvm::errs() << inst << "\n";
+		//llvm::errs() << inst << "\n";
 		/*
 		context_.Top()->Print();
 		context_.Solver().Print();

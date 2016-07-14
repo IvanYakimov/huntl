@@ -46,7 +46,6 @@ namespace interpreter {
 	}
 
 	solver::Kind SymbolicEval::ExtractKindFromICmpInst(const llvm::ICmpInst* inst) {
-		llvm::errs() << "inst opcode is:" << inst->getInversePredicate() << "\n";
 		switch(inst->getPredicate()) {
 		case ICmpInst::ICMP_EQ:
 			return Kind::EQUAL;
