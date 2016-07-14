@@ -9,7 +9,7 @@ namespace interpreter {
 	using memory::HolderPtr;
 	using llvm::ICmpInst;
 
-	ConcreteEval::ConcreteEval(ContextRef context) : context_(context), True(1,1), False(1,0) {
+	ConcreteEval::ConcreteEval(ContextRef context) : context_(context), True(8,1,false), False(8,0,false) {
 
 	}
 
@@ -97,10 +97,10 @@ namespace interpreter {
 	}
 
 	const llvm::BasicBlock* ConcreteEval::Branch(const llvm::Instruction *inst, interpreter::MetaIntRef condition, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse) {
-		if (condition.eq(True)) {
+		if (condition == True) {
 			return iftrue;
 		}
-		else if (condition.eq(False)) {
+		else if (condition == False) {
 			return iffalse;
 		}
 		else

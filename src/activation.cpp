@@ -3,28 +3,11 @@
 namespace memory {
 	using memory::HolderPtr;
 
-	Activation::Activation() : RetVal() {
+	Activation::Activation() : RetVal(), PC() {
 		local_memory_ = memory::LocalMemory::Create();
 	}
 
-	/*
-	Activation::Activation(ArgMapPtr arg_map) {
-		assert (arg_map != nullptr);
-		//arg_map_ = arg_map;
-		ret_ = nullptr;
-		local_memory_ = memory::LocalMemory::Create();
-	}
-	*/
-
-	Activation::~Activation() {
-
-	}
-
-	/*
-	ActivationPtr Activation::Create(ArgMapPtr arg_map) {
-		return utils::Create<Activation>(arg_map);
-	}
-	*/
+	Activation::~Activation() {}
 
 	ActivationPtr Activation::Create() {
 		return utils::Create<Activation>();
@@ -40,23 +23,15 @@ namespace memory {
 		ret_ = ret;
 	}
 
-	/*
-	memory::HolderPtr Activation::GetArg(Address address) {
-		assert (llvm::isa<llvm::Argument>(address));
-		auto res = arg_map_->find(address);
-		assert (res != arg_map_->end());
-		return res->second;
+	const llvm::BasicBlock* Activation::ProgramCounter::Get() {
+		//assert (program_counter_ != nullptr);
+		return program_counter_;
 	}
-	*/
 
-	/*
-	void Activation::SetArg(Address address, memory::HolderPtr value) {
-		assert (llvm::isa<llvm::Argument>(address));
-		local_memory_->Alloca(address, value);
-		//->find(address) == arg_map_->end());
-		//arg_map_->emplace(address, value);
+	void Activation::ProgramCounter::Set(const llvm::BasicBlock* program_counter) {
+		//assert (program_counter == nullptr);
+		program_counter_ = program_counter;
 	}
-	*/
 
 	void Activation::Alloca(Address address, HolderPtr initial) {
 		local_memory_->Alloca(address, initial);
@@ -67,7 +42,6 @@ namespace memory {
 	}
 
 	void Activation::Store(Address address, HolderPtr holder) {
-		//assert (not llvm::isa<llvm::Argument>(address) and "unexpected behavior");
 		local_memory_->Store(address, holder);
 	}
 

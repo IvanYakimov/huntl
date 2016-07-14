@@ -254,7 +254,14 @@ namespace interpreter {
 					meta_eval_.Assign(addr, hldr);
 				});
 
-				visit (f);
+				const llvm::BasicBlock* next_block = &*f->begin();
+				context_.Top()->PC.Set(next_block);
+				while (next_block != nullptr) {
+					visit (const_cast<llvm::BasicBlock*>(next_block));
+					next_block = context_.Top()->PC.Get();
+				}
+
+				//visit (f);
 
 				ret_val = context_.Top()->RetVal.Get();
 			}
@@ -289,6 +296,7 @@ namespace interpreter {
 		auto holder = context_.Top()->Load(ret_inst);
 		meta_eval_.Assign(&inst, holder);
 		context_.Top()->RetVal.Set(holder);
+		context_.Top()->PC.Set(nullptr);
 		Trace(inst);
 	}
 
@@ -298,6 +306,7 @@ namespace interpreter {
 		// Store it in 'ret_const'
 		meta_eval_.Assign(&inst, holder);
 		context_.Top()->RetVal.Set(holder);
+		context_.Top()->PC.Set(nullptr);
 		//assert (false && "not implemented");
 		Trace(inst);
 	}
@@ -312,12 +321,20 @@ namespace interpreter {
 		auto cond_holder = context_.Top()->Load(cond);
 		assert (cond_holder != nullptr and "only instruction is supported yet");
 		auto next = meta_eval_.Branch(&inst, cond_holder, iftrue, iffalse);
+		context_.Top()->PC.Set(next);
+		errs() << "################## BRACH MYSTERY!! ####################\n";
+		errs() << inst << "\n";
+		errs() << "cond:" << *cond << "\n";
+		errs() << "iftrue: " << *iftrue << "\n";
+		errs() << "iffalse: " << *iffalse << "\n";
+		errs() << "################## BRACH MYSTERY!! ####################\n";
 		//visit(next);
 		Trace(inst);
 	}
 
 	void Evaluator::HandleBranchInst (const llvm::Instruction &inst, const llvm::BasicBlock *jump) {
 		auto next = jump;
+		context_.Top()->PC.Set(next);
 		//visit(next);
 		Trace(inst);
 	}

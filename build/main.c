@@ -1,4 +1,4 @@
-#include "target.h"
+#include "target.c"
 #include <stdlib.h>
 
 int main() {

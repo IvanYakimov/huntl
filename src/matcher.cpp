@@ -54,7 +54,9 @@ namespace interpreter {
 				*jump = NULL;
 		Value *cond = NULL;
 
-		if (Case (inst, &cond, &iftrue, &iffalse))
+		//NOTE: the operands are stored in reversed order, as follow: (IfTrue, IfFalse, Cond)^R = (Cond, IfFalse, IfTrue)
+		//see: http://llvm.org/docs/doxygen/html/classllvm_1_1BranchInst.html
+		if (Case (inst, &cond, &iffalse, &iftrue))
 			HandleBranchInst(inst, cond, iftrue, iffalse);
 		else if (Case (inst, &jump))
 			HandleBranchInst(inst, jump);

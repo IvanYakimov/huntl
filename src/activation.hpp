@@ -12,6 +12,7 @@
 #include "holder.hpp"
 #include "local-memory.hpp"
 #include "memory-map-interface.hpp"
+#include "llvm/IR/BasicBlock.h"
 
 namespace memory {
 	class Activation;
@@ -22,13 +23,10 @@ namespace memory {
 	class Activation {
 	public:
 		NONCOPYABLE(Activation);
-		//Activation(ArgMapPtr arg_map);
 		Activation();
 		~Activation();
-		//static ActivationPtr Create(ArgMapPtr arg_map);
 		static ActivationPtr Create();
 		memory::HolderPtr GetArg(Address address);
-		//void SetArg(Address, memory::HolderPtr value);
 		class ReturnValue {
 		public:
 			void Set(memory::HolderPtr value);
@@ -36,16 +34,19 @@ namespace memory {
 		private:
 			memory::HolderPtr ret_ = nullptr;
 		} RetVal;
-		//memory::HolderPtr GetRet();
-		//void SetRet(memory::HolderPtr ret);
+		class ProgramCounter {
+		public:
+			void Set(const llvm::BasicBlock* program_counter);
+			const llvm::BasicBlock* Get();
+		private:
+			const llvm::BasicBlock* program_counter_ = nullptr;
+		} PC;
 		void Alloca(Address address, HolderPtr initial);
 		HolderPtr Load(Address address);
 		void Store(Address address, HolderPtr holder);
 		void Print();
 	private:
 		memory::LocalMemoryPtr local_memory_;
-		//ArgMapPtr arg_map_;
-		//memory::HolderPtr ret_;
 	};
 }
 
