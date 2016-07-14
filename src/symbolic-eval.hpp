@@ -5,7 +5,13 @@
 #include "meta-int.hpp"
 #include "llvm/Support/Casting.h"
 # include "llvm/IR/Instructions.h"
+#include "llvm/IR/BasicBlock.h"
 #include "expr.hpp"
+
+// fork support
+#include <unistd.h>
+#include <sys/wait.h>
+#include <sys/types.h>
 
 namespace interpreter {
 	class SymbolicEval {
@@ -19,6 +25,7 @@ namespace interpreter {
 		//solver::SharedExpr Concrete_To_Symbolic(interpreter::MetaIntRef concrete_val);
 		solver::Kind ExtractKindFromInst(const llvm::Instruction* inst);
 		solver::Kind ExtractKindFromICmpInst(const llvm::ICmpInst* inst);
+		const llvm::BasicBlock* MakeDecision(const solver::SharedExpr& condition, const llvm::BasicBlock* branch_ptr, bool branch_marker);
 		ContextRef context_;
 	};
 }

@@ -103,9 +103,40 @@ namespace interpreter {
 		context_.Top()->Store(destination, v_holder);
 	}
 
+	const llvm::BasicBlock* SymbolicEval::MakeDecision(const solver::SharedExpr& condition, const llvm::BasicBlock* branch_ptr, bool branch_marker) {
+		solver::SharedExpr _expected = context_.Solver().MkConst(branch_marker);
+		auto constraint = context_.Solver().MkExpr(Kind::IFF, condition, _expected);
+		context_.Solver().Constraint(constraint);
+		if (!context_.Solver().IsSat())
+			exit(EXIT_SUCCESS);
+		else
+			return branch_ptr;
+	}
+
 	const llvm::BasicBlock* SymbolicEval::Branch (const llvm::Instruction *inst, solver::SharedExpr condition,
 			const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse) {
+		pid_t child_pid = 0;
+		int ch_status;
+		const llvm::BasicBlock* next_branch;
 
+		std::cerr << "fork\n";
+
+		llvm::errs().flush();
+		std::flush(std::cerr);
+
+		child_pid = fork();
+		if (child_pid > 0) {
+			wait(&ch_status);
+			next_branch = MakeDecision(condition, iftrue, true);
+			//std::cerr << "fork to TRUE branch:\n";
+			//llvm::errs() << *next_branch << "\n";
+		}
+		else {
+			next_branch = MakeDecision(condition, iffalse, false);
+			//std::cerr << "fork to FALSE branch:\n";
+			//llvm::errs() << *next_branch << "\n";
+		}
+		return next_branch;
 	}
 }
 

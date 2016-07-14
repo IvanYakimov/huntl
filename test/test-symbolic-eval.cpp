@@ -36,7 +36,7 @@ public:
 	}
 
 	void CheckSymRet(ContextRef context, memory::HolderPtr ret_holder, MetaIntRef exp) {
-		ASSERT_TRUE(context.Solver().CheckSat());
+		ASSERT_TRUE(context.Solver().IsSat());
 		ASSERT_TRUE(memory::IsSymbolic(ret_holder));
 		auto ret_expr = memory::GetExpr(ret_holder);
 		auto meta_int = context.Solver().GetValue(ret_expr);
@@ -139,7 +139,7 @@ TEST_F (SymEvalTest, mksym_uiN) {
 	//Eval(c, caller, caller_args, MetaInt(16,4));
 	// get x value:
 	auto ret_holder = eval.CallFunction(caller, caller_args);
-	ASSERT_TRUE(c.Solver().CheckSat());
+	ASSERT_TRUE(c.Solver().IsSat());
 }
 
 

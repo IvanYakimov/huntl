@@ -18,6 +18,7 @@ namespace solver {
 	//using SolverPtr = std::shared_ptr<Solver>;
 	using SolverRef = Solver&;
 	using Kind = CVC4::Kind;
+	using Result = CVC4::Result;
 
 	class Solver {
 	public:
@@ -30,10 +31,11 @@ namespace solver {
 		//static SolverPtr Create();
 		// TODO: refactoring - replace HolderPtr by SharedExpr
 		void Constraint(SharedExpr constraint);
-		bool CheckSat();
+		bool IsSat();
 		interpreter::MetaInt GetValue(SharedExpr e);
 		Type MkBitVectorType(unsigned size);
 		SharedExpr MkConst(BitVec val);
+		SharedExpr MkConst(bool val);
 		SharedExpr MkVar(Type type);
 		SharedExpr MkExpr(Kind kind, SharedExpr left, SharedExpr right);
 		//TODO: refactoring:

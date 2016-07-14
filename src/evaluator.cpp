@@ -93,7 +93,7 @@ namespace interpreter {
 		std::list<memory::ConcretePtr> arg_sol_list;
 		memory::ConcretePtr ret_sol;
 
-		if (context_.Solver().CheckSat() == true) {
+		if (context_.Solver().IsSat() == true) {
 			for(auto pair = args->begin(); pair != args->end(); pair++) {
 				//std::cerr << *pair.second << "\n";
 				HolderPtr holder = pair->second;
@@ -119,7 +119,7 @@ namespace interpreter {
 		}
 		else
 			assert (false and "not implemented");
-		std::cerr << "//----------------------------\n AUTOMATICALLY GENERATED TEST CASE FOR:\n\n";
+		std::cerr << "\n//----------------------------\n AUTOMATICALLY GENERATED TEST CASE FOR:\n\n";
 		std::cerr << target_->getName().str() << ":\n";
 		for_each(arg_sol_list.begin(), arg_sol_list.end(), [&](auto arg_sol) {
 			std::cerr << *arg_sol << " ";
@@ -145,14 +145,14 @@ namespace interpreter {
 
 		assert(memory::GetValue(ret_sol) == gres.IntVal and "generated ret-value MUST be equivalent to one returned from JIT!");
 
-		std::cerr << "//END." << "\n";
+		std::cerr << "//END.\n//-----------------------------------\n\n";
 		exit(0);
 		//assert (false and "not implemented");
 	}
 
 	void Evaluator::ProcessModule(llvm::Module *m) {
-		errs() << "------------------------\nvisit module:\n";
-		errs() << "funcs in module: \n";
+		//errs() << "------------------------\nvisit module:\n";
+		//errs() << "funcs in module: \n";
 		assert (m->begin() != m->end());
 		std::list<llvm::Function*> test_functions;
 		for (auto f_it = m->begin(); f_it != m->end(); f_it++) {
@@ -180,20 +180,20 @@ namespace interpreter {
 					std::string bitwidth_str = *iuN_match.begin();
 					int bitwidth_val = std::stoi(bitwidth_str);
 					builtins_.emplace(f_it, MkSym(context_, bitwidth_val));
-					errs() << "builtint matched: " << name << "\n";
+					//errs() << "builtint matched: " << name << "\n";
 				}
 			}
 			else if (matched_test_NAMEs == 1) {
-					errs() << "test matched: " << name << "\n";
+					//errs() << "test matched: " << name << "\n";
 					test_functions.push_back(f_it);
 			}
 			else if (matched_gen_TARGETs == 1) {
-				errs() << "gen matched: " << name << "; ";
+				//errs() << "gen matched: " << name << "; ";
 				std::string target_name = gen_TARGET_matches.suffix();
 
 				StringRef llvm_styled_target_name(target_name.c_str());
 				llvm::Function* target = m->getFunction(llvm_styled_target_name);
-				errs() << "with target: " << target->getName() << "\n";
+				//errs() << "with target: " << target->getName() << "\n";
 				if (target == nullptr) {
 					errs() << "no " << llvm_styled_target_name << " target found. stop." << "\n";
 					exit(0);
@@ -237,7 +237,7 @@ namespace interpreter {
 		memory::HolderPtr ret_val = nullptr;
 		auto is_builtin = builtins_.find(f);
 		if (is_builtin != builtins_.end()) {
-			llvm::errs() << "this is a builtin function!\n";
+			//llvm::errs() << "this is a builtin function!\n";
 			context_.Push(); {
 			ret_val = is_builtin->second(f, args);
 			}
@@ -281,12 +281,16 @@ namespace interpreter {
 	}
 
 	void Evaluator::Trace(const llvm::Instruction& inst) {
+		/*
 		llvm::errs() << "------------------------------------\n";
 		llvm::errs() << "{\n";
+		*/
 		llvm::errs() << inst << "\n";
+		/*
 		context_.Top()->Print();
 		context_.Solver().Print();
 		llvm::errs() << "}\n";
+		*/
 	}
 
 	// Return
@@ -322,12 +326,14 @@ namespace interpreter {
 		assert (cond_holder != nullptr and "only instruction is supported yet");
 		auto next = meta_eval_.Branch(&inst, cond_holder, iftrue, iffalse);
 		context_.Top()->PC.Set(next);
+		/*
 		errs() << "################## BRACH MYSTERY!! ####################\n";
 		errs() << inst << "\n";
 		errs() << "cond:" << *cond << "\n";
 		errs() << "iftrue: " << *iftrue << "\n";
 		errs() << "iffalse: " << *iffalse << "\n";
 		errs() << "################## BRACH MYSTERY!! ####################\n";
+		*/
 		//visit(next);
 		Trace(inst);
 	}
@@ -446,7 +452,7 @@ namespace interpreter {
 	}
 
 	void Evaluator::HandleCallInst(const llvm::CallInst &inst) {
-		llvm::errs() << "call " << inst.getCalledFunction()->getName() << "\n";
+		//llvm::errs() << "call " << inst.getCalledFunction()->getName() << "\n";
 		//TODO: meta_eval_.Assign(...) for all operand values
 		auto called = inst.getCalledFunction();
 		assert (called != nullptr and "indirect function invocation not supported");

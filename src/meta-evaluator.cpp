@@ -91,8 +91,10 @@ namespace interpreter {
 		if (memory::IsConcrete(condition)) {
 			return concrete_eval_.Branch(inst, memory::GetValue(condition), iftrue, iffalse);
 		}
+		else if (memory::IsSymbolic(condition))
+			return symbolic_eval_.Branch(inst, memory::GetExpr(condition), iftrue, iffalse);
 		else
-			assert (false and "symbolic branching not implemented");
+			assert (false and "unexpected behavior");
 		return nullptr;
 	}
 

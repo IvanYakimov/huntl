@@ -1,5 +1,6 @@
 int target(int x, int y) {
-	if (y == 0)
+	if (x < y)
 		return x;
-	else return x + target(x, y-1);
+	else
+		return y;
 }

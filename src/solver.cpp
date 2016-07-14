@@ -37,7 +37,7 @@ namespace solver {
 	}
 	*/
 
-	bool Solver::CheckSat() {
+	bool Solver::IsSat() {
 		return smt_engine_.checkSat().isSat();
 	}
 
@@ -58,6 +58,10 @@ namespace solver {
 
 	Type Solver::MkBitVectorType(unsigned size) {
 		return expr_manager_.mkBitVectorType(size);
+	}
+
+	SharedExpr Solver::MkConst(bool val) {
+		return expr_manager_.mkConst(val);
 	}
 
 	SharedExpr Solver::MkConst(BitVec val) {
