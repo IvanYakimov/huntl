@@ -9,7 +9,7 @@ namespace interpreter {
 	using memory::HolderPtr;
 	using llvm::ICmpInst;
 
-	ConcreteEval::ConcreteEval(ContextRef context) : context_(context) {
+	ConcreteEval::ConcreteEval(ContextRef context) : context_(context), True(1,1), False(1,0) {
 
 	}
 
@@ -46,7 +46,7 @@ namespace interpreter {
 	}
 
 	bool ConcreteEval::PerformConcreteICmpInst(const llvm::ICmpInst* inst, MetaIntRef left_val, MetaIntRef right_val) {
-			switch (inst->getOpcode()) {
+			switch (inst->getPredicate()) {
 			case llvm::ICmpInst::ICMP_EQ:
 				return left_val.eq(right_val);
 			case llvm::ICmpInst::ICMP_NE:
@@ -90,10 +90,22 @@ namespace interpreter {
 		bool result = PerformConcreteICmpInst(icmp_inst, left_val, right_val);
 		MetaInt casted_result;
 		if (result == true)
-			casted_result = MetaInt(1, 1);
+			casted_result = True;
 		else
-			casted_result = MetaInt(1, 0);
+			casted_result = False;
 		Assign(inst, casted_result);
+	}
+
+	const llvm::BasicBlock* ConcreteEval::Branch(const llvm::Instruction *inst, interpreter::MetaIntRef condition, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse) {
+		if (condition.eq(True)) {
+			return iftrue;
+		}
+		else if (condition.eq(False)) {
+			return iffalse;
+		}
+		else
+			assert (false and "unexpected conditional");
+		return nullptr;
 	}
 }
 

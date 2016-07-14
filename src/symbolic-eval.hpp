@@ -14,6 +14,7 @@ namespace interpreter {
 		void BinOp (const llvm::Instruction* inst, solver::SharedExpr left, solver::SharedExpr right);
 		void IntComparison (const llvm::Instruction* inst, solver::SharedExpr left, solver::SharedExpr right);
 		void Assign (const llvm::Value *destination, solver::SharedExpr target);
+		const llvm::BasicBlock*  Branch (const llvm::Instruction *inst, solver::SharedExpr condition, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse);
 	private:
 		//solver::SharedExpr Concrete_To_Symbolic(interpreter::MetaIntRef concrete_val);
 		solver::Kind ExtractKindFromInst(const llvm::Instruction* inst);

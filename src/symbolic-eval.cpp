@@ -102,6 +102,11 @@ namespace interpreter {
 		// Store fresh constrained variable v to the memory
 		context_.Top()->Store(destination, v_holder);
 	}
+
+	const llvm::BasicBlock* SymbolicEval::Branch (const llvm::Instruction *inst, solver::SharedExpr condition,
+			const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse) {
+
+	}
 }
 
 

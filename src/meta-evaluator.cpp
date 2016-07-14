@@ -86,6 +86,16 @@ namespace interpreter {
 		MixedEval2(inst, left, right, concrete_comparison, symbolic_comparison);
 	}
 
+	const llvm::BasicBlock* MetaEvaluator::Branch (const llvm::Instruction *inst, memory::HolderPtr condition,
+			const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse) {
+		if (memory::IsConcrete(condition)) {
+			return concrete_eval_.Branch(inst, memory::GetValue(condition), iftrue, iffalse);
+		}
+		else
+			assert (false and "symbolic branching not implemented");
+		return nullptr;
+	}
+
 	void MetaEvaluator::Assign (const llvm::Value *destination, memory::HolderPtr target) {
 		if (memory::IsConcrete(target)) {
 			concrete_eval_.Assign(destination, memory::GetValue(target));

@@ -14,7 +14,10 @@ namespace interpreter {
 		void BinOp (const llvm::Instruction* inst, interpreter::MetaIntRef left_val, interpreter::MetaIntRef right_val);
 		void IntComparison(const llvm::Instruction* inst, interpreter::MetaIntRef left_val, interpreter::MetaIntRef right_val);
 		void Assign (const llvm::Value* destination, interpreter::MetaIntRef value);
+		const llvm::BasicBlock* Branch (const llvm::Instruction *inst, interpreter::MetaIntRef condition, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse);
 	private:
+		const MetaInt True;
+		const MetaInt False;
 		interpreter::ContextRef context_;
 		inline interpreter::MetaInt PerformConcreteBinOp(const llvm::Instruction* inst, interpreter::MetaIntRef left_val, interpreter::MetaIntRef right_val);
 		inline bool PerformConcreteICmpInst(const llvm::ICmpInst* inst, interpreter::MetaIntRef left_val, interpreter::MetaIntRef right_val);

@@ -309,11 +309,17 @@ namespace interpreter {
 
 	// Branch
 	void Evaluator::HandleBranchInst (const llvm::Instruction &inst, const llvm::Value *cond, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse) {
-		assert (false && "not implemented");
+		auto cond_holder = context_.Top()->Load(cond);
+		assert (cond_holder != nullptr and "only instruction is supported yet");
+		auto next = meta_eval_.Branch(&inst, cond_holder, iftrue, iffalse);
+		//visit(next);
+		Trace(inst);
 	}
 
 	void Evaluator::HandleBranchInst (const llvm::Instruction &inst, const llvm::BasicBlock *jump) {
-		assert (false && "not implemented");
+		auto next = jump;
+		//visit(next);
+		Trace(inst);
 	}
 
 	// BinOp
