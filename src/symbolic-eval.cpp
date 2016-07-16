@@ -6,10 +6,11 @@ namespace interpreter {
 	using interpreter::MetaIntRef;
 	using llvm::Instruction;
 	using llvm::ICmpInst;
+	using solver::BitVec;
+	using solver::InfiniteInt;
 
 	SymbolicEval::SymbolicEval(ContextRef context) :
-			context_(context){
-
+			context_(context) {
 	}
 
 	Kind SymbolicEval::ExtractKindFromInst(const Instruction* inst) {
@@ -82,8 +83,12 @@ namespace interpreter {
 		assert (llvm::isa<llvm::ICmpInst>(inst));
 		const llvm::ICmpInst *icmp_inst = llvm::dyn_cast<llvm::ICmpInst>(inst);
 		auto kind = ExtractKindFromICmpInst(icmp_inst);
-		auto constraint = context_.Solver().MkExpr(kind, left, right);
-		Assign(inst, constraint);
+		auto bool_res = context_.Solver().MkExpr(kind, left, right);
+		auto bit_true = context_.Solver().MkConst(BitVec(1, InfiniteInt(1)));
+		auto bit_false = context_.Solver().MkConst(BitVec(1, InfiniteInt(0)));
+		auto e = context_.Solver().MkExpr(Kind::ITE, bool_res, bit_true, bit_false);
+
+		Assign(inst, e);
 	}
 
 	void SymbolicEval::Assign (const llvm::Value *destination, solver::SharedExpr e) {
@@ -103,9 +108,20 @@ namespace interpreter {
 	}
 
 	const llvm::BasicBlock* SymbolicEval::MakeDecision(const solver::SharedExpr& condition, const llvm::BasicBlock* branch_ptr, bool branch_marker) {
-		solver::SharedExpr _expected = context_.Solver().MkConst(branch_marker);
-		auto constraint = context_.Solver().MkExpr(Kind::IFF, condition, _expected);
-		context_.Solver().Constraint(constraint);
+		auto bit_true = context_.Solver().MkConst(BitVec(1, InfiniteInt(1)));
+		auto bit_false = context_.Solver().MkConst(BitVec(1, InfiniteInt(0)));
+		auto bool_true = context_.Solver().MkConst(true);
+		auto bool_false = context_.Solver().MkConst(false);
+
+
+		auto cond_eq_true = context_.Solver().MkExpr(Kind::EQUAL, condition, bit_true);
+		auto converted_condition = context_.Solver().MkExpr(Kind::ITE, cond_eq_true, bool_true, bool_false);
+
+
+		auto direction = context_.Solver().MkConst(branch_marker);
+		auto final_constraint = context_.Solver().MkExpr(Kind::IFF, converted_condition, direction);
+
+		context_.Solver().Constraint(final_constraint);
 		if (!context_.Solver().IsSat())
 			exit(EXIT_SUCCESS);
 		else
@@ -118,7 +134,8 @@ namespace interpreter {
 		int ch_status;
 		const llvm::BasicBlock* next_branch;
 
-		std::cerr << "fork\n";
+
+		std::cerr << ".";
 
 		llvm::errs().flush();
 		std::flush(std::cerr);
@@ -127,13 +144,9 @@ namespace interpreter {
 		if (child_pid > 0) {
 			wait(&ch_status);
 			next_branch = MakeDecision(condition, iftrue, true);
-			//std::cerr << "fork to TRUE branch:\n";
-			//llvm::errs() << *next_branch << "\n";
 		}
 		else {
 			next_branch = MakeDecision(condition, iffalse, false);
-			//std::cerr << "fork to FALSE branch:\n";
-			//llvm::errs() << *next_branch << "\n";
 		}
 		return next_branch;
 	}

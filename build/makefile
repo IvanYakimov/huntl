@@ -19,6 +19,7 @@ LLVM_TEST_HELPERS = ir-function-builder.o
 
 TEST_RUNNER = test-runner.o
 
+BLAH = test-gcd.ll test-hweight.ll
 BENCHMARKS = hweight.ll gcd.ll
 
 OBJ = $(INTERPRETER) $(MEMORY) $(SOLVER)
@@ -41,6 +42,7 @@ TST = ../test
 vpath %.cpp $(SRC) $(TST) $(TST)/solver/ $(TST)/interpreter $(TST)/matcher
 vpath %.hpp $(SRC) $(TST)/matcher
 vpath %.c 	$(SRC) ../benchmarks
+vpath %.h	$(SRC) ../benchmarks
 		
 program.so: shared.o 
 	$(CXX) -shared $< -o $@ $(CXXFLAGS) $(CVC4FLAGS) 
@@ -74,6 +76,12 @@ clean:
 benchmarks: $(BENCHMARKS)
 	touch benchmarks
 	
+	
+$(BLAH):
+test-%.ll: test-%.c %.c
+	clang -S -emit-llvm -O0 $^
+		
+	
 $(BENCHMARKS):
 %.ll: %.c
 	clang -S -emit-llvm -O0 $<
@@ -84,6 +92,7 @@ test.ll: test.c
 
 api-pattern.cpp: test.ll
 	llc -march=cpp $< -o api-pattern.cpp
+
 
 .PHONY: run
 run:	program.so test.ll

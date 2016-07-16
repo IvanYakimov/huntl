@@ -9,7 +9,7 @@ namespace interpreter {
 	using memory::HolderPtr;
 	using llvm::ICmpInst;
 
-	ConcreteEval::ConcreteEval(ContextRef context) : context_(context), True(8,1,false), False(8,0,false) {
+	ConcreteEval::ConcreteEval(ContextRef context) : context_(context), True(1,1,false), False(1,0,false) {
 
 	}
 

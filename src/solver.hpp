@@ -34,10 +34,12 @@ namespace solver {
 		bool IsSat();
 		interpreter::MetaInt GetValue(SharedExpr e);
 		Type MkBitVectorType(unsigned size);
+		Type MkBooleanType();
 		SharedExpr MkConst(BitVec val);
 		SharedExpr MkConst(bool val);
 		SharedExpr MkVar(Type type);
 		SharedExpr MkExpr(Kind kind, SharedExpr left, SharedExpr right);
+		SharedExpr MkExpr(Kind kind, SharedExpr child1, SharedExpr child2, SharedExpr child3);
 		//TODO: refactoring:
 		void Print();
 	private:

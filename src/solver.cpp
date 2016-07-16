@@ -60,6 +60,10 @@ namespace solver {
 		return expr_manager_.mkBitVectorType(size);
 	}
 
+	Type Solver::MkBooleanType() {
+		return expr_manager_.booleanType();
+	}
+
 	SharedExpr Solver::MkConst(bool val) {
 		return expr_manager_.mkConst(val);
 	}
@@ -74,6 +78,10 @@ namespace solver {
 
 	SharedExpr Solver::MkExpr(Kind kind, SharedExpr left, SharedExpr right) {
 		return expr_manager_.mkExpr(kind, left, right);
+	}
+
+	SharedExpr Solver::MkExpr(Kind kind, SharedExpr child1, SharedExpr child2, SharedExpr child3) {
+		return expr_manager_.mkExpr(kind, child1, child2, child3);
 	}
 }
 
