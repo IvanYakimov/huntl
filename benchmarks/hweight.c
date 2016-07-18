@@ -1,14 +1,15 @@
 //#include <linux/bitops.h>
 //#include <asm/types.h>
 
-typedef unsigned long __u64;
-
 /**
  * hweightN - returns the hamming weight of a N-bit word
  * @x: the word to weigh
  *
  * The Hamming Weight of a number is the total number of bits set in it.
  */
+
+typedef unsigned long __u64;
+#define CONFIG_ARCH_HAS_FAST_MULTIPLIER
 
 unsigned int __sw_hweight32(unsigned int w)
 {

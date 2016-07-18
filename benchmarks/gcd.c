@@ -19,17 +19,8 @@
 	do { typeof(a) __tmp = (a); (a) = (b); (b) = __tmp; } while (0)
 // -->
 
-unsigned long gcd_helper(unsigned long a, unsigned long b);
-unsigned long gcd(unsigned long a, unsigned long b) {
-	if (a <= 24 && b <= 48)
-		return gcd_helper(a,b);
-	else
-		return 0;
-}
-
-
 /* If normalization is done by loops, the even/odd algorithm is a win. */
-unsigned long gcd_helper(unsigned long a, unsigned long b)
+unsigned long gcd(unsigned long a, unsigned long b)
 {
 	unsigned long r = a | b;
 

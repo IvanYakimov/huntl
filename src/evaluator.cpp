@@ -207,30 +207,20 @@ namespace interpreter {
 			//exit(0);
 		}
 
-		/*
 		pid_t child_pid = 0;
-		int ch_status;
-
-		llvm::errs().flush();
-		std::flush(std::cerr);
-
-		child_pid = fork();
-		if (child_pid > 0) {
-			std::cerr << "####parent process start" << "\n";
-			wait(&ch_status);
-			std::cerr << "####parent process end" << "\n";
-		}
-		else {
-			std::cerr << "####child process start" << "\n";
-			*/
-			for (auto it = test_functions.begin(); it != test_functions.end(); it++) {
+		int ch_status = 0;
+		for (auto it = test_functions.begin(); it != test_functions.end(); it++) {
+			errs().flush();
+			std::flush(std::cerr);
+			child_pid = fork();
+			if (child_pid > 0) {
+				wait(&ch_status);
+			}
+			else {
 				auto args = utils::Create<interpreter::ArgMap>();
 				auto ret = CallFunction(*it,args);
 			}
-			/*
-			std::cerr << "####child process end" << "\n";
 		}
-		*/
 	}
 
 	memory::HolderPtr Evaluator::CallFunction(llvm::Function *f, memory::ArgMapPtr args) {

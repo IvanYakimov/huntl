@@ -1,4 +1,5 @@
 #include "built-in.h"
+#include "sym-limits.h"
 #include "gcd.c"
 
 //TODO: replace by macro OR generate
@@ -9,9 +10,9 @@ int test_gcd() {
 	unsigned long b = 0;
 	unsigned long r = 0;
 	a = mksym_u64();
-	//a = 24;
 	b = mksym_u64();
-	//b = 24;
+	a = limit_u64(a, 0, 8);
+	b = limit_u64(b, 0, 24);
 	r = gcd(a,b);
 	gen_gcd(a,b,r);
 	return 0;
