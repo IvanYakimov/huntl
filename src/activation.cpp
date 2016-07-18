@@ -2,9 +2,10 @@
 
 namespace memory {
 	using memory::HolderPtr;
+#define DUMMY_ALLOCA 4
 
 	Activation::Activation(RamRef ram) : RetVal(), PC(), ram_(ram) {
-		local_memory_ = memory::LocalMemory::Create();
+		//local_memory_ = memory::LocalMemory::Create();
 	}
 
 	Activation::~Activation() {}
@@ -33,20 +34,37 @@ namespace memory {
 		program_counter_ = program_counter;
 	}
 
-	void Activation::Alloca(Address address, HolderPtr initial) {
-		local_memory_->Alloca(address, initial);
+	void Activation::Alloca(RegisterName register_name, HolderPtr initial) {
+		//local_memory_->Alloca(address, initial);
+		//TODO: alignment
+		auto addr = ram_.Stack().Alloca(initial, DUMMY_ALLOCA);
+		memory_map_.emplace(register_name, addr);
 	}
 
-	HolderPtr Activation::Load(Address address) {
-		return local_memory_->Load(address);
+	HolderPtr Activation::Load(RegisterName register_name) {
+		auto it = memory_map_.find(register_name);
+		assert (it != memory_map_.end());
+		auto addr = it->second;
+		//TODO: align
+		return ram_.Stack().Read(addr, DUMMY_ALLOCA);
+		//return local_memory_->Load(address);
 	}
 
-	void Activation::Store(Address address, HolderPtr holder) {
-		local_memory_->Store(address, holder);
+	void Activation::Store(RegisterName register_name, HolderPtr holder) {
+		//local_memory_->Store(address, holder);
+		auto it = memory_map_.find(register_name);
+		RamAddress addr;
+		if (it == memory_map_.end()) {
+			addr = ram_.Stack().Alloca(holder, DUMMY_ALLOCA);
+			memory_map_.emplace(register_name, addr);
+		}
+		else
+			addr = it->second;
+		ram_.Stack().Write(holder, addr, DUMMY_ALLOCA);
 	}
 
 	void Activation::Print() {
-		local_memory_->Print();
+		//local_memory_->Print();
 	}
 }
 

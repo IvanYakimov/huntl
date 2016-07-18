@@ -20,14 +20,14 @@ namespace memory {
 		LocalMemory();
 		~LocalMemory();
 		//using Address = const llvm::Value*;
-		void Alloca(Address address, HolderPtr initial);
-		HolderPtr Load(Address address);
-		void Store(Address address, HolderPtr holder);
+		void Alloca(RegisterName address, HolderPtr initial);
+		HolderPtr Load(RegisterName address);
+		void Store(RegisterName address, HolderPtr holder);
 		static LocalMemoryPtr Create();
 		void Print();
 	private:
-		using Pointer = std::pair<Address, HolderPtr>;
-		using MemoryMap = std::map<Address, HolderPtr>;
+		using Pointer = std::pair<RegisterName, HolderPtr>;
+		using MemoryMap = std::map<RegisterName, HolderPtr>;
 		MemoryMap mmap_;
 	};
 }

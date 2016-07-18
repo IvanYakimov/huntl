@@ -9,18 +9,18 @@ namespace memory {
 
 	}
 
-	void LocalMemory::Alloca(Address address, HolderPtr initial) {
+	void LocalMemory::Alloca(RegisterName address, HolderPtr initial) {
 		assert (mmap_.find(address) == mmap_.end());
 		mmap_.emplace(address, initial);
 	}
 
-	HolderPtr LocalMemory::Load(Address address) {
+	HolderPtr LocalMemory::Load(RegisterName address) {
 		auto it = mmap_.find(address);
 		assert (it != mmap_.end());
 		return it->second;
 	}
 
-	void LocalMemory::Store(Address address, HolderPtr holder) {
+	void LocalMemory::Store(RegisterName address, HolderPtr holder) {
 		mmap_[address] = holder;
 	}
 

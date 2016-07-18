@@ -19,7 +19,7 @@ namespace memory {
 	class Activation;
 	using ActivationPtr = std::shared_ptr<Activation>;
 	//TODO: customize :(
-	using ArgMap = std::map<Address, memory::HolderPtr>;
+	using ArgMap = std::map<RegisterName, memory::HolderPtr>;
 	using ArgMapPtr = std::shared_ptr<ArgMap>;
 	class Activation {
 	public:
@@ -27,7 +27,7 @@ namespace memory {
 		Activation(RamRef ram);
 		~Activation();
 		static ActivationPtr Create(RamRef ram);
-		memory::HolderPtr GetArg(Address address);
+		memory::HolderPtr GetArg(RegisterName address);
 		class ReturnValue {
 		public:
 			void Set(memory::HolderPtr value);
@@ -42,12 +42,13 @@ namespace memory {
 		private:
 			const llvm::BasicBlock* program_counter_ = nullptr;
 		} PC;
-		void Alloca(Address address, HolderPtr initial);
-		HolderPtr Load(Address address);
-		void Store(Address address, HolderPtr holder);
+		void Alloca(RegisterName address, HolderPtr initial);
+		HolderPtr Load(RegisterName address);
+		void Store(RegisterName address, HolderPtr holder);
 		void Print();
 	private:
-		memory::LocalMemoryPtr local_memory_;
+		//memory::LocalMemoryPtr local_memory_;
+		std::map<RegisterName, RamAddress> memory_map_;
 		memory::RamRef ram_;
 	};
 }

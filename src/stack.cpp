@@ -25,22 +25,25 @@ namespace memory {
 		segment_stack_.top() += align;
 		MemoryCellPtr mcell = std::unique_ptr<MemoryCell>(new MemoryCell(holder, align));
 		ram_.emplace(addr, std::move(mcell));
+		//std::cerr << "alloca " << *holder << " to addr: " << addr << "\n";
 		return addr;
 	}
 
 	void Stack::Write(HolderPtr holder, RamAddress addr, Alignment align) {
+		//std::cerr << "write " << *holder << " to addr: " << addr << "\n";
 		assert (addr < segment_stack_.top());
 		auto it = ram_.find(addr);
 		assert (it != ram_.end());
-		assert (it->first == align);
+		assert (it->second->align_ == align);
 		it->second->holder_ = holder;
 	}
 
 	HolderPtr Stack::Read(RamAddress addr, Alignment align) {
+		//std::cerr << "read from addr: " << addr << "\n";
 		assert (addr < segment_stack_.top());
 		auto it = ram_.find(addr);
 		assert (it != ram_.end());
-		assert (it->first == align);
+		assert (it->second->align_ == align);
 		auto res = it->second->holder_;
 		assert (res != nullptr);
 		return res;
