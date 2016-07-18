@@ -9,7 +9,7 @@ test-holder.o test-regex.o test-evaluator.o test-symbolic-eval.o
 # 
 # expr-test.o
 
-MEMORY = local-memory.o holder.o activation.o activation-stack.o
+MEMORY = local-memory.o holder.o activation.o activation-stack.o stack.o
 MEMORY_TEST = test-holder.o test-local-memory.o $(SOLVER) $(INTERPRETER) $(LLVM_TEST_HELPERS) $(TEST_RUNNER)
 
 SOLVER = solver.o path-constraint.o

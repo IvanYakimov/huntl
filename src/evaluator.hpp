@@ -1,5 +1,5 @@
-# ifndef __STATEMENT_EVALUATOR_HPP__
-# define __STATEMENT_EVALUATOR_HPP__
+# ifndef __EVALUATOR_HPP__
+# define __EVALUATOR_HPP__
 
 // STL
 #include <exception>
