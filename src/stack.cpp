@@ -20,7 +20,7 @@ namespace memory {
 
 	}
 
-	Address Stack::Alloca(HolderPtr holder, Alignment align) {
+	RamAddress Stack::Alloca(HolderPtr holder, Alignment align) {
 		auto addr = segment_stack_.top();
 		segment_stack_.top() += align;
 		MemoryCellPtr mcell = std::unique_ptr<MemoryCell>(new MemoryCell(holder, align));
@@ -28,7 +28,7 @@ namespace memory {
 		return addr;
 	}
 
-	void Stack::Write(HolderPtr holder, Address addr, Alignment align) {
+	void Stack::Write(HolderPtr holder, RamAddress addr, Alignment align) {
 		assert (addr < segment_stack_.top());
 		auto it = ram_.find(addr);
 		assert (it != ram_.end());
@@ -36,7 +36,7 @@ namespace memory {
 		it->second->holder_ = holder;
 	}
 
-	HolderPtr Stack::Read(Address addr, Alignment align) {
+	HolderPtr Stack::Read(RamAddress addr, Alignment align) {
 		assert (addr < segment_stack_.top());
 		auto it = ram_.find(addr);
 		assert (it != ram_.end());

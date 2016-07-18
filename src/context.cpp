@@ -1,7 +1,7 @@
 #include "context.hpp"
 
 namespace interpreter {
-	Context::Context() {
+	Context::Context() : solver_(), ram_(), activation_stack_(ram_) {
 	}
 
 	Context::~Context() {
@@ -13,12 +13,12 @@ namespace interpreter {
 	}
 
 	memory::ActivationPtr Context::Top() {
-		return activation_stack.top();
+		return activation_stack_.top();
 	}
 
 	void Context::Push() {
-		auto new_activation = memory::Activation::Create();
-		activation_stack.Push(new_activation);
+		//auto new_activation = memory::Activation::Create();
+		activation_stack_.Push();
 	}
 
 	/*
@@ -28,7 +28,7 @@ namespace interpreter {
 	*/
 
 	void Context::Pop() {
-		activation_stack.Pop();
+		activation_stack_.Pop();
 	}
 }
 

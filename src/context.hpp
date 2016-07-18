@@ -5,6 +5,7 @@
 #include "solver.hpp"
 #include "object.hpp"
 #include "memory-map-interface.hpp"
+#include "ram.hpp"
 
 namespace interpreter {
 	struct Context;
@@ -23,8 +24,9 @@ namespace interpreter {
 		void Pop();
 		memory::ActivationPtr Top();
 	private:
-		memory::ActivationStack activation_stack;
+		memory::ActivationStack activation_stack_;
 		solver::Solver solver_;
+		memory::Ram ram_;
 	};
 }
 

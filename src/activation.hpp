@@ -13,6 +13,7 @@
 #include "local-memory.hpp"
 #include "memory-map-interface.hpp"
 #include "llvm/IR/BasicBlock.h"
+#include "ram.hpp"
 
 namespace memory {
 	class Activation;
@@ -23,9 +24,9 @@ namespace memory {
 	class Activation {
 	public:
 		NONCOPYABLE(Activation);
-		Activation();
+		Activation(RamRef ram);
 		~Activation();
-		static ActivationPtr Create();
+		static ActivationPtr Create(RamRef ram);
 		memory::HolderPtr GetArg(Address address);
 		class ReturnValue {
 		public:
@@ -47,6 +48,7 @@ namespace memory {
 		void Print();
 	private:
 		memory::LocalMemoryPtr local_memory_;
+		memory::RamRef ram_;
 	};
 }
 

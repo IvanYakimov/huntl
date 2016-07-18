@@ -7,16 +7,18 @@
 #include <stack>
 #include <memory>
 
+#include "ram-delc.hpp"
+
 namespace memory {
-	using Address = std::uint64_t;
-	using Alignment = std::uint16_t;
+	class Stack;
+	using StackRef = Stack&;
 	class Stack {
 	public:
 		Stack();
 		~Stack();
-		Address Alloca(HolderPtr holder, Alignment align);
-		void Write(HolderPtr holder, Address addr, Alignment align);
-		HolderPtr Read(Address addr, Alignment align);
+		RamAddress Alloca(HolderPtr holder, Alignment align);
+		void Write(HolderPtr holder, RamAddress addr, Alignment align);
+		HolderPtr Read(RamAddress addr, Alignment align);
 		void Push();
 		void Pop();
 	private:
@@ -28,8 +30,8 @@ namespace memory {
 			HolderPtr holder_;
 		};
 		using MemoryCellPtr = std::unique_ptr<MemoryCell>;
-		std::stack<Address> segment_stack_;
-		std::map<Address, MemoryCellPtr> ram_;
+		std::stack<RamAddress> segment_stack_;
+		std::map<RamAddress, MemoryCellPtr> ram_;
 	};
 };
 

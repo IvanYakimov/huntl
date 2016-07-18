@@ -3,14 +3,14 @@
 namespace memory {
 	using memory::HolderPtr;
 
-	Activation::Activation() : RetVal(), PC() {
+	Activation::Activation(RamRef ram) : RetVal(), PC(), ram_(ram) {
 		local_memory_ = memory::LocalMemory::Create();
 	}
 
 	Activation::~Activation() {}
 
-	ActivationPtr Activation::Create() {
-		return utils::Create<Activation>();
+	ActivationPtr Activation::Create(RamRef ram) {
+		return utils::Create<Activation>(ram);
 	}
 
 	memory::HolderPtr Activation::ReturnValue::Get() {
