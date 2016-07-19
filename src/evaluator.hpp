@@ -24,6 +24,7 @@
 #include "context.hpp"
 #include "converter.hpp"
 #include "eval-tracer.hpp"
+#include "built-in-impl.hpp"
 
 #include "llvm/ExecutionEngine/ExecutionEngine.h"
 #include "llvm/ExecutionEngine/GenericValue.h"
@@ -50,25 +51,6 @@ namespace interpreter {
 		using BuiltInMap = std::map<llvm::Function*, BuiltIn>;
 
 		BuiltInMap builtins_;
-
-		class MkSym {
-		public:
-			MkSym(ContextRef context_, unsigned size);
-			memory::HolderPtr operator()(llvm::Function* f, memory::ArgMapPtr args);
-		private:
-			ContextRef context_;
-			const unsigned size_;
-		};
-
-		class Gen {
-		public:
-			Gen(ContextRef context, llvm::Function* target, llvm::Module* module);
-			memory::HolderPtr operator()(llvm::Function* f, memory::ArgMapPtr args);
-		private:
-			ContextRef context_;
-			llvm::Function* target_;
-			llvm::Module* module_;
-		};
 
 	private:
 		// Return

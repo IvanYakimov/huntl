@@ -3,10 +3,10 @@ SHELL = /bin/sh
 LLVM_PASS = voyager-pass.o
 
 INTERPRETER = kernel.o matcher.o evaluator.o meta-evaluator.o meta-int.o context.o concrete-eval.o symbolic-eval.o \
-	eval-tracer.o
+	eval-tracer.o built-in-impl.o
  
 INTERPRETER_TEST = $(SOLVER) $(MEMORY) $(LLVM_TEST_HELPERS) $(TEST_RUNNER) \
-test-holder.o test-regex.o test-evaluator.o test-symbolic-eval.o
+test-holder.o test-regex.o test-evaluator.o test-symbolic-eval.o 
 # 
 # expr-test.o
 
