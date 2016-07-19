@@ -46,10 +46,6 @@ namespace interpreter {
 		interpreter::ContextRef context_;
 		EvalTracer tracer_;
 		auto ProduceHolder(const llvm::ConstantInt* constant_int);
-		using BuiltIn = std::function<memory::HolderPtr(llvm::Function*, memory::ArgMapPtr)>;
-		using BuiltInPtr = std::shared_ptr<BuiltIn>;
-		using BuiltInMap = std::map<llvm::Function*, BuiltIn>;
-
 		BuiltInMap builtins_;
 
 	private:

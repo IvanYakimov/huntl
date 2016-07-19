@@ -11,7 +11,13 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 
+#include <functional>
+
 namespace interpreter {
+	using BuiltIn = std::function<memory::HolderPtr(llvm::Function*, memory::ArgMapPtr)>;
+	using BuiltInPtr = std::shared_ptr<BuiltIn>;
+	using BuiltInMap = std::map<llvm::Function*, BuiltIn>;
+
 	class MkSym {
 	public:
 		MkSym(ContextRef context_, unsigned size);
