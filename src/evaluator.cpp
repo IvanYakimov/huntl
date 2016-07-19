@@ -12,7 +12,8 @@ namespace interpreter {
 
 	Evaluator::Evaluator(interpreter::ContextRef context) :
 			context_(context),
-			meta_eval_(context) {
+			meta_eval_(context),
+			tracer_(context) {
 	}
 
 	Evaluator::~Evaluator() {
@@ -165,29 +166,6 @@ namespace interpreter {
 		}
 	}
 
-	void Evaluator::TraceCall(const llvm::Function* target, bool status) {
-		if (status == true) {
-			std::clog << TraceLevel() << "call " << target->getName().str() << std::endl;
-			level_++;
-		}
-		else {
-			level_--;
-			std::clog << TraceLevel() << "back from " << target->getName().str() << std::endl;
-		}
-	}
-
-	void Evaluator::TraceFunc(const llvm::Function* target) {
-		std::clog << utils::ToString(*target) << std::endl;
-	}
-
-	std::string Evaluator::TraceLevel() {
-		std::string res;
-		for (int i = 0; i < level_; i++)
-			res += "-";
-		res += " ";
-		return res;
-	}
-
 	memory::HolderPtr Evaluator::CallFunction(llvm::Function *f, memory::ArgMapPtr args) {
 		// llvm::errs() << "call " << f->getName() << "\n";
 		memory::HolderPtr ret_val = nullptr;
@@ -201,7 +179,7 @@ namespace interpreter {
 		else {
 			// push
 			context_.Push(); {
-				TraceCall(f, true);
+				tracer_.Call(f, true);
 				// initiate args
 				for_each(args->begin(), args->end(), [&](auto pair){
 					auto addr = pair.first;
@@ -212,14 +190,14 @@ namespace interpreter {
 
 				const llvm::BasicBlock* next_block = &*f->begin();
 				context_.Top()->PC.Set(next_block);
-				TraceFunc(f);
-				//TraceBlock(next_block);
+				tracer_.Func(f);
+				//tracer_.Block(next_block);
 				while (next_block != nullptr) {
 					visit (const_cast<llvm::BasicBlock*>(next_block));
 					next_block = context_.Top()->PC.Get();
 				}
 				ret_val = context_.Top()->RetVal.Get();
-				TraceCall(f,false);
+				tracer_.Call(f,false);
 			}
 			context_.Pop(); // pop
 			//llvm::errs() << "return from " << f->getName() << "\n";
@@ -236,51 +214,13 @@ namespace interpreter {
 		return holder;
 	}
 
-#define TRACE_BR
-
-	void Evaluator::TraceBlock(const llvm::BasicBlock* next) {
-#ifdef TRACE_BR
-		if (next != nullptr)
-			std::clog << utils::ToString(*next) << std::endl;
-		else
-			std::clog << "--end--" << std::endl;
-#endif
-	}
-
-//#define TRACE_INST_NAMES
-#define TRACE_TARGET_VAL
-
-	void Evaluator::TraceAssign(const llvm::Instruction& inst, const llvm::Value* target) {
-#ifdef TRACE_INST_NAMES
-		std::clog << utils::ToString(inst) << std::endl;
-#endif
-#ifdef TRACE_TARGET_VAL
-		if (llvm::isa<llvm::StoreInst>(inst))
-			assert (target != nullptr);
-		else
-			(target = &inst);
-		std::string target_full_name = utils::ToString(*target);
-		HolderPtr holder = context_.Top()->Load(target);
-		std::regex r(" = ");
-		std::smatch r_match;
-		if (std::regex_search(target_full_name, r_match, r)) {
-			std::clog << TraceLevel() << r_match.prefix() << " <- " << *holder << std::endl;
-		}
-		else
-			assert (false and "regex failed");
-#endif
-		//llvm::errs() << inst << "\n";
-		//context_.Top()->Print();
-		//context_.Solver().Print();
-	}
-
 	// Return
 	void Evaluator::HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst) {
 		auto holder = context_.Top()->Load(ret_inst);
 		meta_eval_.Assign(&inst, holder);
 		context_.Top()->RetVal.Set(holder);
 		context_.Top()->PC.Set(nullptr);
-		//TraceAssign(inst, ret_inst);
+		//trace_.Assign(inst, ret_inst);
 	}
 
 	void Evaluator::HandleReturnInst (const llvm::Instruction &inst, const llvm::ConstantInt *ret_const) {
@@ -288,14 +228,14 @@ namespace interpreter {
 		meta_eval_.Assign(&inst, holder);
 		context_.Top()->RetVal.Set(holder);
 		context_.Top()->PC.Set(nullptr);
-		//TraceAssign(inst, ret_const);
+		//trace_.Assign(inst, ret_const);
 	}
 
 	void Evaluator::HandleReturnInst (const llvm::Instruction &inst) {
 		auto undef = memory::Undef::Create();
 		context_.Top()->RetVal.Set(undef);
 		context_.Top()->PC.Set(nullptr);
-		//TraceAssign(inst);
+		//trace_.Assign(inst);
 	}
 
 	// Branch
@@ -304,13 +244,13 @@ namespace interpreter {
 		assert (cond_holder != nullptr and "only instruction is supported yet");
 		auto next = meta_eval_.Branch(&inst, cond_holder, iftrue, iffalse);
 		context_.Top()->PC.Set(next);
-		TraceBlock(next);
+		tracer_.Block(next);
 	}
 
 	void Evaluator::HandleBranchInst (const llvm::Instruction &inst, const llvm::BasicBlock *jump) {
 		auto next = jump;
 		context_.Top()->PC.Set(next);
-		TraceBlock(next);
+		tracer_.Block(next);
 	}
 
 	// BinOp
@@ -318,21 +258,21 @@ namespace interpreter {
 		auto left_holder = ProduceHolder(left);
 		auto right_holder = context_.Top()->Load(right);
 		meta_eval_.BinOp(&inst, left_holder, right_holder);
-		TraceAssign(inst);
+		tracer_.Assign(inst);
 	}
 
 	void Evaluator::HandleBinOp (const llvm::Instruction &inst, const llvm::Value *left, const llvm::ConstantInt *right) {
 		auto left_holder = context_.Top()->Load(left);
 		auto right_holder = ProduceHolder(right);
 		meta_eval_.BinOp(&inst, left_holder, right_holder);
-		TraceAssign(inst);
+		tracer_.Assign(inst);
 	}
 
 	void Evaluator::HandleBinOp (const llvm::Instruction &inst, const llvm::Value *left, const llvm::Value *right) {
 		auto left_holder = context_.Top()->Load(left);
 		auto right_holder = context_.Top()->Load(right);
 		meta_eval_.BinOp(&inst, left_holder, right_holder);
-		TraceAssign(inst);
+		tracer_.Assign(inst);
 	}
 
 	// Cmp
@@ -340,7 +280,7 @@ namespace interpreter {
 		auto left_holder = ProduceHolder(left);
 		auto right_holder = context_.Top()->Load(right);
 		meta_eval_.IntComparison(&inst, left_holder, right_holder);
-		TraceAssign(inst);
+		tracer_.Assign(inst);
 	}
 
 	void Evaluator::HandleICmpInst (const llvm::Instruction &inst, const llvm::Value *left, const llvm::ConstantInt *right) {
@@ -348,7 +288,7 @@ namespace interpreter {
 		auto right_holder = ProduceHolder(right);
 
 		meta_eval_.IntComparison(&inst, left_holder, right_holder);
-		TraceAssign(inst);
+		tracer_.Assign(inst);
 	}
 
 	void Evaluator::HandleICmpInst (const llvm::Instruction &inst, const llvm::Value *left, const llvm::Value *right) {
@@ -356,7 +296,7 @@ namespace interpreter {
 		auto right_holder = context_.Top()->Load(right);
 
 		meta_eval_.IntComparison(&inst, left_holder, right_holder);
-		TraceAssign(inst);
+		tracer_.Assign(inst);
 
 	}
 
@@ -364,33 +304,33 @@ namespace interpreter {
 	void Evaluator::HandleAllocaInst (const llvm::Instruction &inst, const llvm::ConstantInt *allocated) {
 		auto holder = ProduceHolder(allocated);
 		context_.Top()->Alloca(&inst, holder);
-		TraceAssign(inst);
+		tracer_.Assign(inst);
 	}
 
 	// Load
 	void Evaluator::HandleLoadInst (const llvm::Instruction &inst, const llvm::Instruction *instruction) {
 		auto holder = context_.Top()->Load(instruction);
 		meta_eval_.Assign(&inst, holder);
-		TraceAssign(inst);
+		tracer_.Assign(inst);
 	}
 
 	// Store
 	void Evaluator::HandleStoreInst (const llvm::Instruction &inst, const llvm::ConstantInt *constant_int, const llvm::Value *ptr) {
 		auto holder = ProduceHolder(constant_int);
 		meta_eval_.Assign(ptr, holder);
-		TraceAssign(inst, ptr);
+		tracer_.Assign(inst, ptr);
 	}
 
 	void Evaluator::HandleStoreInst (const llvm::Instruction &inst, const llvm::Instruction *instruction, const llvm::Value *ptr) {
 		auto holder = context_.Top()->Load(instruction);
 		meta_eval_.Assign(ptr, holder);
-		TraceAssign(inst, ptr);
+		tracer_.Assign(inst, ptr);
 	}
 
 	void Evaluator::HandleStoreInst (const llvm::Instruction &inst, const llvm::Argument *arg, const llvm::Value *ptr) {
 		auto holder = context_.Top()->Load(arg);
 		meta_eval_.Assign(ptr, holder);
-		TraceAssign(inst, ptr);
+		tracer_.Assign(inst, ptr);
 	}
 
 	void Evaluator::HandleCallInst(const llvm::CallInst &inst) {

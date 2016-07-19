@@ -1,9 +1,9 @@
 #ifndef __CONTEXT_HPP__
 #define __CONTEXT_HPP__
 
+#include "object.hpp"
 #include "activation-stack.hpp"
 #include "solver.hpp"
-#include "object.hpp"
 #include "memory-map-interface.hpp"
 #include "ram.hpp"
 

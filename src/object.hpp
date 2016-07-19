@@ -1,6 +1,9 @@
 #ifndef __OBJECT_HPP__
 #define __OBJECT_HPP__
 
+//#define __STDC_LIMIT_MACROS
+//#define __STDC_CONSTANT_MACROS
+
 # include <memory>
 # include <string>
 # include <iostream>

@@ -23,6 +23,7 @@
 #include "solver.hpp"
 #include "context.hpp"
 #include "converter.hpp"
+#include "eval-tracer.hpp"
 
 #include "llvm/ExecutionEngine/ExecutionEngine.h"
 #include "llvm/ExecutionEngine/GenericValue.h"
@@ -42,17 +43,11 @@ namespace interpreter {
 	private:
 		MetaEvaluator meta_eval_;
 		interpreter::ContextRef context_;
+		EvalTracer tracer_;
 		auto ProduceHolder(const llvm::ConstantInt* constant_int);
-		void TraceCall(const llvm::Function* target, bool status = true);
-		void TraceBlock(const llvm::BasicBlock* next);
-		void TraceAssign(const llvm::Instruction& inst, const llvm::Value* target = nullptr);
-		void TraceFunc(const llvm::Function* target);
 		using BuiltIn = std::function<memory::HolderPtr(llvm::Function*, memory::ArgMapPtr)>;
 		using BuiltInPtr = std::shared_ptr<BuiltIn>;
 		using BuiltInMap = std::map<llvm::Function*, BuiltIn>;
-
-		unsigned level_ = 0;
-		std::string TraceLevel();
 
 		BuiltInMap builtins_;
 
