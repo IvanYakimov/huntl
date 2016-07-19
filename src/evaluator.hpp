@@ -5,13 +5,13 @@
 #include <exception>
 #include <string>
 #include <regex>
-#include <functional>
+//#include <functional>
 #include <list>
 
 // fork support
-#include <unistd.h>
-#include <sys/wait.h>
-#include <sys/types.h>
+//#include <unistd.h>
+//#include <sys/wait.h>
+//#include <sys/types.h>
 
 #include "activation.hpp"
 #include "local-memory.hpp"
@@ -26,8 +26,8 @@
 #include "eval-tracer.hpp"
 #include "built-in-impl.hpp"
 
-#include "llvm/ExecutionEngine/ExecutionEngine.h"
-#include "llvm/ExecutionEngine/GenericValue.h"
+//#include "llvm/ExecutionEngine/ExecutionEngine.h"
+//#include "llvm/ExecutionEngine/GenericValue.h"
 
 //TODO: use -I option to perform headers search instead of ../ (?)
 
