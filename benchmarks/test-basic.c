@@ -3,7 +3,7 @@
 #include "basic.c"
 
 //TODO: replace by macro OR generate
-int gen_eq(int x, int y, int r);
+void gen_eq(int x, int y, int r);
 int eq(int x, int y) {
 	if (x == y)
 		return 1;
@@ -11,7 +11,7 @@ int eq(int x, int y) {
 		return 0;
 }
 
-int test_1() {
+void test_1() {
 	int a = 0, b = 0,
 		 r = 0;
 	a = mksym_i32();
@@ -20,10 +20,9 @@ int test_1() {
 	b = limit_i32(b,-10,10);
 	r = eq(a,b);
 	gen_eq(a,b,r);
-	return 0;
 }
 
-int gen_arith(int x, int y, int r);
+void gen_arith(int x, int y, int r);
 int arith(int x, int y) {
 	if (x - y == 0)
 		return 1;
@@ -31,7 +30,7 @@ int arith(int x, int y) {
 		return -1;
 }
 
-int test_mixed_arith() {
+void test_mixed_arith() {
 	int a = 0, b = 0, r = 0;
 	a = mksym_i32();
 	b = mksym_i32();
@@ -39,10 +38,9 @@ int test_mixed_arith() {
 	b = limit_i32(b,-10,10);
 	r = arith(a,b);
 	gen_arith(a,b,r);
-	return 0;
 }
 
-int gen_sum(int a, int n, int r);
+void gen_sum(int a, int n, int r);
 int sum(int a, int n) {
 	int i = 0, s = 0;
 	for (i = 0; i < n; i++)
@@ -50,7 +48,7 @@ int sum(int a, int n) {
 	return s;
 }
 
-int test_sum() {
+void test_sum() {
 	int a = 0, n = 0, s = 0;
 	a = mksym_i32();
 	n = mksym_i32();
@@ -60,18 +58,17 @@ int test_sum() {
 	//end
 	s = sum(a,n);
 	gen_sum(a,n,s);
-	return 0;
 }
 
-unsigned gen_recsum(unsigned a, unsigned n, unsigned res);
+void gen_recsum(unsigned a, unsigned n, unsigned res);
 unsigned recsum(unsigned a, unsigned n) {
-	if (n == 0)
+	if (n == 1)
 		return a;
 	else
 		return a + recsum(a, n - 1);
 }
 
-int test_recsum() {
+void test_recsum() {
 	int a = 0, n = 0, s = 0;
 	a = mksym_i32();
 	n = mksym_i32();
@@ -81,7 +78,6 @@ int test_recsum() {
 	//end
 	s = recsum(a,n);
 	gen_recsum(a,n,s);
-	return 0;
 }
 
 //TODO: switch-case support

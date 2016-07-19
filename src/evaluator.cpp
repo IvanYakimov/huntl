@@ -8,6 +8,7 @@ namespace interpreter {
 	using utils::Create;
 	using memory::ArgMap;
 	using memory::HolderPtr;
+	using memory::Undef;
 
 	class Printer {
 	//template<class... Args>
@@ -147,8 +148,10 @@ namespace interpreter {
 		assert(memory::GetValue(ret_sol) == gres.IntVal and "generated ret-value MUST be equivalent to one returned from JIT!");
 
 		//std::cerr << "//END.\n//-----------------------------------\n\n";
+		//context_.Top()->PC.Set(nullptr);
 		exit(0);
 		//assert (false and "not implemented");
+		return memory::Undef::Create();
 	}
 
 	void Evaluator::ProcessModule(llvm::Module *m) {
@@ -204,7 +207,6 @@ namespace interpreter {
 			else {
 				//this is ordinary function
 			}
-			//exit(0);
 		}
 
 		pid_t child_pid = 0;
@@ -228,7 +230,6 @@ namespace interpreter {
 		memory::HolderPtr ret_val = nullptr;
 		auto is_builtin = builtins_.find(f);
 		if (is_builtin != builtins_.end()) {
-			//llvm::errs() << "this is a builtin function!\n";
 			context_.Push(); {
 			ret_val = is_builtin->second(f, args);
 			}
@@ -251,9 +252,6 @@ namespace interpreter {
 					visit (const_cast<llvm::BasicBlock*>(next_block));
 					next_block = context_.Top()->PC.Get();
 				}
-
-				//visit (f);
-
 				ret_val = context_.Top()->RetVal.Get();
 			}
 			context_.Pop(); // pop
@@ -286,8 +284,6 @@ namespace interpreter {
 
 	// Return
 	void Evaluator::HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst) {
-		// Load holder from '&inst'
-		// Store it to 'ret_inst'
 		auto holder = context_.Top()->Load(ret_inst);
 		meta_eval_.Assign(&inst, holder);
 		context_.Top()->RetVal.Set(holder);
@@ -296,18 +292,17 @@ namespace interpreter {
 	}
 
 	void Evaluator::HandleReturnInst (const llvm::Instruction &inst, const llvm::ConstantInt *ret_const) {
-		// Produce	new concrete holder
 		auto holder = ProduceHolder(ret_const);
-		// Store it in 'ret_const'
 		meta_eval_.Assign(&inst, holder);
 		context_.Top()->RetVal.Set(holder);
 		context_.Top()->PC.Set(nullptr);
-		//assert (false && "not implemented");
 		Trace(inst);
 	}
 
 	void Evaluator::HandleReturnInst (const llvm::Instruction &inst) {
-		assert (false && "not implemented");
+		auto undef = memory::Undef::Create();
+		context_.Top()->RetVal.Set(undef);
+		context_.Top()->PC.Set(nullptr);
 		Trace(inst);
 	}
 
@@ -317,22 +312,12 @@ namespace interpreter {
 		assert (cond_holder != nullptr and "only instruction is supported yet");
 		auto next = meta_eval_.Branch(&inst, cond_holder, iftrue, iffalse);
 		context_.Top()->PC.Set(next);
-		/*
-		errs() << "################## BRACH MYSTERY!! ####################\n";
-		errs() << inst << "\n";
-		errs() << "cond:" << *cond << "\n";
-		errs() << "iftrue: " << *iftrue << "\n";
-		errs() << "iffalse: " << *iffalse << "\n";
-		errs() << "################## BRACH MYSTERY!! ####################\n";
-		*/
-		//visit(next);
 		Trace(inst);
 	}
 
 	void Evaluator::HandleBranchInst (const llvm::Instruction &inst, const llvm::BasicBlock *jump) {
 		auto next = jump;
 		context_.Top()->PC.Set(next);
-		//visit(next);
 		Trace(inst);
 	}
 
@@ -363,11 +348,7 @@ namespace interpreter {
 		auto left_holder = ProduceHolder(left);
 		auto right_holder = context_.Top()->Load(right);
 		meta_eval_.IntComparison(&inst, left_holder, right_holder);
-
-		// Load left and right args.
-		// Produce expression, use get_op, defined above
 		Trace(inst);
-		//assert (false && "not implemented");
 	}
 
 	void Evaluator::HandleICmpInst (const llvm::Instruction &inst, const llvm::Value *left, const llvm::ConstantInt *right) {
@@ -375,49 +356,27 @@ namespace interpreter {
 		auto right_holder = ProduceHolder(right);
 
 		meta_eval_.IntComparison(&inst, left_holder, right_holder);
-		// Load left and right args.
-		// Produce expression, use get_op, defined above
 		Trace(inst);
-		//assert (false && "not implemented");
 	}
 
 	void Evaluator::HandleICmpInst (const llvm::Instruction &inst, const llvm::Value *left, const llvm::Value *right) {
 		auto left_holder = context_.Top()->Load(left);
 		auto right_holder = context_.Top()->Load(right);
 
-		/*
-		auto get_op = [](const llvm::Instruction &inst) {
-			auto icmp_inst = llvm::dyn_cast<llvm::ICmpInst>(&inst);
-			switch (icmp_inst->getPredicate()) {
-				//case CmpInst::Predicate::ICMP_SLT: return solver::BinOp::LESS_THAN;
-				//default: InterruptionHandler::Do(new InterpretationFailure(inst));
-			};
-		};
-		*/
-
 		meta_eval_.IntComparison(&inst, left_holder, right_holder);
 		Trace(inst);
-		// Load left and right args.
-		// Produce expression, use get_op, defined above
-		//assert (false && "not implemented");
+
 	}
 
 	// Alloca
 	void Evaluator::HandleAllocaInst (const llvm::Instruction &inst, const llvm::ConstantInt *allocated) {
-		// Get 'allocated' value
 		auto holder = ProduceHolder(allocated);
-		//auto display = utils::GetInstance<memory::Display>();
-		// Alloca to 'inst'
-		//TODO: move to meta_eval_
 		context_.Top()->Alloca(&inst, holder);
 		Trace(inst);
 	}
 
 	// Load
 	void Evaluator::HandleLoadInst (const llvm::Instruction &inst, const llvm::Instruction *instruction) {
-		// (assert (= v e))
-		// Load object form 'ptr'
-		// Store (associate) object to '&inst'
 		auto holder = context_.Top()->Load(instruction);
 		meta_eval_.Assign(&inst, holder);
 		Trace(inst);
@@ -443,8 +402,6 @@ namespace interpreter {
 	}
 
 	void Evaluator::HandleCallInst(const llvm::CallInst &inst) {
-		//llvm::errs() << "call " << inst.getCalledFunction()->getName() << "\n";
-		//TODO: meta_eval_.Assign(...) for all operand values
 		auto called = inst.getCalledFunction();
 		assert (called != nullptr and "indirect function invocation not supported");
 		memory::ArgMapPtr argmap = utils::Create<ArgMap>();
@@ -466,12 +423,15 @@ namespace interpreter {
 		}
 		assert (args == called->arg_end());
 
-		//TODO: Put constrains for args x1,x2...xn back to the caller!!!?????????
-
 		memory::HolderPtr ret_holder = CallFunction(called, argmap);
-		assert (ret_holder != nullptr);
 
-		meta_eval_.Assign(&inst, ret_holder);
+		if (called->getReturnType()->isVoidTy()) {
+			assert (utils::instanceof<Undef>(ret_holder));
+		}
+		else {
+			assert (ret_holder != nullptr);
+			meta_eval_.Assign(&inst, ret_holder);
+		}
 	}
 }
 

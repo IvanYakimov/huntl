@@ -6,6 +6,7 @@
 #include "wrapper.hpp"
 #include "creatable.hpp"
 #include "meta-int.hpp"
+#include "creatable.hpp"
 
 namespace memory {
 	class Holder;
@@ -20,12 +21,23 @@ namespace memory {
 
 	bool IsSymbolic(HolderPtr holder);
 	bool IsConcrete(HolderPtr holder);
+	bool IsUndef(HolderPtr holder);
 
 	class Holder : public Object {
 	public:
 		COMPARABLE(Holder);
 		PRINTABLE(Holder);
 		virtual ~Holder(){}
+	};
+
+	class Undef : public Holder {
+	public:
+		COMPARABLE(Undef);
+		PRINTABLE(Undef);
+		virtual ~Undef(){}
+		virtual bool Equals (const Object& rhs) const;
+		virtual std::ostream& ToStream(std::ostream &os, const Object& obj) const;
+		static HolderPtr Create();
 	};
 
 	const solver::SharedExpr& GetExpr(memory::HolderPtr holder);
