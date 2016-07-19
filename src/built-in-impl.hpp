@@ -13,6 +13,8 @@
 
 #include <functional>
 
+#include "test-generator.hpp"
+
 namespace interpreter {
 	using BuiltIn = std::function<memory::HolderPtr(llvm::Function*, memory::ArgMapPtr)>;
 	using BuiltInPtr = std::shared_ptr<BuiltIn>;
