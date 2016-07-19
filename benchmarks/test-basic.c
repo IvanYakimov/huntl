@@ -22,6 +22,7 @@ void test_1() {
 	gen_eq(a,b,r);
 }
 
+/*
 void gen_arith(int x, int y, int r);
 int arith(int x, int y) {
 	if (x - y == 0)
@@ -79,7 +80,7 @@ void test_recsum() {
 	s = recsum(a,n);
 	gen_recsum(a,n,s);
 }
-
+*/
 //TODO: switch-case support
 /*
 int gen_cases(int k, int r);

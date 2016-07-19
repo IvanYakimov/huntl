@@ -15,14 +15,16 @@ MEMORY_TEST = test-holder.o test-local-memory.o $(SOLVER) $(INTERPRETER) $(LLVM_
 SOLVER = solver.o path-constraint.o
 SOLVER_TEST = $(TEST_RUNNER) $(MEMORY) $(INTERPRETER)
 
+UTILS = converter.o printer.o
+
 LLVM_TEST_HELPERS = ir-function-builder.o
 
 TEST_RUNNER = test-runner.o
 
-BLAH = test-gcd.ll test-hweight.ll
 BENCHMARKS = hweight.ll gcd.ll
+BLAH = test-gcd.ll test-hweight.ll
 
-OBJ = $(INTERPRETER) $(MEMORY) $(SOLVER)
+OBJ = $(INTERPRETER) $(MEMORY) $(SOLVER) $(UTILS)
 OBJ_TEST = $(INTERPRETER_TEST) $(MEMORY_TEST) $(SOLVER_TEST) $(LLVM_TEST_HELPERS)
 
 CXX = g++
@@ -47,7 +49,7 @@ vpath %.h	$(SRC) ../benchmarks
 program.so: shared.o 
 	$(CXX) -shared $< -o $@ $(CXXFLAGS) $(CVC4FLAGS) 
 
-shared.o: $(INTERPRETER) $(SOLVER) $(MEMORY) $(LLVM_PASS)
+shared.o: $(INTERPRETER) $(SOLVER) $(MEMORY) $(LLVM_PASS) $(UTILS)
 	ld -r $^ -o $@ $(LLVM_DYNAMIC)
 
 solver-test.out: $(SOLVER) $(SOLVER_TEST)
@@ -101,19 +103,21 @@ run:	program.so test.ll
 gdb: program.so test.ll
 	gdb opt	
 # helpers ----------------------------------------------- />	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	
