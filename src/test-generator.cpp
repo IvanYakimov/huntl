@@ -57,6 +57,7 @@ namespace interpreter {
 		// JIT:
 		llvm::ExecutionEngine* jit = llvm::EngineBuilder(module_).create();
 		std::vector<llvm::GenericValue> jit_args;
+		llvm::GenericValue gres;
 
 		for_each(arg_sol_list.begin(), arg_sol_list.end(), [&](auto arg_sol) {
 			llvm::GenericValue gval;
@@ -64,8 +65,8 @@ namespace interpreter {
 			jit_args.push_back(gval);
 		});
 
-		llvm::GenericValue gres = jit->runFunction(target_, jit_args);
-		assert(memory::GetValue(ret_sol) == gres.IntVal and "generated ret-value MUST be equivalent to one returned from JIT!");
+		gres = jit->runFunction(target_, jit_args);
 
+		assert(memory::GetValue(ret_sol) == gres.IntVal and "generated ret-value MUST be equivalent to one returned from JIT!");
 	}
 }

@@ -28,37 +28,13 @@ namespace interpreter {
 		ConcreteFunc2 concrete_binop = std::bind(&ConcreteEval::BinOp, &concrete_eval_, _1, _2, _3);
 		SymbolicFunc2 symbolic_binop = std::bind(&SymbolicEval::BinOp, &symbolic_eval_, _1, _2, _3);
 		MixedEval2(inst, left, right, concrete_binop, symbolic_binop);
-		/*
-		if (IsConcrete(left) and IsConcrete(right)) {
-			auto left_val = memory::GetValue(left);//Object::UpCast<Concrete>(left)->Get();
-			auto right_val = memory::GetValue(right);//Object::UpCast<Concrete>(right)->Get();
-			concrete_eval_.BinOp(inst, left_val, right_val);
-		}
-		else if (IsConcrete(left) and IsSymbolic(right)) {
-			auto left_sym = Symbolize(memory::GetValue(left));
-			auto right_sym = memory::GetExpr(right);
-			symbolic_eval_.BinOp(inst, left_sym, right_sym);
-		}
-		else if (IsSymbolic(left) and IsConcrete(right)) {
-			auto left_sym = memory::GetExpr(left);
-			auto right_sym = Symbolize(memory::GetValue(right));
-			symbolic_eval_.BinOp(inst, left_sym, right_sym);
-		}
-		else if (IsSymbolic(left) and IsSymbolic(right)) {
-			auto left_sym = memory::GetExpr(left);
-			auto right_sym = memory::GetExpr(right);
-			symbolic_eval_.BinOp(inst, left_sym, right_sym);
-		}
-		else
-			assert (false and "unexpected behavior");
-			*/
 	}
 
 	void MetaEvaluator::MixedEval2(const llvm::Instruction* inst, memory::HolderPtr left, memory::HolderPtr right,
 					ConcreteFunc2 F, SymbolicFunc2 G) {
 		if (IsConcrete(left) and IsConcrete(right)) {
-			auto left_val = memory::GetValue(left);//Object::UpCast<Concrete>(left)->Get();
-			auto right_val = memory::GetValue(right);//Object::UpCast<Concrete>(right)->Get();
+			auto left_val = memory::GetValue(left);
+			auto right_val = memory::GetValue(right);
 			F(inst, left_val, right_val);
 		}
 		else if (IsConcrete(left) and IsSymbolic(right)) {
@@ -107,6 +83,39 @@ namespace interpreter {
 		}
 		else
 			assert (false and "unexpected behavior");
+	}
+
+	void MetaEvaluator::Dereferencing (const llvm::Value* lhs, memory::HolderPtr ptr_holder) {
+		if (memory::IsConcrete(ptr_holder)) {
+			auto deref_holder = context_.Top()->Dereference(ptr_holder);
+			if (memory::IsConcrete(deref_holder)) {
+				MetaIntRef deref_concrete = memory::GetValue(deref_holder);
+				concrete_eval_.Assign(lhs, deref_concrete);
+			}
+			else if (memory::IsSymbolic(deref_holder)) {
+				//assert (false and "not implemented");
+				SharedExpr deref_sym = memory::GetExpr(deref_holder);
+				symbolic_eval_.Assign(lhs, deref_sym);
+			}
+			else
+				assert (false and "unexpected");
+		}
+		else if (memory::IsSymbolic(ptr_holder)) {
+			assert (false and "not implemented");
+		}
+		else assert (false and "unexpected behavior");
+	}
+
+	void MetaEvaluator::Addressing (const llvm::Value* lhs, memory::HolderPtr addr_holder) {
+		if (memory::IsConcrete(addr_holder)) {
+			MetaIntRef addr_concrete = memory::GetValue(addr_holder);
+			concrete_eval_.Assign(lhs, addr_concrete);
+		}
+		else if (memory::IsSymbolic(addr_holder)) {
+			assert (false and "not implemented");
+		}
+		else
+			assert (false and "unexpected");
 	}
 }
 

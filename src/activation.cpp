@@ -69,6 +69,14 @@ namespace memory {
 		return it->second;
 	}
 
+	HolderPtr Activation::Dereference(HolderPtr pointer_holder) {
+		assert (memory::IsConcrete(pointer_holder));
+		interpreter::MetaIntRef pointer = memory::GetValue(pointer_holder);
+		RamAddress address = pointer.getZExtValue();
+		auto res = ram_.Stack().Read(address, DUMMY_ALLOCA);
+		return res;
+	}
+
 	void Activation::Print() {
 		//local_memory_->Print();
 	}

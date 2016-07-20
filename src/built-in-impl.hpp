@@ -14,6 +14,7 @@
 #include <functional>
 
 #include "test-generator.hpp"
+#include <iostream>
 
 namespace interpreter {
 	using BuiltIn = std::function<memory::HolderPtr(llvm::Function*, memory::ArgMapPtr)>;
