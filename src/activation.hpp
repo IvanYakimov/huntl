@@ -46,6 +46,7 @@ namespace memory {
 		HolderPtr Load(RegisterName address);
 		void Store(RegisterName address, HolderPtr holder);
 		void Print();
+		RamAddress AddressOf(RegisterName target);
 	private:
 		//memory::LocalMemoryPtr local_memory_;
 		std::map<RegisterName, RamAddress> memory_map_;

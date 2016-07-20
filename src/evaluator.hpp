@@ -48,6 +48,10 @@ namespace interpreter {
 		auto ProduceHolder(const llvm::ConstantInt* constant_int);
 		BuiltInMap builtins_;
 
+		bool IsPointerToPointer(const llvm::Value* value);
+		bool IsDereferencing(const llvm::Instruction& load_inst, const llvm::Value* ptr);
+		bool IsAddressing(const llvm::Instruction& store_inst, const llvm::Value* ptr);
+
 	private:
 		// Return
 		virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst);
@@ -75,8 +79,8 @@ namespace interpreter {
 		virtual void HandleLoadInst (const llvm::Instruction &inst, const llvm::Value *target);
 
 		// Store
-		virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::ConstantInt *constant_int, const llvm::Value *ptr);
-		virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Value *target, const llvm::Value *ptr);
+		virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::ConstantInt *rhs, const llvm::Value *lhs);
+		virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Value *rhs, const llvm::Value *lhs);
 
 		virtual void HandleCallInst(const llvm::CallInst &inst);
 };

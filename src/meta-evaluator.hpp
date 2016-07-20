@@ -30,7 +30,9 @@ namespace interpreter {
 		void BinOp (const llvm::Instruction* inst, memory::HolderPtr left, memory::HolderPtr right);
 		void IntComparison (const llvm::Instruction* inst, memory::HolderPtr left, memory::HolderPtr right);
 		const llvm::BasicBlock* Branch (const llvm::Instruction *inst, memory::HolderPtr condition, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse);
-		void Assign (const llvm::Value *destination, memory::HolderPtr target);
+		void Assign (const llvm::Value *lhs, memory::HolderPtr rhs_holder);
+		void Dereferencing (const llvm::Value* lhs, memory::HolderPtr ptr_holder);
+		void Addressing (const llvm::Value* lhs, memory::HolderPtr addr_holder);
 	private:
 		ContextRef context_;
 		ConcreteEval concrete_eval_;

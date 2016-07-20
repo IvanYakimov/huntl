@@ -63,6 +63,12 @@ namespace memory {
 		ram_.Stack().Write(holder, addr, DUMMY_ALLOCA);
 	}
 
+	RamAddress Activation::AddressOf(RegisterName target) {
+		auto it = memory_map_.find(target);
+		assert (it != memory_map_.end());
+		return it->second;
+	}
+
 	void Activation::Print() {
 		//local_memory_->Print();
 	}

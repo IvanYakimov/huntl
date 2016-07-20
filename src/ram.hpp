@@ -14,6 +14,7 @@ namespace memory {
 		Ram();
 		~Ram();
 		StackRef Stack();
+		const static unsigned machine_word_bitsize_ = 64;
 	private:
 		memory::Stack stack_;
 	};

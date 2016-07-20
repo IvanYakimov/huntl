@@ -233,24 +233,59 @@ namespace interpreter {
 		tracer_.Assign(inst);
 	}
 
+	// see: http://stackoverflow.com/questions/12879673/check-pointer-to-pointer-type-in-llvm
+	bool Evaluator::IsPointerToPointer(const Value* V) {
+	    const Type* ty = V->getType();
+	    if (ty->isPointerTy() && ty->getContainedType(0)->isPointerTy())
+	    	return true;
+	    else
+	    	return false;
+	}
+
+	bool Evaluator::IsDereferencing(const llvm::Instruction& load_inst, const llvm::Value* ptr) {
+		return IsPointerToPointer(ptr);
+	}
+
+	bool Evaluator::IsAddressing(const llvm::Instruction& store_inst, const llvm::Value* ptr) {
+		return IsPointerToPointer(ptr);
+	}
+
 	// Load
-	void Evaluator::HandleLoadInst (const llvm::Instruction &inst, const llvm::Value *target) {
-		auto holder = context_.Top()->Load(target);
-		meta_eval_.Assign(&inst, holder);
-		tracer_.Assign(inst);
+	void Evaluator::HandleLoadInst (const llvm::Instruction &lhs, const llvm::Value *rhs) {
+		if (IsDereferencing(lhs, rhs)) {
+			auto ptr_holder = context_.Top()->Load(rhs);
+			meta_eval_.Dereferencing(&lhs, ptr_holder);
+		}
+		else {
+			auto rhs_holder = context_.Top()->Load(rhs);
+			meta_eval_.Assign(&lhs, rhs_holder);
+		}
+		tracer_.Assign(lhs);
 	}
 
 	// Store
-	void Evaluator::HandleStoreInst (const llvm::Instruction &inst, const llvm::ConstantInt *constant_int, const llvm::Value *ptr) {
-		auto holder = ProduceHolder(constant_int);
-		meta_eval_.Assign(ptr, holder);
-		tracer_.Assign(*ptr);
+	void Evaluator::HandleStoreInst (const llvm::Instruction &inst, const llvm::ConstantInt *rhs, const llvm::Value *lhs) {
+		if (IsAddressing(inst, lhs)) {
+			assert (false and "unexpected addressing operation (casting)");
+		}
+		else {
+			auto holder = ProduceHolder(rhs);
+			meta_eval_.Assign(lhs, holder);
+		}
+		tracer_.Assign(*lhs);
 	}
 
-	void Evaluator::HandleStoreInst (const llvm::Instruction &inst, const llvm::Value *target, const llvm::Value *ptr) {
-		auto holder = context_.Top()->Load(target);
-		meta_eval_.Assign(ptr, holder);
-		tracer_.Assign(*ptr);
+	void Evaluator::HandleStoreInst (const llvm::Instruction &inst, const llvm::Value *rhs, const llvm::Value *lhs) {
+		if (IsAddressing(inst, lhs)) {
+			memory::RamAddress address = context_.Top()->AddressOf(rhs);
+			auto address_holder = memory::Concrete::Create(MetaInt(memory::Ram::machine_word_bitsize_, address));
+			meta_eval_.Addressing(lhs, address_holder);
+		}
+		else {
+			auto holder = context_.Top()->Load(rhs);
+			meta_eval_.Assign(lhs, holder);
+		}
+		tracer_.Assign(*lhs);
 	}
 
 	void Evaluator::HandleCallInst(const llvm::CallInst &inst) {
