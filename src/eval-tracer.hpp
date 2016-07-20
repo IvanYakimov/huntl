@@ -18,8 +18,10 @@ namespace interpreter {
 		NONCOPYABLE(EvalTracer);
 		void Call(const llvm::Function* target, bool status = true);
 		void Block(const llvm::BasicBlock* next);
-		void Assign(const llvm::Instruction& inst, const llvm::Value* target = nullptr);
+		void Assign(const llvm::Value& target);
 		void Func(const llvm::Function* target);
+		void Ret(const llvm::Value* target);
+		void Ret();
 		std::string TraceLevel();
 	private:
 		ContextRef context_;

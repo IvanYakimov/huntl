@@ -45,22 +45,18 @@ namespace interpreter {
 	}
 
 //#define TRACE_INST_NAMES
-#define TRACE_TARGET_VAL
+#define TRACE_INST
 
-	void EvalTracer::Assign(const llvm::Instruction& inst, const llvm::Value* target) {
+	void EvalTracer::Assign(const llvm::Value& target) {
 #ifdef TRACE_INST_NAMES
 		std::clog << utils::ToString(inst) << std::endl;
 #endif
-#ifdef TRACE_TARGET_VAL
-		if (llvm::isa<llvm::StoreInst>(inst))
-			assert (target != nullptr);
-		else
-			(target = &inst);
-		std::string target_full_name = utils::ToString(*target);
-		HolderPtr holder = context_.Top()->Load(target);
+#ifdef TRACE_INST
+		std::string inst_str = utils::ToString(target);
+		HolderPtr holder = context_.Top()->Load(&target);
 		std::regex r(" = ");
 		std::smatch r_match;
-		if (std::regex_search(target_full_name, r_match, r)) {
+		if (std::regex_search(inst_str, r_match, r)) {
 			std::clog << TraceLevel() << r_match.prefix() << " <- " << *holder << std::endl;
 		}
 		else
@@ -69,6 +65,15 @@ namespace interpreter {
 		//llvm::errs() << inst << "\n";
 		//context_.Top()->Print();
 		//context_.Solver().Print();
+	}
+
+	void EvalTracer::Ret(const llvm::Value* target) {
+		HolderPtr holder = context_.Top()->Load(target);
+		std::clog << TraceLevel() << "ret " << *holder << std::endl;
+	}
+
+	void EvalTracer::Ret() {
+		std::clog << TraceLevel() << "ret void" << std::endl;
 	}
 }
 
