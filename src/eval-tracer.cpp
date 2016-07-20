@@ -10,7 +10,9 @@ namespace interpreter {
 
 	}
 
+//#define TRACE_CALLS
 	void EvalTracer::Call(const llvm::Function* target, bool status) {
+#ifdef TRACE_CALLS
 		if (status == true) {
 			std::clog << TraceLevel() << "call " << target->getName().str() << std::endl;
 			level_++;
@@ -19,6 +21,7 @@ namespace interpreter {
 			level_--;
 			std::clog << TraceLevel() << "back from " << target->getName().str() << std::endl;
 		}
+#endif
 	}
 
 //#define TRACE_FUNC_BODIES
@@ -37,7 +40,7 @@ namespace interpreter {
 		return res;
 	}
 
-#define TRACE_BR
+//#define TRACE_BR
 
 	void EvalTracer::Block(const llvm::BasicBlock* next) {
 #ifdef TRACE_BR
@@ -49,7 +52,7 @@ namespace interpreter {
 	}
 
 //#define TRACE_INST_NAMES
-#define TRACE_INST
+//#define TRACE_INST
 
 	void EvalTracer::Assign(const llvm::Value& target) {
 #ifdef TRACE_INST_NAMES
@@ -72,12 +75,16 @@ namespace interpreter {
 	}
 
 	void EvalTracer::Ret(const llvm::Value* target) {
+#ifdef TRACE_INST_NAMES
 		HolderPtr holder = context_.Top()->Load(target);
 		std::clog << TraceLevel() << "ret " << *holder << std::endl;
+#endif
 	}
 
 	void EvalTracer::Ret() {
+#ifdef TRACE_INST_NAMES
 		std::clog << TraceLevel() << "ret void" << std::endl;
+#endif
 	}
 }
 
