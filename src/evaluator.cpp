@@ -234,8 +234,8 @@ namespace interpreter {
 	}
 
 	// Load
-	void Evaluator::HandleLoadInst (const llvm::Instruction &inst, const llvm::Instruction *instruction) {
-		auto holder = context_.Top()->Load(instruction);
+	void Evaluator::HandleLoadInst (const llvm::Instruction &inst, const llvm::Value *target) {
+		auto holder = context_.Top()->Load(target);
 		meta_eval_.Assign(&inst, holder);
 		tracer_.Assign(inst);
 	}
@@ -247,14 +247,8 @@ namespace interpreter {
 		tracer_.Assign(*ptr);
 	}
 
-	void Evaluator::HandleStoreInst (const llvm::Instruction &inst, const llvm::Instruction *instruction, const llvm::Value *ptr) {
-		auto holder = context_.Top()->Load(instruction);
-		meta_eval_.Assign(ptr, holder);
-		tracer_.Assign(*ptr);
-	}
-
-	void Evaluator::HandleStoreInst (const llvm::Instruction &inst, const llvm::Argument *arg, const llvm::Value *ptr) {
-		auto holder = context_.Top()->Load(arg);
+	void Evaluator::HandleStoreInst (const llvm::Instruction &inst, const llvm::Value *target, const llvm::Value *ptr) {
+		auto holder = context_.Top()->Load(target);
 		meta_eval_.Assign(ptr, holder);
 		tracer_.Assign(*ptr);
 	}

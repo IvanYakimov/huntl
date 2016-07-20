@@ -21,8 +21,12 @@ namespace interpreter {
 		}
 	}
 
+//#define TRACE_FUNC_BODIES
+
 	void EvalTracer::Func(const llvm::Function* target) {
+#ifdef TRACE_FUNC_BODIES
 		std::clog << utils::ToString(*target) << std::endl;
+#endif
 	}
 
 	std::string EvalTracer::TraceLevel() {

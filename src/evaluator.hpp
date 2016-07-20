@@ -72,12 +72,11 @@ namespace interpreter {
 		virtual void HandleAllocaInst (const llvm::Instruction &inst, const llvm::ConstantInt *allocated);
 
 		// Load
-		virtual void HandleLoadInst (const llvm::Instruction &inst, const llvm::Instruction *instruction);
+		virtual void HandleLoadInst (const llvm::Instruction &inst, const llvm::Value *target);
 
 		// Store
 		virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::ConstantInt *constant_int, const llvm::Value *ptr);
-		virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Instruction *instruction, const llvm::Value *ptr);
-		virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Argument *arg, const llvm::Value *ptr);
+		virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Value *target, const llvm::Value *ptr);
 
 		virtual void HandleCallInst(const llvm::CallInst &inst);
 };

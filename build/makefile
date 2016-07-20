@@ -22,8 +22,8 @@ LLVM_TEST_HELPERS = ir-function-builder.o
 
 TEST_RUNNER = test-runner.o
 
-BENCHMARKS = hweight.ll gcd.ll
-BLAH = test-gcd.ll test-hweight.ll
+BENCHMARKS = hweight.ll gcd.ll ptr.ll
+BLAH = test-gcd.ll test-hweight.ll test-ptr.ll
 
 OBJ = $(INTERPRETER) $(MEMORY) $(SOLVER) $(UTILS)
 OBJ_TEST = $(INTERPRETER_TEST) $(MEMORY_TEST) $(SOLVER_TEST) $(LLVM_TEST_HELPERS)
