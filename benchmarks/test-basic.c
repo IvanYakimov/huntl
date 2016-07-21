@@ -80,6 +80,21 @@ void test_recsum() {
 	gen_recsum(a,n,s);
 }
 
+void gen_conv(short a, long b, int r);
+int conv(short x, long y) {
+	return (int)x + (int)y;
+}
+
+void test_conv() {
+	short a = 28;
+	long b = 42;
+	int r = 0;
+	//a = mksym_i16();
+	//b = mksym_i64();
+	r = conv(a, b);
+	gen_conv(a, b, r);
+}
+
 //TODO: switch-case support
 /*
 int gen_cases(int k, int r);

@@ -2,7 +2,7 @@
 //#include "sym-limits.h"
 #include "str.c"
 
-void gen_strlen(const char *cs, int res);
+void gen_strlen(const char *cs, size_t res);
 
 void test() {
 	char target[] = "hello";

@@ -129,6 +129,56 @@ namespace interpreter {
 			assert(false);
 	}
 
+	void Matcher::visitGetElementPtrInst (const llvm::GetElementPtrInst &inst) {
+		DebugInstInfo(inst);
+		assert (false and "not implemented");
+	}
+
+	void Matcher::visitTruncInst (const llvm::TruncInst &inst) {
+		DebugInstInfo(inst);
+
+		Value *value = NULL;
+		if (Case (inst, &value))
+			HandleTruncInst(inst, value);
+		else
+			assert (false and "not implemented");
+	}
+
+	void Matcher::visitZExtInst (const llvm::ZExtInst &inst) {
+		DebugInstInfo(inst);
+
+		Value *value = NULL;
+		if (Case (inst, &value))
+			HandleZExtInst (inst, value);
+		else
+			assert (false and "not implemented");
+	}
+
+	void Matcher::visitSExtInst (const llvm::SExtInst &inst) {
+		DebugInstInfo(inst);
+
+		Value *value = NULL;
+		if (Case (inst, &value))
+			HandleSExtInst (inst, value);
+		else
+			assert (false and "not implemented");
+	}
+
+	void Matcher::visitPtrToIntInst (const llvm::PtrToIntInst &inst) {
+		DebugInstInfo(inst);
+		assert (false and "not implemented");
+	}
+
+	void Matcher::visitIntToPtrInst (const llvm::IntToPtrInst &inst) {
+		DebugInstInfo(inst);
+		assert (false and "not implemented");
+	}
+
+	void Matcher::visitBitCastInst (const llvm::BitCastInst &inst) {
+		DebugInstInfo(inst);
+		assert (false and "not implemented");
+	}
+
 	void Matcher::visitStoreInst (const StoreInst &inst)
 	{
 		DebugInstInfo(inst);

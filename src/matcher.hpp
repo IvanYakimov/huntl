@@ -46,6 +46,16 @@ namespace interpreter {
 		void visitAllocaInst (const llvm::AllocaInst &inst);
 		void visitLoadInst (const llvm::LoadInst &inst);
 		void visitStoreInst (const llvm::StoreInst &inst);
+		// missed
+		void visitGetElementPtrInst (const llvm::GetElementPtrInst &inst);
+		// missed
+		void visitTruncInst (const llvm::TruncInst &inst);
+		void visitZExtInst (const llvm::ZExtInst &inst);
+		void visitSExtInst (const llvm::SExtInst &inst);
+		// missed
+		void visitPtrToIntInst (const llvm::PtrToIntInst &inst);
+		void visitIntToPtrInst (const llvm::IntToPtrInst &inst);
+		void visitBitCastInst (const llvm::BitCastInst &inst);
 		// missed instructions
 		void visitCallInst(const llvm::CallInst &inst);
 
@@ -80,6 +90,14 @@ namespace interpreter {
 		virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::ConstantInt *constant_int, const llvm::Value *ptr) = 0;
 		virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Value *target, const llvm::Value *ptr) = 0;
 
+		// Trunc
+		virtual void HandleTruncInst (const llvm::Instruction &inst, const llvm::Value* target) = 0;
+		// ZExt
+		virtual void HandleZExtInst (const llvm::Instruction &inst, const llvm::Value* target) = 0;
+		// SExt
+		virtual void HandleSExtInst (const llvm::Instruction &inst, const llvm::Value* target) = 0;
+
+		// Call
 		virtual void HandleCallInst(const llvm::CallInst &inst) = 0;
 	private:
 		// "pattern matching"

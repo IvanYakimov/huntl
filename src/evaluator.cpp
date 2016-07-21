@@ -288,6 +288,21 @@ namespace interpreter {
 		tracer_.Assign(*lhs);
 	}
 
+	// Trunc
+	void Evaluator::HandleTruncInst (const llvm::Instruction &inst, const llvm::Value* target) {
+
+	}
+
+	// ZExt
+	void Evaluator::HandleZExtInst (const llvm::Instruction &inst, const llvm::Value* target) {
+
+	}
+
+	// SExt
+	void Evaluator::HandleSExtInst (const llvm::Instruction &inst, const llvm::Value* target) {
+
+	}
+
 	void Evaluator::HandleCallInst(const llvm::CallInst &inst) {
 		auto called = inst.getCalledFunction();
 		assert (called != nullptr and "indirect function invocation not supported");
