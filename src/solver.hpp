@@ -11,6 +11,7 @@
 #include "holder.hpp"
 #include "object.hpp"
 #include "expr.hpp"
+#include "meta-kind.hpp"
 
 namespace solver {
 	class Solver;
@@ -37,12 +38,15 @@ namespace solver {
 		Type MkBooleanType();
 		SharedExpr MkConst(BitVec val);
 		SharedExpr MkConst(bool val);
+		SharedExpr MkConversion(utils::MetaKind kind, unsigned width, SharedExpr target);
 		SharedExpr MkVar(Type type);
 		SharedExpr MkExpr(Kind kind, SharedExpr left, SharedExpr right);
 		SharedExpr MkExpr(Kind kind, SharedExpr child1, SharedExpr child2, SharedExpr child3);
 		//TODO: refactoring:
 		void Print();
 	private:
+		SharedExpr MkConversion__helper(utils::MetaKind kind, unsigned width);
+
 		CVC4::ExprManager expr_manager_;
 		CVC4::SmtEngine smt_engine_;
 		CVC4::SymbolTable symbol_table_;

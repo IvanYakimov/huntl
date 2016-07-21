@@ -7,6 +7,7 @@
 # include "llvm/IR/Instructions.h"
 #include "llvm/IR/BasicBlock.h"
 #include "expr.hpp"
+#include "meta-kind.hpp"
 
 // fork support
 #include <unistd.h>
@@ -19,12 +20,14 @@ namespace interpreter {
 		SymbolicEval(ContextRef context);
 		void BinOp (const llvm::Instruction* inst, solver::SharedExpr left, solver::SharedExpr right);
 		void IntComparison (const llvm::Instruction* inst, solver::SharedExpr left, solver::SharedExpr right);
+		void Conversion (const llvm::Instruction* lhs, solver::SharedExpr rhs, utils::MetaKind kind, unsigned width);
 		void Assign (const llvm::Value *destination, solver::SharedExpr target);
 		const llvm::BasicBlock*  Branch (const llvm::Instruction *inst, solver::SharedExpr condition, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse);
 	private:
 		//solver::SharedExpr Concrete_To_Symbolic(interpreter::MetaIntRef concrete_val);
 		solver::Kind ExtractKindFromInst(const llvm::Instruction* inst);
 		solver::Kind ExtractKindFromICmpInst(const llvm::ICmpInst* inst);
+		solver::Kind Conversion__helper(utils::MetaKind kind);
 		const llvm::BasicBlock* MakeDecision(const solver::SharedExpr& condition, const llvm::BasicBlock* branch_ptr, bool branch_marker);
 		ContextRef context_;
 	};

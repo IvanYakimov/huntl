@@ -8,6 +8,7 @@ namespace interpreter {
 	using interpreter::ContextRef;
 	using memory::HolderPtr;
 	using llvm::ICmpInst;
+	using utils::MetaKind;
 
 	ConcreteEval::ConcreteEval(ContextRef context) : context_(context), True(1,1,false), False(1,0,false) {
 

@@ -1,6 +1,8 @@
 #include "solver.hpp"
 
 namespace solver {
+	using utils::MetaKind;
+
 	Solver::Solver() : expr_manager_(), smt_engine_(&expr_manager_), symbol_table_(), path_constraint_() {
 		smt_engine_.setOption("incremental", CVC4::SExpr("true"));
 		smt_engine_.setOption("produce-models", CVC4::SExpr("true"));
@@ -12,30 +14,10 @@ namespace solver {
 
 	}
 
-	/*
-	SolverPtr Solver::Create() {
-		return utils::Create<Solver>();
-	}
-	*/
-
 	void Solver::Constraint(SharedExpr constraint) {
 		smt_engine_.assertFormula(constraint);
 		path_constraint_.push_back(constraint);
 	}
-
-	/*
-	CVC4::ExprManager& Solver::ExprManager() {
-		return expr_manager_;
-	}
-
-	CVC4::SmtEngine& Solver::SmtEngine() {
-		return smt_engine_;
-	}
-
-	CVC4::SymbolTable& Solver::SymbolTable() {
-		return symbol_table_;
-	}
-	*/
 
 	bool Solver::IsSat() {
 		return smt_engine_.checkSat().isSat();
@@ -70,6 +52,24 @@ namespace solver {
 
 	SharedExpr Solver::MkConst(BitVec val) {
 		return expr_manager_.mkConst(val);
+	}
+
+	SharedExpr Solver::MkConversion__helper(utils::MetaKind kind, unsigned width) {
+		switch (kind) {
+		case MetaKind::SExt:
+			return expr_manager_.mkConst(CVC4::BitVectorSignExtend(width));
+		case MetaKind::ZExt:
+			return expr_manager_.mkConst(CVC4::BitVectorZeroExtend(width));
+		case MetaKind::Trunc:
+			return expr_manager_.mkConst(CVC4::BitVectorExtract(width - 1, 0));
+		default:
+			assert (false and "unexpected");
+		}
+	}
+
+	SharedExpr Solver::MkConversion(MetaKind kind, unsigned width, SharedExpr target) {
+		auto op = MkConversion__helper(kind, width);
+		return expr_manager_.mkExpr(op, target);
 	}
 
 	SharedExpr Solver::MkVar(Type type) {

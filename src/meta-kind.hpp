@@ -1,7 +1,7 @@
 #ifndef __META_KIND_HPP__
 #define __META_KIND_HPP__
 
-namespace interpreter {
+namespace utils {
 	enum class MetaKind {
 		ZExt,
 		SExt,

@@ -12,7 +12,7 @@ namespace interpreter {
 	class ConcreteEval {
 	public:
 		ConcreteEval(interpreter::ContextRef context);
-		void Conversion (const llvm::Instruction* lhs, interpreter::MetaIntRef rhs, MetaKind kind, unsigned width);
+		void Conversion (const llvm::Instruction* lhs, interpreter::MetaIntRef rhs, utils::MetaKind kind, unsigned width);
 		void BinOp (const llvm::Instruction* inst, interpreter::MetaIntRef left_val, interpreter::MetaIntRef right_val);
 		void IntComparison(const llvm::Instruction* inst, interpreter::MetaIntRef left_val, interpreter::MetaIntRef right_val);
 		void Assign (const llvm::Value* destination, interpreter::MetaIntRef value);
@@ -23,7 +23,7 @@ namespace interpreter {
 		interpreter::ContextRef context_;
 		inline interpreter::MetaInt BinOp__helper(const llvm::Instruction* inst, interpreter::MetaIntRef left_val, interpreter::MetaIntRef right_val);
 		inline bool IntComparison__helper(const llvm::ICmpInst* inst, interpreter::MetaIntRef left_val, interpreter::MetaIntRef right_val);
-		inline MetaInt Conversion__helper (MetaIntRef rhs, MetaKind kind, unsigned widht);
+		inline MetaInt Conversion__helper (MetaIntRef rhs, utils::MetaKind kind, unsigned widht);
 	};
 }
 

@@ -9,6 +9,7 @@ namespace interpreter {
 	using memory::ArgMap;
 	using memory::HolderPtr;
 	using memory::Undef;
+	using utils::MetaKind;
 
 	Evaluator::Evaluator(interpreter::ContextRef context) :
 			context_(context),

@@ -7,6 +7,7 @@ namespace interpreter {
 	using memory::HolderPtr;
 	using memory::IsConcrete;
 	using memory::IsSymbolic;
+	using utils::MetaKind;
 	using std::placeholders::_1; using std::placeholders::_2; using std::placeholders::_3;
 
 	MetaEvaluator::MetaEvaluator(interpreter::ContextRef context) :
@@ -124,7 +125,8 @@ namespace interpreter {
 			concrete_eval_.Conversion(lhs, value, kind, width);
 		}
 		else if (memory::IsSymbolic(rhs)) {
-			assert (false and "not implemented");
+			SharedExpr expr = memory::GetExpr(rhs);
+			symbolic_eval_.Conversion(lhs, expr, kind, width);
 		}
 		else
 			assert (false and "unexpected");

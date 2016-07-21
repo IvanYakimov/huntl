@@ -8,6 +8,7 @@ namespace interpreter {
 	using llvm::ICmpInst;
 	using solver::BitVec;
 	using solver::InfiniteInt;
+	using utils::MetaKind;
 
 	SymbolicEval::SymbolicEval(ContextRef context) :
 			context_(context) {
@@ -89,6 +90,12 @@ namespace interpreter {
 		auto e = context_.Solver().MkExpr(Kind::ITE, bool_res, bit_true, bit_false);
 
 		Assign(inst, e);
+	}
+
+	void SymbolicEval::Conversion (const llvm::Instruction* lhs, solver::SharedExpr rhs, MetaKind kind, unsigned width) {
+		auto conversion = context_.Solver().MkConversion(kind, width, rhs);
+
+		Assign(lhs, conversion);
 	}
 
 	void SymbolicEval::Assign (const llvm::Value *destination, solver::SharedExpr e) {
