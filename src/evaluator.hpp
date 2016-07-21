@@ -13,18 +13,21 @@
 //#include <sys/wait.h>
 //#include <sys/types.h>
 
-#include "activation.hpp"
-#include "local-memory.hpp"
+
+// inherited from
 #include "matcher.hpp"
 
 // Uses
-#include "meta-evaluator.hpp"
-#include "meta-int.hpp"
+#include "meta-kind.hpp"
 #include "solver.hpp"
 #include "context.hpp"
+#include "meta-int.hpp"
 #include "converter.hpp"
+#include "activation.hpp"
 #include "eval-tracer.hpp"
+#include "local-memory.hpp"
 #include "built-in-impl.hpp"
+#include "meta-evaluator.hpp"
 
 //#include "llvm/ExecutionEngine/ExecutionEngine.h"
 //#include "llvm/ExecutionEngine/GenericValue.h"
@@ -83,11 +86,11 @@ namespace interpreter {
 		virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Value *rhs, const llvm::Value *lhs);
 
 		// Trunc
-		virtual void HandleTruncInst (const llvm::Instruction &inst, const llvm::Value* target) = 0;
+		virtual void HandleTruncInst (const llvm::TruncInst &inst, const llvm::Value* target, const llvm::IntegerType* dest_ty);
 		// ZExt
-		virtual void HandleZExtInst (const llvm::Instruction &inst, const llvm::Value* target) = 0;
+		virtual void HandleZExtInst (const llvm::ZExtInst &inst, const llvm::Value* target, const llvm::IntegerType* dest_ty);
 		// SExt
-		virtual void HandleSExtInst (const llvm::Instruction &inst, const llvm::Value* target) = 0;
+		virtual void HandleSExtInst (const llvm::SExtInst &inst, const llvm::Value* target, const llvm::IntegerType* dest_ty);
 
 		// Call
 		virtual void HandleCallInst(const llvm::CallInst &inst);

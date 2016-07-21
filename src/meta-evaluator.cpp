@@ -117,6 +117,18 @@ namespace interpreter {
 		else
 			assert (false and "unexpected");
 	}
+
+	void MetaEvaluator::Conversion (const llvm::Instruction* lhs, memory::HolderPtr rhs, MetaKind kind, unsigned width) {
+		if (memory::IsConcrete(rhs)) {
+			MetaInt value = memory::GetValue(rhs);
+			concrete_eval_.Conversion(lhs, value, kind, width);
+		}
+		else if (memory::IsSymbolic(rhs)) {
+			assert (false and "not implemented");
+		}
+		else
+			assert (false and "unexpected");
+	}
 }
 
 

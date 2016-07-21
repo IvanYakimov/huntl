@@ -13,7 +13,7 @@ namespace interpreter {
 
 	}
 
-	MetaInt ConcreteEval::PerformConcreteBinOp(const llvm::Instruction* inst, MetaIntRef left_val, MetaIntRef right_val) {
+	MetaInt ConcreteEval::BinOp__helper(const llvm::Instruction* inst, MetaIntRef left_val, MetaIntRef right_val) {
 		switch (inst->getOpcode()) {
 		case Instruction::Add:
 			return left_val.operator +(right_val);
@@ -45,31 +45,44 @@ namespace interpreter {
 		assert (false && "not implemented");
 	}
 
-	bool ConcreteEval::PerformConcreteICmpInst(const llvm::ICmpInst* inst, MetaIntRef left_val, MetaIntRef right_val) {
-			switch (inst->getPredicate()) {
-			case llvm::ICmpInst::ICMP_EQ:
-				return left_val.eq(right_val);
-			case llvm::ICmpInst::ICMP_NE:
-				return left_val.ne(right_val);
-			case llvm::ICmpInst::ICMP_SGE:
-				return left_val.sge(right_val);
-			case llvm::ICmpInst::ICMP_SGT:
-				return left_val.sgt(right_val);
-			case llvm::ICmpInst::ICMP_SLE:
-				return left_val.sle(right_val);
-			case llvm::ICmpInst::ICMP_SLT:
-				return left_val.slt(right_val);
-			case llvm::ICmpInst::ICMP_UGE:
-				return left_val.uge(right_val);
-			case llvm::ICmpInst::ICMP_UGT:
-				return left_val.ugt(right_val);
-			case llvm::ICmpInst::ICMP_ULE:
-				return left_val.ule(right_val);
-			case llvm::ICmpInst::ICMP_ULT:
-				return left_val.ult(right_val);
-			}
-			assert (false && "not implemented");
+	bool ConcreteEval::IntComparison__helper(const llvm::ICmpInst* inst, MetaIntRef left_val, MetaIntRef right_val) {
+		switch (inst->getPredicate()) {
+		case llvm::ICmpInst::ICMP_EQ:
+			return left_val.eq(right_val);
+		case llvm::ICmpInst::ICMP_NE:
+			return left_val.ne(right_val);
+		case llvm::ICmpInst::ICMP_SGE:
+			return left_val.sge(right_val);
+		case llvm::ICmpInst::ICMP_SGT:
+			return left_val.sgt(right_val);
+		case llvm::ICmpInst::ICMP_SLE:
+			return left_val.sle(right_val);
+		case llvm::ICmpInst::ICMP_SLT:
+			return left_val.slt(right_val);
+		case llvm::ICmpInst::ICMP_UGE:
+			return left_val.uge(right_val);
+		case llvm::ICmpInst::ICMP_UGT:
+			return left_val.ugt(right_val);
+		case llvm::ICmpInst::ICMP_ULE:
+			return left_val.ule(right_val);
+		case llvm::ICmpInst::ICMP_ULT:
+			return left_val.ult(right_val);
 		}
+		assert (false && "not implemented");
+	}
+
+	MetaInt ConcreteEval::Conversion__helper (MetaIntRef rhs, MetaKind kind, unsigned width) {
+		switch (kind) {
+		case MetaKind::ZExt:
+			return rhs.zext(width);
+		case MetaKind::SExt:
+			return rhs.sext(width);
+		case MetaKind::Trunc:
+			return rhs.trunc(width);
+		default:
+			assert (false and "fail to convert");
+		}
+	}
 
 	void ConcreteEval::Assign (const llvm::Value* destination, MetaIntRef value) {
 		MetaInt new_concrete = value;
@@ -77,17 +90,19 @@ namespace interpreter {
 		context_.Top()->Store(destination, target);
 	}
 
+	void ConcreteEval::Conversion (const llvm::Instruction* lhs, interpreter::MetaIntRef rhs, MetaKind kind, unsigned width) {
+		auto result = Conversion__helper(rhs, kind, width);
+		Assign(lhs, result);
+	}
+
 	void ConcreteEval::BinOp (const llvm::Instruction* inst, MetaIntRef left_val, MetaIntRef right_val) {
-		auto result = PerformConcreteBinOp(inst, left_val, right_val);
-		//auto result_holder = Concrete::Create(result);
-		//context_.Top()->Store(inst, result_holder);
+		auto result = BinOp__helper(inst, left_val, right_val);
 		Assign(inst, result);
 	}
 
 	void ConcreteEval::IntComparison(const llvm::Instruction* inst, interpreter::MetaIntRef left_val, interpreter::MetaIntRef right_val) {
-		assert (llvm::isa<llvm::ICmpInst>(inst));
 		const llvm::ICmpInst *icmp_inst = llvm::dyn_cast<llvm::ICmpInst>(inst);
-		bool result = PerformConcreteICmpInst(icmp_inst, left_val, right_val);
+		bool result = IntComparison__helper(icmp_inst, left_val, right_val);
 		MetaInt casted_result;
 		if (result == true)
 			casted_result = True;

@@ -20,6 +20,7 @@
 #include "context.hpp"
 #include "concrete-eval.hpp"
 #include "symbolic-eval.hpp"
+#include "meta-kind.hpp"
 
 namespace interpreter {
 	class MetaEvaluator {
@@ -33,6 +34,7 @@ namespace interpreter {
 		void Assign (const llvm::Value *lhs, memory::HolderPtr rhs_holder);
 		void Dereferencing (const llvm::Value* lhs, memory::HolderPtr ptr_holder);
 		void Addressing (const llvm::Value* lhs, memory::HolderPtr addr_holder);
+		void Conversion (const llvm::Instruction* lhs, memory::HolderPtr rhs, MetaKind kind, unsigned width);
 	private:
 		ContextRef context_;
 		ConcreteEval concrete_eval_;

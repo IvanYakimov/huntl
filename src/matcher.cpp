@@ -138,8 +138,11 @@ namespace interpreter {
 		DebugInstInfo(inst);
 
 		Value *value = NULL;
+		Type *ty = inst.getDestTy();
+		assert (ty->isIntegerTy());
+		IntegerType *dest_ty = llvm::dyn_cast<IntegerType>(ty);
 		if (Case (inst, &value))
-			HandleTruncInst(inst, value);
+			HandleTruncInst(inst, value, dest_ty);
 		else
 			assert (false and "not implemented");
 	}
@@ -148,8 +151,11 @@ namespace interpreter {
 		DebugInstInfo(inst);
 
 		Value *value = NULL;
+		Type *ty = inst.getDestTy();
+		assert (ty->isIntegerTy());
+		IntegerType *dest_ty = llvm::dyn_cast<IntegerType>(ty);
 		if (Case (inst, &value))
-			HandleZExtInst (inst, value);
+			HandleZExtInst (inst, value, dest_ty);
 		else
 			assert (false and "not implemented");
 	}
@@ -158,8 +164,11 @@ namespace interpreter {
 		DebugInstInfo(inst);
 
 		Value *value = NULL;
+		Type *ty = inst.getDestTy();
+		assert (ty->isIntegerTy());
+		IntegerType *dest_ty = llvm::dyn_cast<IntegerType>(ty);
 		if (Case (inst, &value))
-			HandleSExtInst (inst, value);
+			HandleSExtInst (inst, value, dest_ty);
 		else
 			assert (false and "not implemented");
 	}

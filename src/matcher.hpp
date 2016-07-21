@@ -91,11 +91,11 @@ namespace interpreter {
 		virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Value *target, const llvm::Value *ptr) = 0;
 
 		// Trunc
-		virtual void HandleTruncInst (const llvm::Instruction &inst, const llvm::Value* target) = 0;
+		virtual void HandleTruncInst (const llvm::TruncInst &inst, const llvm::Value* target, const llvm::IntegerType* dest_ty) = 0;
 		// ZExt
-		virtual void HandleZExtInst (const llvm::Instruction &inst, const llvm::Value* target) = 0;
+		virtual void HandleZExtInst (const llvm::ZExtInst &inst, const llvm::Value* target, const llvm::IntegerType* dest_ty) = 0;
 		// SExt
-		virtual void HandleSExtInst (const llvm::Instruction &inst, const llvm::Value* target) = 0;
+		virtual void HandleSExtInst (const llvm::SExtInst &inst, const llvm::Value* target, const llvm::IntegerType* dest_ty) = 0;
 
 		// Call
 		virtual void HandleCallInst(const llvm::CallInst &inst) = 0;

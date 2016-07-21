@@ -2,6 +2,33 @@
 #include "sym-limits.h"
 #include "basic.c"
 
+void gen_conv(short a, long b, int r);
+int conv(short x, long y) {
+	return (int)x + (int)y;
+}
+
+void test_conv() {
+	short a = 28;
+	long b = 42;
+	int r = 0;
+	//a = mksym_i16();
+	//b = mksym_i64();
+	r = conv(a, b);
+	gen_conv(a, b, r);
+}
+
+void gen_truncate(long x, unsigned int res);
+unsigned int truncate(long x) {
+	return (unsigned int)x;
+}
+
+void test_truncate() {
+	long arg = 0;
+	unsigned res = 0;
+	res = truncate(arg);
+	gen_truncate(arg, res);
+}
+
 //TODO: replace by macro OR generate
 void gen_eq(int x, int y, int r);
 int eq(int x, int y) {
@@ -11,7 +38,7 @@ int eq(int x, int y) {
 		return 0;
 }
 
-void test_1() {
+void test_eq() {
 	int a = 0, b = 0,
 		 r = 0;
 	a = mksym_i32();
@@ -78,21 +105,6 @@ void test_recsum() {
 	//end
 	s = recsum(a,n);
 	gen_recsum(a,n,s);
-}
-
-void gen_conv(short a, long b, int r);
-int conv(short x, long y) {
-	return (int)x + (int)y;
-}
-
-void test_conv() {
-	short a = 28;
-	long b = 42;
-	int r = 0;
-	//a = mksym_i16();
-	//b = mksym_i64();
-	r = conv(a, b);
-	gen_conv(a, b, r);
 }
 
 //TODO: switch-case support

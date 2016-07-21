@@ -289,18 +289,24 @@ namespace interpreter {
 	}
 
 	// Trunc
-	void Evaluator::HandleTruncInst (const llvm::Instruction &inst, const llvm::Value* target) {
-
+	void Evaluator::HandleTruncInst (const llvm::TruncInst &inst, const llvm::Value* target, const llvm::IntegerType* dest_ty) {
+		auto holder = context_.Top()->Load(target);
+		auto width = dest_ty->getBitWidth();
+		meta_eval_.Conversion(&inst, holder, MetaKind::Trunc, width);
 	}
 
 	// ZExt
-	void Evaluator::HandleZExtInst (const llvm::Instruction &inst, const llvm::Value* target) {
-
+	void Evaluator::HandleZExtInst (const llvm::ZExtInst &inst, const llvm::Value* target, const llvm::IntegerType* dest_ty) {
+		auto holder = context_.Top()->Load(target);
+		auto width = dest_ty->getBitWidth();
+		meta_eval_.Conversion(&inst, holder, MetaKind::ZExt, width);
 	}
 
 	// SExt
-	void Evaluator::HandleSExtInst (const llvm::Instruction &inst, const llvm::Value* target) {
-
+	void Evaluator::HandleSExtInst (const llvm::SExtInst &inst, const llvm::Value* target, const llvm::IntegerType* dest_ty) {
+		auto holder = context_.Top()->Load(target);
+		auto width = dest_ty->getBitWidth();
+		meta_eval_.Conversion(&inst, holder, MetaKind::Trunc, width);
 	}
 
 	void Evaluator::HandleCallInst(const llvm::CallInst &inst) {

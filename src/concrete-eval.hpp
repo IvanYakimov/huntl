@@ -6,11 +6,13 @@
 #include "meta-int.hpp"
 #include "holder.hpp"
 #include "context.hpp"
+#include "meta-kind.hpp"
 
 namespace interpreter {
 	class ConcreteEval {
 	public:
 		ConcreteEval(interpreter::ContextRef context);
+		void Conversion (const llvm::Instruction* lhs, interpreter::MetaIntRef rhs, MetaKind kind, unsigned width);
 		void BinOp (const llvm::Instruction* inst, interpreter::MetaIntRef left_val, interpreter::MetaIntRef right_val);
 		void IntComparison(const llvm::Instruction* inst, interpreter::MetaIntRef left_val, interpreter::MetaIntRef right_val);
 		void Assign (const llvm::Value* destination, interpreter::MetaIntRef value);
@@ -19,8 +21,9 @@ namespace interpreter {
 		const MetaInt True;
 		const MetaInt False;
 		interpreter::ContextRef context_;
-		inline interpreter::MetaInt PerformConcreteBinOp(const llvm::Instruction* inst, interpreter::MetaIntRef left_val, interpreter::MetaIntRef right_val);
-		inline bool PerformConcreteICmpInst(const llvm::ICmpInst* inst, interpreter::MetaIntRef left_val, interpreter::MetaIntRef right_val);
+		inline interpreter::MetaInt BinOp__helper(const llvm::Instruction* inst, interpreter::MetaIntRef left_val, interpreter::MetaIntRef right_val);
+		inline bool IntComparison__helper(const llvm::ICmpInst* inst, interpreter::MetaIntRef left_val, interpreter::MetaIntRef right_val);
+		inline MetaInt Conversion__helper (MetaIntRef rhs, MetaKind kind, unsigned widht);
 	};
 }
 
