@@ -33,7 +33,6 @@ namespace interpreter {
 				else
 					assert (false and "unexpected behavior");
 
-				//TODO: use instanceof
 				auto ch = std::dynamic_pointer_cast<memory::Concrete>(holder);
 				assert(ch != nullptr);
 				if (std::next(pair,1) != args_->end())
