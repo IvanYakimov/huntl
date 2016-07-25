@@ -10,6 +10,7 @@ namespace interpreter {
 #define TRACE_INST
 
 	EvalTracer::EvalTracer(ContextRef context) : context_(context) {
+
 	}
 
 	EvalTracer::~EvalTracer() {
@@ -20,12 +21,18 @@ namespace interpreter {
 	void EvalTracer::Call(const llvm::Function* target, memory::ArgMapPtr args, bool status) {
 #ifdef TRACE_CALLS
 		if (status == true) {
-			std::clog << TraceLevel() << "call " << target->getName().str() << std::endl;
+			std::clog << TraceLevel() << "CALL '" << target->getName().str() << "'" <<
+					" WITH ARGS:\t";
+			for (auto it = args->begin(); it != args->end(); ++it) {
+				std::clog << utils::ToString(*it->first) << " = ";
+				std::clog  << *it->second << " | ";
+			}
+			std::clog << std::endl;
 			level_++;
 		}
 		else {
 			level_--;
-			std::clog << TraceLevel() << "back from " << target->getName().str() << std::endl;
+			std::clog << TraceLevel() << "BACK FROM '" << target->getName().str() << "'" << std::endl;
 		}
 		context_.Solver().Print();
 #endif
@@ -64,7 +71,11 @@ namespace interpreter {
 		std::regex r(" = ");
 		std::smatch r_match;
 		if (std::regex_search(inst_str, r_match, r)) {
-			std::clog << TraceLevel() << r_match.prefix() << " <- " << *holder << std::endl;
+			std::clog << TraceLevel() << r_match.prefix()
+					<< " [" << context_.Top()->AddressOf(&target) << "]"
+					<< " <- "
+					<< *holder
+					<< std::endl;
 		}
 		else
 			assert (false and "regex failed");

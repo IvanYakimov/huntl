@@ -315,6 +315,9 @@ namespace interpreter {
 		assert (called != nullptr and "indirect function invocation not supported");
 		memory::ArgMapPtr argmap = utils::Create<ArgMap>();
 		auto args = called->arg_begin();
+
+		std::cerr << "func '" << called->getName().str() << "' args initialization" << std::endl;
+
 		for (auto i = 0; i != inst.getNumArgOperands(); i++) {
 			auto operand = inst.getArgOperand(i);
 			HolderPtr holder = nullptr;
@@ -322,14 +325,36 @@ namespace interpreter {
 			if (llvm::isa<llvm::ConstantInt>(operand)) {
 				holder = ProduceHolder(llvm::dyn_cast<llvm::ConstantInt>(operand));
 			}
-			else {
+			else if (not args->getType()->isPointerTy()){
 				holder = context_.Top()->Load(operand);
 			}
+			else if (args->getType()->isPointerTy()) {
+				auto ram_address = context_.Top()->AddressOf(operand);
+
+				//TODO: check:
+
+				holder = memory::Concrete::Create(MetaInt(memory::Ram::machine_word_bitsize_, ram_address));
+			}
+			else
+				assert (! "unexptected");
+
+			std::cerr << utils::ToString(*args) << " <- " << *holder;
+			if (not args->getType()->isPointerTy())
+				std::cerr << " which is a scalar type";
+			else if (IsPointerToPointer(args))
+				std::cerr << " which is pointer to pointer";
+			else if (args->getType()->isPointerTy())
+				std::cerr << " which is a pointer";
+			else
+				assert (false and "unknown type sort");
 
 			assert (holder != nullptr);
 			argmap->emplace(args, holder);
 			args++;
 		}
+
+		std::cerr << "; " << std::endl;
+
 		assert (args == called->arg_end());
 
 		memory::HolderPtr ret_holder = CallFunction(called, argmap);
