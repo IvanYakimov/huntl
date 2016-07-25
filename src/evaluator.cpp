@@ -105,7 +105,7 @@ namespace interpreter {
 		else {
 			// push
 			context_.Push(); {
-				tracer_.Call(f, true);
+				tracer_.Call(f, args, true);
 				// initiate args
 				for_each(args->begin(), args->end(), [&](auto pair){
 					auto addr = pair.first;
@@ -124,7 +124,7 @@ namespace interpreter {
 					next_block = context_.Top()->PC.Get();
 				}
 				ret_val = context_.Top()->RetVal.Get();
-				tracer_.Call(f,false);
+				tracer_.Call(f, args, false);
 			}
 			context_.Pop(); // pop
 			//llvm::errs() << "return from " << f->getName() << "\n";
@@ -307,7 +307,7 @@ namespace interpreter {
 	void Evaluator::HandleSExtInst (const llvm::SExtInst &inst, const llvm::Value* target, const llvm::IntegerType* dest_ty) {
 		auto holder = context_.Top()->Load(target);
 		auto width = dest_ty->getBitWidth();
-		meta_eval_.Conversion(&inst, holder, MetaKind::Trunc, width);
+		meta_eval_.Conversion(&inst, holder, MetaKind::SExt, width);
 	}
 
 	void Evaluator::HandleCallInst(const llvm::CallInst &inst) {

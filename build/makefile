@@ -22,11 +22,13 @@ LLVM_TEST_HELPERS = ir-function-builder.o
 
 TEST_RUNNER = test-runner.o
 
+PLAYGROUND = expr-test.o
+
 BENCHMARKS = gcd.ll hweight.ll basic.ll ptr.ll str.ll 
 BLAH = test-gcd.ll test-hweight.ll test-basic.ll test-ptr.ll test-str.ll
 
 OBJ = $(INTERPRETER) $(MEMORY) $(SOLVER) $(UTILS)
-OBJ_TEST = $(INTERPRETER_TEST) $(MEMORY_TEST) $(SOLVER_TEST) $(LLVM_TEST_HELPERS)
+OBJ_TEST = $(INTERPRETER_TEST) $(MEMORY_TEST) $(SOLVER_TEST) $(LLVM_TEST_HELPERS) $(PLAYGROUND)
 
 CXX = g++
 #CXX = clang++
@@ -65,6 +67,9 @@ interpreter-test.out: $(INTERPRETER) $(INTERPRETER_TEST)
 	
 memory-test.out: $(MEMORY) $(MEMORY_TEST)
 	$(CXX) $^ -o $@ $(GTESTFLAGS) $(CVC4FLAGS) $(CXXFLAGS) $(LLVM_STATIC)
+	
+playground-test.out: $(PLAYGROUND) $(TEST_RUNNER)
+	$(CXX) $^ -o $@ $(GTESTFLAGS) $(CVC4FLAGS) $(CXXFLAGS) $(LLVM_STATIC) 
 
 $(OBJ_TEST):
 $(OBJ):

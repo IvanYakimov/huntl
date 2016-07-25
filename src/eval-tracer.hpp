@@ -6,6 +6,7 @@
 #include "holder.hpp"
 #include "converter.hpp"
 #include "llvm/IR/InstVisitor.h"
+#include "activation.hpp"
 
 #include <regex>
 #include <string>
@@ -16,7 +17,7 @@ namespace interpreter {
 		EvalTracer(ContextRef context);
 		~EvalTracer();
 		NONCOPYABLE(EvalTracer);
-		void Call(const llvm::Function* target, bool status = true);
+		void Call(const llvm::Function* target, memory::ArgMapPtr args, bool status = true);
 		void Block(const llvm::BasicBlock* next);
 		void Assign(const llvm::Value& target);
 		void Func(const llvm::Function* target);

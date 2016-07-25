@@ -119,14 +119,14 @@ namespace interpreter {
 			assert (false and "unexpected");
 	}
 
-	void MetaEvaluator::Conversion (const llvm::Instruction* lhs, memory::HolderPtr rhs, MetaKind kind, unsigned width) {
+	void MetaEvaluator::Conversion (const llvm::Instruction* lhs, memory::HolderPtr rhs, MetaKind kind, unsigned new_width) {
 		if (memory::IsConcrete(rhs)) {
 			MetaInt value = memory::GetValue(rhs);
-			concrete_eval_.Conversion(lhs, value, kind, width);
+			concrete_eval_.Conversion(lhs, value, kind, new_width);
 		}
 		else if (memory::IsSymbolic(rhs)) {
 			SharedExpr expr = memory::GetExpr(rhs);
-			symbolic_eval_.Conversion(lhs, expr, kind, width);
+			symbolic_eval_.Conversion(lhs, expr, kind, new_width);
 		}
 		else
 			assert (false and "unexpected");

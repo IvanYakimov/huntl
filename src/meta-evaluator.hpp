@@ -34,7 +34,7 @@ namespace interpreter {
 		void Assign (const llvm::Value *lhs, memory::HolderPtr rhs_holder);
 		void Dereferencing (const llvm::Value* lhs, memory::HolderPtr ptr_holder);
 		void Addressing (const llvm::Value* lhs, memory::HolderPtr addr_holder);
-		void Conversion (const llvm::Instruction* lhs, memory::HolderPtr rhs, utils::MetaKind kind, unsigned width);
+		void Conversion (const llvm::Instruction* lhs, memory::HolderPtr rhs, utils::MetaKind kind, unsigned new_width);
 	private:
 		ContextRef context_;
 		ConcreteEval concrete_eval_;

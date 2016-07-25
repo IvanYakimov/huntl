@@ -54,21 +54,35 @@ namespace solver {
 		return expr_manager_.mkConst(val);
 	}
 
-	SharedExpr Solver::MkConversion__helper(utils::MetaKind kind, unsigned width) {
+	SharedExpr Solver::MkConversion__helper(utils::MetaKind kind, unsigned arg) {
 		switch (kind) {
 		case MetaKind::SExt:
-			return expr_manager_.mkConst(CVC4::BitVectorSignExtend(width));
+			return expr_manager_.mkConst(CVC4::BitVectorSignExtend(arg));
 		case MetaKind::ZExt:
-			return expr_manager_.mkConst(CVC4::BitVectorZeroExtend(width));
+			return expr_manager_.mkConst(CVC4::BitVectorZeroExtend(arg));
 		case MetaKind::Trunc:
-			return expr_manager_.mkConst(CVC4::BitVectorExtract(width - 1, 0));
+			return expr_manager_.mkConst(CVC4::BitVectorExtract(arg - 1, 0));
 		default:
 			assert (false and "unexpected");
 		}
 	}
 
-	SharedExpr Solver::MkConversion(MetaKind kind, unsigned width, SharedExpr target) {
-		auto op = MkConversion__helper(kind, width);
+	SharedExpr Solver::MkConversion(MetaKind kind, unsigned new_width, SharedExpr target) {
+		CVC4::BitVectorType target_type = target.getType();
+		auto target_width = target_type.getSize();
+		SharedExpr op;
+		if (kind == MetaKind::SExt or kind == MetaKind::ZExt) {
+			auto increment = new_width - target_width;
+			assert (increment > 0 and increment <= 64);
+			op = MkConversion__helper(kind, increment);
+		}
+		else if (kind == MetaKind::Trunc) {
+			assert (target_width > new_width);
+			op = MkConversion__helper(kind, new_width);
+		}
+		else
+			assert (false and "unexpected");
+
 		return expr_manager_.mkExpr(op, target);
 	}
 

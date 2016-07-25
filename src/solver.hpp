@@ -38,14 +38,14 @@ namespace solver {
 		Type MkBooleanType();
 		SharedExpr MkConst(BitVec val);
 		SharedExpr MkConst(bool val);
-		SharedExpr MkConversion(utils::MetaKind kind, unsigned width, SharedExpr target);
+		SharedExpr MkConversion(utils::MetaKind kind, unsigned new_width, SharedExpr target);
 		SharedExpr MkVar(Type type);
 		SharedExpr MkExpr(Kind kind, SharedExpr left, SharedExpr right);
 		SharedExpr MkExpr(Kind kind, SharedExpr child1, SharedExpr child2, SharedExpr child3);
 		//TODO: refactoring:
 		void Print();
 	private:
-		SharedExpr MkConversion__helper(utils::MetaKind kind, unsigned width);
+		SharedExpr MkConversion__helper(utils::MetaKind kind, unsigned arg);
 
 		CVC4::ExprManager expr_manager_;
 		CVC4::SmtEngine smt_engine_;
