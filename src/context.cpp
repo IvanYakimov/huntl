@@ -1,6 +1,8 @@
 #include "context.hpp"
 
 namespace interpreter {
+	using memory::RamRef;
+
 	Context::Context() : solver_(), ram_(), activation_stack_(ram_) {
 	}
 
@@ -19,6 +21,10 @@ namespace interpreter {
 	void Context::Push() {
 		//auto new_activation = memory::Activation::Create();
 		activation_stack_.Push();
+	}
+
+	RamRef Context::Ram() {
+		return (RamRef)ram_;
 	}
 
 	/*

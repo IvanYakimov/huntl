@@ -14,8 +14,8 @@ namespace interpreter {
 
 	}
 
-	MetaInt ConcreteEval::BinOp__helper(const llvm::Instruction* inst, MetaIntRef left_val, MetaIntRef right_val) {
-		switch (inst->getOpcode()) {
+	MetaInt ConcreteEval::BinOp__helper(unsigned op_code, MetaIntRef left_val, MetaIntRef right_val) {
+		switch (op_code) {
 		case Instruction::Add:
 			return left_val.operator +(right_val);
 		case Instruction::Sub:
@@ -46,8 +46,8 @@ namespace interpreter {
 		assert (false && "not implemented");
 	}
 
-	bool ConcreteEval::IntComparison__helper(const llvm::ICmpInst* inst, MetaIntRef left_val, MetaIntRef right_val) {
-		switch (inst->getPredicate()) {
+	bool ConcreteEval::IntComparison__helper(llvm::ICmpInst::Predicate predicate, MetaIntRef left_val, MetaIntRef right_val) {
+		switch (predicate) {
 		case llvm::ICmpInst::ICMP_EQ:
 			return left_val.eq(right_val);
 		case llvm::ICmpInst::ICMP_NE:
@@ -85,34 +85,39 @@ namespace interpreter {
 		}
 	}
 
-	void ConcreteEval::Assign (const llvm::Value* destination, MetaIntRef value) {
+	void ConcreteEval::Assign (memory::RamAddress lhs, MetaIntRef value) {
 		MetaInt new_concrete = value;
 		HolderPtr target = Concrete::Create(new_concrete);
-		context_.Top()->Store(destination, target);
+		context_.Ram().Stack().Write(target, lhs, memory::Ram::def_align_);
 	}
 
-	void ConcreteEval::Conversion (const llvm::Instruction* lhs, interpreter::MetaIntRef rhs, MetaKind kind, unsigned width) {
+	void ConcreteEval::Conversion (memory::RamAddress lhs, interpreter::MetaIntRef rhs, MetaKind kind, unsigned width) {
 		auto result = Conversion__helper(rhs, kind, width);
 		Assign(lhs, result);
 	}
 
-	void ConcreteEval::BinOp (const llvm::Instruction* inst, MetaIntRef left_val, MetaIntRef right_val) {
-		auto result = BinOp__helper(inst, left_val, right_val);
-		Assign(inst, result);
+	void ConcreteEval::BinOp (memory::RamAddress lhs, unsigned op_code, interpreter::MetaIntRef left_val, interpreter::MetaIntRef right_val) {
+		auto result = BinOp__helper(op_code, left_val, right_val);
+		Assign(lhs, result);
 	}
 
-	void ConcreteEval::IntComparison(const llvm::Instruction* inst, interpreter::MetaIntRef left_val, interpreter::MetaIntRef right_val) {
-		const llvm::ICmpInst *icmp_inst = llvm::dyn_cast<llvm::ICmpInst>(inst);
-		bool result = IntComparison__helper(icmp_inst, left_val, right_val);
+	MetaInt ConcreteEval::Bool_To_MetaInt(bool result) {
 		MetaInt casted_result;
 		if (result == true)
 			casted_result = True;
 		else
 			casted_result = False;
-		Assign(inst, casted_result);
+
+		return casted_result;
 	}
 
-	const llvm::BasicBlock* ConcreteEval::Branch(const llvm::Instruction *inst, interpreter::MetaIntRef condition, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse) {
+	void ConcreteEval::IntComparison(memory::RamAddress lhs, llvm::ICmpInst::Predicate predicate, interpreter::MetaIntRef left_val, interpreter::MetaIntRef right_val) {
+		bool result = IntComparison__helper(predicate, left_val, right_val);
+		MetaInt llvm_bool = Bool_To_MetaInt(result);
+		Assign(lhs, llvm_bool);
+	}
+
+	const llvm::BasicBlock* ConcreteEval::Branch(interpreter::MetaIntRef condition, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse) {
 		if (condition == True) {
 			return iftrue;
 		}

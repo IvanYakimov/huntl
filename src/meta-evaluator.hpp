@@ -21,6 +21,7 @@
 #include "concrete-eval.hpp"
 #include "symbolic-eval.hpp"
 #include "meta-kind.hpp"
+#include "ram-delc.hpp"
 
 namespace interpreter {
 	class MetaEvaluator {
@@ -32,8 +33,6 @@ namespace interpreter {
 		void IntComparison (const llvm::Instruction* inst, memory::HolderPtr left, memory::HolderPtr right);
 		const llvm::BasicBlock* Branch (const llvm::Instruction *inst, memory::HolderPtr condition, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse);
 		void Assign (const llvm::Value *lhs, memory::HolderPtr rhs_holder);
-		void Dereferencing (const llvm::Value* lhs, memory::HolderPtr ptr_holder);
-		void Addressing (const llvm::Value* lhs, memory::HolderPtr addr_holder);
 		void Conversion (const llvm::Instruction* lhs, memory::HolderPtr rhs, utils::MetaKind kind, unsigned new_width);
 	private:
 		ContextRef context_;

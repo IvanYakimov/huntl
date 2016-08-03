@@ -86,39 +86,6 @@ namespace interpreter {
 			assert (false and "unexpected behavior");
 	}
 
-	void MetaEvaluator::Dereferencing (const llvm::Value* lhs, memory::HolderPtr ptr_holder) {
-		if (memory::IsConcrete(ptr_holder)) {
-			auto deref_holder = context_.Top()->Dereference(ptr_holder);
-			if (memory::IsConcrete(deref_holder)) {
-				MetaIntRef deref_concrete = memory::GetValue(deref_holder);
-				concrete_eval_.Assign(lhs, deref_concrete);
-			}
-			else if (memory::IsSymbolic(deref_holder)) {
-				//assert (false and "not implemented");
-				SharedExpr deref_sym = memory::GetExpr(deref_holder);
-				symbolic_eval_.Assign(lhs, deref_sym);
-			}
-			else
-				assert (false and "unexpected");
-		}
-		else if (memory::IsSymbolic(ptr_holder)) {
-			assert (false and "not implemented");
-		}
-		else assert (false and "unexpected behavior");
-	}
-
-	void MetaEvaluator::Addressing (const llvm::Value* lhs, memory::HolderPtr addr_holder) {
-		if (memory::IsConcrete(addr_holder)) {
-			MetaIntRef addr_concrete = memory::GetValue(addr_holder);
-			concrete_eval_.Assign(lhs, addr_concrete);
-		}
-		else if (memory::IsSymbolic(addr_holder)) {
-			assert (false and "not implemented");
-		}
-		else
-			assert (false and "unexpected");
-	}
-
 	void MetaEvaluator::Conversion (const llvm::Instruction* lhs, memory::HolderPtr rhs, MetaKind kind, unsigned new_width) {
 		if (memory::IsConcrete(rhs)) {
 			MetaInt value = memory::GetValue(rhs);

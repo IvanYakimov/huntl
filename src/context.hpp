@@ -23,6 +23,7 @@ namespace interpreter {
 		void Push();
 		void Pop();
 		memory::ActivationPtr Top();
+		memory::RamRef Ram();
 	private:
 		memory::ActivationStack activation_stack_;
 		solver::Solver solver_;
