@@ -65,7 +65,10 @@ namespace interpreter {
 		});
 
 		gres = jit->runFunction(target_, jit_args);
+		auto jit_res = memory::Concrete::Create(gres.IntVal);
 
+		if (ret_sol != jit_res)
+			std::cerr << "jit res: " << *jit_res << std::endl;
 		assert(memory::GetValue(ret_sol) == gres.IntVal and "generated ret-value MUST be equivalent to one returned from JIT!");
 	}
 }

@@ -77,7 +77,7 @@ void test_eq() {
 	gen_eq(a,b,r);
 }
 
-/*
+
 void gen_arith(int x, int y, int r);
 int arith(int x, int y) {
 	if (x - y == 0)

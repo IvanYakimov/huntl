@@ -112,6 +112,7 @@ namespace interpreter {
 					auto hldr = pair.second;
 					// assign
 					meta_eval_.Assign(addr, hldr);
+					tracer_.Assign(*addr);
 				});
 
 				const llvm::BasicBlock* next_block = &*f->begin();
@@ -255,10 +256,13 @@ namespace interpreter {
 	void Evaluator::HandleLoadInst (const llvm::Instruction &lhs, const llvm::Value *rhs) {
 		if (IsDereferencing(lhs, rhs)) {
 			auto ptr_holder = context_.Top()->Load(rhs);
+			std::cerr << "deref" << std::endl;
+			//std::cerr << "load rhs: "<< *ptr_holder << std::endl;
 			meta_eval_.Dereferencing(&lhs, ptr_holder);
 		}
 		else {
 			auto rhs_holder = context_.Top()->Load(rhs);
+			//std::cerr << "load rhs: "<< *rhs_holder << std::endl;
 			meta_eval_.Assign(&lhs, rhs_holder);
 		}
 		tracer_.Assign(lhs);
@@ -275,6 +279,12 @@ namespace interpreter {
 		}
 		tracer_.Assign(*lhs);
 	}
+
+	// https://blog.felixangell.com/an-introduction-to-llvm-in-go/
+	/* see: http://llvm.org/docs/tutorial/OCamlLangImpl7.html
+	 * In LLVM, all memory accesses are explicit with load/store instructions,
+	 * and it is carefully designed not to have (or need) an “address-of” operator.
+	 */
 
 	void Evaluator::HandleStoreInst (const llvm::Instruction &inst, const llvm::Value *rhs, const llvm::Value *lhs) {
 		if (IsAddressing(inst, lhs)) {
@@ -316,7 +326,7 @@ namespace interpreter {
 		memory::ArgMapPtr argmap = utils::Create<ArgMap>();
 		auto args = called->arg_begin();
 
-		std::cerr << "func '" << called->getName().str() << "' args initialization" << std::endl;
+		//std::cerr << "func '" << called->getName().str() << "' args initialization" << std::endl;
 
 		for (auto i = 0; i != inst.getNumArgOperands(); i++) {
 			auto operand = inst.getArgOperand(i);
@@ -338,6 +348,7 @@ namespace interpreter {
 			else
 				assert (! "unexptected");
 
+			/*
 			std::cerr << utils::ToString(*args) << " <- " << *holder;
 			if (not args->getType()->isPointerTy())
 				std::cerr << " which is a scalar type";
@@ -347,6 +358,7 @@ namespace interpreter {
 				std::cerr << " which is a pointer";
 			else
 				assert (false and "unknown type sort");
+				*/
 
 			assert (holder != nullptr);
 			argmap->emplace(args, holder);
