@@ -29,11 +29,11 @@ namespace interpreter {
 		MetaEvaluator(interpreter::ContextRef context);
 		~MetaEvaluator();
 		NONCOPYABLE(MetaEvaluator);
-		void BinOp (const llvm::Instruction* inst, memory::HolderPtr left, memory::HolderPtr right);
-		void IntComparison (const llvm::Instruction* inst, memory::HolderPtr left, memory::HolderPtr right);
-		const llvm::BasicBlock* Branch (const llvm::Instruction *inst, memory::HolderPtr condition, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse);
-		void Assign (const llvm::Value *lhs, memory::HolderPtr rhs_holder);
-		void Conversion (const llvm::Instruction* lhs, memory::HolderPtr rhs, utils::MetaKind kind, unsigned new_width);
+		void BinOp (memory::RamAddress lhs, unsigned op_code, memory::HolderPtr left, memory::HolderPtr right);
+		void IntComparison (memory::RamAddress lhs, llvm::ICmpInst::Predicate predicate, memory::HolderPtr left, memory::HolderPtr right);
+		const llvm::BasicBlock* Branch (memory::HolderPtr condition, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse);
+		void Assign (memory::RamAddress lhs, memory::HolderPtr rhs_holder);
+		void Conversion (memory::RamAddress lhs, memory::HolderPtr rhs, utils::MetaKind kind, unsigned new_width);
 	private:
 		ContextRef context_;
 		ConcreteEval concrete_eval_;
@@ -41,8 +41,7 @@ namespace interpreter {
 		solver::SharedExpr Symbolize(interpreter::MetaIntRef concrete_val);
 		using ConcreteFunc2 = std::function<void(const llvm::Instruction*,MetaIntRef,MetaIntRef)>;
 		using SymbolicFunc2 = std::function<void(const llvm::Instruction*,solver::SharedExpr,solver::SharedExpr)>;
-		void MixedEval2(const llvm::Instruction* inst, memory::HolderPtr left, memory::HolderPtr right,
-				ConcreteFunc2 F, SymbolicFunc2 G);
+		void MixedEval2(const llvm::Instruction* inst, memory::HolderPtr left, memory::HolderPtr right, ConcreteFunc2 F, SymbolicFunc2 G);
 
 		/*
 		template <class InstTy>

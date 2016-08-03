@@ -25,14 +25,15 @@ namespace interpreter {
 		return c_sym;
 	}
 
-	void MetaEvaluator::BinOp (const llvm::Instruction* inst, memory::HolderPtr left, memory::HolderPtr right) {
+	void MetaEvaluator::BinOp (memory::RamAddress lhs, unsigned op_code, memory::HolderPtr left, memory::HolderPtr right) {
+		/*
 		ConcreteFunc2 concrete_binop = std::bind(&ConcreteEval::BinOp, &concrete_eval_, _1, _2, _3);
 		SymbolicFunc2 symbolic_binop = std::bind(&SymbolicEval::BinOp, &symbolic_eval_, _1, _2, _3);
 		MixedEval2(inst, left, right, concrete_binop, symbolic_binop);
+		*/
 	}
 
-	void MetaEvaluator::MixedEval2(const llvm::Instruction* inst, memory::HolderPtr left, memory::HolderPtr right,
-					ConcreteFunc2 F, SymbolicFunc2 G) {
+	void MetaEvaluator::MixedEval2(const llvm::Instruction* inst, memory::HolderPtr left, memory::HolderPtr right, ConcreteFunc2 F, SymbolicFunc2 G) {
 		if (IsConcrete(left) and IsConcrete(right)) {
 			auto left_val = memory::GetValue(left);
 			auto right_val = memory::GetValue(right);
@@ -57,42 +58,43 @@ namespace interpreter {
 			assert (false and "unexpected behavior");
 	}
 
-	void MetaEvaluator::IntComparison (const llvm::Instruction* inst, memory::HolderPtr left, memory::HolderPtr right) {
+	void MetaEvaluator::IntComparison (memory::RamAddress lhs, llvm::ICmpInst::Predicate predicate, memory::HolderPtr left, memory::HolderPtr right) {
+		/*
 		ConcreteFunc2 concrete_comparison = std::bind(&ConcreteEval::IntComparison, &concrete_eval_, _1, _2, _3);
 		SymbolicFunc2 symbolic_comparison = std::bind(&SymbolicEval::IntComparison, &symbolic_eval_, _1, _2, _3);
 		MixedEval2(inst, left, right, concrete_comparison, symbolic_comparison);
+		*/
 	}
 
-	const llvm::BasicBlock* MetaEvaluator::Branch (const llvm::Instruction *inst, memory::HolderPtr condition,
-			const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse) {
+	const llvm::BasicBlock* MetaEvaluator::Branch (memory::HolderPtr condition, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse) {
 		if (memory::IsConcrete(condition)) {
-			return concrete_eval_.Branch(inst, memory::GetValue(condition), iftrue, iffalse);
+			return concrete_eval_.Branch(memory::GetValue(condition), iftrue, iffalse);
 		}
 		else if (memory::IsSymbolic(condition))
-			return symbolic_eval_.Branch(inst, memory::GetExpr(condition), iftrue, iffalse);
+			return symbolic_eval_.Branch(memory::GetExpr(condition), iftrue, iffalse);
 		else
 			assert (false and "unexpected behavior");
 		return nullptr;
 	}
 
-	void MetaEvaluator::Assign (const llvm::Value *destination, memory::HolderPtr target) {
+	void MetaEvaluator::Assign (memory::RamAddress lhs, memory::HolderPtr target) {
 		if (memory::IsConcrete(target)) {
-			concrete_eval_.Assign(destination, memory::GetValue(target));
+			concrete_eval_.Assign(lhs, memory::GetValue(target));
 		}
 		else if (memory::IsSymbolic(target)) {
-			symbolic_eval_.Assign(destination, memory::GetExpr(target));
+			symbolic_eval_.Assign(lhs, memory::GetExpr(target));
 		}
 		else
 			assert (false and "unexpected behavior");
 	}
 
-	void MetaEvaluator::Conversion (const llvm::Instruction* lhs, memory::HolderPtr rhs, MetaKind kind, unsigned new_width) {
-		if (memory::IsConcrete(rhs)) {
-			MetaInt value = memory::GetValue(rhs);
+	void MetaEvaluator::Conversion (memory::RamAddress lhs, memory::HolderPtr target, utils::MetaKind kind, unsigned new_width) {
+		if (memory::IsConcrete(target)) {
+			MetaInt value = memory::GetValue(target);
 			concrete_eval_.Conversion(lhs, value, kind, new_width);
 		}
-		else if (memory::IsSymbolic(rhs)) {
-			SharedExpr expr = memory::GetExpr(rhs);
+		else if (memory::IsSymbolic(target)) {
+			SharedExpr expr = memory::GetExpr(target);
 			symbolic_eval_.Conversion(lhs, expr, kind, new_width);
 		}
 		else
