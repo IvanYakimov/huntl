@@ -18,17 +18,16 @@ namespace interpreter {
 	class SymbolicEval {
 	public:
 		SymbolicEval(ContextRef context);
-		void BinOp (const llvm::Instruction* inst, solver::SharedExpr left, solver::SharedExpr right);
-		void IntComparison (const llvm::Instruction* inst, solver::SharedExpr left, solver::SharedExpr right);
-		void Conversion (const llvm::Instruction* lhs, solver::SharedExpr rhs, utils::MetaKind kind, unsigned width);
-		void Assign (const llvm::Value *destination, solver::SharedExpr target);
-		const llvm::BasicBlock*  Branch (const llvm::Instruction *inst, solver::SharedExpr condition, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse);
+		void BinOp (memory::RamAddress lhs, unsigned bin_op, solver::SharedExpr left, solver::SharedExpr right);
+		void IntComparison (memory::RamAddress lhs, llvm::ICmpInst::Predicate predicate, solver::SharedExpr left, solver::SharedExpr right);
+		void Conversion (memory::RamAddress lhs, solver::SharedExpr rhs, utils::MetaKind kind, unsigned width);
+		void Assign (memory::RamAddress lhs, solver::SharedExpr target);
+		const llvm::BasicBlock* Branch (solver::SharedExpr condition, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse);
 	private:
-		//solver::SharedExpr Concrete_To_Symbolic(interpreter::MetaIntRef concrete_val);
-		solver::Kind ExtractKindFromInst(const llvm::Instruction* inst);
-		solver::Kind ExtractKindFromICmpInst(const llvm::ICmpInst* inst);
-		solver::Kind Conversion__helper(utils::MetaKind kind);
-		const llvm::BasicBlock* MakeDecision(const solver::SharedExpr& condition, const llvm::BasicBlock* branch_ptr, bool branch_marker);
+		solver::Kind OpCode_To_Kind(unsigned op_code);
+		solver::Kind Predicate_To_Kind(llvm::ICmpInst::Predicate predicate);
+		solver::Kind ConversionHelper(utils::MetaKind kind);
+		const llvm::BasicBlock* BranchHelper(const solver::SharedExpr& condition, const llvm::BasicBlock* branch_ptr, bool branch_marker);
 		ContextRef context_;
 	};
 }
