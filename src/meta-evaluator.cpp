@@ -8,7 +8,8 @@ namespace interpreter {
 	using memory::IsConcrete;
 	using memory::IsSymbolic;
 	using utils::MetaKind;
-	using std::placeholders::_1; using std::placeholders::_2; using std::placeholders::_3;
+	using llvm::ICmpInst;
+	using std::placeholders::_1; using std::placeholders::_2; using std::placeholders::_3; using std::placeholders::_4;
 
 	MetaEvaluator::MetaEvaluator(interpreter::ContextRef context) :
 			context_(context),
@@ -19,51 +20,17 @@ namespace interpreter {
 	MetaEvaluator::~MetaEvaluator() {
 	}
 
-	solver::SharedExpr MetaEvaluator::Symbolize(interpreter::MetaIntRef concrete_val) {
-		auto bv_val = interpreter::MetaInt_To_BitVec(concrete_val);
-		auto c_sym = context_.Solver().MkConst(bv_val);
-		return c_sym;
-	}
-
 	void MetaEvaluator::BinOp (memory::RamAddress lhs, unsigned op_code, memory::HolderPtr left, memory::HolderPtr right) {
-		/*
-		ConcreteFunc2 concrete_binop = std::bind(&ConcreteEval::BinOp, &concrete_eval_, _1, _2, _3);
-		SymbolicFunc2 symbolic_binop = std::bind(&SymbolicEval::BinOp, &symbolic_eval_, _1, _2, _3);
-		MixedEval2(inst, left, right, concrete_binop, symbolic_binop);
-		*/
-	}
-
-	void MetaEvaluator::MixedEval2(const llvm::Instruction* inst, memory::HolderPtr left, memory::HolderPtr right, ConcreteFunc2 F, SymbolicFunc2 G) {
-		if (IsConcrete(left) and IsConcrete(right)) {
-			auto left_val = memory::GetValue(left);
-			auto right_val = memory::GetValue(right);
-			F(inst, left_val, right_val);
-		}
-		else if (IsConcrete(left) and IsSymbolic(right)) {
-			auto left_sym = Symbolize(memory::GetValue(left));
-			auto right_sym = memory::GetExpr(right);
-			G(inst, left_sym, right_sym);
-		}
-		else if (IsSymbolic(left) and IsConcrete(right)) {
-			auto left_sym = memory::GetExpr(left);
-			auto right_sym = Symbolize(memory::GetValue(right));
-			G(inst, left_sym, right_sym);
-		}
-		else if (IsSymbolic(left) and IsSymbolic(right)) {
-			auto left_sym = memory::GetExpr(left);
-			auto right_sym = memory::GetExpr(right);
-			G(inst, left_sym, right_sym);
-		}
-		else
-			assert (false and "unexpected behavior");
+		using OpCode = unsigned;
+		ConcreteFunc2<OpCode> concrete_binop = std::bind(&ConcreteEval::BinOp, &concrete_eval_, _1, _2, _3, _4);
+		SymbolicFunc2<OpCode> symbolic_binop = std::bind(&SymbolicEval::BinOp, &symbolic_eval_, _1, _2, _3, _4);
+		MixedEval2<OpCode>(lhs, op_code, left, right, concrete_binop, symbolic_binop);
 	}
 
 	void MetaEvaluator::IntComparison (memory::RamAddress lhs, llvm::ICmpInst::Predicate predicate, memory::HolderPtr left, memory::HolderPtr right) {
-		/*
-		ConcreteFunc2 concrete_comparison = std::bind(&ConcreteEval::IntComparison, &concrete_eval_, _1, _2, _3);
-		SymbolicFunc2 symbolic_comparison = std::bind(&SymbolicEval::IntComparison, &symbolic_eval_, _1, _2, _3);
-		MixedEval2(inst, left, right, concrete_comparison, symbolic_comparison);
-		*/
+		ConcreteFunc2<ICmpInst::Predicate> concrete_comparison = std::bind(&ConcreteEval::IntComparison, &concrete_eval_, _1, _2, _3, _4);
+		SymbolicFunc2<ICmpInst::Predicate> symbolic_comparison = std::bind(&SymbolicEval::IntComparison, &symbolic_eval_, _1, _2, _3, _4);
+		MixedEval2<ICmpInst::Predicate>(lhs, predicate, left, right, concrete_comparison, symbolic_comparison);
 	}
 
 	const llvm::BasicBlock* MetaEvaluator::Branch (memory::HolderPtr condition, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse) {
@@ -99,6 +66,40 @@ namespace interpreter {
 		}
 		else
 			assert (false and "unexpected");
+	}
+
+	//-------------------------------------------------------------------
+	solver::SharedExpr MetaEvaluator::Symbolize(interpreter::MetaIntRef concrete_val) {
+		auto bv_val = interpreter::MetaInt_To_BitVec(concrete_val);
+		auto c_sym = context_.Solver().MkConst(bv_val);
+		return c_sym;
+	}
+
+	// Helpers
+	template <typename Op>
+	void MetaEvaluator::MixedEval2(memory::RamAddress lhs, Op code, memory::HolderPtr left, memory::HolderPtr right, ConcreteFunc2<Op> F, SymbolicFunc2<Op> G) {
+		if (IsConcrete(left) and IsConcrete(right)) {
+			auto left_val = memory::GetValue(left);
+			auto right_val = memory::GetValue(right);
+			F(lhs, code, left_val, right_val);
+		}
+		else if (IsConcrete(left) and IsSymbolic(right)) {
+			auto left_sym = Symbolize(memory::GetValue(left));
+			auto right_sym = memory::GetExpr(right);
+			G(lhs, code, left_sym, right_sym);
+		}
+		else if (IsSymbolic(left) and IsConcrete(right)) {
+			auto left_sym = memory::GetExpr(left);
+			auto right_sym = Symbolize(memory::GetValue(right));
+			G(lhs, code, left_sym, right_sym);
+		}
+		else if (IsSymbolic(left) and IsSymbolic(right)) {
+			auto left_sym = memory::GetExpr(left);
+			auto right_sym = memory::GetExpr(right);
+			G(lhs, code, left_sym, right_sym);
+		}
+		else
+			assert (false and "unexpected behavior");
 	}
 }
 

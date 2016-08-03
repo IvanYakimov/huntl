@@ -38,21 +38,14 @@ namespace interpreter {
 		ContextRef context_;
 		ConcreteEval concrete_eval_;
 		SymbolicEval symbolic_eval_;
+		// Helpers
 		solver::SharedExpr Symbolize(interpreter::MetaIntRef concrete_val);
-		using ConcreteFunc2 = std::function<void(const llvm::Instruction*,MetaIntRef,MetaIntRef)>;
-		using SymbolicFunc2 = std::function<void(const llvm::Instruction*,solver::SharedExpr,solver::SharedExpr)>;
-		void MixedEval2(const llvm::Instruction* inst, memory::HolderPtr left, memory::HolderPtr right, ConcreteFunc2 F, SymbolicFunc2 G);
-
-		/*
-		template <class InstTy>
-		using ConcreteFuncTemplate = std::function<void(const InstTy*,MetaIntRef,MetaIntRef)>;
-		template <class InstTy>
-		using SymbolicFuncTemplate = std::function<void(const InstTy*,solver::SharedExpr,solver::SharedExpr)>;
-
-		template <class InstTy>
-		void MixedEvalTemplate(const InstTy* inst, memory::HolderPtr left, memory::HolderPtr right,
-				ConcreteFuncTemplate<InstTy>, SymbolicFuncTemplate<InstTy>);
-				*/
+		template<typename Op>
+		using ConcreteFunc2 = std::function<void(memory::RamAddress,Op,MetaIntRef,MetaIntRef)>;
+		template<typename Op>
+		using SymbolicFunc2 = std::function<void(memory::RamAddress,Op,solver::SharedExpr,solver::SharedExpr)>;
+		template<typename Op>
+		void MixedEval2(memory::RamAddress lhs, Op code, memory::HolderPtr left, memory::HolderPtr right, ConcreteFunc2<Op> F, SymbolicFunc2<Op> G);
 	};
 }
 
