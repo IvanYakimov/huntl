@@ -22,8 +22,7 @@ namespace interpreter {
 	}
 
 	void Evaluator::ProcessModule(llvm::Module *m) {
-		//errs() << "------------------------\nvisit module:\n";
-		//errs() << "funcs in module: \n";
+		//TODO: extract parsing code:
 		assert (m->begin() != m->end());
 		std::list<llvm::Function*> test_functions;
 		for (auto f_it = m->begin(); f_it != m->end(); f_it++) {
@@ -51,20 +50,16 @@ namespace interpreter {
 					std::string bitwidth_str = *iuN_match.begin();
 					int bitwidth_val = std::stoi(bitwidth_str);
 					builtins_.emplace(f_it, MkSym(context_, bitwidth_val));
-					//errs() << "builtint matched: " << name << "\n";
 				}
 			}
 			else if (matched_test_NAMEs == 1) {
-					//errs() << "test matched: " << name << "\n";
 					test_functions.push_back(f_it);
 			}
 			else if (matched_gen_TARGETs == 1) {
-				//errs() << "gen matched: " << name << "; ";
 				std::string target_name = gen_TARGET_matches.suffix();
 
 				StringRef llvm_styled_target_name(target_name.c_str());
 				llvm::Function* target = m->getFunction(llvm_styled_target_name);
-				//errs() << "with target: " << target->getName() << "\n";
 				if (target == nullptr) {
 					errs() << "no " << llvm_styled_target_name << " target found. stop." << "\n";
 					exit(0);
@@ -93,7 +88,6 @@ namespace interpreter {
 	}
 
 	memory::HolderPtr Evaluator::CallFunction(llvm::Function *f, memory::ArgMapPtr args) {
-		// llvm::errs() << "call " << f->getName() << "\n";
 		memory::HolderPtr ret_val = nullptr;
 		auto is_builtin = builtins_.find(f);
 		if (is_builtin != builtins_.end()) {
@@ -106,14 +100,18 @@ namespace interpreter {
 			// push
 			context_.Push(); {
 				tracer_.Call(f, args, true);
+
+				// alloca
+
 				// initiate args
-				for_each(args->begin(), args->end(), [&](auto pair){
-					auto addr = pair.first;
-					auto hldr = pair.second;
+				for (auto pair = args->begin(); pair != args->end(); pair++){
+					auto variable = pair->first;
+					auto hldr = pair->second;
 					// assign
-					meta_eval_.Assign(addr, hldr);
-					tracer_.Assign(*addr);
-				});
+					auto location = context_.Top()->GetLocation(variable);
+					meta_eval_.Assign(location, hldr);
+					tracer_.Assign(*variable);
+				}
 
 				const llvm::BasicBlock* next_block = &*f->begin();
 				context_.Top()->PC.Set(next_block);
@@ -128,13 +126,11 @@ namespace interpreter {
 				tracer_.Call(f, args, false);
 			}
 			context_.Pop(); // pop
-			//llvm::errs() << "return from " << f->getName() << "\n";
 		}
 		return ret_val;
 	}
 
 	auto Evaluator::ProduceHolder(const llvm::ConstantInt* allocated) {
-		// Get 'allocated' value
 		llvm::IntegerType* ty = allocated->getType();
 		auto width = ty->getBitWidth();
 		const llvm::APInt& val = allocated->getValue();
@@ -144,16 +140,18 @@ namespace interpreter {
 
 	// Return
 	void Evaluator::HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst) {
+		auto lhs_address = context_.Top()->GetLocation(&inst);
 		auto holder = context_.Top()->Load(ret_inst);
-		meta_eval_.Assign(&inst, holder);
+		meta_eval_.Assign(lhs_address, holder);
 		context_.Top()->RetVal.Set(holder);
 		context_.Top()->PC.Set(nullptr);
 		tracer_.Ret(ret_inst);
 	}
 
 	void Evaluator::HandleReturnInst (const llvm::Instruction &inst, const llvm::ConstantInt *ret_const) {
+		auto lhs_address = context_.Top()->GetLocation(&inst);
 		auto holder = ProduceHolder(ret_const);
-		meta_eval_.Assign(&inst, holder);
+		meta_eval_.Assign(lhs_address, holder);
 		context_.Top()->RetVal.Set(holder);
 		context_.Top()->PC.Set(nullptr);
 		tracer_.Ret(ret_const);
@@ -170,7 +168,7 @@ namespace interpreter {
 	void Evaluator::HandleBranchInst (const llvm::Instruction &inst, const llvm::Value *cond, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse) {
 		auto cond_holder = context_.Top()->Load(cond);
 		assert (cond_holder != nullptr and "only instruction is supported yet");
-		auto next = meta_eval_.Branch(&inst, cond_holder, iftrue, iffalse);
+		auto next = meta_eval_.Branch(cond_holder, iftrue, iffalse);
 		context_.Top()->PC.Set(next);
 		tracer_.Block(next);
 	}
@@ -185,45 +183,55 @@ namespace interpreter {
 	void Evaluator::HandleBinOp (const llvm::Instruction &inst, const llvm::ConstantInt *left, const llvm::Value *right) {
 		auto left_holder = ProduceHolder(left);
 		auto right_holder = context_.Top()->Load(right);
-		meta_eval_.BinOp(&inst, left_holder, right_holder);
+		auto lhs_address = context_.Top()->GetLocation(&inst);
+		auto bin_op = inst.getOpcode();
+		meta_eval_.BinOp(lhs_address, bin_op, left_holder, right_holder);
 		tracer_.Assign(inst);
 	}
 
 	void Evaluator::HandleBinOp (const llvm::Instruction &inst, const llvm::Value *left, const llvm::ConstantInt *right) {
 		auto left_holder = context_.Top()->Load(left);
 		auto right_holder = ProduceHolder(right);
-		meta_eval_.BinOp(&inst, left_holder, right_holder);
+		auto lhs_address = context_.Top()->GetLocation(&inst);
+		auto bin_op = inst.getOpcode();
+		meta_eval_.BinOp(lhs_address, bin_op, left_holder, right_holder);
 		tracer_.Assign(inst);
 	}
 
 	void Evaluator::HandleBinOp (const llvm::Instruction &inst, const llvm::Value *left, const llvm::Value *right) {
 		auto left_holder = context_.Top()->Load(left);
 		auto right_holder = context_.Top()->Load(right);
-		meta_eval_.BinOp(&inst, left_holder, right_holder);
+		auto lhs_address = context_.Top()->GetLocation(&inst);
+		auto op_code = inst.getOpcode();
+		meta_eval_.BinOp(lhs_address, op_code, left_holder, right_holder);
 		tracer_.Assign(inst);
 	}
 
 	// Cmp
-	void Evaluator::HandleICmpInst (const llvm::Instruction &inst, const llvm::ConstantInt *left, const llvm::Value *right) {
+	void Evaluator::HandleICmpInst (const llvm::ICmpInst &inst, const llvm::ConstantInt *left, const llvm::Value *right) {
 		auto left_holder = ProduceHolder(left);
 		auto right_holder = context_.Top()->Load(right);
-		meta_eval_.IntComparison(&inst, left_holder, right_holder);
+		auto lhs_address = context_.Top()->GetLocation(&inst);
+		auto predicate = inst.getPredicate();
+		meta_eval_.IntComparison(lhs_address, predicate, left_holder, right_holder);
 		tracer_.Assign(inst);
 	}
 
-	void Evaluator::HandleICmpInst (const llvm::Instruction &inst, const llvm::Value *left, const llvm::ConstantInt *right) {
+	void Evaluator::HandleICmpInst (const llvm::ICmpInst &inst, const llvm::Value *left, const llvm::ConstantInt *right) {
 		auto left_holder = context_.Top()->Load(left);
 		auto right_holder = ProduceHolder(right);
-
-		meta_eval_.IntComparison(&inst, left_holder, right_holder);
+		auto predicate = inst.getPredicate();
+		auto lhs_address = context_.Top()->GetLocation(&inst);
+		meta_eval_.IntComparison(lhs_address, predicate, left_holder, right_holder);
 		tracer_.Assign(inst);
 	}
 
-	void Evaluator::HandleICmpInst (const llvm::Instruction &inst, const llvm::Value *left, const llvm::Value *right) {
+	void Evaluator::HandleICmpInst (const llvm::ICmpInst &inst, const llvm::Value *left, const llvm::Value *right) {
 		auto left_holder = context_.Top()->Load(left);
 		auto right_holder = context_.Top()->Load(right);
-
-		meta_eval_.IntComparison(&inst, left_holder, right_holder);
+		auto lhs_address = context_.Top()->GetLocation(&inst);
+		auto predicate = inst.getPredicate();
+		meta_eval_.IntComparison(lhs_address, predicate, left_holder, right_holder);
 		tracer_.Assign(inst);
 
 	}
@@ -235,48 +243,19 @@ namespace interpreter {
 		tracer_.Assign(inst);
 	}
 
-	// see: http://stackoverflow.com/questions/12879673/check-pointer-to-pointer-type-in-llvm
-	bool Evaluator::IsPointerToPointer(const Value* V) {
-	    const Type* ty = V->getType();
-	    if (ty->isPointerTy() && ty->getContainedType(0)->isPointerTy())
-	    	return true;
-	    else
-	    	return false;
-	}
-
-	bool Evaluator::IsDereferencing(const llvm::Instruction& load_inst, const llvm::Value* ptr) {
-		return IsPointerToPointer(ptr);
-	}
-
-	bool Evaluator::IsAddressing(const llvm::Instruction& store_inst, const llvm::Value* ptr) {
-		return IsPointerToPointer(ptr);
-	}
-
 	// Load
 	void Evaluator::HandleLoadInst (const llvm::Instruction &lhs, const llvm::Value *rhs) {
-		if (IsDereferencing(lhs, rhs)) {
-			auto ptr_holder = context_.Top()->Load(rhs);
-			std::cerr << "deref" << std::endl;
-			//std::cerr << "load rhs: "<< *ptr_holder << std::endl;
-			meta_eval_.Dereferencing(&lhs, ptr_holder);
-		}
-		else {
-			auto rhs_holder = context_.Top()->Load(rhs);
-			//std::cerr << "load rhs: "<< *rhs_holder << std::endl;
-			meta_eval_.Assign(&lhs, rhs_holder);
-		}
+		auto rhs_holder = context_.Top()->Load(rhs);
+		auto lhs_address = context_.Top()->GetLocation(&lhs);
+		meta_eval_.Assign(lhs_address, rhs_holder);
 		tracer_.Assign(lhs);
 	}
 
 	// Store
 	void Evaluator::HandleStoreInst (const llvm::Instruction &inst, const llvm::ConstantInt *rhs, const llvm::Value *lhs) {
-		if (IsAddressing(inst, lhs)) {
-			assert (false and "unexpected addressing operation (casting)");
-		}
-		else {
-			auto holder = ProduceHolder(rhs);
-			meta_eval_.Assign(lhs, holder);
-		}
+		auto holder = ProduceHolder(rhs);
+		auto lhs_address = context_.Top()->GetLocation(lhs);
+		meta_eval_.Assign(lhs_address, holder);
 		tracer_.Assign(*lhs);
 	}
 
@@ -287,15 +266,9 @@ namespace interpreter {
 	 */
 
 	void Evaluator::HandleStoreInst (const llvm::Instruction &inst, const llvm::Value *rhs, const llvm::Value *lhs) {
-		if (IsAddressing(inst, lhs)) {
-			memory::RamAddress address = context_.Top()->AddressOf(rhs);
-			auto address_holder = memory::Concrete::Create(MetaInt(memory::Ram::machine_word_bitsize_, address));
-			meta_eval_.Addressing(lhs, address_holder);
-		}
-		else {
-			auto holder = context_.Top()->Load(rhs);
-			meta_eval_.Assign(lhs, holder);
-		}
+		auto holder = context_.Top()->Load(rhs);
+		auto lhs_address = context_.Top()->GetLocation(lhs);
+		meta_eval_.Assign(lhs_address, holder);
 		tracer_.Assign(*lhs);
 	}
 
@@ -303,21 +276,24 @@ namespace interpreter {
 	void Evaluator::HandleTruncInst (const llvm::TruncInst &inst, const llvm::Value* target, const llvm::IntegerType* dest_ty) {
 		auto holder = context_.Top()->Load(target);
 		auto width = dest_ty->getBitWidth();
-		meta_eval_.Conversion(&inst, holder, MetaKind::Trunc, width);
+		auto lhs_address = context_.Top()->GetLocation(&inst);
+		meta_eval_.Conversion(lhs_address, holder, MetaKind::Trunc, width);
 	}
 
 	// ZExt
 	void Evaluator::HandleZExtInst (const llvm::ZExtInst &inst, const llvm::Value* target, const llvm::IntegerType* dest_ty) {
 		auto holder = context_.Top()->Load(target);
 		auto width = dest_ty->getBitWidth();
-		meta_eval_.Conversion(&inst, holder, MetaKind::ZExt, width);
+		auto lhs_address = context_.Top()->GetLocation(&inst);
+		meta_eval_.Conversion(lhs_address, holder, MetaKind::ZExt, width);
 	}
 
 	// SExt
 	void Evaluator::HandleSExtInst (const llvm::SExtInst &inst, const llvm::Value* target, const llvm::IntegerType* dest_ty) {
 		auto holder = context_.Top()->Load(target);
 		auto width = dest_ty->getBitWidth();
-		meta_eval_.Conversion(&inst, holder, MetaKind::SExt, width);
+		auto lhs_address = context_.Top()->GetLocation(&inst);
+		meta_eval_.Conversion(lhs_address, holder, MetaKind::SExt, width);
 	}
 
 	void Evaluator::HandleCallInst(const llvm::CallInst &inst) {
@@ -325,8 +301,6 @@ namespace interpreter {
 		assert (called != nullptr and "indirect function invocation not supported");
 		memory::ArgMapPtr argmap = utils::Create<ArgMap>();
 		auto args = called->arg_begin();
-
-		//std::cerr << "func '" << called->getName().str() << "' args initialization" << std::endl;
 
 		for (auto i = 0; i != inst.getNumArgOperands(); i++) {
 			auto operand = inst.getArgOperand(i);
@@ -338,34 +312,13 @@ namespace interpreter {
 			else if (not args->getType()->isPointerTy()){
 				holder = context_.Top()->Load(operand);
 			}
-			else if (args->getType()->isPointerTy()) {
-				auto ram_address = context_.Top()->AddressOf(operand);
-
-				//TODO: check:
-
-				holder = memory::Concrete::Create(MetaInt(memory::Ram::machine_word_bitsize_, ram_address));
-			}
 			else
-				assert (! "unexptected");
-
-			/*
-			std::cerr << utils::ToString(*args) << " <- " << *holder;
-			if (not args->getType()->isPointerTy())
-				std::cerr << " which is a scalar type";
-			else if (IsPointerToPointer(args))
-				std::cerr << " which is pointer to pointer";
-			else if (args->getType()->isPointerTy())
-				std::cerr << " which is a pointer";
-			else
-				assert (false and "unknown type sort");
-				*/
+				assert (! "pointers are not currently supported");
 
 			assert (holder != nullptr);
 			argmap->emplace(args, holder);
 			args++;
 		}
-
-		std::cerr << "; " << std::endl;
 
 		assert (args == called->arg_end());
 
@@ -376,7 +329,8 @@ namespace interpreter {
 		}
 		else {
 			assert (ret_holder != nullptr);
-			meta_eval_.Assign(&inst, ret_holder);
+			auto lhs_address = context_.Top()->GetLocation(&inst);
+			meta_eval_.Assign(lhs_address, ret_holder);
 		}
 	}
 }

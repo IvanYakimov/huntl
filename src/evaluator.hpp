@@ -51,10 +51,6 @@ namespace interpreter {
 		auto ProduceHolder(const llvm::ConstantInt* constant_int);
 		BuiltInMap builtins_;
 
-		bool IsPointerToPointer(const llvm::Value* value);
-		bool IsDereferencing(const llvm::Instruction& load_inst, const llvm::Value* ptr);
-		bool IsAddressing(const llvm::Instruction& store_inst, const llvm::Value* ptr);
-
 	private:
 		// Return
 		virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst);
@@ -71,9 +67,9 @@ namespace interpreter {
 		virtual void HandleBinOp (const llvm::Instruction &inst, const llvm::Value *lhs, const llvm::Value *rhs);
 
 		// Cmp
-		virtual void HandleICmpInst (const llvm::Instruction &inst, const llvm::ConstantInt *lhs, const llvm::Value *rhs);
-		virtual void HandleICmpInst (const llvm::Instruction &inst, const llvm::Value *lhs, const llvm::ConstantInt *rhs);
-		virtual void HandleICmpInst (const llvm::Instruction &inst, const llvm::Value *lhs, const llvm::Value *rhs);
+		virtual void HandleICmpInst (const llvm::ICmpInst &inst, const llvm::ConstantInt *lhs, const llvm::Value *rhs);
+		virtual void HandleICmpInst (const llvm::ICmpInst &inst, const llvm::Value *lhs, const llvm::ConstantInt *rhs);
+		virtual void HandleICmpInst (const llvm::ICmpInst &inst, const llvm::Value *lhs, const llvm::Value *rhs);
 
 		// Alloca
 		virtual void HandleAllocaInst (const llvm::Instruction &inst, const llvm::ConstantInt *allocated);

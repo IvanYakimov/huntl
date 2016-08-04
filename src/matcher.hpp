@@ -76,9 +76,9 @@ namespace interpreter {
 		virtual void HandleBinOp (const llvm::Instruction &inst, const llvm::Value *lhs, const llvm::Value *rhs) = 0;
 
 		// Cmp
-		virtual void HandleICmpInst (const llvm::Instruction &inst, const llvm::ConstantInt *lhs, const llvm::Value *rhs) = 0;
-		virtual void HandleICmpInst (const llvm::Instruction &inst, const llvm::Value *lhs, const llvm::ConstantInt *rhs) = 0;
-		virtual void HandleICmpInst (const llvm::Instruction &inst, const llvm::Value *lhs, const llvm::Value *rhs) = 0;
+		virtual void HandleICmpInst (const llvm::ICmpInst &inst, const llvm::ConstantInt *lhs, const llvm::Value *rhs) = 0;
+		virtual void HandleICmpInst (const llvm::ICmpInst &inst, const llvm::Value *lhs, const llvm::ConstantInt *rhs) = 0;
+		virtual void HandleICmpInst (const llvm::ICmpInst &inst, const llvm::Value *lhs, const llvm::Value *rhs) = 0;
 
 		// Alloca
 		virtual void HandleAllocaInst (const llvm::Instruction &inst, const llvm::ConstantInt *allocated) = 0;
@@ -99,7 +99,7 @@ namespace interpreter {
 
 		// Call
 		virtual void HandleCallInst(const llvm::CallInst &inst) = 0;
-	private:
+	protected:
 		// "pattern matching"
 		template <typename... Targs>
 		bool Case (const llvm::Instruction &inst, Targs... Fargs); // inductive casen

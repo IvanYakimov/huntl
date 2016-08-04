@@ -1,7 +1,11 @@
 #include "activation.hpp"
 
+#include "inst-matcher.tpp"
+
 namespace memory {
 	using memory::HolderPtr;
+	using utils::Case;
+	using utils::CaseHelper;
 #define DUMMY_ALLOCA 4
 
 	Activation::Activation(RamRef ram) : RetVal(), PC(), ram_(ram) {
@@ -38,12 +42,12 @@ namespace memory {
 		//local_memory_->Alloca(address, initial);
 		//TODO: alignment
 		auto addr = ram_.Stack().Alloca(initial, DUMMY_ALLOCA);
-		memory_map_.emplace(register_name, addr);
+		local_display_.emplace(register_name, addr);
 	}
 
 	HolderPtr Activation::Load(RegisterName register_name) {
-		auto it = memory_map_.find(register_name);
-		assert (it != memory_map_.end());
+		auto it = local_display_.find(register_name);
+		assert (it != local_display_.end());
 		auto addr = it->second;
 		//TODO: align
 		return ram_.Stack().Read(addr, DUMMY_ALLOCA);
@@ -52,29 +56,48 @@ namespace memory {
 
 	void Activation::Store(RegisterName register_name, HolderPtr holder) {
 		//local_memory_->Store(address, holder);
-		auto it = memory_map_.find(register_name);
+		auto it = local_display_.find(register_name);
 		RamAddress addr;
-		if (it == memory_map_.end()) {
+		if (it == local_display_.end()) {
 			addr = ram_.Stack().Alloca(holder, DUMMY_ALLOCA);
-			memory_map_.emplace(register_name, addr);
+			local_display_.emplace(register_name, addr);
 		}
 		else
 			addr = it->second;
 		ram_.Stack().Write(holder, addr, DUMMY_ALLOCA);
 	}
 
-	RamAddress Activation::AddressOf(RegisterName target) {
-		auto it = memory_map_.find(target);
-		assert (it != memory_map_.end());
-		return it->second;
+	memory::RamAddress Activation::TryToAllocate(const llvm::Value* variable) {
+		// Get 'allocated' value
+		llvm::Type* base_ty = variable->getType();
+		llvm::IntegerType* type = llvm::dyn_cast<llvm::IntegerType>(base_ty);
+
+		// ret handled separately
+		if (type == nullptr and llvm::isa<llvm::ReturnInst>(variable)) {
+			auto ret = llvm::dyn_cast<llvm::ReturnInst>(variable);
+			if (ret->getNumOperands() == 1) {
+				auto operand = ret->getOperand(0);
+				base_ty = operand->getType();
+				type = llvm::dyn_cast<llvm::IntegerType>(base_ty);
+			}
+		}
+
+		assert (type != nullptr);
+		auto width = type->getBitWidth();
+		interpreter::MetaInt val(width, 0);
+		HolderPtr initial = memory::Concrete::Create(val);
+		auto addr = ram_.Stack().Alloca(initial, DUMMY_ALLOCA);
+		local_display_.emplace(variable, addr);
+		return addr;
 	}
 
-	HolderPtr Activation::Dereference(HolderPtr pointer_holder) {
-		assert (memory::IsConcrete(pointer_holder));
-		interpreter::MetaIntRef pointer = memory::GetValue(pointer_holder);
-		RamAddress address = pointer.getZExtValue();
-		auto res = ram_.Stack().Read(address, DUMMY_ALLOCA);
-		return res;
+	RamAddress Activation::GetLocation(RegisterName variable) {
+		auto it = local_display_.find(variable);
+		RamAddress addr;
+		if (it != local_display_.end())
+			return it->second;
+		else
+			return TryToAllocate(variable);
 	}
 
 	void Activation::Print() {

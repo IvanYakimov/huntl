@@ -67,16 +67,15 @@ int eq(int x, int y) {
 }
 
 void test_eq() {
-	int a = 0, b = 0,
-		 r = 0;
+	int a = 12, b = 42,
+		 r = 28;
 	a = mksym_i32();
 	b = mksym_i32();
-	limit2_i32(&a, INT_MIN, INT_MAX);
-	limit2_i32(&b, INT_MIN, INT_MAX);
+	a = limit_i32(a, INT_MIN, INT_MAX);
+	b = limit_i32(b, INT_MIN, INT_MAX);
 	r = eq(a,b);
 	gen_eq(a,b,r);
 }
-
 
 void gen_arith(int x, int y, int r);
 int arith(int x, int y) {
@@ -112,14 +111,13 @@ void test_sum() {
 	n = mksym_i32();
 	//a = limit_i32(a, 0, 3);
 	//n = limit_i32(n, 0, 4);
-	limit2_i32(&a,0,3);
-	limit2_i32(&n,0,4);
+	a = limit_i32(a,0,3);
+	n = limit_i32(n,0,4);
 	//end
 	s = sum(a,n);
 	gen_sum(a,n,s);
 }
 
-/*
 void gen_recsum(unsigned a, unsigned n, unsigned res);
 unsigned recsum(unsigned a, unsigned n) {
 	if (n == 1)
@@ -128,13 +126,14 @@ unsigned recsum(unsigned a, unsigned n) {
 		return a + recsum(a, n - 1);
 }
 
+// BUG in recursive evaluation with symbolic args
 void test_recsum() {
-	int a = 0, n = 0, s = 0;
+	int a = 2, n = 6, s = 0;
 	a = mksym_i32();
-	n = mksym_i32();
+	//n = mksym_i32();
 	//TODO: make as a macro:
-	limit2_i32(&a,0,3);
-	limit2_i32(&n,0,4);
+	a = limit_i32(a,0,3);
+	n = limit_i32(n,0,4);
 	//end
 	s = recsum(a,n);
 	gen_recsum(a,n,s);

@@ -3,7 +3,7 @@
 namespace interpreter {
 	using memory::HolderPtr;
 
-#define EVAL_TRACING
+//#define EVAL_TRACING
 
 #ifdef EVAL_TRACING
 #define TRACE_CALLS
@@ -83,7 +83,7 @@ namespace interpreter {
 		else
 			std::clog << TraceLevel() << inst_str;
 
-		std::clog << " [" << context_.Top()->AddressOf(&target) << "]"
+		std::clog << " [" << context_.Top()->GetLocation(&target) << "]"
 				<< " <- "
 				<< *holder
 				<< std::endl;

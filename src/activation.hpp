@@ -2,6 +2,7 @@
 #define __ACTIVATION_HPP__
 
 #include "llvm/IR/Instruction.h"
+#include "llvm/IR/InstVisitor.h"
 
 #include <memory>
 #include <cassert>
@@ -44,13 +45,14 @@ namespace memory {
 		} PC;
 		void Alloca(RegisterName address, HolderPtr initial);
 		HolderPtr Load(RegisterName address);
+		// get location (with lazy allocation)
+		RamAddress GetLocation(RegisterName variable);
 		void Store(RegisterName address, HolderPtr holder);
 		void Print();
-		RamAddress AddressOf(RegisterName target);
-		HolderPtr Dereference(HolderPtr pointer_ptr);
 	private:
 		//memory::LocalMemoryPtr local_memory_;
-		std::map<RegisterName, RamAddress> memory_map_;
+		memory::RamAddress TryToAllocate(const llvm::Value* variable);
+		std::map<RegisterName, RamAddress> local_display_;
 		memory::RamRef ram_;
 	};
 }

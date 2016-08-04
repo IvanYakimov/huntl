@@ -7,6 +7,9 @@
 #include "creatable.hpp"
 #include "meta-int.hpp"
 #include "creatable.hpp"
+#include "converter.hpp"
+
+#include "llvm/IR/InstVisitor.h"
 
 namespace memory {
 	class Holder;
