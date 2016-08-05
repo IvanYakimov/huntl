@@ -214,10 +214,14 @@ namespace interpreter {
 		//
 
 		auto holder = ProduceHolder(allocated);
+		meta_eval_.Alloca(inst, holder);
+
+		/*
 		auto lhs_address = context_.Top()->GetLocation(&inst);
 		auto target_address = context_.Top()->Alloca(holder);
 		auto target_address_holder = memory::Concrete::Create(interpreter::MetaInt(memory::Ram::machine_word_bitsize_, target_address));
 		meta_eval_.Assign(lhs_address, target_address_holder);
+		*/
 	}
 
 	// Load
