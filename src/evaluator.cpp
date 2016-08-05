@@ -73,54 +73,25 @@ namespace interpreter {
 			}
 		}
 
-		pid_t child_pid = 0;
-		int ch_status = 0;
-		for (auto it = test_functions.begin(); it != test_functions.end(); it++) {
-			errs().flush();
-			std::flush(std::cerr);
-			child_pid = fork();
-			if (child_pid > 0) {
-				wait(&ch_status);
-			}
-			else {
-				auto args = utils::Create<interpreter::ArgMap>();
-				auto ret = CallFunction(*it,args);
-			}
-		}
+		EvaluateFunctionList(test_functions);
 	}
 
-	memory::HolderPtr Evaluator::CallFunction(llvm::Function *f, memory::ArgMapPtr args) {
+	memory::HolderPtr Evaluator::CallFunction(llvm::Function *f, memory::ArgMapPtr arg_map) {
 		memory::HolderPtr ret_val = nullptr;
-		auto is_builtin = builtins_.find(f);
-		if (is_builtin != builtins_.end()) {
+		auto it = builtins_.find(f);
+		if (it != builtins_.end()) {
 			context_.Push(); {
-			ret_val = is_builtin->second(f, args);
+				ret_val = it->second(f, arg_map);
 			}
 			context_.Pop();
 		}
 		else {
-			// push
 			context_.Push(); {
-				// initiate args
-				for (auto pair = args->begin(); pair != args->end(); pair++){
-					auto variable = pair->first;
-					auto hldr = pair->second;
-					// assign
-					auto location = context_.Top()->GetLocation(variable);
-					meta_eval_.Assign(location, hldr);
-					tracer_.Assign(*variable);
-				}
-
-				const llvm::BasicBlock* next_block = &*f->begin();
-				context_.Top()->PC.Set(next_block);
-				while (next_block != nullptr) {
-					visit (const_cast<llvm::BasicBlock*>(next_block));
-					next_block = context_.Top()->PC.Get();
-				}
-
+				AssignTopFunctionArgs(arg_map);
+				EvaluateTopFunction(f);
 				ret_val = context_.Top()->RetVal.Get();
 			}
-			context_.Pop(); // pop
+			context_.Pop();
 		}
 		return ret_val;
 	}
@@ -230,15 +201,15 @@ namespace interpreter {
 
 	void Evaluator::HandleCallInst(const llvm::CallInst &inst) {
 		auto called = ExtractCalledFunction(inst);
-		ArgMapPtr argmap = InitArgMap(inst);
+		ArgMapPtr argmap = ProduceArgMap(inst);
 		HolderPtr ret_holder = CallFunction(called, argmap);
-		InitFuncRet(ret_holder, inst, called);
+		AssignCallResult(inst, ret_holder);
 	}
 
 	//----------------------------------------------------------------------------
 	// Helpers
 
-	memory::ArgMapPtr Evaluator::InitArgMap(const llvm::CallInst &inst) {
+	memory::ArgMapPtr Evaluator::ProduceArgMap(const llvm::CallInst &inst) {
 		memory::ArgMapPtr argmap = utils::Create<ArgMap>();
 		auto called = ExtractCalledFunction(inst);
 		auto args = called->arg_begin();
@@ -252,7 +223,45 @@ namespace interpreter {
 		return argmap;
 	}
 
-	void Evaluator::InitFuncRet(memory::HolderPtr ret_holder, const llvm::CallInst& inst, llvm::Function* called) {
+	void Evaluator::EvaluateFunctionList(std::list<llvm::Function*> test_functions) {
+		pid_t child_pid = 0;
+		int ch_status = 0;
+		for (auto it = test_functions.begin(); it != test_functions.end(); it++) {
+			errs().flush();
+			std::flush(std::cerr);
+			child_pid = fork();
+			if (child_pid > 0) {
+				wait(&ch_status);
+			} else {
+				auto args = utils::Create<interpreter::ArgMap>();
+				auto ret = CallFunction(*it, args);
+			}
+		}
+	}
+
+	void Evaluator::EvaluateTopFunction(llvm::Function* f) {
+		const llvm::BasicBlock* next_block = &*f->begin();
+		context_.Top()->PC.Set(next_block);
+		while (next_block != nullptr) {
+			visit(const_cast<llvm::BasicBlock*>(next_block));
+			next_block = context_.Top()->PC.Get();
+		}
+	}
+
+
+	void Evaluator::AssignTopFunctionArgs(ArgMapPtr args) {
+		for (auto pair = args->begin(); pair != args->end(); pair++){
+			auto variable = pair->first;
+			auto hldr = pair->second;
+			// assign
+			auto location = context_.Top()->GetLocation(variable);
+			meta_eval_.Assign(location, hldr);
+			tracer_.Assign(*variable);
+		}
+	}
+
+	void Evaluator::AssignCallResult(const llvm::CallInst& inst, memory::HolderPtr ret_holder) {
+		auto called = ExtractCalledFunction(inst);
 		if (called->getReturnType()->isVoidTy()) {
 			assert(utils::instanceof<Undef>(ret_holder));
 		} else {

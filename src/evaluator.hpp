@@ -50,8 +50,11 @@ namespace interpreter {
 		EvalTracer tracer_;
 		memory::HolderPtr ProduceHolder(const llvm::Value* target);
 		BuiltInMap builtins_;
-		memory::ArgMapPtr InitArgMap(const llvm::CallInst &inst);
-		void InitFuncRet(memory::HolderPtr ret_holder, const llvm::CallInst& inst, llvm::Function* called);
+		memory::ArgMapPtr ProduceArgMap(const llvm::CallInst &inst);
+		void EvaluateFunctionList(std::list<llvm::Function*> test_functions);
+		void EvaluateTopFunction(llvm::Function* f);
+		void AssignCallResult(const llvm::CallInst& inst, memory::HolderPtr ret_holder);
+		void AssignTopFunctionArgs(memory::ArgMapPtr);
 
 	private:
 		// Return
