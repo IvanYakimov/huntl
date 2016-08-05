@@ -139,33 +139,25 @@ namespace interpreter {
 	}
 
 	// Return
-	void Evaluator::HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst) {
-		auto lhs_address = context_.Top()->GetLocation(&inst);
-		auto holder = context_.Top()->Load(ret_inst);
-		meta_eval_.Assign(lhs_address, holder);
-		context_.Top()->RetVal.Set(holder);
-		context_.Top()->PC.Set(nullptr);
+	void Evaluator::HandleReturnInst (const llvm::ReturnInst &inst, const llvm::Instruction *ret_inst) {
+		HolderPtr holder = context_.Top()->Load(ret_inst);
+		meta_eval_.Return(inst, holder);
 		tracer_.Ret(ret_inst);
 	}
 
-	void Evaluator::HandleReturnInst (const llvm::Instruction &inst, const llvm::ConstantInt *ret_const) {
-		auto lhs_address = context_.Top()->GetLocation(&inst);
-		auto holder = ProduceHolder(ret_const);
-		meta_eval_.Assign(lhs_address, holder);
-		context_.Top()->RetVal.Set(holder);
-		context_.Top()->PC.Set(nullptr);
+	void Evaluator::HandleReturnInst (const llvm::ReturnInst &inst, const llvm::ConstantInt *ret_const) {
+		HolderPtr holder = ProduceHolder(ret_const);
+		meta_eval_.Return(inst, holder);
 		tracer_.Ret(ret_const);
 	}
 
-	void Evaluator::HandleReturnInst (const llvm::Instruction &inst) {
-		auto undef = memory::Undef::Create();
-		context_.Top()->RetVal.Set(undef);
-		context_.Top()->PC.Set(nullptr);
+	void Evaluator::HandleReturnInst (const llvm::ReturnInst &inst) {
+		meta_eval_.Return(inst);
 		tracer_.Ret();
 	}
 
 	// Branch
-	void Evaluator::HandleBranchInst (const llvm::Instruction &inst, const llvm::Value *cond, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse) {
+	void Evaluator::HandleBranchInst (const llvm::BranchInst &inst, const llvm::Value *cond, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse) {
 		auto cond_holder = context_.Top()->Load(cond);
 		assert (cond_holder != nullptr and "only instruction is supported yet");
 		auto next = meta_eval_.Branch(cond_holder, iftrue, iffalse);
@@ -173,14 +165,14 @@ namespace interpreter {
 		tracer_.Block(next);
 	}
 
-	void Evaluator::HandleBranchInst (const llvm::Instruction &inst, const llvm::BasicBlock *jump) {
+	void Evaluator::HandleBranchInst (const llvm::BranchInst &inst, const llvm::BasicBlock *jump) {
 		auto next = jump;
 		context_.Top()->PC.Set(next);
 		tracer_.Block(next);
 	}
 
 	// BinOp
-	void Evaluator::HandleBinOp (const llvm::Instruction &inst, const llvm::ConstantInt *left, const llvm::Value *right) {
+	void Evaluator::HandleBinOp (const llvm::BinaryOperator &inst, const llvm::ConstantInt *left, const llvm::Value *right) {
 		auto left_holder = ProduceHolder(left);
 		auto right_holder = context_.Top()->Load(right);
 		auto lhs_address = context_.Top()->GetLocation(&inst);
@@ -189,7 +181,7 @@ namespace interpreter {
 		tracer_.Assign(inst);
 	}
 
-	void Evaluator::HandleBinOp (const llvm::Instruction &inst, const llvm::Value *left, const llvm::ConstantInt *right) {
+	void Evaluator::HandleBinOp (const llvm::BinaryOperator &inst, const llvm::Value *left, const llvm::ConstantInt *right) {
 		auto left_holder = context_.Top()->Load(left);
 		auto right_holder = ProduceHolder(right);
 		auto lhs_address = context_.Top()->GetLocation(&inst);
@@ -198,7 +190,7 @@ namespace interpreter {
 		tracer_.Assign(inst);
 	}
 
-	void Evaluator::HandleBinOp (const llvm::Instruction &inst, const llvm::Value *left, const llvm::Value *right) {
+	void Evaluator::HandleBinOp (const llvm::BinaryOperator &inst, const llvm::Value *left, const llvm::Value *right) {
 		auto left_holder = context_.Top()->Load(left);
 		auto right_holder = context_.Top()->Load(right);
 		auto lhs_address = context_.Top()->GetLocation(&inst);
@@ -237,14 +229,14 @@ namespace interpreter {
 	}
 
 	// Alloca
-	void Evaluator::HandleAllocaInst (const llvm::Instruction &inst, const llvm::ConstantInt *allocated) {
+	void Evaluator::HandleAllocaInst (const llvm::AllocaInst &inst, const llvm::ConstantInt *allocated) {
 		auto holder = ProduceHolder(allocated);
 		context_.Top()->Alloca(&inst, holder);
 		tracer_.Assign(inst);
 	}
 
 	// Load
-	void Evaluator::HandleLoadInst (const llvm::Instruction &lhs, const llvm::Value *rhs) {
+	void Evaluator::HandleLoadInst (const llvm::LoadInst &lhs, const llvm::Value *rhs) {
 		auto rhs_holder = context_.Top()->Load(rhs);
 		auto lhs_address = context_.Top()->GetLocation(&lhs);
 		meta_eval_.Assign(lhs_address, rhs_holder);
@@ -252,7 +244,7 @@ namespace interpreter {
 	}
 
 	// Store
-	void Evaluator::HandleStoreInst (const llvm::Instruction &inst, const llvm::ConstantInt *rhs, const llvm::Value *lhs) {
+	void Evaluator::HandleStoreInst (const llvm::StoreInst &inst, const llvm::ConstantInt *rhs, const llvm::Value *lhs) {
 		auto holder = ProduceHolder(rhs);
 		auto lhs_address = context_.Top()->GetLocation(lhs);
 		meta_eval_.Assign(lhs_address, holder);
@@ -265,7 +257,7 @@ namespace interpreter {
 	 * and it is carefully designed not to have (or need) an “address-of” operator.
 	 */
 
-	void Evaluator::HandleStoreInst (const llvm::Instruction &inst, const llvm::Value *rhs, const llvm::Value *lhs) {
+	void Evaluator::HandleStoreInst (const llvm::StoreInst &inst, const llvm::Value *rhs, const llvm::Value *lhs) {
 		auto holder = context_.Top()->Load(rhs);
 		auto lhs_address = context_.Top()->GetLocation(lhs);
 		meta_eval_.Assign(lhs_address, holder);

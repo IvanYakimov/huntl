@@ -68,6 +68,19 @@ namespace interpreter {
 			assert (false and "unexpected");
 	}
 
+	void MetaEvaluator::Return(const llvm::ReturnInst &inst, HolderPtr holder) {
+		auto lhs_address = context_.Top()->GetLocation(&inst);
+		Assign(lhs_address, holder);
+		context_.Top()->RetVal.Set(holder);
+		context_.Top()->PC.Set(nullptr);
+	}
+
+	void MetaEvaluator::Return(const llvm::ReturnInst &inst) {
+		auto undef = memory::Undef::Create();
+		context_.Top()->RetVal.Set(undef);
+		context_.Top()->PC.Set(nullptr);
+	}
+
 	//-------------------------------------------------------------------
 	solver::SharedExpr MetaEvaluator::Symbolize(interpreter::MetaIntRef concrete_val) {
 		auto bv_val = interpreter::MetaInt_To_BitVec(concrete_val);

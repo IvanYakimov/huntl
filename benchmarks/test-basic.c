@@ -4,7 +4,6 @@
 
 #include <limits.h>
 
-/*
 //--------------------------------------------------------------------
 // <-- Conversions
 
@@ -17,7 +16,7 @@ void test_extend() {
 	short arg = 28;
 	int res = 0;
 	arg = mksym_i16();
-	limit2_i16(&arg, SHRT_MIN, SHRT_MAX);
+	arg = limit_i16(arg, SHRT_MIN, SHRT_MAX);
 	res = extend(arg);
 	gen_extend(arg, res);
 }
@@ -31,7 +30,7 @@ void test_truncate() {
 	long arg = 28;
 	unsigned res = 0;
 	arg = mksym_i64();
-	limit2_i64(&arg, LONG_MIN, LONG_MAX);
+	arg = limit_i64(arg, LONG_MIN, LONG_MAX);
 	res = truncate(arg);
 	gen_truncate(arg, res);
 }
@@ -46,9 +45,9 @@ void test_conv() {
 	long b = 42;
 	int r = 0;
 	a = mksym_i16();
-	limit2_i16(&a, SHRT_MIN, SHRT_MAX);
+	a = limit_i16(a, SHRT_MIN, SHRT_MAX);
 	b = mksym_i64();
-	limit2_i64(&b, LONG_MIN, LONG_MAX);
+	b = limit_i64(b, LONG_MIN, LONG_MAX);
 	r = conv(a, b);
 	gen_conv(a, b, r);
 }
@@ -56,7 +55,6 @@ void test_conv() {
 // -->
 //--------------------------------------------------------------------
 
-*/
 //TODO: replace by macro OR generate
 void gen_eq(int x, int y, int r);
 int eq(int x, int y) {
@@ -130,7 +128,7 @@ unsigned recsum(unsigned a, unsigned n) {
 void test_recsum() {
 	int a = 2, n = 6, s = 0;
 	a = mksym_i32();
-	//n = mksym_i32();
+	n = mksym_i32();
 	//TODO: make as a macro:
 	a = limit_i32(a,0,3);
 	n = limit_i32(n,0,4);

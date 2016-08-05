@@ -28,6 +28,15 @@ int limit_i32(int x, int lower, int upper) {
 		return x;
 }
 
+long limit_i64(long x, long lower, long upper) {
+	if (x >= upper)
+		return upper;
+	else if (x <= lower)
+		return lower;
+	else
+		return x;
+}
+
 void limit2_i32(int* x, int lower, int upper) {
 	if (*x >= upper)
 		*x = upper;

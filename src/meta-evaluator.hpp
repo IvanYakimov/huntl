@@ -34,6 +34,10 @@ namespace interpreter {
 		const llvm::BasicBlock* Branch (memory::HolderPtr condition, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse);
 		void Assign (memory::RamAddress lhs, memory::HolderPtr rhs_holder);
 		void Conversion (memory::RamAddress lhs, memory::HolderPtr rhs, utils::MetaKind kind, unsigned new_width);
+		void Return(const llvm::ReturnInst &inst, memory::HolderPtr holder);
+		void Return(const llvm::ReturnInst &inst);
+		//void Store(const llvm::StoreInst &inst, memory::HolderPtr holder, const llvm::Value *lhs);
+		//void Load(const llvm::LoadInst &inst, memory::HolderPtr holder); // <-- incorrect declaration
 	private:
 		ContextRef context_;
 		ConcreteEval concrete_eval_;

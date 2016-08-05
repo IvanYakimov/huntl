@@ -53,18 +53,18 @@ namespace interpreter {
 
 	private:
 		// Return
-		virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::Instruction *ret_inst);
-		virtual void HandleReturnInst (const llvm::Instruction &inst, const llvm::ConstantInt *ret_const);
-		virtual void HandleReturnInst (const llvm::Instruction &inst);
+		virtual void HandleReturnInst (const llvm::ReturnInst &inst, const llvm::Instruction *ret_inst);
+		virtual void HandleReturnInst (const llvm::ReturnInst &inst, const llvm::ConstantInt *ret_const);
+		virtual void HandleReturnInst (const llvm::ReturnInst &inst);
 
 		// Branch
-		virtual void HandleBranchInst (const llvm::Instruction &inst, const llvm::Value *cond, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse);
-		virtual void HandleBranchInst (const llvm::Instruction &inst, const llvm::BasicBlock *jump);
+		virtual void HandleBranchInst (const llvm::BranchInst &inst, const llvm::Value *cond, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse);
+		virtual void HandleBranchInst (const llvm::BranchInst &inst, const llvm::BasicBlock *jump);
 
 		// BinOp
-		virtual void HandleBinOp (const llvm::Instruction &inst, const llvm::ConstantInt *lhs, const llvm::Value *rhs);
-		virtual void HandleBinOp (const llvm::Instruction &inst, const llvm::Value *lhs, const llvm::ConstantInt *rhs);
-		virtual void HandleBinOp (const llvm::Instruction &inst, const llvm::Value *lhs, const llvm::Value *rhs);
+		virtual void HandleBinOp (const llvm::BinaryOperator &inst, const llvm::ConstantInt *lhs, const llvm::Value *rhs);
+		virtual void HandleBinOp (const llvm::BinaryOperator &inst, const llvm::Value *lhs, const llvm::ConstantInt *rhs);
+		virtual void HandleBinOp (const llvm::BinaryOperator &inst, const llvm::Value *lhs, const llvm::Value *rhs);
 
 		// Cmp
 		virtual void HandleICmpInst (const llvm::ICmpInst &inst, const llvm::ConstantInt *lhs, const llvm::Value *rhs);
@@ -72,14 +72,14 @@ namespace interpreter {
 		virtual void HandleICmpInst (const llvm::ICmpInst &inst, const llvm::Value *lhs, const llvm::Value *rhs);
 
 		// Alloca
-		virtual void HandleAllocaInst (const llvm::Instruction &inst, const llvm::ConstantInt *allocated);
+		virtual void HandleAllocaInst (const llvm::AllocaInst &inst, const llvm::ConstantInt *allocated);
 
 		// Load
-		virtual void HandleLoadInst (const llvm::Instruction &inst, const llvm::Value *target);
+		virtual void HandleLoadInst (const llvm::LoadInst &inst, const llvm::Value *target);
 
 		// Store
-		virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::ConstantInt *rhs, const llvm::Value *lhs);
-		virtual void HandleStoreInst (const llvm::Instruction &inst, const llvm::Value *rhs, const llvm::Value *lhs);
+		virtual void HandleStoreInst (const llvm::StoreInst &inst, const llvm::ConstantInt *rhs, const llvm::Value *lhs);
+		virtual void HandleStoreInst (const llvm::StoreInst &inst, const llvm::Value *rhs, const llvm::Value *lhs);
 
 		// Trunc
 		virtual void HandleTruncInst (const llvm::TruncInst &inst, const llvm::Value* target, const llvm::IntegerType* dest_ty);
