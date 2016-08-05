@@ -29,10 +29,12 @@ namespace interpreter {
 		MixedEval2<OpCode>(lhs_addr, op_code, left, right, concrete_binop, symbolic_binop);
 	}
 
-	void MetaEvaluator::IntComparison (memory::RamAddress lhs, llvm::ICmpInst::Predicate predicate, memory::HolderPtr left, memory::HolderPtr right) {
+	void MetaEvaluator::IntComparison (const llvm::ICmpInst &comparison, memory::HolderPtr left, memory::HolderPtr right) {
+		auto lhs_address = context_.Top()->GetLocation(&comparison);
+		auto predicate = comparison.getPredicate();
 		ConcreteFunc2<ICmpInst::Predicate> concrete_comparison = std::bind(&ConcreteEval::IntComparison, &concrete_eval_, _1, _2, _3, _4);
 		SymbolicFunc2<ICmpInst::Predicate> symbolic_comparison = std::bind(&SymbolicEval::IntComparison, &symbolic_eval_, _1, _2, _3, _4);
-		MixedEval2<ICmpInst::Predicate>(lhs, predicate, left, right, concrete_comparison, symbolic_comparison);
+		MixedEval2<ICmpInst::Predicate>(lhs_address, predicate, left, right, concrete_comparison, symbolic_comparison);
 	}
 
 	const llvm::BasicBlock* MetaEvaluator::Branch (memory::HolderPtr condition, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse) {
@@ -68,6 +70,24 @@ namespace interpreter {
 		}
 		else
 			assert (false and "unexpected");
+	}
+
+	void MetaEvaluator::Load(const llvm::LoadInst &lhs, memory::HolderPtr ptr_holder) {
+		assert (memory::IsConcrete(ptr_holder));
+		MetaIntRef ptr_holder_value = memory::GetValue(ptr_holder);
+		// dereferencing
+		memory::RamAddress target_address = ptr_holder_value.getZExtValue();
+		auto target_holder = context_.Ram().Stack().Read(target_address, memory::Ram::def_align_);
+		auto lhs_address = context_.Top()->GetLocation(&lhs);
+		Assign(lhs_address, target_holder);
+	}
+
+	void MetaEvaluator::Store(const llvm::StoreInst &inst, memory::HolderPtr value_holder, memory::HolderPtr ptr_holder) {
+		assert (memory::IsConcrete(ptr_holder));
+		MetaIntRef ptr_concrete_value = memory::GetValue(ptr_holder);
+		// dereferencing
+		memory::RamAddress target_memory_cell = ptr_concrete_value.getZExtValue();
+		Assign(target_memory_cell, value_holder);
 	}
 
 	void MetaEvaluator::Return(const llvm::ReturnInst &inst, HolderPtr holder) {

@@ -30,12 +30,14 @@ namespace interpreter {
 		~MetaEvaluator();
 		NONCOPYABLE(MetaEvaluator);
 		void BinOp (const llvm::BinaryOperator &binop, memory::HolderPtr left, memory::HolderPtr right);
-		void IntComparison (memory::RamAddress lhs, llvm::ICmpInst::Predicate predicate, memory::HolderPtr left, memory::HolderPtr right);
+		void IntComparison (const llvm::ICmpInst &comparison, memory::HolderPtr left, memory::HolderPtr right);
 		const llvm::BasicBlock* Branch (memory::HolderPtr condition, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse);
 		void Assign (memory::RamAddress lhs, memory::HolderPtr rhs_holder);
 		void Conversion (memory::RamAddress lhs, memory::HolderPtr rhs, utils::MetaKind kind, unsigned new_width);
 		void Return(const llvm::ReturnInst &inst, memory::HolderPtr holder);
 		void Return(const llvm::ReturnInst &inst);
+		void Load(const llvm::LoadInst &lhs, memory::HolderPtr ptr);
+		void Store(const llvm::StoreInst &inst, memory::HolderPtr value, memory::HolderPtr ptr);
 		//void Store(const llvm::StoreInst &inst, memory::HolderPtr holder, const llvm::Value *lhs);
 		//void Load(const llvm::LoadInst &inst, memory::HolderPtr holder); // <-- incorrect declaration
 	private:
