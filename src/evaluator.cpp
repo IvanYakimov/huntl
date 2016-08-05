@@ -125,11 +125,20 @@ namespace interpreter {
 		return ret_val;
 	}
 
-	auto Evaluator::ProduceHolder(const llvm::ConstantInt* allocated) {
-		llvm::IntegerType* ty = allocated->getType();
-		auto width = ty->getBitWidth();
-		const llvm::APInt& val = allocated->getValue();
-		auto holder = memory::Concrete::Create(val);
+	HolderPtr Evaluator::ProduceHolder(const llvm::Value* target) {
+		HolderPtr holder = nullptr;
+		if (llvm::isa<llvm::ConstantInt>(target)) {
+			const llvm::ConstantInt* target_const = llvm::dyn_cast<llvm::ConstantInt>(target);
+			assert(target_const != nullptr);
+			llvm::IntegerType* int_ty = target_const->getType();
+			auto width = int_ty->getBitWidth();
+			const llvm::APInt& val = target_const->getValue();
+			holder = memory::Concrete::Create(val);
+		}
+		else {
+			holder = context_.Top()->Load(target);
+		}
+		assert (holder != nullptr);
 		return holder;
 	}
 
@@ -294,26 +303,13 @@ namespace interpreter {
 	//----------------------------------------------------------------------------
 	// Helpers
 
-	HolderPtr Evaluator::ProduceOperandHolder(const Value* operand) {
-		HolderPtr holder = nullptr;
-		if (llvm::isa<llvm::ConstantInt>(operand)) {
-			holder = ProduceHolder(llvm::dyn_cast<llvm::ConstantInt>(operand));
-		}
-		else
-			holder = context_.Top()->Load(operand);
-		assert (holder != nullptr);
-		return holder;
-	}
-
 	memory::ArgMapPtr Evaluator::InitArgMap(const llvm::CallInst &inst) {
 		memory::ArgMapPtr argmap = utils::Create<ArgMap>();
 		auto called = ExtractCalledFunction(inst);
 		auto args = called->arg_begin();
 		for (auto i = 0; i != inst.getNumArgOperands(); i++) {
 			auto operand = inst.getArgOperand(i);
-
-			HolderPtr holder = ProduceOperandHolder(operand);
-
+			HolderPtr holder = ProduceHolder(operand);
 			argmap->emplace(args, holder);
 			args++;
 		}

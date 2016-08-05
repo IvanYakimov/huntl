@@ -48,11 +48,10 @@ namespace interpreter {
 		MetaEvaluator meta_eval_;
 		interpreter::ContextRef context_;
 		EvalTracer tracer_;
-		auto ProduceHolder(const llvm::ConstantInt* constant_int);
+		memory::HolderPtr ProduceHolder(const llvm::Value* target);
 		BuiltInMap builtins_;
 		memory::ArgMapPtr InitArgMap(const llvm::CallInst &inst);
 		void InitFuncRet(memory::HolderPtr ret_holder, const llvm::CallInst& inst, llvm::Function* called);
-		memory::HolderPtr ProduceOperandHolder(const llvm::Value* operand);
 
 	private:
 		// Return
