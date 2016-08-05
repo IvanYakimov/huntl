@@ -144,7 +144,6 @@ namespace interpreter {
 
 	// Return
 	void Evaluator::HandleReturnInst (const llvm::ReturnInst &inst, const llvm::Value *ret_inst) {
-		//HolderPtr holder = context_.Top()->Load(ret_inst);
 		HolderPtr holder = ProduceHolder(ret_inst);
 		meta_eval_.Return(inst, holder);
 	}
@@ -155,7 +154,6 @@ namespace interpreter {
 
 	// Branch
 	void Evaluator::HandleBranchInst (const llvm::BranchInst &inst, const llvm::Value *cond, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse) {
-		//auto cond_holder = context_.Top()->Load(cond);
 		HolderPtr cond_holder = ProduceHolder(cond);
 		assert (cond_holder != nullptr and "only instruction is supported yet");
 		auto next = meta_eval_.Branch(cond_holder, iftrue, iffalse);
@@ -169,8 +167,6 @@ namespace interpreter {
 
 	// BinOp
 	void Evaluator::HandleBinOp (const llvm::BinaryOperator &inst, const llvm::Value *left, const llvm::Value *right) {
-		//auto left_holder = context_.Top()->Load(left);
-		//auto right_holder = context_.Top()->Load(right);
 		HolderPtr left_holder = ProduceHolder(left);
 		HolderPtr right_holder = ProduceHolder(right);
 		meta_eval_.BinOp(inst, left_holder, right_holder);
@@ -178,8 +174,6 @@ namespace interpreter {
 
 	// Cmp
 	void Evaluator::HandleICmpInst (const llvm::ICmpInst &inst, const llvm::Value *left, const llvm::Value *right) {
-		//auto left_holder = context_.Top()->Load(left);
-		//auto right_holder = context_.Top()->Load(right);
 		HolderPtr left_holder = ProduceHolder(left);
 		HolderPtr right_holder = ProduceHolder(right);
 		meta_eval_.IntComparison(inst, left_holder, right_holder);
@@ -187,56 +181,25 @@ namespace interpreter {
 
 	// Alloca
 	void Evaluator::HandleAllocaInst (const llvm::AllocaInst &inst, const llvm::ConstantInt *allocated) {
-		/*
-		// note: variable is a pointer to the fresh allocated value
-		// x = alloca:
-		//
-		// *x [0] = 4
-		//  _ [4] = 1
-		*/
 		auto holder = ProduceHolder(allocated);
 		meta_eval_.Alloca(inst, holder);
 	}
 
 	// Load
 	void Evaluator::HandleLoadInst (const llvm::LoadInst &lhs, const llvm::Value *ptr) {
-		/*
-		// lhs = *rhs
-		 */
-		//auto ptr_holder = context_.Top()->Load(ptr);
 		HolderPtr ptr_holder = ProduceHolder(ptr);
 		meta_eval_.Load(lhs, ptr_holder);
 	}
 
 	// Store
-	/*
-	// https://blog.felixangell.com/an-introduction-to-llvm-in-go/
-	/* see: http://llvm.org/docs/tutorial/OCamlLangImpl7.html
-	 * In LLVM, all memory accesses are explicit with load/store instructions,
-	 * and it is carefully designed not to have (or need) an “address-of” operator.
-	 */
 	void Evaluator::HandleStoreInst (const llvm::StoreInst &inst, const llvm::Value *value, const llvm::Value *ptr) {
-		/*
-		// "store val *ptr" treated as follow: "*ptr = val"
-		//
-		// *ptr	[0] = 4
-		//	_ 	[4] = 1		// initial allocated value = 1
-		//
-		// store val *ptr
-		//
-		// *ptr	[0] = 4
-		//	_ 	[4] = val	// now ptr point to _, which is equivalent to val
-		 */
-		//auto value_holder = context_.Top()->Load(value);
 		HolderPtr value_holder = ProduceHolder(value);
-		//auto ptr_holder = context_.Top()->Load(ptr);
 		HolderPtr ptr_holder = ProduceHolder(ptr);
 		meta_eval_.Store(inst, value_holder, ptr_holder);
 	}
 
 	// Trunc
 	void Evaluator::HandleTruncInst (const llvm::TruncInst &inst, const llvm::Value* target, const llvm::IntegerType* dest_ty) {
-		//auto holder = context_.Top()->Load(target);
 		HolderPtr holder = ProduceHolder(target);
 		auto width = dest_ty->getBitWidth();
 		auto lhs_address = context_.Top()->GetLocation(&inst);
@@ -245,7 +208,6 @@ namespace interpreter {
 
 	// ZExt
 	void Evaluator::HandleZExtInst (const llvm::ZExtInst &inst, const llvm::Value* target, const llvm::IntegerType* dest_ty) {
-		//auto holder = context_.Top()->Load(target);
 		HolderPtr holder = ProduceHolder(target);
 		auto width = dest_ty->getBitWidth();
 		auto lhs_address = context_.Top()->GetLocation(&inst);
@@ -254,7 +216,6 @@ namespace interpreter {
 
 	// SExt
 	void Evaluator::HandleSExtInst (const llvm::SExtInst &inst, const llvm::Value* target, const llvm::IntegerType* dest_ty) {
-		//auto holder = context_.Top()->Load(target);
 		HolderPtr holder = ProduceHolder(target);
 		auto width = dest_ty->getBitWidth();
 		auto lhs_address = context_.Top()->GetLocation(&inst);
