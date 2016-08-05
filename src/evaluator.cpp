@@ -348,11 +348,8 @@ namespace interpreter {
 			if (llvm::isa<llvm::ConstantInt>(operand)) {
 				holder = ProduceHolder(llvm::dyn_cast<llvm::ConstantInt>(operand));
 			}
-			else if (not args->getType()->isPointerTy()){
-				holder = context_.Top()->Load(operand);
-			}
 			else
-				assert (! "pointers are not currently supported");
+				holder = context_.Top()->Load(operand);
 
 			assert (holder != nullptr);
 			argmap->emplace(args, holder);

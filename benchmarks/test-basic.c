@@ -7,12 +7,6 @@
 //--------------------------------------------------------------------
 // <-- Conversions
 
-void test_me() {
-	int x = 2;
-	int y;
-	y = x;
-}
-
 void gen_extend(short x, int res);
 int extend(short x) {
 	return (int)x;
@@ -22,7 +16,7 @@ void test_extend() {
 	short arg = 28;
 	int res = 0;
 	arg = mksym_i16();
-	arg = limit_i16(arg, SHRT_MIN, SHRT_MAX);
+	limit2_i16(&arg, SHRT_MIN, SHRT_MAX);
 	res = extend(arg);
 	gen_extend(arg, res);
 }
@@ -36,7 +30,7 @@ void test_truncate() {
 	long arg = 28;
 	unsigned res = 0;
 	arg = mksym_i64();
-	arg = limit_i64(arg, LONG_MIN, LONG_MAX);
+	limit2_i64(&arg, LONG_MIN, LONG_MAX);
 	res = truncate(arg);
 	gen_truncate(arg, res);
 }
@@ -51,9 +45,9 @@ void test_conv() {
 	long b = 42;
 	int r = 0;
 	a = mksym_i16();
-	a = limit_i16(a, SHRT_MIN, SHRT_MAX);
+	limit2_i16(&a, SHRT_MIN, SHRT_MAX);
 	b = mksym_i64();
-	b = limit_i64(b, LONG_MIN, LONG_MAX);
+	limit2_i64(&b, LONG_MIN, LONG_MAX);
 	r = conv(a, b);
 	gen_conv(a, b, r);
 }
@@ -75,8 +69,8 @@ void test_eq() {
 		 r = 28;
 	a = mksym_i32();
 	b = mksym_i32();
-	a = limit_i32(a, INT_MIN, INT_MAX);
-	b = limit_i32(b, INT_MIN, INT_MAX);
+	limit2_i32(&a, INT_MIN, INT_MAX);
+	limit2_i32(&b, INT_MIN, INT_MAX);
 	r = eq(a,b);
 	gen_eq(a,b,r);
 }
@@ -93,10 +87,8 @@ void test_mixed_arith() {
 	int a = 0, b = 0, r = 0;
 	a = mksym_i32();
 	b = mksym_i32();
-	a = limit_i32(a, INT_MIN, INT_MAX);
-	b = limit_i32(b, INT_MIN, INT_MAX);
-	//limit2_i32(&a, INT_MIN, INT_MAX);
-	//limit2_i32(&b, INT_MIN, INT_MAX);
+	limit2_i32(&a, INT_MIN, INT_MAX);
+	limit2_i32(&b, INT_MIN, INT_MAX);
 	r = arith(a,b);
 	gen_arith(a,b,r);
 }
@@ -113,11 +105,8 @@ void test_sum() {
 	int a = 0, n = 0, s = 0;
 	a = mksym_i32();
 	n = mksym_i32();
-	//a = limit_i32(a, 0, 3);
-	//n = limit_i32(n, 0, 4);
-	a = limit_i32(a,0,3);
-	n = limit_i32(n,0,4);
-	//end
+	limit2_i32(&a,0,3);
+	limit2_i32(&n,0,4);
 	s = sum(a,n);
 	gen_sum(a,n,s);
 }
@@ -130,15 +119,12 @@ unsigned recsum(unsigned a, unsigned n) {
 		return a + recsum(a, n - 1);
 }
 
-// BUG in recursive evaluation with symbolic args
 void test_recsum() {
 	int a = 2, n = 6, s = 0;
 	a = mksym_i32();
 	n = mksym_i32();
-	//TODO: make as a macro:
-	a = limit_i32(a,0,3);
-	n = limit_i32(n,0,4);
-	//end
+	limit2_i32(&a,0,3);
+	limit2_i32(&n,0,4);
 	s = recsum(a,n);
 	gen_recsum(a,n,s);
 }

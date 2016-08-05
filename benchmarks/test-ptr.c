@@ -3,7 +3,7 @@
 #include <limits.h>
 
 void twice_helper(int *x) {
-	*x = 2;
+	*x = *x * 2;
 }
 
 int twice(int x) {
@@ -15,6 +15,8 @@ void gen_twice(int x, int r);
 
 void test_twice() {
 	int a = 28;
+	a = mksym_i32();
+	limit2_i32(&a, 0, 28);
 	int r = twice(a);
 	gen_twice(a,r);
 }
@@ -37,13 +39,13 @@ int swap_tester(int a, int b) {
 		return 0;
 }
 
-void test_1() {
+void test_swap() {
 	int x = 28;
 	int y = 42;
-	//x = mksym_i32();
-	//y = mksym_i32();
-	//limit2_i32(&x, INT_MIN, INT_MAX);
-	//limit2_i32(&y, INT_MIN, INT_MAX);
+	x = mksym_i32();
+	y = mksym_i32();
+	limit2_i32(&x, 0, 28);
+	limit2_i32(&y, 42, 101);
 	if (x == y)
 		x++;
 	int r = swap_tester(x,y);
