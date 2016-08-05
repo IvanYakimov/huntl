@@ -7,6 +7,12 @@
 //--------------------------------------------------------------------
 // <-- Conversions
 
+void test_me() {
+	int x = 2;
+	int y;
+	y = x;
+}
+
 void gen_extend(short x, int res);
 int extend(short x) {
 	return (int)x;
