@@ -143,15 +143,9 @@ namespace interpreter {
 	}
 
 	// Return
-	void Evaluator::HandleReturnInst (const llvm::ReturnInst &inst, const llvm::Instruction *ret_inst) {
+	void Evaluator::HandleReturnInst (const llvm::ReturnInst &inst, const llvm::Value *ret_inst) {
 		//HolderPtr holder = context_.Top()->Load(ret_inst);
 		HolderPtr holder = ProduceHolder(ret_inst);
-		meta_eval_.Return(inst, holder);
-	}
-
-	void Evaluator::HandleReturnInst (const llvm::ReturnInst &inst, const llvm::ConstantInt *ret_const) {
-		//HolderPtr holder = ProduceHolder(ret_const);
-		HolderPtr holder = ProduceHolder(ret_const);
 		meta_eval_.Return(inst, holder);
 	}
 
@@ -174,22 +168,6 @@ namespace interpreter {
 	}
 
 	// BinOp
-	void Evaluator::HandleBinOp (const llvm::BinaryOperator &inst, const llvm::ConstantInt *left, const llvm::Value *right) {
-		//auto left_holder = ProduceHolder(left);
-		//auto right_holder = context_.Top()->Load(right);
-		HolderPtr left_holder = ProduceHolder(left);
-		HolderPtr right_holder = ProduceHolder(right);
-		meta_eval_.BinOp(inst, left_holder, right_holder);
-	}
-
-	void Evaluator::HandleBinOp (const llvm::BinaryOperator &inst, const llvm::Value *left, const llvm::ConstantInt *right) {
-		//auto left_holder = context_.Top()->Load(left);
-		//auto right_holder = ProduceHolder(right);
-		HolderPtr left_holder = ProduceHolder(left);
-		HolderPtr right_holder = ProduceHolder(right);
-		meta_eval_.BinOp(inst, left_holder, right_holder);
-	}
-
 	void Evaluator::HandleBinOp (const llvm::BinaryOperator &inst, const llvm::Value *left, const llvm::Value *right) {
 		//auto left_holder = context_.Top()->Load(left);
 		//auto right_holder = context_.Top()->Load(right);
@@ -199,22 +177,6 @@ namespace interpreter {
 	}
 
 	// Cmp
-	void Evaluator::HandleICmpInst (const llvm::ICmpInst &inst, const llvm::ConstantInt *left, const llvm::Value *right) {
-		//auto left_holder = ProduceHolder(left);
-		//auto right_holder = context_.Top()->Load(right);
-		HolderPtr left_holder = ProduceHolder(left);
-		HolderPtr right_holder = ProduceHolder(right);
-		meta_eval_.IntComparison(inst, left_holder, right_holder);
-	}
-
-	void Evaluator::HandleICmpInst (const llvm::ICmpInst &inst, const llvm::Value *left, const llvm::ConstantInt *right) {
-		//auto left_holder = context_.Top()->Load(left);
-		//auto right_holder = ProduceHolder(right);
-		HolderPtr left_holder = ProduceHolder(left);
-		HolderPtr right_holder = ProduceHolder(right);
-		meta_eval_.IntComparison(inst, left_holder, right_holder);
-	}
-
 	void Evaluator::HandleICmpInst (const llvm::ICmpInst &inst, const llvm::Value *left, const llvm::Value *right) {
 		//auto left_holder = context_.Top()->Load(left);
 		//auto right_holder = context_.Top()->Load(right);
@@ -247,7 +209,13 @@ namespace interpreter {
 	}
 
 	// Store
-	void Evaluator::HandleStoreInst (const llvm::StoreInst &inst, const llvm::ConstantInt *value, const llvm::Value *ptr) {
+	/*
+	// https://blog.felixangell.com/an-introduction-to-llvm-in-go/
+	/* see: http://llvm.org/docs/tutorial/OCamlLangImpl7.html
+	 * In LLVM, all memory accesses are explicit with load/store instructions,
+	 * and it is carefully designed not to have (or need) an “address-of” operator.
+	 */
+	void Evaluator::HandleStoreInst (const llvm::StoreInst &inst, const llvm::Value *value, const llvm::Value *ptr) {
 		/*
 		// "store val *ptr" treated as follow: "*ptr = val"
 		//
@@ -258,23 +226,6 @@ namespace interpreter {
 		//
 		// *ptr	[0] = 4
 		//	_ 	[4] = val	// now ptr point to _, which is equivalent to val
-		 */
-		//auto value_holder = ProduceHolder(value);
-		HolderPtr value_holder = ProduceHolder(value);
-		//auto ptr_holder = context_.Top()->Load(ptr);
-		HolderPtr ptr_holder = ProduceHolder(ptr);
-		meta_eval_.Store(inst, value_holder, ptr_holder);
-	}
-
-	/*
-	// https://blog.felixangell.com/an-introduction-to-llvm-in-go/
-	/* see: http://llvm.org/docs/tutorial/OCamlLangImpl7.html
-	 * In LLVM, all memory accesses are explicit with load/store instructions,
-	 * and it is carefully designed not to have (or need) an “address-of” operator.
-	 */
-	void Evaluator::HandleStoreInst (const llvm::StoreInst &inst, const llvm::Value *value, const llvm::Value *ptr) {
-		/*
-		// *ptr = value
 		 */
 		//auto value_holder = context_.Top()->Load(value);
 		HolderPtr value_holder = ProduceHolder(value);
