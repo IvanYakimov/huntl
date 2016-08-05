@@ -206,33 +206,29 @@ namespace interpreter {
 
 	// Alloca
 	void Evaluator::HandleAllocaInst (const llvm::AllocaInst &inst, const llvm::ConstantInt *allocated) {
-		// variable is a pointer to the fresh allocated value
+		/*
+		// note: variable is a pointer to the fresh allocated value
 		// x = alloca:
 		//
 		// *x [0] = 4
 		//  _ [4] = 1
-		//
-
+		*/
 		auto holder = ProduceHolder(allocated);
 		meta_eval_.Alloca(inst, holder);
-
-		/*
-		auto lhs_address = context_.Top()->GetLocation(&inst);
-		auto target_address = context_.Top()->Alloca(holder);
-		auto target_address_holder = memory::Concrete::Create(interpreter::MetaInt(memory::Ram::machine_word_bitsize_, target_address));
-		meta_eval_.Assign(lhs_address, target_address_holder);
-		*/
 	}
 
 	// Load
 	void Evaluator::HandleLoadInst (const llvm::LoadInst &lhs, const llvm::Value *ptr) {
+		/*
 		// lhs = *rhs
+		 */
 		auto ptr_holder = context_.Top()->Load(ptr);
 		meta_eval_.Load(lhs, ptr_holder);
 	}
 
 	// Store
 	void Evaluator::HandleStoreInst (const llvm::StoreInst &inst, const llvm::ConstantInt *value, const llvm::Value *ptr) {
+		/*
 		// "store val *ptr" treated as follow: "*ptr = val"
 		//
 		// *ptr	[0] = 4
@@ -242,20 +238,22 @@ namespace interpreter {
 		//
 		// *ptr	[0] = 4
 		//	_ 	[4] = val	// now ptr point to _, which is equivalent to val
-
+		 */
 		auto value_holder = ProduceHolder(value);
 		auto ptr_holder = context_.Top()->Load(ptr);
 		meta_eval_.Store(inst, value_holder, ptr_holder);
 	}
 
+	/*
 	// https://blog.felixangell.com/an-introduction-to-llvm-in-go/
 	/* see: http://llvm.org/docs/tutorial/OCamlLangImpl7.html
 	 * In LLVM, all memory accesses are explicit with load/store instructions,
 	 * and it is carefully designed not to have (or need) an “address-of” operator.
 	 */
-
 	void Evaluator::HandleStoreInst (const llvm::StoreInst &inst, const llvm::Value *value, const llvm::Value *ptr) {
-		// *x = rhs
+		/*
+		// *ptr = value
+		 */
 		auto value_holder = context_.Top()->Load(value);
 		auto ptr_holder = context_.Top()->Load(ptr);
 		meta_eval_.Store(inst, value_holder, ptr_holder);
