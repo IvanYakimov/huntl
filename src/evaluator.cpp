@@ -144,11 +144,13 @@ namespace interpreter {
 
 	// Return
 	void Evaluator::HandleReturnInst (const llvm::ReturnInst &inst, const llvm::Instruction *ret_inst) {
-		HolderPtr holder = context_.Top()->Load(ret_inst);
+		//HolderPtr holder = context_.Top()->Load(ret_inst);
+		HolderPtr holder = ProduceHolder(ret_inst);
 		meta_eval_.Return(inst, holder);
 	}
 
 	void Evaluator::HandleReturnInst (const llvm::ReturnInst &inst, const llvm::ConstantInt *ret_const) {
+		//HolderPtr holder = ProduceHolder(ret_const);
 		HolderPtr holder = ProduceHolder(ret_const);
 		meta_eval_.Return(inst, holder);
 	}
@@ -159,7 +161,8 @@ namespace interpreter {
 
 	// Branch
 	void Evaluator::HandleBranchInst (const llvm::BranchInst &inst, const llvm::Value *cond, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse) {
-		auto cond_holder = context_.Top()->Load(cond);
+		//auto cond_holder = context_.Top()->Load(cond);
+		HolderPtr cond_holder = ProduceHolder(cond);
 		assert (cond_holder != nullptr and "only instruction is supported yet");
 		auto next = meta_eval_.Branch(cond_holder, iftrue, iffalse);
 		context_.Top()->PC.Set(next);
@@ -172,39 +175,51 @@ namespace interpreter {
 
 	// BinOp
 	void Evaluator::HandleBinOp (const llvm::BinaryOperator &inst, const llvm::ConstantInt *left, const llvm::Value *right) {
-		auto left_holder = ProduceHolder(left);
-		auto right_holder = context_.Top()->Load(right);
+		//auto left_holder = ProduceHolder(left);
+		//auto right_holder = context_.Top()->Load(right);
+		HolderPtr left_holder = ProduceHolder(left);
+		HolderPtr right_holder = ProduceHolder(right);
 		meta_eval_.BinOp(inst, left_holder, right_holder);
 	}
 
 	void Evaluator::HandleBinOp (const llvm::BinaryOperator &inst, const llvm::Value *left, const llvm::ConstantInt *right) {
-		auto left_holder = context_.Top()->Load(left);
-		auto right_holder = ProduceHolder(right);
+		//auto left_holder = context_.Top()->Load(left);
+		//auto right_holder = ProduceHolder(right);
+		HolderPtr left_holder = ProduceHolder(left);
+		HolderPtr right_holder = ProduceHolder(right);
 		meta_eval_.BinOp(inst, left_holder, right_holder);
 	}
 
 	void Evaluator::HandleBinOp (const llvm::BinaryOperator &inst, const llvm::Value *left, const llvm::Value *right) {
-		auto left_holder = context_.Top()->Load(left);
-		auto right_holder = context_.Top()->Load(right);
+		//auto left_holder = context_.Top()->Load(left);
+		//auto right_holder = context_.Top()->Load(right);
+		HolderPtr left_holder = ProduceHolder(left);
+		HolderPtr right_holder = ProduceHolder(right);
 		meta_eval_.BinOp(inst, left_holder, right_holder);
 	}
 
 	// Cmp
 	void Evaluator::HandleICmpInst (const llvm::ICmpInst &inst, const llvm::ConstantInt *left, const llvm::Value *right) {
-		auto left_holder = ProduceHolder(left);
-		auto right_holder = context_.Top()->Load(right);
+		//auto left_holder = ProduceHolder(left);
+		//auto right_holder = context_.Top()->Load(right);
+		HolderPtr left_holder = ProduceHolder(left);
+		HolderPtr right_holder = ProduceHolder(right);
 		meta_eval_.IntComparison(inst, left_holder, right_holder);
 	}
 
 	void Evaluator::HandleICmpInst (const llvm::ICmpInst &inst, const llvm::Value *left, const llvm::ConstantInt *right) {
-		auto left_holder = context_.Top()->Load(left);
-		auto right_holder = ProduceHolder(right);
+		//auto left_holder = context_.Top()->Load(left);
+		//auto right_holder = ProduceHolder(right);
+		HolderPtr left_holder = ProduceHolder(left);
+		HolderPtr right_holder = ProduceHolder(right);
 		meta_eval_.IntComparison(inst, left_holder, right_holder);
 	}
 
 	void Evaluator::HandleICmpInst (const llvm::ICmpInst &inst, const llvm::Value *left, const llvm::Value *right) {
-		auto left_holder = context_.Top()->Load(left);
-		auto right_holder = context_.Top()->Load(right);
+		//auto left_holder = context_.Top()->Load(left);
+		//auto right_holder = context_.Top()->Load(right);
+		HolderPtr left_holder = ProduceHolder(left);
+		HolderPtr right_holder = ProduceHolder(right);
 		meta_eval_.IntComparison(inst, left_holder, right_holder);
 	}
 
@@ -226,7 +241,8 @@ namespace interpreter {
 		/*
 		// lhs = *rhs
 		 */
-		auto ptr_holder = context_.Top()->Load(ptr);
+		//auto ptr_holder = context_.Top()->Load(ptr);
+		HolderPtr ptr_holder = ProduceHolder(ptr);
 		meta_eval_.Load(lhs, ptr_holder);
 	}
 
@@ -243,8 +259,10 @@ namespace interpreter {
 		// *ptr	[0] = 4
 		//	_ 	[4] = val	// now ptr point to _, which is equivalent to val
 		 */
-		auto value_holder = ProduceHolder(value);
-		auto ptr_holder = context_.Top()->Load(ptr);
+		//auto value_holder = ProduceHolder(value);
+		HolderPtr value_holder = ProduceHolder(value);
+		//auto ptr_holder = context_.Top()->Load(ptr);
+		HolderPtr ptr_holder = ProduceHolder(ptr);
 		meta_eval_.Store(inst, value_holder, ptr_holder);
 	}
 
@@ -258,14 +276,17 @@ namespace interpreter {
 		/*
 		// *ptr = value
 		 */
-		auto value_holder = context_.Top()->Load(value);
-		auto ptr_holder = context_.Top()->Load(ptr);
+		//auto value_holder = context_.Top()->Load(value);
+		HolderPtr value_holder = ProduceHolder(value);
+		//auto ptr_holder = context_.Top()->Load(ptr);
+		HolderPtr ptr_holder = ProduceHolder(ptr);
 		meta_eval_.Store(inst, value_holder, ptr_holder);
 	}
 
 	// Trunc
 	void Evaluator::HandleTruncInst (const llvm::TruncInst &inst, const llvm::Value* target, const llvm::IntegerType* dest_ty) {
-		auto holder = context_.Top()->Load(target);
+		//auto holder = context_.Top()->Load(target);
+		HolderPtr holder = ProduceHolder(target);
 		auto width = dest_ty->getBitWidth();
 		auto lhs_address = context_.Top()->GetLocation(&inst);
 		meta_eval_.Conversion(lhs_address, holder, MetaKind::Trunc, width);
@@ -273,7 +294,8 @@ namespace interpreter {
 
 	// ZExt
 	void Evaluator::HandleZExtInst (const llvm::ZExtInst &inst, const llvm::Value* target, const llvm::IntegerType* dest_ty) {
-		auto holder = context_.Top()->Load(target);
+		//auto holder = context_.Top()->Load(target);
+		HolderPtr holder = ProduceHolder(target);
 		auto width = dest_ty->getBitWidth();
 		auto lhs_address = context_.Top()->GetLocation(&inst);
 		meta_eval_.Conversion(lhs_address, holder, MetaKind::ZExt, width);
@@ -281,7 +303,8 @@ namespace interpreter {
 
 	// SExt
 	void Evaluator::HandleSExtInst (const llvm::SExtInst &inst, const llvm::Value* target, const llvm::IntegerType* dest_ty) {
-		auto holder = context_.Top()->Load(target);
+		//auto holder = context_.Top()->Load(target);
+		HolderPtr holder = ProduceHolder(target);
 		auto width = dest_ty->getBitWidth();
 		auto lhs_address = context_.Top()->GetLocation(&inst);
 		meta_eval_.Conversion(lhs_address, holder, MetaKind::SExt, width);
