@@ -175,27 +175,30 @@ namespace interpreter {
 	void Evaluator::HandleBinOp (const llvm::BinaryOperator &inst, const llvm::ConstantInt *left, const llvm::Value *right) {
 		auto left_holder = ProduceHolder(left);
 		auto right_holder = context_.Top()->Load(right);
-		auto lhs_address = context_.Top()->GetLocation(&inst);
-		auto bin_op = inst.getOpcode();
-		meta_eval_.BinOp(lhs_address, bin_op, left_holder, right_holder);
+		//auto lhs_address = context_.Top()->GetLocation(&inst);
+		//auto bin_op = inst.getOpcode();
+		//meta_eval_.BinOp(lhs_address, bin_op, left_holder, right_holder);
+		meta_eval_.BinOp(inst, left_holder, right_holder);
 		tracer_.Assign(inst);
 	}
 
 	void Evaluator::HandleBinOp (const llvm::BinaryOperator &inst, const llvm::Value *left, const llvm::ConstantInt *right) {
 		auto left_holder = context_.Top()->Load(left);
 		auto right_holder = ProduceHolder(right);
-		auto lhs_address = context_.Top()->GetLocation(&inst);
-		auto bin_op = inst.getOpcode();
-		meta_eval_.BinOp(lhs_address, bin_op, left_holder, right_holder);
+		//auto lhs_address = context_.Top()->GetLocation(&inst);
+		//auto bin_op = inst.getOpcode();
+		//meta_eval_.BinOp(lhs_address, bin_op, left_holder, right_holder);
+		meta_eval_.BinOp(inst, left_holder, right_holder);
 		tracer_.Assign(inst);
 	}
 
 	void Evaluator::HandleBinOp (const llvm::BinaryOperator &inst, const llvm::Value *left, const llvm::Value *right) {
 		auto left_holder = context_.Top()->Load(left);
 		auto right_holder = context_.Top()->Load(right);
-		auto lhs_address = context_.Top()->GetLocation(&inst);
-		auto op_code = inst.getOpcode();
-		meta_eval_.BinOp(lhs_address, op_code, left_holder, right_holder);
+		//auto lhs_address = context_.Top()->GetLocation(&inst);
+		//auto op_code = inst.getOpcode();
+		//meta_eval_.BinOp(lhs_address, op_code, left_holder, right_holder);
+		meta_eval_.BinOp(inst, left_holder, right_holder);
 		tracer_.Assign(inst);
 	}
 

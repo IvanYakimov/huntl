@@ -74,7 +74,6 @@ namespace memory {
 		llvm::Type* base_ty = variable->getType();
 		unsigned width;
 
-
 		if (base_ty->isIntegerTy()) {
 			llvm::IntegerType* type = llvm::dyn_cast<llvm::IntegerType>(base_ty);
 			width = type->getBitWidth();

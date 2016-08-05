@@ -29,7 +29,7 @@ namespace interpreter {
 		MetaEvaluator(interpreter::ContextRef context);
 		~MetaEvaluator();
 		NONCOPYABLE(MetaEvaluator);
-		void BinOp (memory::RamAddress lhs, unsigned op_code, memory::HolderPtr left, memory::HolderPtr right);
+		void BinOp (const llvm::BinaryOperator &binop, memory::HolderPtr left, memory::HolderPtr right);
 		void IntComparison (memory::RamAddress lhs, llvm::ICmpInst::Predicate predicate, memory::HolderPtr left, memory::HolderPtr right);
 		const llvm::BasicBlock* Branch (memory::HolderPtr condition, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse);
 		void Assign (memory::RamAddress lhs, memory::HolderPtr rhs_holder);

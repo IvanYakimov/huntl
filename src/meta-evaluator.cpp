@@ -20,11 +20,13 @@ namespace interpreter {
 	MetaEvaluator::~MetaEvaluator() {
 	}
 
-	void MetaEvaluator::BinOp (memory::RamAddress lhs, unsigned op_code, memory::HolderPtr left, memory::HolderPtr right) {
+	void MetaEvaluator::BinOp (const llvm::BinaryOperator &binop, memory::HolderPtr left, memory::HolderPtr right) {
 		using OpCode = unsigned;
+		auto op_code = binop.getOpcode();
+		auto lhs_addr = context_.Top()->GetLocation(&binop);
 		ConcreteFunc2<OpCode> concrete_binop = std::bind(&ConcreteEval::BinOp, &concrete_eval_, _1, _2, _3, _4);
 		SymbolicFunc2<OpCode> symbolic_binop = std::bind(&SymbolicEval::BinOp, &symbolic_eval_, _1, _2, _3, _4);
-		MixedEval2<OpCode>(lhs, op_code, left, right, concrete_binop, symbolic_binop);
+		MixedEval2<OpCode>(lhs_addr, op_code, left, right, concrete_binop, symbolic_binop);
 	}
 
 	void MetaEvaluator::IntComparison (memory::RamAddress lhs, llvm::ICmpInst::Predicate predicate, memory::HolderPtr left, memory::HolderPtr right) {
