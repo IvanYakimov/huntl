@@ -50,6 +50,9 @@ namespace interpreter {
 		EvalTracer tracer_;
 		auto ProduceHolder(const llvm::ConstantInt* constant_int);
 		BuiltInMap builtins_;
+		memory::ArgMapPtr InitArgMap(const llvm::CallInst &inst);
+		void InitFuncRet(memory::HolderPtr ret_holder, const llvm::CallInst& inst, llvm::Function* called);
+		memory::HolderPtr ProduceOperandHolder(const llvm::Value* operand);
 
 	private:
 		// Return

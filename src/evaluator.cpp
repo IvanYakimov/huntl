@@ -7,9 +7,11 @@ using namespace llvm;
 namespace interpreter {
 	using utils::Create;
 	using memory::ArgMap;
+	using memory::ArgMapPtr;
 	using memory::HolderPtr;
 	using memory::Undef;
 	using utils::MetaKind;
+	using llvm::Value;
 
 	Evaluator::Evaluator(interpreter::ContextRef context) :
 			context_(context),
@@ -99,10 +101,6 @@ namespace interpreter {
 		else {
 			// push
 			context_.Push(); {
-				tracer_.Call(f, args, true);
-
-				// alloca
-
 				// initiate args
 				for (auto pair = args->begin(); pair != args->end(); pair++){
 					auto variable = pair->first;
@@ -115,15 +113,12 @@ namespace interpreter {
 
 				const llvm::BasicBlock* next_block = &*f->begin();
 				context_.Top()->PC.Set(next_block);
-				tracer_.Func(f);
-				//tracer_.Block(next_block);
-				//TODO: refactoring
 				while (next_block != nullptr) {
 					visit (const_cast<llvm::BasicBlock*>(next_block));
 					next_block = context_.Top()->PC.Get();
 				}
+
 				ret_val = context_.Top()->RetVal.Get();
-				tracer_.Call(f, args, false);
 			}
 			context_.Pop(); // pop
 		}
@@ -283,36 +278,54 @@ namespace interpreter {
 		meta_eval_.Conversion(lhs_address, holder, MetaKind::SExt, width);
 	}
 
-	void Evaluator::HandleCallInst(const llvm::CallInst &inst) {
-		auto called = inst.getCalledFunction();
-		assert (called != nullptr and "indirect function invocation not supported");
-		memory::ArgMapPtr argmap = utils::Create<ArgMap>();
-		auto args = called->arg_begin();
+	llvm::Function* ExtractCalledFunction(const llvm::CallInst& inst) {
+		llvm::Function* called = inst.getCalledFunction();
+		assert(called != nullptr and "invalid function call");
+		return called;
+	}
 
+	void Evaluator::HandleCallInst(const llvm::CallInst &inst) {
+		auto called = ExtractCalledFunction(inst);
+		ArgMapPtr argmap = InitArgMap(inst);
+		HolderPtr ret_holder = CallFunction(called, argmap);
+		InitFuncRet(ret_holder, inst, called);
+	}
+
+	//----------------------------------------------------------------------------
+	// Helpers
+
+	HolderPtr Evaluator::ProduceOperandHolder(const Value* operand) {
+		HolderPtr holder = nullptr;
+		if (llvm::isa<llvm::ConstantInt>(operand)) {
+			holder = ProduceHolder(llvm::dyn_cast<llvm::ConstantInt>(operand));
+		}
+		else
+			holder = context_.Top()->Load(operand);
+		assert (holder != nullptr);
+		return holder;
+	}
+
+	memory::ArgMapPtr Evaluator::InitArgMap(const llvm::CallInst &inst) {
+		memory::ArgMapPtr argmap = utils::Create<ArgMap>();
+		auto called = ExtractCalledFunction(inst);
+		auto args = called->arg_begin();
 		for (auto i = 0; i != inst.getNumArgOperands(); i++) {
 			auto operand = inst.getArgOperand(i);
-			HolderPtr holder = nullptr;
 
-			if (llvm::isa<llvm::ConstantInt>(operand)) {
-				holder = ProduceHolder(llvm::dyn_cast<llvm::ConstantInt>(operand));
-			}
-			else
-				holder = context_.Top()->Load(operand);
+			HolderPtr holder = ProduceOperandHolder(operand);
 
-			assert (holder != nullptr);
 			argmap->emplace(args, holder);
 			args++;
 		}
-
 		assert (args == called->arg_end());
+		return argmap;
+	}
 
-		memory::HolderPtr ret_holder = CallFunction(called, argmap);
-
+	void Evaluator::InitFuncRet(memory::HolderPtr ret_holder, const llvm::CallInst& inst, llvm::Function* called) {
 		if (called->getReturnType()->isVoidTy()) {
-			assert (utils::instanceof<Undef>(ret_holder));
-		}
-		else {
-			assert (ret_holder != nullptr);
+			assert(utils::instanceof<Undef>(ret_holder));
+		} else {
+			assert(ret_holder != nullptr);
 			auto lhs_address = context_.Top()->GetLocation(&inst);
 			meta_eval_.Assign(lhs_address, ret_holder);
 		}
