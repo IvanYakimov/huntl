@@ -159,8 +159,9 @@ namespace interpreter {
 
 	// Alloca
 	void Evaluator::HandleAllocaInst (const llvm::AllocaInst &inst, const llvm::ConstantInt *allocated, const llvm::Type* allocated_type) {
-		auto holder = ProduceHolder(allocated);
-		meta_eval_.Alloca(inst, holder);
+		//auto holder = ProduceHolder(allocated);
+		//meta_eval_.Alloca(inst, holder);
+		meta_eval_.Alloca(inst, allocated_type);
 	}
 
 	// Load

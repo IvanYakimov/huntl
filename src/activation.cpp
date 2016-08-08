@@ -37,6 +37,11 @@ namespace memory {
 		program_counter_ = program_counter;
 	}
 
+	memory::RamAddress Activation::Alloca(const llvm::Type* allocated) {
+		auto addr = ram_.Stack().Alloca(allocated);
+		return addr;
+	}
+
 	memory::RamAddress Activation::Alloca(HolderPtr initial) {
 		// note allocated value is not directly available (throw the display), but only from RAM address
 		auto addr = ram_.Stack().Alloca(initial, memory::Ram::def_align_);

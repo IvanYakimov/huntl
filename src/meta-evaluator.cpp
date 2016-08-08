@@ -72,6 +72,13 @@ namespace interpreter {
 			assert (false and "unexpected");
 	}
 
+	void MetaEvaluator::Alloca(const llvm::AllocaInst &lhs, const llvm::Type* allocated_ty) {
+		auto lhs_address = context_.Top()->GetLocation(&lhs);
+		auto target_address = context_.Top()->Alloca(allocated_ty);
+		auto target_address_holder = memory::Concrete::Create(interpreter::MetaInt(memory::Ram::machine_word_bitsize_, target_address));
+		Assign(lhs_address, target_address_holder);
+	}
+
 	void MetaEvaluator::Alloca(const llvm::AllocaInst &lhs, memory::HolderPtr initial) {
 		auto lhs_address = context_.Top()->GetLocation(&lhs);
 		auto target_address = context_.Top()->Alloca(initial);

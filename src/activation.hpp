@@ -43,6 +43,7 @@ namespace memory {
 		private:
 			const llvm::BasicBlock* program_counter_ = nullptr;
 		} PC;
+		memory::RamAddress Alloca(const llvm::Type* allocated);
 		memory::RamAddress Alloca(HolderPtr initial);
 		HolderPtr Load(RegisterName address);
 		// get location (with lazy allocation)

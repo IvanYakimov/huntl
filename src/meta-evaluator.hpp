@@ -36,6 +36,7 @@ namespace interpreter {
 		void Conversion (memory::RamAddress lhs, memory::HolderPtr rhs, utils::MetaKind kind, unsigned new_width);
 		void Return(const llvm::ReturnInst &inst, memory::HolderPtr holder);
 		void Return(const llvm::ReturnInst &inst);
+		void Alloca(const llvm::AllocaInst &lhs, const llvm::Type* allocated_ty);
 		void Alloca(const llvm::AllocaInst &lhs, memory::HolderPtr initial);
 		void Load(const llvm::LoadInst &lhs, memory::HolderPtr ptr);
 		void Store(const llvm::StoreInst &inst, memory::HolderPtr value, memory::HolderPtr ptr);

@@ -8,6 +8,9 @@
 #include <memory>
 
 #include "ram-delc.hpp"
+//#include "ram.hpp"
+
+#include "llvm/IR/Type.h"
 
 namespace memory {
 	class Stack;
@@ -17,6 +20,7 @@ namespace memory {
 		Stack();
 		~Stack();
 		RamAddress Alloca(HolderPtr holder, Alignment align);
+		RamAddress Alloca(const llvm::Type* allocated);
 		void Write(HolderPtr holder, RamAddress addr, Alignment align);
 		HolderPtr Read(RamAddress addr, Alignment align);
 		void Push();

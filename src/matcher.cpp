@@ -63,6 +63,7 @@ namespace interpreter {
 		//auto op = inst.getOperand(0);
 		//std::cerr << utils::Printer::Do(op) << std::endl;
 		//llvm::errs() << *inst.getType() << "\n";
+		//llvm::errs() << inst << "\n";
 		ConstantInt *constant_int = NULL;
 		Type *allocated_type = inst.getAllocatedType();
 		if (Case (inst, &constant_int))
