@@ -19,13 +19,13 @@ namespace memory {
 	public:
 		Stack();
 		~Stack();
-		RamAddress Alloca(HolderPtr holder, Alignment align);
 		RamAddress Alloca(const llvm::Type* allocated);
 		void Write(HolderPtr holder, RamAddress addr, Alignment align);
 		HolderPtr Read(RamAddress addr, Alignment align);
 		void Push();
 		void Pop();
 	private:
+		RamAddress Alloca(HolderPtr holder, Alignment align);
 		class MemoryCell {
 		public:
 			MemoryCell(HolderPtr holder, Alignment align);
