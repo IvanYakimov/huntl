@@ -43,6 +43,7 @@ namespace memory {
 		private:
 			const llvm::BasicBlock* program_counter_ = nullptr;
 		} PC;
+		memory::RamAddress Alloca(HolderPtr initial);
 		memory::RamAddress Alloca(const llvm::Type* allocated);
 		HolderPtr Load(RegisterName address);
 		// get location (with lazy allocation)
@@ -50,7 +51,6 @@ namespace memory {
 		void Store(RegisterName address, HolderPtr holder);
 		void Print();
 	private:
-		memory::RamAddress Alloca(HolderPtr initial);
 		//memory::LocalMemoryPtr local_memory_;
 		memory::RamAddress TryToAllocate(const llvm::Value* variable);
 		std::map<RegisterName, RamAddress> local_display_;
