@@ -2,6 +2,30 @@
 #include "sym-limits.h"
 #include <limits.h>
 
+int ptrtoint_helper(int dummy) {
+	int c1 = 28;
+	char *x1 = c1;
+	unsigned long x1_ptr = x1;
+	short *x2 = c1;
+	unsigned long x2_ptr = x2;
+	int *x3 = c1;
+	unsigned long x3_ptr = x3;
+	long *x4 = c1;
+	unsigned long x4_ptr = x4;
+	if (x1_ptr == c1 && x2_ptr == c1 && x3_ptr == c1 && x4_ptr == c1)
+		return 1;
+	else
+		return 0;
+}
+void gen_ptrtoint_helper(int x, int r);
+void test_ptrtoint() {
+	int a = 28, r = 0;
+	//a = mksym_i32();
+	limit2_i32(&a, 0, 28);
+	r = ptrtoint_helper(a);
+	gen_ptrtoint_helper(a,r);
+}
+
 void twice_helper(int *x) {
 	*x = *x * 2;
 }

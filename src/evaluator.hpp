@@ -86,6 +86,10 @@ namespace interpreter {
 		virtual void HandleZExtInst (const llvm::ZExtInst &inst, const llvm::Value* target, const llvm::IntegerType* dest_ty);
 		// SExt
 		virtual void HandleSExtInst (const llvm::SExtInst &inst, const llvm::Value* target, const llvm::IntegerType* dest_ty);
+		// PtrToInt
+		virtual void HandlePtrToInt (const llvm::PtrToIntInst &inst, const llvm::Value* target, const llvm::IntegerType* dest_ty);
+		// IntToPtr
+		virtual void HandleIntToPtr (const llvm::IntToPtrInst &inst, const llvm::Value* target, const llvm::PointerType* dest_ty);
 
 		// Call
 		virtual void HandleCallInst(const llvm::CallInst &inst);

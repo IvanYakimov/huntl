@@ -81,9 +81,10 @@ namespace interpreter {
 
 	void Matcher::visitTruncInst (const llvm::TruncInst &inst) {
 		Value *value = NULL;
-		Type *ty = inst.getDestTy();
+		/*Type *ty = inst.getDestTy();
 		assert (ty->isIntegerTy());
-		IntegerType *dest_ty = llvm::dyn_cast<IntegerType>(ty);
+		IntegerType *dest_ty = llvm::dyn_cast<IntegerType>(ty);*/
+		IntegerType *dest_ty = ExtractDestType<IntegerType, TruncInst>(inst);//llvm::dyn_cast<IntegerType>(ty);
 		if (Case (inst, &value))
 			HandleTruncInst(inst, value, dest_ty);
 		else
@@ -92,9 +93,7 @@ namespace interpreter {
 
 	void Matcher::visitZExtInst (const llvm::ZExtInst &inst) {
 		Value *value = NULL;
-		Type *ty = inst.getDestTy();
-		assert (ty->isIntegerTy());
-		IntegerType *dest_ty = llvm::dyn_cast<IntegerType>(ty);
+		IntegerType *dest_ty = ExtractDestType<IntegerType, ZExtInst>(inst);
 		if (Case (inst, &value))
 			HandleZExtInst (inst, value, dest_ty);
 		else
@@ -103,9 +102,7 @@ namespace interpreter {
 
 	void Matcher::visitSExtInst (const llvm::SExtInst &inst) {
 		Value *value = NULL;
-		Type *ty = inst.getDestTy();
-		assert (ty->isIntegerTy());
-		IntegerType *dest_ty = llvm::dyn_cast<IntegerType>(ty);
+		IntegerType *dest_ty = ExtractDestType<IntegerType, SExtInst>(inst);
 		if (Case (inst, &value))
 			HandleSExtInst (inst, value, dest_ty);
 		else
@@ -113,11 +110,21 @@ namespace interpreter {
 	}
 
 	void Matcher::visitPtrToIntInst (const llvm::PtrToIntInst &inst) {
-		assert (false and "not implemented");
+		Value *value = NULL;
+		IntegerType *dest_ty = ExtractDestType<IntegerType, PtrToIntInst>(inst);
+		if (Case (inst, &value))
+			HandlePtrToInt(inst, value, dest_ty);
+		else
+			assert (false and "not implemented");
 	}
 
 	void Matcher::visitIntToPtrInst (const llvm::IntToPtrInst &inst) {
-		assert (false and "not implemented");
+		Value *value = NULL;
+		PointerType *dest_ty = ExtractDestType<PointerType, IntToPtrInst>(inst);
+		if (Case (inst, &value))
+			HandleIntToPtr(inst, value, dest_ty);
+		else
+			assert (false and "not implemented");
 	}
 
 	void Matcher::visitBitCastInst (const llvm::BitCastInst &inst) {
@@ -141,6 +148,15 @@ namespace interpreter {
 
 	//--------------------
 	// Case matcher
+	template <class D, class I>
+	D* Matcher::ExtractDestType(const I &inst) {
+		Type *ty = inst.getDestTy();
+		//assert (ty->isIntegerTy());
+		D* res = llvm::dyn_cast<D>(ty);
+		assert (res != nullptr);
+		return res;
+	}
+
 	template <typename... Targs>
 	bool Matcher::Case(const Instruction &inst, Targs... Fargs) {
 		return CaseHelper::Do(inst, 0, Fargs...);

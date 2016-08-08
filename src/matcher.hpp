@@ -25,6 +25,7 @@ http://www.cplusplus.com/reference/type_traits/remove_pointer/
 # include <memory>
 # include <exception>
 # include <ostream>
+#include <iostream>
 
 namespace interpreter {
 	//TODO: refactoring
@@ -86,10 +87,17 @@ namespace interpreter {
 		virtual void HandleZExtInst (const llvm::ZExtInst &inst, const llvm::Value* target, const llvm::IntegerType* dest_ty) = 0;
 		// SExt
 		virtual void HandleSExtInst (const llvm::SExtInst &inst, const llvm::Value* target, const llvm::IntegerType* dest_ty) = 0;
+		// IntToPtr
+		virtual void HandlePtrToInt (const llvm::PtrToIntInst &inst, const llvm::Value* target, const llvm::IntegerType* dest_ty) = 0;
+		// PtrToInt
+		virtual void HandleIntToPtr (const llvm::IntToPtrInst &inst, const llvm::Value* target, const llvm::PointerType* dest_ty) = 0;
 
 		// Call
 		virtual void HandleCallInst(const llvm::CallInst &inst) = 0;
 	protected:
+		template <class D, class I>
+		D* ExtractDestType(const I &inst);
+
 		// "pattern matching"
 		template <typename... Targs>
 		bool Case (const llvm::Instruction &inst, Targs... Fargs); // inductive casen
