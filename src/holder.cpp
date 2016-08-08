@@ -13,8 +13,6 @@ namespace memory {
 		return (utils::instanceof<Undef>(holder));
 	}
 
-
-
 	const solver::SharedExpr& GetExpr(memory::HolderPtr holder) {
 		assert(memory::IsSymbolic(holder));
 		return Object::UpCast<memory::Symbolic>(holder)->Get();

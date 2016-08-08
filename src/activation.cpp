@@ -38,12 +38,8 @@ namespace memory {
 	}
 
 	memory::RamAddress Activation::Alloca(HolderPtr initial) {
-		//local_memory_->Alloca(address, initial);
-		//TODO: alignment
-		auto addr = ram_.Stack().Alloca(initial, memory::Ram::def_align_);
 		// note allocated value is not directly available (throw the display), but only from RAM address
-		//local_display_.emplace(inst, addr);
-		//assert (false);
+		auto addr = ram_.Stack().Alloca(initial, memory::Ram::def_align_);
 		return addr;
 	}
 

@@ -19,6 +19,8 @@ http://www.cplusplus.com/reference/type_traits/remove_pointer/
 # include "llvm/Support/raw_ostream.h"
 # include "llvm/Support/Debug.h"
 
+#include "printer.hpp"
+
 # include <type_traits>
 # include <map>
 # include <string>
@@ -75,7 +77,7 @@ namespace interpreter {
 		virtual void HandleICmpInst (const llvm::ICmpInst &inst, const llvm::Value *lhs, const llvm::Value *rhs) = 0;
 
 		// Alloca
-		virtual void HandleAllocaInst (const llvm::AllocaInst &inst, const llvm::ConstantInt *allocated) = 0;
+		virtual void HandleAllocaInst (const llvm::AllocaInst &inst, const llvm::ConstantInt *allocated, const llvm::Type *allocated_type) = 0;
 		// Load
 		virtual void HandleLoadInst (const llvm::LoadInst &inst, const llvm::Value *ptr) = 0;
 		// Store

@@ -60,9 +60,13 @@ namespace interpreter {
 	}
 
 	void Matcher::visitAllocaInst (const AllocaInst &inst) {
+		//auto op = inst.getOperand(0);
+		//std::cerr << utils::Printer::Do(op) << std::endl;
+		//llvm::errs() << *inst.getType() << "\n";
 		ConstantInt *constant_int = NULL;
+		Type *allocated_type = inst.getAllocatedType();
 		if (Case (inst, &constant_int))
-			HandleAllocaInst(inst, constant_int);
+			HandleAllocaInst(inst, constant_int, allocated_type);
 		else
 			assert(false && "not implemented");
 	}

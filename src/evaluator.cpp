@@ -42,6 +42,10 @@ namespace interpreter {
 			std::smatch gen_TARGET_matches;
 			auto matched_gen_TARGETs = std::regex_search(name, gen_TARGET_matches, gen_TARGET_regex);
 
+			std::regex str_TEXT_regex("str_");
+			std::smatch str_TEXT_matches;
+			auto matched_str_TEXTs = std::regex_search(name, str_TEXT_matches, str_TEXT_regex);
+
 			if (matched_mksym == 1) {
 				std::string suffix = mksym_matches.suffix();
 				std::regex iuN_regex("[[:digit:]]+");
@@ -67,6 +71,9 @@ namespace interpreter {
 					exit(0);
 				}
 				builtins_.emplace(f_it, Gen(context_, target, m));
+			}
+			else if (matched_str_TEXTs == 1) {
+
 			}
 			else {
 				//this is ordinary function
@@ -151,7 +158,7 @@ namespace interpreter {
 	}
 
 	// Alloca
-	void Evaluator::HandleAllocaInst (const llvm::AllocaInst &inst, const llvm::ConstantInt *allocated) {
+	void Evaluator::HandleAllocaInst (const llvm::AllocaInst &inst, const llvm::ConstantInt *allocated, const llvm::Type* allocated_type) {
 		auto holder = ProduceHolder(allocated);
 		meta_eval_.Alloca(inst, holder);
 	}
