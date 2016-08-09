@@ -81,7 +81,7 @@ namespace interpreter {
 		virtual void HandleStoreInst (const llvm::StoreInst &inst, const llvm::Value *value, const llvm::Value *ptr);
 
 		// GetElementPtr
-		virtual void HandleGetElementPtr (const llvm::GetElementPtrInst& inst, const llvm::Value *target, const llvm::ConstantInt *start_from, const llvm::ConstantInt *index);
+		virtual void HandleGetElementPtr (const llvm::GetElementPtrInst& inst, const llvm::Value *target, const llvm::Value *start_from, const llvm::Value *index);
 
 		// Trunc
 		virtual void HandleTruncInst (const llvm::TruncInst &inst, const llvm::Value* target, const llvm::IntegerType* dest_ty);

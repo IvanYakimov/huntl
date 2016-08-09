@@ -78,7 +78,7 @@ namespace interpreter {
 		auto target_address = context_.Top()->Alloca(allocated_ty);
 		auto target_address_holder = memory::Concrete::Create(interpreter::MetaInt(memory::Ram::machine_word_bitsize_, target_address));
 		Assign(lhs_address, target_address_holder);
-		std::cerr << "alloca addr: " << *target_address_holder << std::endl;
+		//std::cerr << "alloca addr: " << *target_address_holder << std::endl;
 	}
 
 	void MetaEvaluator::Alloca(const llvm::AllocaInst &lhs, memory::HolderPtr initial) {
@@ -89,7 +89,7 @@ namespace interpreter {
 	}
 
 	void MetaEvaluator::Load(const llvm::LoadInst &lhs, memory::HolderPtr ptr_holder) {
-		std::cerr << "load from pointer: " << *ptr_holder << std::endl;
+		//std::cerr << "load from pointer: " << *ptr_holder << std::endl;
 		assert (memory::IsConcrete(ptr_holder));
 		MetaIntRef ptr_holder_value = memory::GetValue(ptr_holder);
 		// dereferencing
@@ -100,7 +100,7 @@ namespace interpreter {
 	}
 
 	void MetaEvaluator::Store(const llvm::StoreInst &inst, memory::HolderPtr value_holder, memory::HolderPtr ptr_holder) {
-		std::cerr << "store " << *value_holder << " to ptr: " << *ptr_holder << std::endl;
+		//std::cerr << "store " << *value_holder << " to ptr: " << *ptr_holder << std::endl;
 		assert (memory::IsConcrete(ptr_holder));
 		MetaIntRef ptr_concrete_value = memory::GetValue(ptr_holder);
 		// dereferencing
@@ -124,8 +124,8 @@ namespace interpreter {
 		assert (sizeof(result) == sizeof(memory::RamAddress));
 		HolderPtr result_holder = Concrete::Create(MetaInt(memory::kWordSize, result));
 		auto lhs_address = context_.Top()->GetLocation(&inst);
-		std::cerr << "base = " << base << " idx = " << idx << " ptr = " << ptr << " result = " << result << " top-address = " << context_.Ram().Stack().UpperBound() << std::endl;
-		context_.Ram().Stack().Print();
+		//std::cerr << "base = " << base << " idx = " << idx << " ptr = " << ptr << " result = " << result << " top-address = " << context_.Ram().Stack().UpperBound() << std::endl;
+		//context_.Ram().Stack().Print();
 		Assign(lhs_address, result_holder);
 	}
 

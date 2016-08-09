@@ -177,7 +177,7 @@ namespace interpreter {
 		meta_eval_.Store(inst, value_holder, ptr_holder);
 	}
 
-	void Evaluator::HandleGetElementPtr (const llvm::GetElementPtrInst& inst, const llvm::Value *target, const llvm::ConstantInt *start_from, const llvm::ConstantInt *index) {
+	void Evaluator::HandleGetElementPtr (const llvm::GetElementPtrInst& inst, const llvm::Value *target, const llvm::Value *start_from, const llvm::Value *index) {
 		HolderPtr target_holder = ProduceHolder(target);
 		HolderPtr base_holder = ProduceHolder(start_from);
 		HolderPtr idx_holder = ProduceHolder(index);

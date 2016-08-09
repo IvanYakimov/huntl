@@ -83,7 +83,7 @@ namespace interpreter {
 	// getelementptr <object type> <begin> <"shift">
 	void Matcher::visitGetElementPtrInst (const llvm::GetElementPtrInst &inst) {
 		Value* target = NULL;
-		ConstantInt *begin = NULL, *idx = NULL;
+		Value *begin = NULL, *idx = NULL;
 		inst.isInBounds();
 		if (Case (inst, &target, &begin, &idx)) {
 			HandleGetElementPtr(inst, target, begin, idx);
