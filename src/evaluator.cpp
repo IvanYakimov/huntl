@@ -177,6 +177,24 @@ namespace interpreter {
 		meta_eval_.Store(inst, value_holder, ptr_holder);
 	}
 
+	void Evaluator::HandleGetElementPtr (const llvm::GetElementPtrInst& inst, const llvm::Value *target, const llvm::ConstantInt *start_from, const llvm::ConstantInt *index) {
+		HolderPtr target_holder = ProduceHolder(target);
+		HolderPtr base_holder = ProduceHolder(start_from);
+		HolderPtr idx_holder = ProduceHolder(index);
+		if (inst.isInBounds()) {
+			Type* ty = target->getType();
+			if (ty->isPointerTy() and ty->getContainedType(0)->isArrayTy()) {
+				ArrayType* arr_ty = llvm::dyn_cast<ArrayType>(ty->getContainedType(0));
+				meta_eval_.GetElementPtr(inst, arr_ty, target_holder, base_holder, idx_holder);
+			}
+			else
+				assert (! "only ptr to array supported");
+
+		}
+		else
+			assert (! "unbound access not implemented");
+	}
+
 	// Trunc
 	void Evaluator::HandleTruncInst (const llvm::TruncInst &inst, const llvm::Value* target, const llvm::IntegerType* dest_ty) {
 		HolderPtr holder = ProduceHolder(target);

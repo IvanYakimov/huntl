@@ -47,6 +47,7 @@ namespace memory {
 			auto first_el_addr = Alloca(el_ty);
 			for (int i = 1; i < len; i++)
 				Alloca(el_ty);
+			return first_el_addr;
 		}
 		else
 			assert (! "not implemented");
@@ -94,6 +95,18 @@ namespace memory {
 				it = ram_.erase(it);
 			++it;
 		}
+	}
+
+	void Stack::Print() {
+		std::cerr << "Stack trace:\n";
+		for (auto it = ram_.begin(); it != ram_.end(); ++it) {
+			std::cerr << it->first << " -> " << *it->second->holder_ << "\n";
+		}
+		std::cerr << "\n";
+	}
+
+	unsigned long Stack::UpperBound() {
+		return segment_stack_.top();
 	}
 }
 

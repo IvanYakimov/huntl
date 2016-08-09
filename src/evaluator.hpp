@@ -80,6 +80,9 @@ namespace interpreter {
 		// Store
 		virtual void HandleStoreInst (const llvm::StoreInst &inst, const llvm::Value *value, const llvm::Value *ptr);
 
+		// GetElementPtr
+		virtual void HandleGetElementPtr (const llvm::GetElementPtrInst& inst, const llvm::Value *target, const llvm::ConstantInt *start_from, const llvm::ConstantInt *index);
+
 		// Trunc
 		virtual void HandleTruncInst (const llvm::TruncInst &inst, const llvm::Value* target, const llvm::IntegerType* dest_ty);
 		// ZExt

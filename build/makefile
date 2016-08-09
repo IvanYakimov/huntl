@@ -41,7 +41,7 @@ LLVMF_DYNAMIC = $(filter-out -g -fno-exceptions -O2 -std=c++11, $(shell llvm-con
 LLVM_STATIC = $(filter-out -g -fno-exceptions -O2 -std=c++11, $(shell llvm-config --cxxflags --ldflags --libs core engine)) \
 -ltinfo -ldl
 DBGFLAGS = -D DBG -U NDEBUG
-CLANG = clang -Wint-conversion
+CLANG = clang -S -emit-llvm -O0 -Wint-conversion
 
 SRC = ../src
 TST = ../test
@@ -86,21 +86,18 @@ clean:
 benchmarks: $(BENCHMARKS)
 	touch benchmarks
 	
-	
-BENCH_FLAGS = -O0
-	
 $(BLAH):
 test-%.ll: test-%.c %.c
-	clang -S -emit-llvm $(BENCH_FLAGS) $^
+	$(CLANG) $^
 		
 	
 $(BENCHMARKS):
 %.ll: %.c
-	$(CLANG) -S -emit-llvm $(BENCH_FLAGS) $<
+	$(CLANG) $<
 
 # < helpers ------------------------------------------------
 test.ll: test.c
-	$(CLANG) -S -emit-llvm -O0 $< -Wimplicit-int
+	$(CLANG) $< 
 
 api-pattern.cpp: test.ll
 	llc -march=cpp $< -o api-pattern.cpp

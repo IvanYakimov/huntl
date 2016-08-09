@@ -6,6 +6,7 @@
 #include <map>
 #include <stack>
 #include <memory>
+#include <iostream>
 
 #include "ram-delc.hpp"
 //#include "ram.hpp"
@@ -25,6 +26,8 @@ namespace memory {
 		HolderPtr Read(RamAddress addr, Alignment align);
 		void Push();
 		void Pop();
+		unsigned long UpperBound();
+		void Print();
 	private:
 		class MemoryCell {
 		public:

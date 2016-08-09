@@ -80,8 +80,16 @@ namespace interpreter {
 			assert(false);
 	}
 
+	// getelementptr <object type> <begin> <"shift">
 	void Matcher::visitGetElementPtrInst (const llvm::GetElementPtrInst &inst) {
-		assert (false and "not implemented");
+		Value* target = NULL;
+		ConstantInt *begin = NULL, *idx = NULL;
+		inst.isInBounds();
+		if (Case (inst, &target, &begin, &idx)) {
+			HandleGetElementPtr(inst, target, begin, idx);
+		}
+		else
+			assert (false and "not implemented");
 	}
 
 	void Matcher::visitTruncInst (const llvm::TruncInst &inst) {

@@ -10,6 +10,7 @@ namespace interpreter {
 	using utils::MetaKind;
 	using llvm::ICmpInst;
 	using std::placeholders::_1; using std::placeholders::_2; using std::placeholders::_3; using std::placeholders::_4;
+	using llvm::IntegerType; using llvm::Type; using llvm::dyn_cast; using llvm::isa;
 
 	MetaEvaluator::MetaEvaluator(interpreter::ContextRef context) :
 			context_(context),
@@ -77,6 +78,7 @@ namespace interpreter {
 		auto target_address = context_.Top()->Alloca(allocated_ty);
 		auto target_address_holder = memory::Concrete::Create(interpreter::MetaInt(memory::Ram::machine_word_bitsize_, target_address));
 		Assign(lhs_address, target_address_holder);
+		std::cerr << "alloca addr: " << *target_address_holder << std::endl;
 	}
 
 	void MetaEvaluator::Alloca(const llvm::AllocaInst &lhs, memory::HolderPtr initial) {
@@ -87,6 +89,7 @@ namespace interpreter {
 	}
 
 	void MetaEvaluator::Load(const llvm::LoadInst &lhs, memory::HolderPtr ptr_holder) {
+		std::cerr << "load from pointer: " << *ptr_holder << std::endl;
 		assert (memory::IsConcrete(ptr_holder));
 		MetaIntRef ptr_holder_value = memory::GetValue(ptr_holder);
 		// dereferencing
@@ -97,11 +100,33 @@ namespace interpreter {
 	}
 
 	void MetaEvaluator::Store(const llvm::StoreInst &inst, memory::HolderPtr value_holder, memory::HolderPtr ptr_holder) {
+		std::cerr << "store " << *value_holder << " to ptr: " << *ptr_holder << std::endl;
 		assert (memory::IsConcrete(ptr_holder));
 		MetaIntRef ptr_concrete_value = memory::GetValue(ptr_holder);
 		// dereferencing
 		memory::RamAddress target_memory_cell = ptr_concrete_value.getZExtValue();
 		Assign(target_memory_cell, value_holder);
+	}
+
+	void MetaEvaluator::GetElementPtr(const llvm::GetElementPtrInst &inst, llvm::ArrayType* arr_ty_bound, memory::HolderPtr target_ptr_holder, memory::HolderPtr base_holder, memory::HolderPtr arr_idx_holder) {
+		assert (IsConcrete(target_ptr_holder) and IsConcrete(base_holder) and IsConcrete(arr_idx_holder) and "all args must be concrete values");
+		IntegerType* el_ty = dyn_cast<IntegerType>(arr_ty_bound->getArrayElementType());
+		assert(el_ty != nullptr and "only integer arrays are supported");
+		auto el_width = el_ty->getBitWidth();
+		assert (el_width % 8 == 0);
+		auto el_align = el_width / 8;
+		// TODO: boundary checking
+		unsigned long base = GetValue(base_holder).getSExtValue();
+		unsigned long idx = GetValue(arr_idx_holder).getSExtValue();
+		unsigned long ptr = GetValue(target_ptr_holder).getSExtValue();
+		assert (base == 0 and "walking throw the pointer is not expected");
+		unsigned long result = ptr + idx * el_align;
+		assert (sizeof(result) == sizeof(memory::RamAddress));
+		HolderPtr result_holder = Concrete::Create(MetaInt(memory::kWordSize, result));
+		auto lhs_address = context_.Top()->GetLocation(&inst);
+		std::cerr << "base = " << base << " idx = " << idx << " ptr = " << ptr << " result = " << result << " top-address = " << context_.Ram().Stack().UpperBound() << std::endl;
+		context_.Ram().Stack().Print();
+		Assign(lhs_address, result_holder);
 	}
 
 	void MetaEvaluator::Return(const llvm::ReturnInst &inst, HolderPtr holder) {
