@@ -38,11 +38,13 @@ namespace utils {
 			return val_;
 		}
 
-		virtual bool Equals (const Object& rhs) const {
+		virtual bool Equals (const Object& rhs) const { /*
 			auto cmp = [] (const TheWrapper& l, const TheWrapper& r) -> bool {
 				return Compare(l.Get(), r.Get());
 			};
 			return EqualsHelper<TheWrapper>(*this, rhs, cmp);
+			*/
+			return val_ == static_cast<const TheWrapper&>(rhs).Get();
 		}
 
 		virtual std::ostream& ToStream(std::ostream &os, const Object& obj) const {

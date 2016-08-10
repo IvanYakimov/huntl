@@ -14,6 +14,7 @@
 #include <functional>
 
 #include <ostream>
+#include <list>
 
 namespace interpreter {
  	 class TestGenerator {
@@ -29,7 +30,22 @@ namespace interpreter {
  		 llvm::Function* target_;
  		 memory::ArgMapPtr args_;
  		 llvm::Module* module_;
- 	 };
+ 		 memory::ConcretePtr HandleInteger(llvm::IntegerType* ty, memory::HolderPtr value);
+ 		 std::list<memory::ConcretePtr> HandlePointer(llvm::PointerType* ty, memory::HolderPtr ptr);
+ 		 memory::ConcretePtr HandleScalar(memory::HolderPtr holder);
+ 		 bool JIT(std::list<memory::ConcretePtr> arg_sol_list, memory::ConcretePtr ret_sol);
+};
 }
 
 #endif
+
+
+
+
+
+
+
+
+
+
+
