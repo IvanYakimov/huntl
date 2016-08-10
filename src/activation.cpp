@@ -6,6 +6,8 @@ namespace memory {
 	using memory::HolderPtr;
 	using utils::Case;
 	using utils::CaseHelper;
+	using llvm::Type; using llvm::ArrayType; using llvm::IntegerType; using llvm::PointerType;
+	using interpreter::MetaInt;
 
 	Activation::Activation(RamRef ram) : RetVal(), PC(), ram_(ram) {
 		//local_memory_ = memory::LocalMemory::Create();
@@ -37,16 +39,50 @@ namespace memory {
 		program_counter_ = program_counter;
 	}
 
+	/*
 	memory::RamAddress Activation::Alloca(const llvm::Type* allocated) {
 		auto addr = ram_.Stack().Alloca(allocated);
 		return addr;
 	}
+	*/
 
+	RamAddress Activation::Alloca(const Type* allocated) {
+		if (allocated->isIntegerTy()) {
+			const IntegerType* int_ty = llvm::dyn_cast<IntegerType>(allocated);
+			auto width = int_ty->getBitWidth();
+			auto val = 1;
+			auto holder = memory::Concrete::Create(MetaInt(width, val));
+			assert (width % 8 == 0);
+			return ram_.Stack().Alloca(holder, memory::kDefAlign /*width / 8*/);
+		}
+		else if (allocated->isPointerTy()) {
+			auto width = memory::kWordSize;
+			//std::cerr << "allocate pointer" << std::endl;
+			auto val = 1;
+			auto holder = memory::Concrete::Create(MetaInt(width, val));
+			assert (width % 8 == 0);
+			return ram_.Stack().Alloca(holder, memory::kDefAlign /*width / 8*/);
+		}
+		else if (allocated->isArrayTy()) {
+			const ArrayType* array_ty = llvm::dyn_cast<ArrayType>(allocated);
+			const Type* el_ty = array_ty->getArrayElementType();
+			auto len = array_ty->getArrayNumElements();
+			auto first_el_addr = Alloca(el_ty);
+			for (int i = 1; i < len; i++)
+				Alloca(el_ty);
+			return first_el_addr;
+		}
+		else
+			assert (! "not implemented");
+	}
+
+	/*
 	memory::RamAddress Activation::Alloca(HolderPtr initial) {
 		// note allocated value is not directly available (throw the display), but only from RAM address
 		auto addr = ram_.Stack().Alloca(initial, memory::Ram::def_align_);
 		return addr;
 	}
+	*/
 
 	HolderPtr Activation::Load(RegisterName register_name) {
 		auto it = local_display_.find(register_name);
