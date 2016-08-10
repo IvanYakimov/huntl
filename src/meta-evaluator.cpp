@@ -81,12 +81,14 @@ namespace interpreter {
 		//std::cerr << "alloca addr: " << *target_address_holder << std::endl;
 	}
 
+	/*
 	void MetaEvaluator::Alloca(const llvm::AllocaInst &lhs, memory::HolderPtr initial) {
 		auto lhs_address = context_.Top()->GetLocation(&lhs);
 		auto target_address = context_.Top()->Alloca(initial);
 		auto target_address_holder = memory::Concrete::Create(interpreter::MetaInt(memory::Ram::machine_word_bitsize_, target_address));
 		Assign(lhs_address, target_address_holder);
 	}
+	*/
 
 	void MetaEvaluator::Load(const llvm::LoadInst &lhs, memory::HolderPtr ptr_holder) {
 		//std::cerr << "load from pointer: " << *ptr_holder << std::endl;
