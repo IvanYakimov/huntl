@@ -11,7 +11,7 @@ bool VoyagerPass::runOnFunction (llvm::Function &func) {
 }
 */
 
-#define JIT_EXPERIMENT
+//#define JIT_EXPERIMENT
 
 void JITExperiment(llvm::Module &M) {
 	char buff[] = "hello world";

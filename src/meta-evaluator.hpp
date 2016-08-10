@@ -41,6 +41,7 @@ namespace interpreter {
 		void Load(const llvm::LoadInst &lhs, memory::HolderPtr ptr);
 		void Store(const llvm::StoreInst &inst, memory::HolderPtr value, memory::HolderPtr ptr);
 		void GetElementPtr(const llvm::GetElementPtrInst &inst, llvm::ArrayType* arr_ty_bound, memory::HolderPtr target_ptr_holder, memory::HolderPtr base_holder, memory::HolderPtr arr_idx_holder);
+		void GetElementPtr(const llvm::GetElementPtrInst &inst, llvm::ArrayType* arr_ty_bound, memory::HolderPtr target_ptr_holder, memory::HolderPtr arr_idx_holder);
 	private:
 		ContextRef context_;
 		ConcreteEval concrete_eval_;

@@ -1,16 +1,34 @@
-//#include "built-in.h"
-//#include "sym-limits.h"
-#include "str.c"
+#include "built-in.h"
+#include "sym-limits.h"
+//#include <limits.h>
 
-void gen_strlen(const char *cs, size_t res);
-void mksym_str(char* str, int n);
-void str_hello(char* str, int n);
+typedef unsigned long size_t;
 
-void test_() {
-	char target[6];
-	str_hello(target, 6);
-	size_t res = strlen(target);
-	gen_strlen(target,res);
+void gen_strlen(const char *s, size_t res);
+size_t strlen(const char *s)
+{
+	const char *sc;
+
+	for (sc = s; *sc != '\0'; ++sc)
+		;
+	return sc - s;
 }
+
+void test_strlen() {
+	char buff[10];
+	size_t len;
+	len = strlen(buff);
+	gen_strlen(buff,len);
+}
+
+
+
+
+
+
+
+
+
+
 
 

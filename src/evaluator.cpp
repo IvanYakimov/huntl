@@ -188,8 +188,27 @@ namespace interpreter {
 				meta_eval_.GetElementPtr(inst, arr_ty, target_holder, base_holder, idx_holder);
 			}
 			else
-				assert (! "only ptr to array supported");
+				assert (! "only ptr to array is supported");
 
+		}
+		else
+			assert (! "unbound access not implemented");
+	}
+
+	void Evaluator::HandleGetElementPtr (const llvm::GetElementPtrInst& inst, const llvm::Value *target, const llvm::Value *index) {
+		HolderPtr target_holder = ProduceHolder(target);
+		HolderPtr idx_holder = ProduceHolder(index);
+		if (inst.isInBounds()) {
+			Type *ty = target->getType();
+			if (ty->isPointerTy() and ty->getContainedType(0)->isArrayTy()) {
+				ArrayType* arr_ty = llvm::dyn_cast<ArrayType>(ty->getContainedType(0));
+				meta_eval_.GetElementPtr(inst, arr_ty, target_holder, idx_holder);
+			}
+			else if (ty->isPointerTy() and ty->getContainedType(0)->isIntegerTy()) {
+				std::cerr << "get iN\n";
+				abort();
+				//assert (! "only ptr to array is supported");
+			}
 		}
 		else
 			assert (! "unbound access not implemented");

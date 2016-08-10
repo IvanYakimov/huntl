@@ -131,6 +131,25 @@ namespace interpreter {
 		Assign(lhs_address, result_holder);
 	}
 
+	void MetaEvaluator::GetElementPtr(const llvm::GetElementPtrInst &inst, llvm::ArrayType* arr_ty_bound, memory::HolderPtr target_ptr_holder, memory::HolderPtr arr_idx_holder) {
+		assert (IsConcrete(target_ptr_holder) and IsConcrete(arr_idx_holder) and "all args must be concrete values");
+		IntegerType* el_ty = dyn_cast<IntegerType>(arr_ty_bound->getArrayElementType());
+		assert(el_ty != nullptr and "only integer arrays are supported");
+		auto el_width = el_ty->getBitWidth();
+		assert (el_width % 8 == 0);
+		auto el_align = el_width / 8;
+		// TODO: boundary checking
+		unsigned long idx = GetValue(arr_idx_holder).getSExtValue();
+		unsigned long ptr = GetValue(target_ptr_holder).getSExtValue();
+		unsigned long result = ptr + idx * el_align;
+		assert (sizeof(result) == sizeof(memory::RamAddress));
+		HolderPtr result_holder = Concrete::Create(MetaInt(memory::kWordSize, result));
+		auto lhs_address = context_.Top()->GetLocation(&inst);
+		std::cerr << " idx = " << idx << " ptr = " << ptr << " result = " << result << " top-address = " << context_.Ram().Stack().UpperBound() << std::endl;
+		//context_.Ram().Stack().Print();
+		Assign(lhs_address, result_holder);
+	}
+
 	void MetaEvaluator::Return(const llvm::ReturnInst &inst, HolderPtr holder) {
 		auto lhs_address = context_.Top()->GetLocation(&inst);
 		Assign(lhs_address, holder);
