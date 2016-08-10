@@ -205,8 +205,8 @@ namespace interpreter {
 				meta_eval_.GetElementPtr(inst, arr_ty, target_holder, idx_holder);
 			}
 			else if (ty->isPointerTy() and ty->getContainedType(0)->isIntegerTy()) {
-				std::cerr << "get iN\n";
-				abort();
+				IntegerType* int_ptr_ty = llvm::dyn_cast<IntegerType>(ty->getContainedType(0));
+				meta_eval_.GetElementPtr(inst,int_ptr_ty,target_holder,idx_holder);
 				//assert (! "only ptr to array is supported");
 			}
 		}

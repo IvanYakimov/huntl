@@ -122,6 +122,7 @@ namespace interpreter {
 		unsigned long idx = GetValue(arr_idx_holder).getSExtValue();
 		unsigned long ptr = GetValue(target_ptr_holder).getSExtValue();
 		assert (base == 0 and "walking throw the pointer is not expected");
+		el_align = memory::kDefAlign;
 		unsigned long result = ptr + idx * el_align;
 		assert (sizeof(result) == sizeof(memory::RamAddress));
 		HolderPtr result_holder = Concrete::Create(MetaInt(memory::kWordSize, result));
@@ -141,7 +142,26 @@ namespace interpreter {
 		// TODO: boundary checking
 		unsigned long idx = GetValue(arr_idx_holder).getSExtValue();
 		unsigned long ptr = GetValue(target_ptr_holder).getSExtValue();
+		el_align = memory::kDefAlign;
 		unsigned long result = ptr + idx * el_align;
+		assert (sizeof(result) == sizeof(memory::RamAddress));
+		HolderPtr result_holder = Concrete::Create(MetaInt(memory::kWordSize, result));
+		auto lhs_address = context_.Top()->GetLocation(&inst);
+		std::cerr << " idx = " << idx << " ptr = " << ptr << " result = " << result << " top-address = " << context_.Ram().Stack().UpperBound() << std::endl;
+		//context_.Ram().Stack().Print();
+		Assign(lhs_address, result_holder);
+	}
+
+	void MetaEvaluator::GetElementPtr(const llvm::GetElementPtrInst &inst, llvm::IntegerType* int_ptr_ty , memory::HolderPtr target_ptr_holder, memory::HolderPtr arr_idx_holder) {
+		assert (IsConcrete(target_ptr_holder) and IsConcrete(arr_idx_holder) and "all args must be concrete values");
+		auto int_width = int_ptr_ty->getBitWidth();
+		assert (int_width % 8 == 0);
+		auto int_align = int_width / 8;
+		// TODO: boundary checking
+		unsigned long idx = GetValue(arr_idx_holder).getSExtValue();
+		unsigned long ptr = GetValue(target_ptr_holder).getSExtValue();
+		int_align = memory::kDefAlign;
+		unsigned long result = ptr + idx * int_align;
 		assert (sizeof(result) == sizeof(memory::RamAddress));
 		HolderPtr result_holder = Concrete::Create(MetaInt(memory::kWordSize, result));
 		auto lhs_address = context_.Top()->GetLocation(&inst);

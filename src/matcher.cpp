@@ -90,7 +90,6 @@ namespace interpreter {
 		}
 		else if (Case (inst, &target, &idx)) {
 			HandleGetElementPtr(inst, target, idx);
-			abort();
 		}
 		else
 			assert (false and "not implemented");

@@ -54,6 +54,7 @@ namespace interpreter {
 
 		//---------------------------------------------------------------------------
 		// JIT:
+		exit(0);
 		llvm::ExecutionEngine* jit = llvm::EngineBuilder(module_).create();
 		std::vector<llvm::GenericValue> jit_args;
 		llvm::GenericValue gres;
