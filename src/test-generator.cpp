@@ -64,6 +64,8 @@ namespace interpreter {
 			jit_args.push_back(gval);
 		});
 
+		// http://ktown.kde.org/~zrusin/main.cpp
+		// http://stackoverflow.com/questions/19807875/how-to-convert-a-genericvalue-to-value-in-llvm
 		gres = jit->runFunction(target_, jit_args);
 		auto jit_res = memory::Concrete::Create(gres.IntVal);
 
