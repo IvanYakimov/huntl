@@ -15,8 +15,24 @@
 
 #include <ostream>
 #include <list>
+#include <memory>
 
 namespace interpreter {
+	struct Solution {
+	};
+	using SolutionPtr = std::shared_ptr<Solution>;
+	struct Scalar : public Solution {
+	public:
+		Scalar(memory::ConcretePtr scalar);
+		memory::ConcretePtr scalar;
+	};
+	using ScalarPtr = std::shared_ptr<Scalar>;
+	struct Array : public Solution {
+		std::list<ScalarPtr> agregate;
+	};
+	using ArrayPtr = std::shared_ptr<Array>;
+	using SolutionList = std::list<SolutionPtr>;
+
  	 class TestGenerator {
  	 public:
  		 TestGenerator(llvm::Module* module, llvm::Function* target, memory::ArgMapPtr args,
@@ -30,10 +46,11 @@ namespace interpreter {
  		 llvm::Function* target_;
  		 memory::ArgMapPtr args_;
  		 llvm::Module* module_;
- 		 memory::ConcretePtr HandleInteger(llvm::IntegerType* ty, memory::HolderPtr value);
- 		 std::list<memory::ConcretePtr> HandlePointer(llvm::PointerType* ty, memory::HolderPtr ptr);
- 		 memory::ConcretePtr HandleScalar(memory::HolderPtr holder);
- 		 bool JIT(std::list<memory::ConcretePtr> arg_sol_list, memory::ConcretePtr ret_sol);
+ 		 memory::ConcretePtr ProduceScalar(memory::HolderPtr holder);
+ 		 bool JIT(std::vector<llvm::GenericValue> jit_args, llvm::GenericValue expected);
+ 		SolutionPtr HandleArg(llvm::Type* ty, memory::HolderPtr holder);
+ 		SolutionList ProduceArgSolutions(llvm::Function* func, memory::ArgMapPtr arg_map);
+ 		std::vector<llvm::GenericValue> ProduceJITArgs(SolutionList result_list);
 };
 }
 

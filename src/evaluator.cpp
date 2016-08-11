@@ -42,9 +42,11 @@ namespace interpreter {
 			std::smatch gen_TARGET_matches;
 			auto matched_gen_TARGETs = std::regex_search(name, gen_TARGET_matches, gen_TARGET_regex);
 
+			/*
 			std::regex str_TEXT_regex("str_");
 			std::smatch str_TEXT_matches;
 			auto matched_str_TEXTs = std::regex_search(name, str_TEXT_matches, str_TEXT_regex);
+			*/
 
 			if (matched_mksym == 1) {
 				std::string suffix = mksym_matches.suffix();
@@ -57,9 +59,16 @@ namespace interpreter {
 					int bitwidth_val = std::stoi(bitwidth_str);
 					builtins_.emplace(f_it, MkSym(context_, bitwidth_val));
 				}
+				else {
+					assert (! "bad mksym_ function");
+				}
+
+				std::cerr << "mksym_ function: ";
 			}
 			else if (matched_test_NAMEs == 1) {
 					test_functions.push_back(f_it);
+
+					std::cerr << "test_ function: ";
 			}
 			else if (matched_gen_TARGETs == 1) {
 				std::string target_name = gen_TARGET_matches.suffix();
@@ -71,13 +80,15 @@ namespace interpreter {
 					exit(0);
 				}
 				builtins_.emplace(f_it, Gen(context_, target, m));
-			}
-			else if (matched_str_TEXTs == 1) {
 
+				std::cerr << "gen_ function: ";
 			}
 			else {
 				//this is ordinary function
+				std::cerr << "ordinay function: ";
 			}
+
+			std::cerr << f_it->getName().str() << std::endl;
 		}
 
 		EvaluateFunctionList(test_functions);
