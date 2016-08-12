@@ -10,6 +10,11 @@ namespace interpreter {
 		return os;
 	}
 
+	std::ostream& operator<<(std::ostream &os, const MetaInt& obj) {
+		os << obj.toString(10, obj.isSignedIntN(obj.getBitWidth()));
+		return os;
+	}
+
 	solver::BitVec MetaInt_To_BitVec(MetaInt arg) {
 		auto width = arg.getBitWidth();
 		if (arg.isSignedIntN(width)) {

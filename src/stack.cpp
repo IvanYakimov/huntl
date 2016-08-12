@@ -102,7 +102,7 @@ namespace memory {
 	void Stack::Print() {
 		std::cerr << "Stack trace:\n";
 		for (auto it = ram_.begin(); it != ram_.end(); ++it) {
-			std::cerr << it->first << " -> " << *it->second->holder_ << "\n";
+			std::cerr << it->first << ", align " << it->second->align_ << " -> " << *it->second->holder_ << "\n";
 		}
 		std::cerr << "\n";
 	}

@@ -24,20 +24,6 @@ namespace interpreter {
 
 	}
 
-	memory::ConcretePtr TestGenerator::ProduceScalar(HolderPtr holder) {
-		ConcretePtr result = nullptr;
-		if (memory::IsConcrete(holder)) {
-			result = dynamic_pointer_cast<Concrete>(holder);
-		} else if (memory::IsSymbolic(holder)) {
-			solver::SharedExpr e = memory::GetExpr(holder);
-			interpreter::MetaInt val = context_.Solver().GetValue(e);
-			result = dynamic_pointer_cast<Concrete>(Concrete::Create(val));
-		} else
-			assert(false and "unexpected behavior");
-		assert(result != nullptr and "cast failed");
-		return result;
-	}
-
 	bool ArgValidation(llvm::Function* func) {
 		auto res = true;
 		for (auto it = func->arg_begin(); it != func->arg_end(); it++) {
@@ -52,23 +38,44 @@ namespace interpreter {
 		return res;
 	}
 
-	SolutionPtr TestGenerator::HandleArg(Type* ty, HolderPtr holder) {
-		if (ty->isIntegerTy()) {
-			// leaf
-			ConcretePtr res = ProduceScalar(holder);
-			return std::make_shared<Scalar>(res);
-		}
-		else if (ty->isPointerTy() and ty->getContainedType(0)->isIntegerTy()) {
-			// node
-			// 1. Dereference pointer
-			// 2. Create array from integers
-		}
-		else
-			assert (! "bad");
+	SolutionPtr TestGenerator::ProduceInteger(HolderPtr holder) {
+		SolutionPtr result = nullptr;
+		if (memory::IsConcrete(holder)) {
+			MetaIntRef val = memory::GetValue(holder);
+			return Integer::Create(val);
+		} else if (memory::IsSymbolic(holder)) {
+			solver::SharedExpr e = memory::GetExpr(holder);
+			interpreter::MetaIntRef val = context_.Solver().GetValue(e);
+			return Integer::Create(val);
+		} else
+			assert(false and "unexpected behavior");
 	}
 
-	SolutionList TestGenerator::ProduceArgSolutions(llvm::Function* func, ArgMapPtr arg_map) {
-		SolutionList results;
+	SolutionPtr TestGenerator::HandleArg(Type* ty, HolderPtr holder) {
+		if (ty->isIntegerTy()) {
+			// this can be or integer const
+			return ProduceInteger(holder);
+			//or implicit array of integers
+		}
+		else if (ty->isPointerTy()) {
+			assert (memory::IsConcrete(holder));
+			// 1. Dereference the pointer
+			MetaIntRef ptr_address_metaint = memory::GetValue(holder);
+			memory::RamAddress ptr_address = ptr_address_metaint.getZExtValue();
+			//auto align = ptr_address_metaint.getBitWidth() / 8;
+			auto align = memory::kDefAlign;
+			HolderPtr ptr_holder = context_.Ram().Stack().Read(ptr_address, align);
+			// 2. Create result for the appropriate object
+			return Pointer::Create(HandleArg(ty->getContainedType(0), ptr_holder));
+			// node
+		}
+		else
+			assert (! "unexpected");
+	}
+
+	SolutionListPtr TestGenerator::ProduceArgSolutions(llvm::Function* func, ArgMapPtr arg_map) {
+		SolutionListPtr results = utils::Create<SolutionList>();
+		//SolutionList results;
 		auto farg_iterator = func->arg_begin();
 		auto argmap_iterator = arg_map->begin();
 		// for all args of TARGET (not gen_TARGET) function
@@ -77,64 +84,86 @@ namespace interpreter {
 			HolderPtr holder = argmap_iterator->second;
 			SolutionPtr res = HandleArg(ty, holder);
 			assert (res != nullptr);
-			results.push_back(res);
+			results->push_back(res);
 			argmap_iterator++;
 			farg_iterator++;
 		}
-		assert (results.size() == arg_map->size() - 1);
+		assert (results->size() == arg_map->size() - 1);
 		return results;
 	}
 
-	/*
 	SolutionPtr TestGenerator::ProduceRetSolution(llvm::Function* func, ArgMapPtr arg_map) {
-		llvm::Type* ret_ty = func->getReturnType();
 		// the last item of gen_TARGET argument list references to the TARGET return value
+		llvm::Type* ret_ty = func->getReturnType();
 		auto argmap_iterator = arg_map->rbegin();
-		HolderPtr = argmap_iterator->second;
-		SolutionPtr res = HandleArg(ret_ty, holder);
-		assert (res != nullptr);
-		return res;
+		HolderPtr holder = argmap_iterator->second;
+		return HandleArg(ret_ty, holder);
 	}
-	*/
 
-	void PrintResults(const llvm::Function* func, SolutionList results) {
+	void TestGenerator::PrintSolution(SolutionPtr sol, std::ostream& file) {
+		if (utils::instanceof<Integer>(sol)) {
+			IntegerPtr integer = std::dynamic_pointer_cast<Integer>(sol);
+			file << integer->Get();
+		}
+		else if (utils::instanceof<Pointer>(sol)) {
+			PointerPtr pointer = std::dynamic_pointer_cast<Pointer>(sol);
+			file << "*";
+			PrintSolution(pointer->Dereference(), file);
+			//assert (! "not impl");
+		}
+		else if (utils::instanceof<Array>(sol)) {
+			assert (! "not impl");
+		}
+		else
+			assert (! "unexpected type of argument");
+	}
 
+	void TestGenerator::PrintFunctionInfo(llvm::Function* func, std::ostream& file) {
+		file << func->getName().str() << ": ";
+	}
+
+	void TestGenerator::PrintSeparator(std::ostream& file) {
+		file << " ";
+	}
+
+	void TestGenerator::PrintTransition(std::ostream& file) {
+		file << " => ";
+	}
+
+	void TestGenerator::PrintEndl(std::ostream& file) {
+		file << std::endl;
+	}
+
+	void TestGenerator::PrintWholeSolution(llvm::Function* func, SolutionListPtr arg_sols, SolutionPtr ret_sol, std::ostream& file) {
+		assert (func != nullptr and arg_sols != nullptr and ret_sol != nullptr);
+		assert (func->arg_size() == arg_sols->size());
+
+		PrintFunctionInfo(func, file);
+		auto it = arg_sols->begin();
+		while (it != arg_sols->end()) {
+			PrintSolution(*it, file);
+			if (++it != arg_sols->end())
+				PrintSeparator(file);
+		}
+		PrintTransition(file);
+		PrintSolution(ret_sol, file);
+		PrintEndl(file);
 	}
 
 	void TestGenerator::Do() {
 		assert (ArgValidation(target_) == true and "argument types validation failed");
-		SolutionList arg_sols;
+		SolutionListPtr arg_sols;
 		SolutionPtr ret_sol;
 		if (context_.Solver().IsSat() == true) {
 			arg_sols = ProduceArgSolutions(target_, args_);
-			//ret_sol = ProduceRetSolution(target_, args_);
-			/*
-			for(auto pair = args_->begin(); pair != args_->end(); pair++) {
-				HolderPtr holder = pair->second;
-				auto ch = HandleScalar(holder);
-				if (std::next(pair,1) != args_->end())
-					arg_sol_list.push_back(ch);
-				else
-					ret_sol = ch;
-			}
-			*/
+			ret_sol = ProduceRetSolution(target_, args_);
 		}
 		else
 			assert (false and "not implemented");
 
-		std::cerr << "DONE.\n";
-		abort();
+		PrintWholeSolution(target_, arg_sols, ret_sol, file_);
 
-		/*
-		file_ << "\n";
-		file_ << target_->getName().str() << ":\t";
-		for_each(arg_sol_list.begin(), arg_sol_list.end(), [&](auto arg_sol) {
-			file_ << *arg_sol << " ";
-		});
-
-		file_ << " ==> ";
-		file_ << *ret_sol << "\n";
-		*/
+		exit(0);
 
 		//---------------------------------------------------------------------------
 		// JIT:
@@ -142,7 +171,7 @@ namespace interpreter {
 		//assert (JIT(arg_sol_list, ret_sol) and "JIT verification failed");
 	}
 
-	std::vector<llvm::GenericValue> ProduceJITArgs(SolutionList result_list) {
+	std::vector<llvm::GenericValue> ProduceJITArgs(SolutionListPtr result_list) {
 		/*
 		std::vector<llvm::GenericValue> jit_args;
 		ResultList::iterator;

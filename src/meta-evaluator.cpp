@@ -147,7 +147,7 @@ namespace interpreter {
 		assert (sizeof(result) == sizeof(memory::RamAddress));
 		HolderPtr result_holder = Concrete::Create(MetaInt(memory::kWordSize, result));
 		auto lhs_address = context_.Top()->GetLocation(&inst);
-		std::cerr << " idx = " << idx << " ptr = " << ptr << " result = " << result << " top-address = " << context_.Ram().Stack().UpperBound() << std::endl;
+		// std::cerr << " idx = " << idx << " ptr = " << ptr << " result = " << result << " top-address = " << context_.Ram().Stack().UpperBound() << std::endl;
 		//context_.Ram().Stack().Print();
 		Assign(lhs_address, result_holder);
 	}
@@ -165,7 +165,7 @@ namespace interpreter {
 		assert (sizeof(result) == sizeof(memory::RamAddress));
 		HolderPtr result_holder = Concrete::Create(MetaInt(memory::kWordSize, result));
 		auto lhs_address = context_.Top()->GetLocation(&inst);
-		std::cerr << " idx = " << idx << " ptr = " << ptr << " result = " << result << " top-address = " << context_.Ram().Stack().UpperBound() << std::endl;
+		// std::cerr << " idx = " << idx << " ptr = " << ptr << " result = " << result << " top-address = " << context_.Ram().Stack().UpperBound() << std::endl;
 		//context_.Ram().Stack().Print();
 		Assign(lhs_address, result_holder);
 	}
