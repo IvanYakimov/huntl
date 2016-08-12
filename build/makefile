@@ -25,7 +25,7 @@ TEST_RUNNER = test-runner.o
 
 PLAYGROUND = expr-test.o
 
-BENCHMARKS = gcd.ll hweight.ll basic.ll ptr.ll str.ll lab.ll
+BENCHMARKS = gcd.ll hweight.ll basic.ll ptr.ll str.ll lab.ll arrays.ll
 BLAH = test-gcd.ll test-hweight.ll test-basic.ll test-ptr.ll test-str.ll test-lab.ll
 
 OBJ = $(INTERPRETER) $(MEMORY) $(SOLVER) $(UTILS)

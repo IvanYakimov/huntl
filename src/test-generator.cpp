@@ -68,9 +68,9 @@ namespace interpreter {
 			// 2. Create result for the appropriate object
 			const llvm::Type* addressed_ty = context_.Ram().Stack().GetType(ptr_address);
 			if (llvm::isa<llvm::ArrayType>(addressed_ty))
-				std::cerr << "// ptr to array\n";
+				;//std::cerr << "// ptr to array\n";
 			else if (llvm::isa<llvm::IntegerType>(addressed_ty))
-				std::cerr << "// ptr to int\n";
+				;//std::cerr << "// ptr to int\n";
 			return Pointer::Create(HandleArg(ty->getContainedType(0), ptr_holder));
 			// node
 		}

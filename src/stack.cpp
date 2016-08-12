@@ -1,8 +1,8 @@
 #include "stack.hpp"
 
 namespace memory {
-	//using llvm::Type; using llvm::IntegerType; using llvm::ArrayType;
-	//using interpreter::MetaInt;
+	using llvm::Type; using llvm::IntegerType; using llvm::ArrayType;
+	using interpreter::MetaInt;
 	using llvm::Type;
 
 	Stack::Stack() {
@@ -56,6 +56,35 @@ namespace memory {
 			assert (! "not implemented");
 	}
 	*/
+
+	RamAddress Stack::Alloca(const Type* allocated) {
+		if (allocated->isIntegerTy()) {
+			const IntegerType* int_ty = llvm::dyn_cast<IntegerType>(allocated);
+			auto width = int_ty->getBitWidth();
+			auto val = 1;
+			auto holder = memory::Concrete::Create(MetaInt(width, val));
+			assert (width % 8 == 0 or width == 1);
+			return Alloca(holder, allocated, memory::kDefAlign /*width / 8*/);
+		}
+		else if (allocated->isPointerTy()) {
+			auto width = memory::kWordSize;
+			auto val = 1;
+			auto holder = memory::Concrete::Create(MetaInt(width, val));
+			assert (width % 8 == 0);
+			return Alloca(holder, allocated, memory::kDefAlign /*width / 8*/);
+		}
+		else if (allocated->isArrayTy()) {
+			const ArrayType* array_ty = llvm::dyn_cast<ArrayType>(allocated);
+			const Type* el_ty = array_ty->getArrayElementType();
+			auto len = array_ty->getArrayNumElements();
+			auto first_el_addr = Alloca(el_ty);
+			for (int i = 1; i < len; i++)
+				Alloca(el_ty);
+			return first_el_addr;
+		}
+		else
+			assert (! "not implemented");
+	}
 
 	RamAddress Stack::Alloca(HolderPtr holder, const llvm::Type* type, Alignment align) {
 		auto addr = segment_stack_.top();

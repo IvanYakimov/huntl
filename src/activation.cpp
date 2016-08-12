@@ -37,20 +37,25 @@ namespace memory {
 	}
 
 	RamAddress Activation::Alloca(const Type* allocated) {
+		return ram_.Stack().Alloca(allocated);
+	}
+
+	/*
+	RamAddress Activation::Alloca(const Type* allocated) {
 		if (allocated->isIntegerTy()) {
 			const IntegerType* int_ty = llvm::dyn_cast<IntegerType>(allocated);
 			auto width = int_ty->getBitWidth();
 			auto val = 1;
 			auto holder = memory::Concrete::Create(MetaInt(width, val));
 			assert (width % 8 == 0 or width == 1);
-			return ram_.Stack().Alloca(holder, allocated, memory::kDefAlign /*width / 8*/);
+			return ram_.Stack().Alloca(holder, allocated, memory::kDefAlign);
 		}
 		else if (allocated->isPointerTy()) {
 			auto width = memory::kWordSize;
 			auto val = 1;
 			auto holder = memory::Concrete::Create(MetaInt(width, val));
 			assert (width % 8 == 0);
-			return ram_.Stack().Alloca(holder, allocated, memory::kDefAlign /*width / 8*/);
+			return ram_.Stack().Alloca(holder, allocated, memory::kDefAlign);
 		}
 		else if (allocated->isArrayTy()) {
 			const ArrayType* array_ty = llvm::dyn_cast<ArrayType>(allocated);
@@ -64,6 +69,7 @@ namespace memory {
 		else
 			assert (! "not implemented");
 	}
+	*/
 
 	HolderPtr Activation::Load(RegisterName register_name) {
 		auto it = local_display_.find(register_name);
