@@ -3,6 +3,7 @@
 namespace memory {
 	//using llvm::Type; using llvm::IntegerType; using llvm::ArrayType;
 	//using interpreter::MetaInt;
+	using llvm::Type;
 
 	Stack::Stack() {
 		segment_stack_.push(0);
@@ -14,7 +15,8 @@ namespace memory {
 		assert (segment_stack_.size() == 0);
 	}
 
-	Stack::MemoryCell::MemoryCell(HolderPtr holder, Alignment align) {
+	Stack::MemoryCell::MemoryCell(HolderPtr holder, const Type* type, Alignment align) : type_(type) {
+		assert (holder != nullptr and type != nullptr and align > 0);
 		holder_ = holder;
 		align_ = align;
 	}
@@ -55,10 +57,10 @@ namespace memory {
 	}
 	*/
 
-	RamAddress Stack::Alloca(HolderPtr holder, Alignment align) {
+	RamAddress Stack::Alloca(HolderPtr holder, const llvm::Type* type, Alignment align) {
 		auto addr = segment_stack_.top();
 		segment_stack_.top() += align;
-		MemoryCellPtr mcell = std::unique_ptr<MemoryCell>(new MemoryCell(holder, align));
+		MemoryCellPtr mcell = std::unique_ptr<MemoryCell>(new MemoryCell(holder, type, align));
 		ram_.emplace(addr, std::move(mcell));
 		//std::cerr << "alloca " << *holder << " to addr: " << addr << "\n";
 		return addr;
@@ -80,6 +82,15 @@ namespace memory {
 		assert (it != ram_.end());
 		assert (it->second->align_ == align);
 		auto res = it->second->holder_;
+		assert (res != nullptr);
+		return res;
+	}
+
+	const llvm::Type* Stack::GetType(RamAddress addr) {
+		assert (addr < segment_stack_.top());
+		auto it = ram_.find(addr);
+		assert (it != ram_.end());
+		auto res = it->second->type_;
 		assert (res != nullptr);
 		return res;
 	}

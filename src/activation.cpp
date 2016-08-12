@@ -52,8 +52,8 @@ namespace memory {
 			auto width = int_ty->getBitWidth();
 			auto val = 1;
 			auto holder = memory::Concrete::Create(MetaInt(width, val));
-			assert (width % 8 == 0);
-			return ram_.Stack().Alloca(holder, memory::kDefAlign /*width / 8*/);
+			assert (width % 8 == 0 or width == 1);
+			return ram_.Stack().Alloca(holder, allocated, memory::kDefAlign /*width / 8*/);
 		}
 		else if (allocated->isPointerTy()) {
 			auto width = memory::kWordSize;
@@ -61,7 +61,7 @@ namespace memory {
 			auto val = 1;
 			auto holder = memory::Concrete::Create(MetaInt(width, val));
 			assert (width % 8 == 0);
-			return ram_.Stack().Alloca(holder, memory::kDefAlign /*width / 8*/);
+			return ram_.Stack().Alloca(holder, allocated, memory::kDefAlign /*width / 8*/);
 		}
 		else if (allocated->isArrayTy()) {
 			const ArrayType* array_ty = llvm::dyn_cast<ArrayType>(allocated);
@@ -98,8 +98,9 @@ namespace memory {
 		auto it = local_display_.find(register_name);
 		RamAddress addr;
 		if (it == local_display_.end()) {
-			addr = ram_.Stack().Alloca(holder, memory::Ram::def_align_);
-			local_display_.emplace(register_name, addr);
+			//addr = ram_.Stack().Alloca(holder, memory::Ram::def_align_);
+			//local_display_.emplace(register_name, addr);
+			abort();
 		}
 		else
 			addr = it->second;
@@ -109,30 +110,34 @@ namespace memory {
 	memory::RamAddress Activation::TryToAllocate(const llvm::Value* variable) {
 		// Get 'allocated' value
 		llvm::Type* base_ty = variable->getType();
-		unsigned width;
+		//unsigned width;
+		RamAddress addr;
 
 		if (base_ty->isIntegerTy()) {
-			llvm::IntegerType* type = llvm::dyn_cast<llvm::IntegerType>(base_ty);
-			width = type->getBitWidth();
+			//llvm::IntegerType* type = llvm::dyn_cast<llvm::IntegerType>(base_ty);
+			//width = type->getBitWidth();
+			addr = Alloca(base_ty);
 		} // ret handled separately
 		else if (base_ty->isPointerTy()) {
-			width = memory::Ram::machine_word_bitsize_;
+			//width = memory::Ram::machine_word_bitsize_;
+			addr = Alloca(base_ty);
 		}
 		else if (llvm::isa<llvm::ReturnInst>(variable)) {
 			auto ret = llvm::dyn_cast<llvm::ReturnInst>(variable);
 			if (ret->getNumOperands() == 1) {
 				auto operand = ret->getOperand(0);
-				base_ty = operand->getType();
-				llvm::IntegerType* type = llvm::dyn_cast<llvm::IntegerType>(base_ty);
-				width = type->getBitWidth();
+				auto ret_val_ty = operand->getType();
+				//llvm::IntegerType* type = llvm::dyn_cast<llvm::IntegerType>(base_ty);
+				//width = type->getBitWidth();
+				addr = Alloca(ret_val_ty);
 			}
 		}
 		else
 			assert (! "unexpected behavior");
 
-		interpreter::MetaInt val(width, 0);
-		HolderPtr initial = memory::Concrete::Create(val);
-		auto addr = ram_.Stack().Alloca(initial, memory::Ram::def_align_);
+		//interpreter::MetaInt val(width, 0);
+		//HolderPtr initial = memory::Concrete::Create(val);
+		//auto addr = Alloca(variable->getType());//ram_.Stack().Alloca(initial, memory::Ram::def_align_);
 		local_display_.emplace(variable, addr);
 		return addr;
 	}

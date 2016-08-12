@@ -11,7 +11,7 @@
 #include "ram-delc.hpp"
 //#include "ram.hpp"
 
-//#include "llvm/IR/Type.h"
+#include "llvm/IR/Type.h"
 
 namespace memory {
 	class Stack;
@@ -21,9 +21,10 @@ namespace memory {
 		Stack();
 		~Stack();
 		//RamAddress Alloca(const llvm::Type* allocated);
-		RamAddress Alloca(HolderPtr holder, Alignment align);
+		RamAddress Alloca(HolderPtr holder, const llvm::Type* type, Alignment align);
 		void Write(HolderPtr holder, RamAddress addr, Alignment align);
 		HolderPtr Read(RamAddress addr, Alignment align);
+		const llvm::Type* GetType(RamAddress addr);
 		void Push();
 		void Pop();
 		unsigned long UpperBound();
@@ -31,10 +32,11 @@ namespace memory {
 	private:
 		class MemoryCell {
 		public:
-			MemoryCell(HolderPtr holder, Alignment align);
+			MemoryCell(HolderPtr holder, const llvm::Type* type, Alignment align);
 			~MemoryCell();
 			Alignment align_;
 			HolderPtr holder_;
+			const llvm::Type* type_;
 		};
 		using MemoryCellPtr = std::unique_ptr<MemoryCell>;
 		std::stack<RamAddress> segment_stack_;
