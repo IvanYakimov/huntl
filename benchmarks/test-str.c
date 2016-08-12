@@ -17,7 +17,7 @@ size_t strlen(const char *s)
 void test_strlen() {
 	char buff[5];
 	for (int i = 0; i < 5; i++) {
-		buff[i] = 'a' + i;
+		buff[i] = mksym_i32();//'a' + i;
 	}
 	size_t len;
 	len = strlen(buff);

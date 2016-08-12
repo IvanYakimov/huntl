@@ -76,9 +76,30 @@ void test_swap() {
 	gen_swap_tester(x,y,r);
 }
 
+void gen_ptrarg(int *x, int res);
+int ptrarg(int *x) {
+	return *x + 1;
+}
 
+void test_ptrarg() {
+	int x = mksym_i32();
+	limit2_i32(&x,28,42);
+	int res = ptrarg(&x);
+	gen_ptrarg(&x, res);
+}
 
+void gen_ptr2arg(int **x, int res);
+int ptr2arg(int **x) {
+	return **x + 2;
+}
 
+void test_ptr2arg() {
+	int x = mksym_i32();
+	limit2_i32(&x,101,128);
+	int *y = &x;
+	int res = ptr2arg(&y);
+	gen_ptr2arg(&y, res);
+}
 
 
 

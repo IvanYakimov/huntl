@@ -66,6 +66,11 @@ namespace interpreter {
 			auto align = memory::kDefAlign;
 			HolderPtr ptr_holder = context_.Ram().Stack().Read(ptr_address, align);
 			// 2. Create result for the appropriate object
+			const llvm::Type* addressed_ty = context_.Ram().Stack().GetType(ptr_address);
+			if (llvm::isa<llvm::ArrayType>(addressed_ty))
+				std::cerr << "// ptr to array\n";
+			else if (llvm::isa<llvm::IntegerType>(addressed_ty))
+				std::cerr << "// ptr to int\n";
 			return Pointer::Create(HandleArg(ty->getContainedType(0), ptr_holder));
 			// node
 		}
@@ -151,7 +156,7 @@ namespace interpreter {
 	}
 
 	void TestGenerator::Do() {
-		assert (ArgValidation(target_) == true and "argument types validation failed");
+		//assert (ArgValidation(target_) == true and "argument types validation failed");
 		SolutionListPtr arg_sols;
 		SolutionPtr ret_sol;
 		if (context_.Solver().IsSat() == true) {
