@@ -52,7 +52,7 @@ namespace memory {
 		void Print();
 	private:
 		//memory::LocalMemoryPtr local_memory_;
-		memory::RamAddress TryToAllocate(const llvm::Value* variable);
+		memory::RamAddress LazyRegisterAllocation(const llvm::Value* variable);
 		std::map<RegisterName, RamAddress> local_display_;
 		memory::RamRef ram_;
 	};
