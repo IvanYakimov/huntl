@@ -29,16 +29,18 @@ namespace interpreter {
 	};
 	using IntegerPtr = std::shared_ptr<Integer>;
 
+	class Array;
+	using ArrayPtr = std::shared_ptr<Array>;
 	class Array : public Solution {
 	public:
 		Array();
-		void PushBack(MetaIntRef value);
-		MetaIntRef GetElement(unsigned index);
-		static SolutionPtr Create();
+		void PushBack(SolutionPtr value);
+		SolutionPtr GetElement(unsigned index);
+		static ArrayPtr Create();
+		unsigned GetSize();
 	private:
-		std::vector<MetaInt> val_list_;
+		std::vector<SolutionPtr> val_list_;
 	};
-	using ArrayPtr = std::shared_ptr<Array>;
 
 	class Pointer : public Solution {
 	public:

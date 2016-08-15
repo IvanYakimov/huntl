@@ -43,7 +43,7 @@ namespace interpreter {
 		void PrintSeparator(std::ostream& file);
 		void PrintEndl(std::ostream& file);
 		void PrintWholeSolution(llvm::Function* func, SolutionListPtr arg_sols, SolutionPtr ret_sol, std::ostream& file);
-		SolutionPtr HandleArg(llvm::Type* ty, HolderPtr holder);
+		SolutionPtr HandleArg(const llvm::Type* ty, HolderPtr holder);
 		SolutionListPtr ProduceArgSolutions(llvm::Function* func, ArgMapPtr arg_map);
 		SolutionPtr ProduceRetSolution(llvm::Function* func, ArgMapPtr arg_map);
 		std::vector<llvm::GenericValue> ProduceJITArgs(SolutionListPtr result_list);

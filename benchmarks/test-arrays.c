@@ -37,6 +37,26 @@ void test_sum() {
 }
 
 
+void gen_sum2(int *arr, int size, int res);
+int sum2(int *arr, int size) {
+	int sum = 0;
+	for (int i = 0; i < size; i++)
+		sum += arr[i];
+	return sum;
+}
+
+void test_sum2() {
+	int arr[5];
+	for (int i = 0; i < 5; i++) {
+		arr[i] = mksym_i32();
+		limit2_i32(&arr[i],0,1);
+	}
+	int res = sum2(arr, 5);
+	gen_sum2(arr, 5, res);
+}
+
+
+
 
 
 

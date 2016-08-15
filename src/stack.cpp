@@ -123,6 +123,16 @@ namespace memory {
 		return res;
 	}
 
+	const llvm::Type* Stack::GetMetaType(RamAddress addr) {
+		auto mc = GetMemoryCell(addr);
+		return mc->bounds_->object_type_;
+	}
+
+	RamAddress Stack::GetBaseAddress(RamAddress addr) {
+		auto mc = GetMemoryCell(addr);
+		return mc->bounds_->base_;
+	}
+
 	void Stack::Push() {
 		auto top_addr = segment_stack_.top();
 		segment_stack_.push(top_addr);

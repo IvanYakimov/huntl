@@ -10,15 +10,18 @@ namespace interpreter {
 	}
 
 	Array::Array() {}
-	void Array::PushBack(MetaIntRef value) {
+	void Array::PushBack(SolutionPtr value) {
 		val_list_.push_back(value);
 	}
-	MetaIntRef Array::GetElement(unsigned index) {
+	SolutionPtr Array::GetElement(unsigned index) {
 		assert (index <= val_list_.size());
 		return val_list_[index];
 	}
-	SolutionPtr Array::Create() {
+	ArrayPtr Array::Create() {
 		return utils::Create<Array>();
+	}
+	unsigned Array::GetSize() {
+		return val_list_.size();
 	}
 
 	Pointer::Pointer(SolutionPtr target) : target_(target) {}

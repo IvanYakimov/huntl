@@ -45,6 +45,8 @@ namespace memory {
 		void Write(HolderPtr holder, RamAddress addr, Alignment align);
 		HolderPtr Read(RamAddress addr, Alignment align);
 		const llvm::Type* GetType(RamAddress addr);
+		const llvm::Type* GetMetaType(RamAddress addr);
+		RamAddress GetBaseAddress(RamAddress addr);
 		void Push();
 		void Pop();
 		unsigned long UpperBound();
