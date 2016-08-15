@@ -21,9 +21,7 @@ namespace memory {
 	public:
 		Stack();
 		~Stack();
-		//RamAddress Alloca(const llvm::Type* allocated);
 		RamAddress Alloca(const llvm::Type* type);
-		RamAddress Alloca(HolderPtr holder, const llvm::Type* type, Alignment align);
 		void Write(HolderPtr holder, RamAddress addr, Alignment align);
 		HolderPtr Read(RamAddress addr, Alignment align);
 		const llvm::Type* GetType(RamAddress addr);
@@ -43,6 +41,7 @@ namespace memory {
 		using MemoryCellPtr = std::unique_ptr<MemoryCell>;
 		std::stack<RamAddress> segment_stack_;
 		std::map<RamAddress, MemoryCellPtr> ram_;
+		RamAddress Alloca(HolderPtr holder, const llvm::Type* type, Alignment align);
 	};
 };
 
