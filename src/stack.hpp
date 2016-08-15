@@ -38,10 +38,11 @@ namespace memory {
 			HolderPtr holder_;
 			const llvm::Type* type_;
 		};
-		using MemoryCellPtr = std::unique_ptr<MemoryCell>;
+		using MemoryCellPtr = std::shared_ptr<MemoryCell>;
 		std::stack<RamAddress> segment_stack_;
 		std::map<RamAddress, MemoryCellPtr> ram_;
 		RamAddress Alloca(HolderPtr holder, const llvm::Type* type, Alignment align);
+		MemoryCellPtr GetMemoryCell(RamAddress addr);
 	};
 };
 

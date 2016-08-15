@@ -57,37 +57,37 @@ namespace memory {
 	RamAddress Stack::Alloca(HolderPtr holder, const llvm::Type* type, Alignment align) {
 		auto addr = segment_stack_.top();
 		segment_stack_.top() += align;
-		MemoryCellPtr mcell = std::unique_ptr<MemoryCell>(new MemoryCell(holder, type, align));
-		ram_.emplace(addr, std::move(mcell));
-		//std::cerr << "alloca " << *holder << " to addr: " << addr << "\n";
+		MemoryCellPtr mcell = std::make_shared<MemoryCell>(holder, type, align);
+		ram_.emplace(addr, mcell);
 		return addr;
 	}
 
-	void Stack::Write(HolderPtr holder, RamAddress addr, Alignment align) {
-		//std::cerr << "write " << *holder << " to addr: " << addr << "\n";
+	Stack::MemoryCellPtr Stack::GetMemoryCell(RamAddress addr) {
 		assert (addr < segment_stack_.top());
 		auto it = ram_.find(addr);
 		assert (it != ram_.end());
-		assert (it->second->align_ == align);
-		it->second->holder_ = holder;
+		auto res = it->second;
+		assert (res != nullptr);
+		return res;
+	}
+
+	void Stack::Write(HolderPtr holder, RamAddress addr, Alignment align) {
+		auto mc = GetMemoryCell(addr);
+		assert (mc->align_ == align);
+		mc->holder_ = holder;
 	}
 
 	HolderPtr Stack::Read(RamAddress addr, Alignment align) {
-		//std::cerr << "read from addr: " << addr << "\n";
-		assert (addr < segment_stack_.top());
-		auto it = ram_.find(addr);
-		assert (it != ram_.end());
-		assert (it->second->align_ == align);
-		auto res = it->second->holder_;
+		auto mc = GetMemoryCell(addr);
+		assert (mc->align_ == align);
+		auto res = mc->holder_;
 		assert (res != nullptr);
 		return res;
 	}
 
 	const llvm::Type* Stack::GetType(RamAddress addr) {
-		assert (addr < segment_stack_.top());
-		auto it = ram_.find(addr);
-		assert (it != ram_.end());
-		auto res = it->second->type_;
+		auto mc = GetMemoryCell(addr);
+		auto res = mc->type_;
 		assert (res != nullptr);
 		return res;
 	}
