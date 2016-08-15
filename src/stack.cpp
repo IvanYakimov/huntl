@@ -15,49 +15,80 @@ namespace memory {
 		assert (segment_stack_.size() == 0);
 	}
 
-	Stack::MemoryCell::MemoryCell(HolderPtr holder, const Type* type, Alignment align) : type_(type) {
+	Stack::MemoryCell::MemoryCell(HolderPtr holder, const Type* type, Alignment align, ObjectRecordPtr bounds) : type_(type) {
 		assert (holder != nullptr and type != nullptr and align > 0);
 		holder_ = holder;
 		align_ = align;
+		bounds_ = bounds;
 	}
 
 	Stack::MemoryCell::~MemoryCell() {
-
+		assert (holder_ != nullptr and type_ != nullptr and align_ > 0);
+		assert (bounds_ != nullptr);
 	}
 
-	RamAddress Stack::Alloca(const Type* allocated) {
+	Stack::ObjectRecord::ObjectRecord(RamAddress base, const llvm::Type* type) {
+		base_ = base;
+		object_type_ = type;
+	}
+	Stack::ObjectRecord::~ObjectRecord() {
+		assert (object_type_ != nullptr);
+	}
+
+	RamAddress Stack::AllocaScalar(auto width, const llvm::Type* allocated, ObjectRecordPtr bounds) {
+		auto val = 1;
+		auto holder = memory::Concrete::Create(MetaInt(width, val));
+		RamAddress result;
+		// if the scalar is not a part of another object
+		if (bounds == nullptr) {
+			RamAddress top = UpperBound();
+			bounds = std::make_shared<ObjectRecord>(top, allocated);
+			result = Alloca(holder, allocated, memory::kDefAlign, bounds);
+			assert (top == result);
+		}
+		else {
+			result = Alloca(holder, allocated, memory::kDefAlign, bounds);
+		}
+		return result;
+	}
+
+	RamAddress Stack::Alloca(const llvm::Type* allocated, ObjectRecordPtr bounds) {
 		if (allocated->isIntegerTy()) {
 			const IntegerType* int_ty = llvm::dyn_cast<IntegerType>(allocated);
 			auto width = int_ty->getBitWidth();
-			auto val = 1;
-			auto holder = memory::Concrete::Create(MetaInt(width, val));
 			assert (width % 8 == 0 or width == 1);
-			return Alloca(holder, allocated, memory::kDefAlign /*width / 8*/);
+			return AllocaScalar(width, allocated, bounds);
 		}
 		else if (allocated->isPointerTy()) {
 			auto width = memory::kWordSize;
-			auto val = 1;
-			auto holder = memory::Concrete::Create(MetaInt(width, val));
+			//auto val = 1;
+			//auto holder = memory::Concrete::Create(MetaInt(width, val));
 			assert (width % 8 == 0);
-			return Alloca(holder, allocated, memory::kDefAlign /*width / 8*/);
+			return AllocaScalar(width, allocated, bounds);
+			//return Alloca(holder, allocated, memory::kDefAlign);
 		}
 		else if (allocated->isArrayTy()) {
 			const ArrayType* array_ty = llvm::dyn_cast<ArrayType>(allocated);
 			const Type* el_ty = array_ty->getArrayElementType();
 			auto len = array_ty->getArrayNumElements();
-			auto first_el_addr = Alloca(el_ty);
-			for (int i = 1; i < len; i++)
-				Alloca(el_ty);
+			auto top = UpperBound();
+			bounds = std::make_shared<ObjectRecord>(top, array_ty);
+			auto first_el_addr = Alloca(el_ty, bounds);
+			assert (first_el_addr == top);
+			for (int i = 1; i < len; i++) {
+				Alloca(el_ty, bounds);
+			}
 			return first_el_addr;
 		}
 		else
 			assert (! "not implemented");
 	}
 
-	RamAddress Stack::Alloca(HolderPtr holder, const llvm::Type* type, Alignment align) {
+
+	RamAddress Stack::Alloca(HolderPtr holder, const llvm::Type* type, Alignment align, ObjectRecordPtr bounds) {
 		auto addr = segment_stack_.top();
 		segment_stack_.top() += align;
-		MemoryCellPtr mcell = std::make_shared<MemoryCell>(holder, type, align);
+		MemoryCellPtr mcell = std::make_shared<MemoryCell>(holder, type, align, bounds);
 		ram_.emplace(addr, mcell);
 		return addr;
 	}

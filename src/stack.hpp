@@ -18,10 +18,30 @@ namespace memory {
 	class Stack;
 	using StackRef = Stack&;
 	class Stack {
+		class ObjectRecord {
+		public:
+			ObjectRecord(RamAddress base, const llvm::Type* type);
+			~ObjectRecord();
+			RamAddress base_;
+			const llvm::Type* object_type_;
+		};
+		using ObjectRecordPtr = std::shared_ptr<ObjectRecord>;
+		class MemoryCell {
+		public:
+			MemoryCell(HolderPtr holder, const llvm::Type* type, Alignment align, ObjectRecordPtr bounds);
+			~MemoryCell();
+			Alignment align_;
+			HolderPtr holder_;
+			const llvm::Type* type_;
+			ObjectRecordPtr bounds_;
+		};
+		using MemoryCellPtr = std::shared_ptr<MemoryCell>;
+		std::stack<RamAddress> segment_stack_;
+		std::map<RamAddress, MemoryCellPtr> ram_;
 	public:
 		Stack();
 		~Stack();
-		RamAddress Alloca(const llvm::Type* type);
+		RamAddress Alloca(const llvm::Type* type, ObjectRecordPtr bounds = nullptr);
 		void Write(HolderPtr holder, RamAddress addr, Alignment align);
 		HolderPtr Read(RamAddress addr, Alignment align);
 		const llvm::Type* GetType(RamAddress addr);
@@ -30,18 +50,8 @@ namespace memory {
 		unsigned long UpperBound();
 		void Print();
 	private:
-		class MemoryCell {
-		public:
-			MemoryCell(HolderPtr holder, const llvm::Type* type, Alignment align);
-			~MemoryCell();
-			Alignment align_;
-			HolderPtr holder_;
-			const llvm::Type* type_;
-		};
-		using MemoryCellPtr = std::shared_ptr<MemoryCell>;
-		std::stack<RamAddress> segment_stack_;
-		std::map<RamAddress, MemoryCellPtr> ram_;
-		RamAddress Alloca(HolderPtr holder, const llvm::Type* type, Alignment align);
+		RamAddress AllocaScalar(auto width, const llvm::Type* allocated, ObjectRecordPtr bounds);
+		RamAddress Alloca(HolderPtr holder, const llvm::Type* type, Alignment align, ObjectRecordPtr bounds);
 		MemoryCellPtr GetMemoryCell(RamAddress addr);
 	};
 };
