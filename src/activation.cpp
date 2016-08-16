@@ -75,7 +75,7 @@ namespace memory {
 		auto it = local_display_.find(register_name);
 		assert (it != local_display_.end());
 		auto addr = it->second;
-		return ram_.Stack().Read(addr, memory::Ram::def_align_);
+		return ram_.Stack().Read(addr, memory::kDefAlign);
 	}
 
 	void Activation::Store(RegisterName register_name, HolderPtr holder) {
@@ -86,7 +86,7 @@ namespace memory {
 		}
 		else
 			addr = it->second;
-		ram_.Stack().Write(holder, addr, memory::Ram::def_align_);
+		ram_.Stack().Write(holder, addr, memory::kDefAlign);
 	}
 
 	memory::RamAddress Activation::LazyRegisterAllocation(const llvm::Value* variable) {

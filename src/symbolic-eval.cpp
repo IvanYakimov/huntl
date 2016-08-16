@@ -108,7 +108,7 @@ namespace interpreter {
 		context_.Solver().Constraint(constraint);
 		auto v_holder = memory::Symbolic::Create(v);
 		// Store fresh constrained variable v to the memory
-		context_.Ram().Stack().Write(v_holder, lhs, Ram::def_align_);
+		context_.Ram().Stack().Write(v_holder, lhs, memory::kDefAlign);
 	}
 
 	const llvm::BasicBlock* SymbolicEval::BranchHelper(const solver::SharedExpr& condition, const llvm::BasicBlock* branch_ptr, bool branch_marker) {

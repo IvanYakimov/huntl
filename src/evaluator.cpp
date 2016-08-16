@@ -239,7 +239,7 @@ namespace interpreter {
 		HolderPtr holder = ProduceHolder(target);
 		assert (memory::IsConcrete(holder));
 		auto to_width = dest_ty->getBitWidth();
-		auto from_width = memory::Ram::machine_word_bitsize_;
+		auto from_width = memory::kWordSize;
 		auto lhs_address = context_.Top()->GetLocation(&inst);
 		if (to_width < from_width)
 			meta_eval_.Conversion(lhs_address, holder, MetaKind::Trunc, to_width);
@@ -256,7 +256,7 @@ namespace interpreter {
 		llvm::Type* target_ty = target->getType();
 		llvm::IntegerType* int_target_ty = llvm::dyn_cast<IntegerType>(target_ty);
 		auto from_width = int_target_ty->getBitWidth();
-		auto to_width = memory::Ram::machine_word_bitsize_;
+		auto to_width = memory::kWordSize;
 		auto lhs_address = context_.Top()->GetLocation(&inst);
 		if (to_width < from_width)
 			meta_eval_.Conversion(lhs_address, holder, MetaKind::Trunc, to_width);

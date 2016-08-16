@@ -76,7 +76,7 @@ namespace interpreter {
 	void MetaEvaluator::Alloca(const llvm::AllocaInst &lhs, const llvm::Type* allocated_ty) {
 		auto lhs_address = context_.Top()->GetLocation(&lhs);
 		auto target_address = context_.Top()->Alloca(allocated_ty);
-		auto target_address_holder = memory::Concrete::Create(interpreter::MetaInt(memory::Ram::machine_word_bitsize_, target_address));
+		auto target_address_holder = memory::Concrete::Create(interpreter::MetaInt(memory::kWordSize, target_address));
 		Assign(lhs_address, target_address_holder);
 		//std::cerr << "alloca addr: " << *target_address_holder << std::endl;
 	}
@@ -96,7 +96,7 @@ namespace interpreter {
 		MetaIntRef ptr_holder_value = memory::GetValue(ptr_holder);
 		// dereferencing
 		memory::RamAddress target_address = ptr_holder_value.getZExtValue();
-		auto target_holder = context_.Ram().Stack().Read(target_address, memory::Ram::def_align_);
+		auto target_holder = context_.Ram().Stack().Read(target_address, memory::kDefAlign);
 		auto lhs_address = context_.Top()->GetLocation(&lhs);
 		Assign(lhs_address, target_holder);
 	}
