@@ -123,10 +123,23 @@ namespace interpreter {
 		return HandleArg(ret_ty, holder);
 	}
 
+	void PrintASCII(MetaIntRef symbol, std::ostream& os) {
+		unsigned long code = symbol.getZExtValue();
+		char ascii = (char)code;
+		if (std::isprint(ascii))
+			os << ascii;
+		else
+			os << "\\" << (unsigned)ascii;
+	}
+
 	void TestGenerator::PrintSolution(SolutionPtr sol, std::ostream& file) {
 		if (utils::instanceof<Integer>(sol)) {
 			IntegerPtr integer = std::dynamic_pointer_cast<Integer>(sol);
-			file << integer->Get();
+			MetaIntRef val = integer->Get();
+			if (val.getBitWidth() > 8)
+				file << integer->Get();
+			else
+				PrintASCII(val, file);
 		}
 		else if (utils::instanceof<Pointer>(sol)) {
 			PointerPtr pointer = std::dynamic_pointer_cast<Pointer>(sol);
