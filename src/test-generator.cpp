@@ -67,17 +67,22 @@ namespace interpreter {
 				const llvm::ArrayType* array_type = llvm::dyn_cast<llvm::ArrayType>(meta_type);
 				ArrayPtr array = Array::Create();
 				auto arr_size = array_type->getNumElements();
+				auto el_ty = array_type->getElementType();
+				assert (el_ty->isIntegerTy());
+				auto integer_el_ty = llvm::dyn_cast<llvm::IntegerType>(el_ty);
+				auto width = integer_el_ty->getBitWidth();
+				assert (width > 0 and width % 8 == 0);
+				unsigned el_align = width / 8;
 				for (int i = 0; i < arr_size; i++) {
-					auto holder = context_.Ram().Stack().Read(ptr_target + i * memory::kDefAlign, memory::kDefAlign);
+					auto holder = context_.Ram().Stack().Read(ptr_target + i * el_align);
 					SolutionPtr sol = ProduceInteger(holder);
 					array->PushBack(sol);
 				}
 				return Pointer::Create(array);
 				//std::cerr << "array size: " << array_type->getNumElements() << std::endl;
 			}
-			else if (meta_type->isIntegerTy() or meta_type->isPointerTy()){
-				auto align = memory::kDefAlign;
-				HolderPtr ptr_holder = context_.Ram().Stack().Read(ptr_target, align);
+			else if (meta_type->isIntegerTy() or meta_type->isPointerTy()) {
+				HolderPtr ptr_holder = context_.Ram().Stack().Read(ptr_target);
 				// 2. Create result for the appropriate object
 				const llvm::Type* addressed_ty = context_.Ram().Stack().GetType(ptr_target);
 

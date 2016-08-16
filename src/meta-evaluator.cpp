@@ -96,7 +96,7 @@ namespace interpreter {
 		MetaIntRef ptr_holder_value = memory::GetValue(ptr_holder);
 		// dereferencing
 		memory::RamAddress target_address = ptr_holder_value.getZExtValue();
-		auto target_holder = context_.Ram().Stack().Read(target_address, memory::kDefAlign);
+		auto target_holder = context_.Ram().Stack().Read(target_address);
 		auto lhs_address = context_.Top()->GetLocation(&lhs);
 		Assign(lhs_address, target_holder);
 	}
@@ -122,7 +122,7 @@ namespace interpreter {
 		unsigned long idx = GetValue(arr_idx_holder).getSExtValue();
 		unsigned long ptr = GetValue(target_ptr_holder).getSExtValue();
 		assert (base == 0 and "walking throw the pointer is not expected");
-		el_align = memory::kDefAlign;
+		// el_align = memory::kDefAlign;
 		unsigned long result = ptr + idx * el_align;
 		assert (sizeof(result) == sizeof(memory::RamAddress));
 		HolderPtr result_holder = Concrete::Create(MetaInt(memory::kWordSize, result));
@@ -142,7 +142,7 @@ namespace interpreter {
 		// TODO: boundary checking
 		unsigned long idx = GetValue(arr_idx_holder).getSExtValue();
 		unsigned long ptr = GetValue(target_ptr_holder).getSExtValue();
-		el_align = memory::kDefAlign;
+		//el_align = memory::kDefAlign;
 		unsigned long result = ptr + idx * el_align;
 		assert (sizeof(result) == sizeof(memory::RamAddress));
 		HolderPtr result_holder = Concrete::Create(MetaInt(memory::kWordSize, result));
@@ -160,7 +160,7 @@ namespace interpreter {
 		// TODO: boundary checking
 		unsigned long idx = GetValue(arr_idx_holder).getSExtValue();
 		unsigned long ptr = GetValue(target_ptr_holder).getSExtValue();
-		int_align = memory::kDefAlign;
+		//int_align = memory::kDefAlign;
 		unsigned long result = ptr + idx * int_align;
 		assert (sizeof(result) == sizeof(memory::RamAddress));
 		HolderPtr result_holder = Concrete::Create(MetaInt(memory::kWordSize, result));

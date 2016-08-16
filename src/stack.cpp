@@ -39,15 +39,22 @@ namespace memory {
 		auto val = 1;
 		auto holder = memory::Concrete::Create(MetaInt(width, val));
 		RamAddress result;
+		unsigned align = 0;
+		if (width == 1)
+			align = memory::kBoolAlign;
+		else if (width % 8 == 0)
+			align = width / 8;
+		else
+			assert (false);
 		// if the scalar is not a part of another object
 		if (bounds == nullptr) {
 			RamAddress top = UpperBound();
 			bounds = std::make_shared<ObjectRecord>(top, allocated);
-			result = Alloca(holder, allocated, memory::kDefAlign, bounds);
+			result = Alloca(holder, allocated, align, bounds);
 			assert (top == result);
 		}
 		else {
-			result = Alloca(holder, allocated, memory::kDefAlign, bounds);
+			result = Alloca(holder, allocated, align, bounds);
 		}
 		return result;
 	}
@@ -102,15 +109,13 @@ namespace memory {
 		return res;
 	}
 
-	void Stack::Write(HolderPtr holder, RamAddress addr, Alignment align) {
+	void Stack::Write(HolderPtr holder, RamAddress addr) {
 		auto mc = GetMemoryCell(addr);
-		assert (mc->align_ == align);
 		mc->holder_ = holder;
 	}
 
-	HolderPtr Stack::Read(RamAddress addr, Alignment align) {
+	HolderPtr Stack::Read(RamAddress addr) {
 		auto mc = GetMemoryCell(addr);
-		assert (mc->align_ == align);
 		auto res = mc->holder_;
 		assert (res != nullptr);
 		return res;

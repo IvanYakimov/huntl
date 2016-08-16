@@ -42,8 +42,8 @@ namespace memory {
 		Stack();
 		~Stack();
 		RamAddress Alloca(const llvm::Type* type, ObjectRecordPtr bounds = nullptr);
-		void Write(HolderPtr holder, RamAddress addr, Alignment align);
-		HolderPtr Read(RamAddress addr, Alignment align);
+		void Write(HolderPtr holder, RamAddress addr);
+		HolderPtr Read(RamAddress addr);
 		const llvm::Type* GetType(RamAddress addr);
 		const llvm::Type* GetMetaType(RamAddress addr);
 		RamAddress GetBaseAddress(RamAddress addr);

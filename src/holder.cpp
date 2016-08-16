@@ -1,6 +1,10 @@
 #include "holder.hpp"
 
 namespace memory {
+	using interpreter::MetaIntRef;
+	using solver::SharedExpr;
+
+
 	bool IsSymbolic(HolderPtr holder) {
 		return utils::instanceof<Symbolic>(holder);
 	}
@@ -34,6 +38,14 @@ namespace memory {
 	std::ostream& Undef::ToStream(std::ostream &os, const Object& obj) const {
 		os << "undef";
 		return os;
+	}
+
+	unsigned WidthToAlign(unsigned width) {
+		assert (width > 0);
+		if (width % 8 == 0)
+			return width % 8;
+		else if (width == 1)
+			return memory::kBoolAlign;
 	}
 }
 

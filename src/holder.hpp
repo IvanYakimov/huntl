@@ -8,6 +8,7 @@
 #include "meta-int.hpp"
 #include "creatable.hpp"
 #include "converter.hpp"
+#include "ram-delc.hpp"
 
 #include "llvm/IR/InstVisitor.h"
 

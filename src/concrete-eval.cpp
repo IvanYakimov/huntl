@@ -88,7 +88,7 @@ namespace interpreter {
 	void ConcreteEval::Assign (memory::RamAddress lhs, MetaIntRef value) {
 		MetaInt new_concrete = value;
 		HolderPtr target = Concrete::Create(new_concrete);
-		context_.Ram().Stack().Write(target, lhs, memory::kDefAlign);
+		context_.Ram().Stack().Write(target, lhs);
 	}
 
 	void ConcreteEval::Conversion (memory::RamAddress lhs, interpreter::MetaIntRef rhs, MetaKind kind, unsigned width) {
