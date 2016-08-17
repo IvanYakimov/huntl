@@ -4,6 +4,7 @@
 #include "stack.hpp"
 #include "object.hpp"
 #include "ram-delc.hpp"
+#include "holder.hpp"
 
 namespace memory {
 	class Ram;
