@@ -21,6 +21,7 @@ namespace interpreter {
 	private:
 		IntegerPtr ProduceInteger(memory::HolderPtr holder);
 		PointerPtr ProducePointerTo(memory::HolderPtr holder);
+		ArrayPtr ProduceArrayOf(const llvm::ArrayType* array_type, memory::RamAddress base_address);
 		SolutionPtr HandleArg(const llvm::Type* ty, memory::HolderPtr holder);
 		ContextRef context_;
 	};

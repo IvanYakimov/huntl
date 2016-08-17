@@ -21,6 +21,23 @@ namespace interpreter {
 			assert(false and "unexpected behavior");
 	}
 
+	ArrayPtr SolutionGenerator::ProduceArrayOf(const llvm::ArrayType* array_type, memory::RamAddress base_address) {
+		ArrayPtr array = Array::Create();
+		auto arr_size = array_type->getNumElements();
+		auto el_ty = array_type->getElementType();
+		assert (el_ty->isIntegerTy());
+		auto integer_el_ty = llvm::dyn_cast<llvm::IntegerType>(el_ty);
+		auto width = integer_el_ty->getBitWidth();
+		assert (width > 0 and width % 8 == 0);
+		unsigned el_align = width / 8;
+		for (int i = 0; i < arr_size; i++) {
+			auto holder = context_.Ram().Stack().Read(base_address + i * el_align);
+			SolutionPtr sol = ProduceInteger(holder);
+			array->PushBack(sol);
+		}
+		return array;
+	}
+
 	PointerPtr SolutionGenerator::ProducePointerTo(memory::HolderPtr holder) {
 		assert (memory::IsConcrete(holder));
 		// 1. Dereference the pointer
@@ -29,21 +46,9 @@ namespace interpreter {
 		const llvm::Type* meta_type = context_.Ram().Stack().GetMetaType(ptr_target);
 		if (meta_type->isArrayTy()) {
 			const llvm::ArrayType* array_type = llvm::dyn_cast<llvm::ArrayType>(meta_type);
-			ArrayPtr array = Array::Create();
-			auto arr_size = array_type->getNumElements();
-			auto el_ty = array_type->getElementType();
-			assert (el_ty->isIntegerTy());
-			auto integer_el_ty = llvm::dyn_cast<llvm::IntegerType>(el_ty);
-			auto width = integer_el_ty->getBitWidth();
-			assert (width > 0 and width % 8 == 0);
-			unsigned el_align = width / 8;
-			for (int i = 0; i < arr_size; i++) {
-				auto holder = context_.Ram().Stack().Read(ptr_target + i * el_align);
-				SolutionPtr sol = ProduceInteger(holder);
-				array->PushBack(sol);
-			}
+			ArrayPtr array = ProduceArrayOf(array_type, ptr_target);
+			assert (array != nullptr);
 			return Pointer::Create(array);
-			//std::cerr << "array size: " << array_type->getNumElements() << std::endl;
 		}
 		else if (meta_type->isIntegerTy() or meta_type->isPointerTy()) {
 			HolderPtr ptr_holder = context_.Ram().Stack().Read(ptr_target);
