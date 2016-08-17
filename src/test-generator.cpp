@@ -17,7 +17,8 @@ namespace interpreter {
 					target_(target),
 					args_(args),
 					context_(context),
-					file_(file) {
+					file_(file),
+					jit_verifier_(context){
 	}
 
 	TestGenerator::~TestGenerator() {
@@ -140,39 +141,7 @@ namespace interpreter {
 
 		//---------------------------------------------------------------------------
 		// JIT:
-		std::vector<GenericValue> jit_args = ProduceJITArgs(arg_sols);
+		std::vector<GenericValue> jit_args = jit_verifier_.ProduceJITArgs(arg_sols);
 		//assert (JIT(arg_sol_list, ret_sol) and "JIT verification failed");
-	}
-
-	std::vector<llvm::GenericValue> ProduceJITArgs(SolutionListPtr result_list) {
-		/*
-		std::vector<llvm::GenericValue> jit_args;
-		ResultList::iterator;
-		llvm::GenericValue gres;
-		for_each(arg_sol_list.begin(), arg_sol_list.end(), [&](auto arg_sol) {
-			llvm::GenericValue gval;
-			gval.IntVal = memory::GetValue(arg_sol);
-			jit_args.push_back(gval);
-		});
-		*/
-	}
-
-	bool TestGenerator::JIT(std::vector<GenericValue> jit_args, GenericValue expected) {
-		//---------------------------------------------------------------------------
-		// JIT:
-		//exit(0);
-		llvm::ExecutionEngine* jit = llvm::EngineBuilder(module_).create();
-
-		// http://ktown.kde.org/~zrusin/main.cpp
-		// http://stackoverflow.com/questions/19807875/how-to-convert-a-genericvalue-to-value-in-llvm
-		GenericValue gres;
-		gres = jit->runFunction(target_, jit_args);
-		ConcretePtr jit_res = dynamic_pointer_cast<Concrete>(Concrete::Create(gres.IntVal));
-		if (gres.IntVal != expected.IntVal) {
-
-			//llvm::errs() << "// jit res: " << gres.IntVal << std::endl;
-		}
-
-		return (expected.IntVal == gres.IntVal);
 	}
 }

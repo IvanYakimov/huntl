@@ -1,9 +1,6 @@
 #ifndef __TEST_GENERATOR_HPP__
 #define __TEST_GENERATOR_HPP__
 
-#include "llvm/IR/InstVisitor.h"
-#include "llvm/ExecutionEngine/ExecutionEngine.h"
-#include "llvm/ExecutionEngine/GenericValue.h"
 #include "holder.hpp"
 #include "context.hpp"
 
@@ -20,6 +17,7 @@
 #include "solution.hpp"
 #include "instanceof.hpp"
 #include "solution-printer.hpp"
+#include "jit-verifier.hpp"
 
 namespace interpreter {
 	using memory::ArgMap; using memory::HolderPtr; using memory::ArgMapPtr;
@@ -36,12 +34,11 @@ namespace interpreter {
 		llvm::Function* target_;
 		memory::ArgMapPtr args_;
 		llvm::Module* module_;
+		JITVerifier jit_verifier_;
 		SolutionPtr ProduceInteger(HolderPtr holder);
 		SolutionPtr HandleArg(const llvm::Type* ty, HolderPtr holder);
 		SolutionListPtr ProduceArgSolutions(llvm::Function* func, ArgMapPtr arg_map);
 		SolutionPtr ProduceRetSolution(llvm::Function* func, ArgMapPtr arg_map);
-		std::vector<llvm::GenericValue> ProduceJITArgs(SolutionListPtr result_list);
-		bool JIT(std::vector<llvm::GenericValue> jit_args, llvm::GenericValue expected);
 };
 }
 
