@@ -120,11 +120,11 @@ unsigned recsum(unsigned a, unsigned n) {
 }
 
 void test_recsum() {
-	int a = 2, n = 6, s = 0;
+	int a = 2, n = 4, s = 0;
 	a = mksym_i32();
-	n = mksym_i32();
+	//n = mksym_i32();
 	limit2_i32(&a,0,3);
-	limit2_i32(&n,0,4);
+	//limit2_i32(&n,0,3);
 	s = recsum(a,n);
 	gen_recsum(a,n,s);
 }

@@ -50,16 +50,17 @@ namespace interpreter {
 			assert (array != nullptr);
 			return Pointer::Create(array);
 		}
-		else if (meta_type->isIntegerTy() or meta_type->isPointerTy()) {
-			HolderPtr ptr_holder = context_.Ram().Stack().Read(ptr_target);
-			// 2. Create result for the appropriate object
-			const llvm::Type* addressed_ty = context_.Ram().Stack().GetType(ptr_target);
-
-			return Pointer::Create(HandleArg(addressed_ty, ptr_holder));
-			// node
+		else {
+			HolderPtr dereferenced = context_.Ram().Stack().Read(ptr_target);
+			if (meta_type->isIntegerTy()) {
+				return Pointer::Create(ProduceInteger(dereferenced));
+			}
+			else if (meta_type->isPointerTy()) {
+				return Pointer::Create(ProducePointerTo(dereferenced));
+			}
+			else
+				assert (false and "unexpected type of pointer");
 		}
-		else
-			assert ("unexpected");
 	}
 
 	SolutionPtr SolutionGenerator::HandleArg(const Type* ty, HolderPtr holder) {
@@ -70,7 +71,7 @@ namespace interpreter {
 			return ProducePointerTo(holder);
 		}
 		else
-			assert (! "unexpected");
+			assert (false and "unexpected");
 	}
 
 	SolutionListPtr SolutionGenerator::ProduceArgSolutions(llvm::Function* func, list<HolderPtr>& arg_map) {
