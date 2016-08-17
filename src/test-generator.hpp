@@ -16,6 +16,7 @@
 
 #include "solution.hpp"
 #include "instanceof.hpp"
+#include "solution-generator.hpp"
 #include "solution-printer.hpp"
 #include "jit-verifier.hpp"
 
@@ -35,10 +36,7 @@ namespace interpreter {
 		memory::ArgMapPtr args_;
 		llvm::Module* module_;
 		JITVerifier jit_verifier_;
-		SolutionPtr ProduceInteger(HolderPtr holder);
-		SolutionPtr HandleArg(const llvm::Type* ty, HolderPtr holder);
-		SolutionListPtr ProduceArgSolutions(llvm::Function* func, ArgMapPtr arg_map);
-		SolutionPtr ProduceRetSolution(llvm::Function* func, ArgMapPtr arg_map);
+		SolutionGenerator sol_gen_;
 };
 }
 
