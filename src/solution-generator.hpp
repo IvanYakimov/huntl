@@ -9,16 +9,18 @@
 #include "llvm/IR/Type.h"
 #include "llvm/IR/Function.h"
 
+#include <list>
+
 namespace interpreter {
 	class SolutionGenerator {
 	public:
 		SolutionGenerator(ContextRef context);
 		~SolutionGenerator();
+		SolutionListPtr ProduceArgSolutions(llvm::Function* func, std::list<memory::HolderPtr>& arg_map);
+		SolutionPtr ProduceRetSolution(llvm::Function* func, memory::HolderPtr arg_map);
+	private:
 		SolutionPtr ProduceInteger(memory::HolderPtr holder);
 		SolutionPtr HandleArg(const llvm::Type* ty, memory::HolderPtr holder);
-		SolutionListPtr ProduceArgSolutions(llvm::Function* func, memory::ArgMapPtr arg_map);
-		SolutionPtr ProduceRetSolution(llvm::Function* func, memory::ArgMapPtr arg_map);
-	private:
 		ContextRef context_;
 	};
 }

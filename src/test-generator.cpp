@@ -26,13 +26,35 @@ namespace interpreter {
 
 	}
 
+	/*
+	ArgMapPtr CloneArgMap(ArgMapPtr target) {
+		ArgMapPtr fresh_map = utils::Create<ArgMap>();
+		for (auto i = target->begin(); i != target->end(); ++i) {
+			fresh_map->emplace(i->first, i->second);
+		}
+		assert (fresh_map->size() == target->size());
+		return fresh_map;
+	}
+	*/
+
+	//TODO: implement void function support
 	void TestGenerator::Do() {
 		SolutionListPtr arg_sols;
 		SolutionPtr ret_sol;
+
+		std::list<HolderPtr> target_args;
+		auto begin = args_->begin();
+		for (auto it = args_->begin(); it != args_->end(); ++it) {
+			target_args.push_back(it->second);
+		}
+		//target_args.pop_back(); // remove last item - it is a ret value of target function!
+		HolderPtr target_ret = target_args.back();
+		target_args.pop_back(); // remove last item - it is a ret value of target function!
+		//HolderPtr target_ret = args_->rbegin()->second;
+
 		if (context_.Solver().IsSat() == true) {
-			arg_sols = sol_gen_.ProduceArgSolutions(target_, args_);
-			//TODO: implement void function support
-			ret_sol = sol_gen_.ProduceRetSolution(target_, args_);
+			arg_sols = sol_gen_.ProduceArgSolutions(target_, target_args);
+			ret_sol = sol_gen_.ProduceRetSolution(target_, target_ret);
 		}
 		else
 			assert (false and "not implemented");

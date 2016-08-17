@@ -3,6 +3,7 @@
 namespace interpreter {
 	using memory::HolderPtr; using memory::ArgMapPtr;
 	using llvm::Type; using llvm::IntegerType; using llvm::PointerType; using llvm::ArrayType;
+	using std::list;
 
 	SolutionGenerator::SolutionGenerator(ContextRef context) : context_(context) {}
 	SolutionGenerator::~SolutionGenerator() {}
@@ -65,30 +66,34 @@ namespace interpreter {
 			assert (! "unexpected");
 	}
 
-	SolutionListPtr SolutionGenerator::ProduceArgSolutions(llvm::Function* func, ArgMapPtr arg_map) {
+	SolutionListPtr SolutionGenerator::ProduceArgSolutions(llvm::Function* func, list<HolderPtr>& arg_map) {
 		SolutionListPtr results = utils::Create<SolutionList>();
 		//SolutionList results;
 		auto farg_iterator = func->arg_begin();
-		auto argmap_iterator = arg_map->begin();
+		auto argmap_iterator = arg_map.begin();
 		// for all args of TARGET (not gen_TARGET) function
 		while (farg_iterator != func->arg_end()) {
 			Type* ty = farg_iterator->getType();
-			HolderPtr holder = argmap_iterator->second;
+			//HolderPtr holder = argmap_iterator->second;
+			HolderPtr holder = *argmap_iterator;
 			SolutionPtr res = HandleArg(ty, holder);
 			assert (res != nullptr);
 			results->push_back(res);
 			argmap_iterator++;
 			farg_iterator++;
 		}
-		assert (results->size() == arg_map->size() - 1);
+		//assert (results->size() == arg_map->size() - 1);
+		assert (results->size() == arg_map.size());
 		return results;
 	}
 
-	SolutionPtr SolutionGenerator::ProduceRetSolution(llvm::Function* func, ArgMapPtr arg_map) {
+	SolutionPtr SolutionGenerator::ProduceRetSolution(llvm::Function* func, HolderPtr holder) {
+		assert (holder != nullptr);
 		// the last item of gen_TARGET argument list references to the TARGET return value
 		llvm::Type* ret_ty = func->getReturnType();
-		auto argmap_iterator = arg_map->rbegin();
-		HolderPtr holder = argmap_iterator->second;
+		assert (not ret_ty->isVoidTy());
+		//auto argmap_iterator = arg_map->rbegin();
+		//HolderPtr holder = argmap_iterator->second;
 		return HandleArg(ret_ty, holder);
 	}
 }
