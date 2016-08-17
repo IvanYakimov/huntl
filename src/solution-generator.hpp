@@ -19,8 +19,8 @@ namespace interpreter {
 		SolutionListPtr ProduceArgSolutions(llvm::Function* func, std::list<memory::HolderPtr>& arg_map);
 		SolutionPtr ProduceRetSolution(llvm::Function* func, memory::HolderPtr arg_map);
 	private:
-		SolutionPtr ProduceInteger(memory::HolderPtr holder);
-		SolutionPtr ProducePointerTo(memory::HolderPtr holder);
+		IntegerPtr ProduceInteger(memory::HolderPtr holder);
+		PointerPtr ProducePointerTo(memory::HolderPtr holder);
 		SolutionPtr HandleArg(const llvm::Type* ty, memory::HolderPtr holder);
 		ContextRef context_;
 	};

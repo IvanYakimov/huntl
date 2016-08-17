@@ -18,16 +18,17 @@ namespace interpreter {
 	};
 	using SolutionPtr = std::shared_ptr<Solution>;
 
+	class Integer;
+	using IntegerPtr = std::shared_ptr<Integer>;
 	class Integer : public Solution {
 	public:
 		Integer(MetaIntRef value);
 		const MetaIntRef Get() const;
 		virtual ~Integer(){}
-		static SolutionPtr Create(MetaIntRef value);
+		static IntegerPtr Create(MetaIntRef value);
 	private:
 		MetaInt value_;
 	};
-	using IntegerPtr = std::shared_ptr<Integer>;
 
 	class Array;
 	using ArrayPtr = std::shared_ptr<Array>;
@@ -42,15 +43,16 @@ namespace interpreter {
 		std::vector<SolutionPtr> val_list_;
 	};
 
+	class Pointer;
+	using PointerPtr = std::shared_ptr<Pointer>;
 	class Pointer : public Solution {
 	public:
 		Pointer(SolutionPtr target);
 		SolutionPtr Dereference();
-		static SolutionPtr Create(SolutionPtr target);
+		static PointerPtr Create(SolutionPtr target);
 	private:
 		SolutionPtr target_;
 	};
-	using PointerPtr = std::shared_ptr<Pointer>;
 
 	using SolutionList = std::list<SolutionPtr>;
 	using SolutionListPtr = std::shared_ptr<SolutionList>;

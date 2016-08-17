@@ -8,7 +8,7 @@ namespace interpreter {
 	SolutionGenerator::SolutionGenerator(ContextRef context) : context_(context) {}
 	SolutionGenerator::~SolutionGenerator() {}
 
-	SolutionPtr SolutionGenerator::ProduceInteger(HolderPtr holder) {
+	IntegerPtr SolutionGenerator::ProduceInteger(HolderPtr holder) {
 		SolutionPtr result = nullptr;
 		if (memory::IsConcrete(holder)) {
 			MetaIntRef val = memory::GetValue(holder);
@@ -21,7 +21,7 @@ namespace interpreter {
 			assert(false and "unexpected behavior");
 	}
 
-	SolutionPtr SolutionGenerator::ProducePointerTo(memory::HolderPtr holder) {
+	PointerPtr SolutionGenerator::ProducePointerTo(memory::HolderPtr holder) {
 		assert (memory::IsConcrete(holder));
 		// 1. Dereference the pointer
 		MetaIntRef ptr_address_metaint = memory::GetValue(holder);

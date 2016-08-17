@@ -2,7 +2,7 @@
 
 namespace interpreter {
 	Integer::Integer(MetaIntRef value) : value_(value){}
-	SolutionPtr Integer::Create(MetaIntRef value) {
+	IntegerPtr Integer::Create(MetaIntRef value) {
 		return utils::Create<Integer>(value);
 	}
 	const MetaIntRef Integer::Get() const {
@@ -26,7 +26,7 @@ namespace interpreter {
 
 	Pointer::Pointer(SolutionPtr target) : target_(target) {}
 	SolutionPtr Pointer::Dereference() {return target_;}
-	SolutionPtr Pointer::Create(SolutionPtr target) {
+	PointerPtr Pointer::Create(SolutionPtr target) {
 		return utils::Create<Pointer>(target);
 	}
 }
