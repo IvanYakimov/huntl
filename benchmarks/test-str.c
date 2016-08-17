@@ -17,9 +17,9 @@ size_t strlen(const char *s)
 void test_strlen() {
 	unsigned char buff[5];
 	for (int i = 0; i < 5; i++) {
-		buff[i] = 'a' + i;
-		//buff[i] = mksym_u8();//'a' + i;
-		//limit2_u8(&buff[i], '\0', 'Z');
+		//buff[i] = 'a' + i;
+		buff[i] = mksym_u8();//'a' + i;
+		limit2_u8(&buff[i], '\0', 'a');
 	}
 	buff[4] = '\0';
 	size_t len;
@@ -27,7 +27,7 @@ void test_strlen() {
 	gen_strlen(buff,len);
 }
 
-//TODO: debugging
+//TODO: select instruction
 /*
 void gen_strcmp(const char *cs, const char *ct, int res);
 int strcmp(const char *cs, const char *ct)
@@ -55,37 +55,8 @@ void test_strcmp() {
 	b1[4] = '\0'; b2[4] = '\0';
 	int len = strcmp(b1,b2);
 	gen_strcmp(b1,b2,len);
-}
+
 */
-
-void gen_memcpy(void *dest, const void *src, size_t cound, int res);
-int memcpy(void *dest, const void *src, size_t count)
-{
-	char *tmp = dest;
-	const char *s = src;
-
-	while (count--)
-		*tmp++ = *s++;
-	return 0;
-}
-
-void test_memcpy() {
-	char b1[5];
-	char b2[5];
-	int res;
-	for (int i = 0; i < 5; i++) {
-		b1[i] = 0;
-		b2[i] = mksym_u8();
-		limit2_u8(&b2[i], 'a','b');
-	}
-	b1[4] = '\0'; b2[4] = '\0';
-	res = memcpy(b1,b2,5);
-	gen_memcpy(b1,b2,5,res);
-}
-
-
-
-
 
 
 
