@@ -20,6 +20,7 @@ namespace interpreter {
 		SolutionPtr ProduceRetSolution(llvm::Function* func, memory::HolderPtr arg_map);
 	private:
 		SolutionPtr ProduceInteger(memory::HolderPtr holder);
+		SolutionPtr ProducePointerTo(memory::HolderPtr holder);
 		SolutionPtr HandleArg(const llvm::Type* ty, memory::HolderPtr holder);
 		ContextRef context_;
 	};

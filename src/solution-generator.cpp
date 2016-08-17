@@ -21,46 +21,48 @@ namespace interpreter {
 			assert(false and "unexpected behavior");
 	}
 
+	SolutionPtr SolutionGenerator::ProducePointerTo(memory::HolderPtr holder) {
+		assert (memory::IsConcrete(holder));
+		// 1. Dereference the pointer
+		MetaIntRef ptr_address_metaint = memory::GetValue(holder);
+		memory::RamAddress ptr_target = ptr_address_metaint.getZExtValue();
+		const llvm::Type* meta_type = context_.Ram().Stack().GetMetaType(ptr_target);
+		if (meta_type->isArrayTy()) {
+			const llvm::ArrayType* array_type = llvm::dyn_cast<llvm::ArrayType>(meta_type);
+			ArrayPtr array = Array::Create();
+			auto arr_size = array_type->getNumElements();
+			auto el_ty = array_type->getElementType();
+			assert (el_ty->isIntegerTy());
+			auto integer_el_ty = llvm::dyn_cast<llvm::IntegerType>(el_ty);
+			auto width = integer_el_ty->getBitWidth();
+			assert (width > 0 and width % 8 == 0);
+			unsigned el_align = width / 8;
+			for (int i = 0; i < arr_size; i++) {
+				auto holder = context_.Ram().Stack().Read(ptr_target + i * el_align);
+				SolutionPtr sol = ProduceInteger(holder);
+				array->PushBack(sol);
+			}
+			return Pointer::Create(array);
+			//std::cerr << "array size: " << array_type->getNumElements() << std::endl;
+		}
+		else if (meta_type->isIntegerTy() or meta_type->isPointerTy()) {
+			HolderPtr ptr_holder = context_.Ram().Stack().Read(ptr_target);
+			// 2. Create result for the appropriate object
+			const llvm::Type* addressed_ty = context_.Ram().Stack().GetType(ptr_target);
+
+			return Pointer::Create(HandleArg(addressed_ty, ptr_holder));
+			// node
+		}
+		else
+			assert ("unexpected");
+	}
+
 	SolutionPtr SolutionGenerator::HandleArg(const Type* ty, HolderPtr holder) {
 		if (ty->isIntegerTy()) {
-			// this can be or integer const
 			return ProduceInteger(holder);
-			//or implicit array of integers
 		}
 		else if (ty->isPointerTy()) {
-			assert (memory::IsConcrete(holder));
-			// 1. Dereference the pointer
-			MetaIntRef ptr_address_metaint = memory::GetValue(holder);
-			memory::RamAddress ptr_target = ptr_address_metaint.getZExtValue();
-			const llvm::Type* meta_type = context_.Ram().Stack().GetMetaType(ptr_target);
-			if (meta_type->isArrayTy()) {
-				const llvm::ArrayType* array_type = llvm::dyn_cast<llvm::ArrayType>(meta_type);
-				ArrayPtr array = Array::Create();
-				auto arr_size = array_type->getNumElements();
-				auto el_ty = array_type->getElementType();
-				assert (el_ty->isIntegerTy());
-				auto integer_el_ty = llvm::dyn_cast<llvm::IntegerType>(el_ty);
-				auto width = integer_el_ty->getBitWidth();
-				assert (width > 0 and width % 8 == 0);
-				unsigned el_align = width / 8;
-				for (int i = 0; i < arr_size; i++) {
-					auto holder = context_.Ram().Stack().Read(ptr_target + i * el_align);
-					SolutionPtr sol = ProduceInteger(holder);
-					array->PushBack(sol);
-				}
-				return Pointer::Create(array);
-				//std::cerr << "array size: " << array_type->getNumElements() << std::endl;
-			}
-			else if (meta_type->isIntegerTy() or meta_type->isPointerTy()) {
-				HolderPtr ptr_holder = context_.Ram().Stack().Read(ptr_target);
-				// 2. Create result for the appropriate object
-				const llvm::Type* addressed_ty = context_.Ram().Stack().GetType(ptr_target);
-
-				return Pointer::Create(HandleArg(addressed_ty, ptr_holder));
-				// node
-			}
-			else
-				assert ("unexpected");
+			return ProducePointerTo(holder);
 		}
 		else
 			assert (! "unexpected");
