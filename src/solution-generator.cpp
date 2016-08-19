@@ -74,15 +74,12 @@ namespace interpreter {
 			assert (false and "unexpected");
 	}
 
-	SolutionListPtr SolutionGenerator::ProduceArgSolutions(llvm::Function* func, list<HolderPtr>& arg_map) {
+	SolutionListPtr SolutionGenerator::ProduceArgSolutions(llvm::Function* func_, list<HolderPtr>& arg_sols_) {
 		SolutionListPtr results = utils::Create<SolutionList>();
-		//SolutionList results;
-		auto farg_iterator = func->arg_begin();
-		auto argmap_iterator = arg_map.begin();
-		// for all args of TARGET (not gen_TARGET) function
-		while (farg_iterator != func->arg_end()) {
+		auto farg_iterator = func_->arg_begin();
+		auto argmap_iterator = arg_sols_.begin();
+		while (farg_iterator != func_->arg_end()) {
 			Type* ty = farg_iterator->getType();
-			//HolderPtr holder = argmap_iterator->second;
 			HolderPtr holder = *argmap_iterator;
 			SolutionPtr res = HandleArg(ty, holder);
 			assert (res != nullptr);
@@ -90,18 +87,14 @@ namespace interpreter {
 			argmap_iterator++;
 			farg_iterator++;
 		}
-		//assert (results->size() == arg_map->size() - 1);
-		assert (results->size() == arg_map.size());
+		assert (results->size() == arg_sols_.size());
 		return results;
 	}
 
-	SolutionPtr SolutionGenerator::ProduceRetSolution(llvm::Function* func, HolderPtr holder) {
-		assert (holder != nullptr);
-		// the last item of gen_TARGET argument list references to the TARGET return value
-		llvm::Type* ret_ty = func->getReturnType();
+	SolutionPtr SolutionGenerator::ProduceRetSolution(llvm::Function* func_, HolderPtr ret_) {
+		assert (ret_ != nullptr);
+		llvm::Type* ret_ty = func_->getReturnType();
 		assert (not ret_ty->isVoidTy());
-		//auto argmap_iterator = arg_map->rbegin();
-		//HolderPtr holder = argmap_iterator->second;
-		return HandleArg(ret_ty, holder);
+		return HandleArg(ret_ty, ret_);
 	}
 }
