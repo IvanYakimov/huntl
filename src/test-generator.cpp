@@ -18,24 +18,13 @@ namespace interpreter {
 					args_(args),
 					context_(context),
 					file_(file),
-					jit_verifier_(context),
-					sol_gen_(context){
+					jit_verifier_(context)
+					{
 	}
 
 	TestGenerator::~TestGenerator() {
 
 	}
-
-	/*
-	ArgMapPtr CloneArgMap(ArgMapPtr target) {
-		ArgMapPtr fresh_map = utils::Create<ArgMap>();
-		for (auto i = target->begin(); i != target->end(); ++i) {
-			fresh_map->emplace(i->first, i->second);
-		}
-		assert (fresh_map->size() == target->size());
-		return fresh_map;
-	}
-	*/
 
 	//TODO: implement void function support
 	void TestGenerator::Do() {
@@ -51,13 +40,14 @@ namespace interpreter {
 		HolderPtr target_ret = target_args.back();
 		target_args.pop_back(); // remove last item - it is a ret value of target function!
 		//HolderPtr target_ret = args_->rbegin()->second;
+		SolutionGenerator sol_gen(context_, target_, target_args, target_ret);
 
-		if (context_.Solver().IsSat() == true) {
-			arg_sols = sol_gen_.ProduceArgSolutions(target_, target_args);
-			ret_sol = sol_gen_.ProduceRetSolution(target_, target_ret);
+		if (sol_gen.ProduceSolution()) {
+			arg_sols = sol_gen.GetArgSolutions();
+			ret_sol = sol_gen.GetRetSolution();
 		}
 		else
-			assert (false and "not implemented");
+			assert (false and "the PC is unsatisfiable");
 
 		PrintWholeSolution(target_, arg_sols, ret_sol, file_);
 

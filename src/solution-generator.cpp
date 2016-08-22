@@ -5,7 +5,12 @@ namespace interpreter {
 	using llvm::Type; using llvm::IntegerType; using llvm::PointerType; using llvm::ArrayType;
 	using std::list;
 
-	SolutionGenerator::SolutionGenerator(ContextRef context) : context_(context) {}
+	SolutionGenerator::SolutionGenerator(ContextRef context, llvm::Function* func, std::list<memory::HolderPtr>& arg_holders, memory::HolderPtr& ret_holder)
+	: context_(context), func_(func),
+	  arg_holders_(arg_holders), ret_holder_(ret_holder),
+	  arg_sols_(nullptr), ret_sol_(nullptr) {
+		assert (func_ != nullptr);
+	}
 	SolutionGenerator::~SolutionGenerator() {}
 
 	IntegerPtr SolutionGenerator::ProduceInteger(HolderPtr holder) {
@@ -19,6 +24,26 @@ namespace interpreter {
 			return Integer::Create(val);
 		} else
 			assert(false and "unexpected behavior");
+	}
+
+	bool SolutionGenerator::ProduceSolution() {
+		if (context_.Solver().IsSat()) {
+			arg_sols_ = ProduceArgSolutions();
+			ret_sol_ = ProduceRetSolution();
+			return true;
+		}
+		else
+			return false;
+	}
+
+	SolutionListPtr SolutionGenerator::GetArgSolutions() {
+		assert (arg_sols_ != nullptr);
+		return arg_sols_;
+	}
+
+	SolutionPtr SolutionGenerator::GetRetSolution() {
+		assert (ret_sol_ != nullptr);
+		return ret_sol_;
 	}
 
 	ArrayPtr SolutionGenerator::ProduceArrayOf(const llvm::ArrayType* array_type, memory::RamAddress base_address) {
@@ -74,10 +99,10 @@ namespace interpreter {
 			assert (false and "unexpected");
 	}
 
-	SolutionListPtr SolutionGenerator::ProduceArgSolutions(llvm::Function* func_, list<HolderPtr>& arg_sols_) {
+	SolutionListPtr SolutionGenerator::ProduceArgSolutions() {
 		SolutionListPtr results = utils::Create<SolutionList>();
 		auto farg_iterator = func_->arg_begin();
-		auto argmap_iterator = arg_sols_.begin();
+		auto argmap_iterator = arg_holders_.begin();
 		while (farg_iterator != func_->arg_end()) {
 			Type* ty = farg_iterator->getType();
 			HolderPtr holder = *argmap_iterator;
@@ -87,14 +112,14 @@ namespace interpreter {
 			argmap_iterator++;
 			farg_iterator++;
 		}
-		assert (results->size() == arg_sols_.size());
+		assert (results->size() == arg_holders_.size());
 		return results;
 	}
 
-	SolutionPtr SolutionGenerator::ProduceRetSolution(llvm::Function* func_, HolderPtr ret_) {
-		assert (ret_ != nullptr);
+	SolutionPtr SolutionGenerator::ProduceRetSolution() {
+		assert (ret_holder_ != nullptr);
 		llvm::Type* ret_ty = func_->getReturnType();
 		assert (not ret_ty->isVoidTy());
-		return HandleArg(ret_ty, ret_);
+		return HandleArg(ret_ty, ret_holder_);
 	}
 }

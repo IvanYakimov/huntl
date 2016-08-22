@@ -36,7 +36,6 @@ namespace interpreter {
 		memory::ArgMapPtr args_;
 		llvm::Module* module_;
 		JITVerifier jit_verifier_;
-		SolutionGenerator sol_gen_;
 };
 }
 
