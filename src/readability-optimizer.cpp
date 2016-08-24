@@ -13,7 +13,12 @@ namespace interpreter {
 		if (utils::instanceof<Integer>(sol)) {
 			IntegerPtr integer = std::dynamic_pointer_cast<Integer>(sol);
 			//f (integer);
-			std::cerr << interpreter::GetWidth(integer->Get()) << " ";
+			HolderPtr holder = integer->Get();
+			unsigned width = GetWidth(holder);
+			if (width == 8) {
+				// readability optimization
+			}
+			std::cerr << width << " ";
 		}
 		else if (utils::instanceof<Pointer>(sol)) {
 			PointerPtr pointer = std::dynamic_pointer_cast<Pointer>(sol);
