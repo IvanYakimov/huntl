@@ -9,6 +9,7 @@
 #include "creatable.hpp"
 #include "converter.hpp"
 #include "ram-delc.hpp"
+#include "solver.hpp"
 
 #include "llvm/IR/InstVisitor.h"
 
@@ -46,6 +47,7 @@ namespace memory {
 
 	const solver::SharedExpr& GetExpr(memory::HolderPtr holder);
 	const interpreter::MetaInt& GetValue(memory::HolderPtr holder);
+	interpreter::MetaInt Concretize(solver::SolverRef solver, memory::HolderPtr holder);
 }
 
 #endif

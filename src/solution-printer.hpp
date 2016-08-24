@@ -22,8 +22,6 @@ namespace interpreter {
 		void PrintSeparator(std::ostream& file);
 		void PrintEndl(std::ostream& file);
 
-		MetaInt Concretize(memory::HolderPtr holder);
-
 		ContextRef context_;
 		llvm::Function* func_;
 		SolutionListPtr arg_sols_;

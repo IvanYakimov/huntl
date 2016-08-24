@@ -15,21 +15,6 @@ namespace interpreter {
 
 	}
 
-	MetaInt SolutionPrinter::Concretize(memory::HolderPtr holder) {
-		if (memory::IsConcrete(holder)) {
-			MetaInt val = memory::GetValue(holder);
-			return val;
-			//return Integer::Create(holder);
-		} else if (memory::IsSymbolic(holder)) {
-			solver::SharedExpr e = memory::GetExpr(holder);
-			interpreter::MetaInt val = context_.Solver().GetValue(e);
-			return val;
-			//return Integer::Create(holder);
-		}
-		else
-			assert (false and "not expected");
-	}
-
 	void SolutionPrinter::PrintASCII(MetaIntRef symbol, std::ostream& os) {
 		unsigned long code = symbol.getZExtValue();
 		char ascii = (char)code;
@@ -42,7 +27,7 @@ namespace interpreter {
 	void SolutionPrinter::PrintSolution(SolutionPtr sol, std::ostream& file) {
 		if (utils::instanceof<Integer>(sol)) {
 			IntegerPtr integer = std::dynamic_pointer_cast<Integer>(sol);
-			MetaInt val = Concretize(integer->Get());
+			MetaInt val = Concretize(context_.Solver(), integer->Get());
 			if (val.getBitWidth() > 8)
 				file << val;
 			else
