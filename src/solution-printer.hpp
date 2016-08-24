@@ -2,6 +2,7 @@
 #define __SOLUTION_PRINTER_HPP__
 
 #include "holder.hpp"
+#include "holder-helper.hpp"
 #include "solution.hpp"
 #include "instanceof.hpp"
 #include "llvm/IR/Function.h"

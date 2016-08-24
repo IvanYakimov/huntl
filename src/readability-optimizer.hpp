@@ -3,6 +3,7 @@
 
 #include "context.hpp"
 #include "solution.hpp"
+#include "holder.hpp"
 
 namespace interpreter {
 	class ReadabilityOptimizer {
