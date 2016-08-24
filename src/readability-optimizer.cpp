@@ -13,6 +13,7 @@ namespace interpreter {
 		if (utils::instanceof<Integer>(sol)) {
 			IntegerPtr integer = std::dynamic_pointer_cast<Integer>(sol);
 			//f (integer);
+			std::cerr << interpreter::GetWidth(integer->Get()) << " ";
 		}
 		else if (utils::instanceof<Pointer>(sol)) {
 			PointerPtr pointer = std::dynamic_pointer_cast<Pointer>(sol);
@@ -35,7 +36,9 @@ namespace interpreter {
 		for (auto it = arg_sols_->begin(); it != arg_sols_->end(); ++it) {
 			RestrictionHelper(*it);
 		}
+		std::cerr << " :- ";
 		RestrictionHelper(ret_sol_);
+		std::cerr << "\n";
 	}
 
 	void ReadabilityOptimizer::ConcretizationPass() {

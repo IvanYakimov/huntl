@@ -4,6 +4,7 @@
 #include "context.hpp"
 #include "solution.hpp"
 #include "holder.hpp"
+#include "holder-helper.hpp"
 
 namespace interpreter {
 	class ReadabilityOptimizer {

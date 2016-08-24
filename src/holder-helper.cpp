@@ -5,16 +5,40 @@ namespace interpreter {
 
 	MetaInt Concretize(SolverRef solver, memory::HolderPtr holder) {
 		if (memory::IsConcrete(holder)) {
-			MetaInt val = memory::GetValue(holder);
-			return val;
-			//return Integer::Create(holder);
+			return memory::GetValue(holder);
 		} else if (memory::IsSymbolic(holder)) {
 			solver::SharedExpr e = memory::GetExpr(holder);
-			interpreter::MetaInt val = solver.GetValue(e);
-			return val;
-			//return Integer::Create(holder);
+			return solver.GetValue(e);
 		}
-		else
-			assert (false and "not expected");
+		assert (false and "not expected");
+	}
+
+	unsigned GetWidth(memory::HolderPtr holder) {
+		if (memory::IsConcrete(holder)) {
+			MetaIntRef value = memory::GetValue(holder);
+			return value.getBitWidth();
+		} else if (memory::IsSymbolic(holder)) {
+			solver::SharedExpr expr = memory::GetExpr(holder);
+			solver::Type type = expr.getType();
+			if (type.isBitVector()) {
+				solver::BitVecTy bv_type = static_cast<solver::BitVecTy>(type);
+				return bv_type.getSize();
+			}
+			else
+				assert (false and "not expected");
+		}
+		assert (false and "not expected");
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
