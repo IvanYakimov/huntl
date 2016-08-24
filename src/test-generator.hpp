@@ -19,6 +19,7 @@
 #include "solution-generator.hpp"
 #include "solution-printer.hpp"
 #include "jit-verifier.hpp"
+#include "readability-optimizer.hpp"
 
 namespace interpreter {
 	using memory::ArgMap; using memory::HolderPtr; using memory::ArgMapPtr;

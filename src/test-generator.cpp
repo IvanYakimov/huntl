@@ -49,6 +49,10 @@ namespace interpreter {
 		else
 			assert (false and "the PC is unsatisfiable");
 
+		ReadabilityOptimizer optimizer(context_, arg_sols, ret_sol);
+		optimizer.RestrictionPass();
+		optimizer.ConcretizationPass();
+
 		SolutionPrinter printer(context_, target_, arg_sols, ret_sol);
 		printer(file_);
 
