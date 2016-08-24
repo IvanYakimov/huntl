@@ -5,6 +5,7 @@
 #include "solution.hpp"
 #include "holder.hpp"
 #include "holder-helper.hpp"
+#include "solver.hpp"
 
 namespace interpreter {
 	class ReadabilityOptimizer {
@@ -18,7 +19,11 @@ namespace interpreter {
 		SolutionListPtr arg_sols_;
 		SolutionPtr ret_sol_;
 		void RestrictionHelper(SolutionPtr sol);
-	};
+		void RestrictionHelperInteger(solver::SharedExpr variable);
+		void TryMakeReadable(const solver::SharedExpr& x);
+		void TryMakeAlphabetic(const solver::SharedExpr& x);
+		void TryMake__Helper(const solver::SharedExpr& constraint);
+};
 }
 
 #endif

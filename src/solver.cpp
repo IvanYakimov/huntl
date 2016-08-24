@@ -3,7 +3,7 @@
 namespace solver {
 	using utils::MetaKind;
 
-	Solver::Solver() : expr_manager_(), smt_engine_(&expr_manager_), symbol_table_(), path_constraint_() {
+	Solver::Solver() : expr_manager_(), smt_engine_(&expr_manager_), symbol_table_() {
 		smt_engine_.setOption("incremental", CVC4::SExpr("true"));
 		smt_engine_.setOption("produce-models", CVC4::SExpr("true"));
 		smt_engine_.setOption("rewrite-divk", CVC4::SExpr("true"));
@@ -16,7 +16,6 @@ namespace solver {
 
 	void Solver::Constraint(SharedExpr constraint) {
 		smt_engine_.assertFormula(constraint);
-		path_constraint_.push_back(constraint);
 	}
 
 	bool Solver::IsSat() {
@@ -31,11 +30,7 @@ namespace solver {
 	}
 
 	void Solver::Print() {
-		std::cerr << "PC: \n";
-		for (auto i = path_constraint_.begin(); i != path_constraint_.end(); i++) {
-			std::cerr << "(" << *i << ")" << "\n\t/\\ ";
-		}
-		std::cerr << " true \n";
+		assert (false and "not implemented");
 	}
 
 	Type Solver::MkBitVectorType(unsigned size) {
@@ -96,6 +91,14 @@ namespace solver {
 
 	SharedExpr Solver::MkExpr(Kind kind, SharedExpr child1, SharedExpr child2, SharedExpr child3) {
 		return expr_manager_.mkExpr(kind, child1, child2, child3);
+	}
+
+	void Solver::Push() {
+		smt_engine_.push();
+	}
+
+	void Solver::Pop() {
+		smt_engine_.pop();
 	}
 }
 

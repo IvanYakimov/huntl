@@ -44,13 +44,14 @@ namespace solver {
 		SharedExpr MkExpr(Kind kind, SharedExpr child1, SharedExpr child2, SharedExpr child3);
 		//TODO: refactoring:
 		void Print();
+		void Push();
+		void Pop();
 	private:
 		SharedExpr MkConversion__helper(utils::MetaKind kind, unsigned arg);
 
 		CVC4::ExprManager expr_manager_;
 		CVC4::SmtEngine smt_engine_;
 		CVC4::SymbolTable symbol_table_;
-		PathConstraint path_constraint_;
 	};
 }
 

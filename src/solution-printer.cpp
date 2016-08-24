@@ -72,6 +72,9 @@ namespace interpreter {
 		assert (func_ != nullptr and arg_sols_ != nullptr and ret_sol_ != nullptr);
 		assert (func_->arg_size() == arg_sols_->size());
 
+		if (not context_.Solver().IsSat())
+			assert (false and "cannot print unsolvable memory graph");
+
 		PrintFunctionInfo(func_, file_);
 		auto it = arg_sols_->begin();
 		while (it != arg_sols_->end()) {
