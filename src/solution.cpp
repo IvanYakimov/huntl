@@ -1,11 +1,11 @@
 #include "solution.hpp"
 
 namespace interpreter {
-	Integer::Integer(MetaIntRef value) : value_(value){}
-	IntegerPtr Integer::Create(MetaIntRef value) {
+	Integer::Integer(HolderPtr value) : value_(value){}
+	IntegerPtr Integer::Create(HolderPtr value) {
 		return utils::Create<Integer>(value);
 	}
-	const MetaIntRef Integer::Get() const {
+	const HolderPtr Integer::Get() const {
 		return value_;
 	}
 

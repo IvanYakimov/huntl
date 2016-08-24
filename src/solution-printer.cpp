@@ -1,7 +1,36 @@
 #include "solution-printer.hpp"
 
 namespace interpreter {
-	void PrintASCII(MetaIntRef symbol, std::ostream& os) {
+	using memory::HolderPtr;
+
+	SolutionPrinter::SolutionPrinter(ContextRef context, llvm::Function* func, SolutionListPtr arg_sols, SolutionPtr ret_sol) :
+		context_(context),
+		func_(func),
+		arg_sols_(arg_sols),
+		ret_sol_(ret_sol){
+		assert (func_ != nullptr and arg_sols_ != nullptr and ret_sol_ != nullptr);
+	}
+
+	SolutionPrinter::~SolutionPrinter() {
+
+	}
+
+	MetaInt SolutionPrinter::Concretize(memory::HolderPtr holder) {
+		if (memory::IsConcrete(holder)) {
+			MetaInt val = memory::GetValue(holder);
+			return val;
+			//return Integer::Create(holder);
+		} else if (memory::IsSymbolic(holder)) {
+			solver::SharedExpr e = memory::GetExpr(holder);
+			interpreter::MetaInt val = context_.Solver().GetValue(e);
+			return val;
+			//return Integer::Create(holder);
+		}
+		else
+			assert (false and "not expected");
+	}
+
+	void SolutionPrinter::PrintASCII(MetaIntRef symbol, std::ostream& os) {
 		unsigned long code = symbol.getZExtValue();
 		char ascii = (char)code;
 		if (std::isprint(ascii))
@@ -10,12 +39,12 @@ namespace interpreter {
 			os << "\\" << (unsigned)ascii;
 	}
 
-	void PrintSolution(SolutionPtr sol, std::ostream& file) {
+	void SolutionPrinter::PrintSolution(SolutionPtr sol, std::ostream& file) {
 		if (utils::instanceof<Integer>(sol)) {
 			IntegerPtr integer = std::dynamic_pointer_cast<Integer>(sol);
-			MetaIntRef val = integer->Get();
+			MetaInt val = Concretize(integer->Get());
 			if (val.getBitWidth() > 8)
-				file << integer->Get();
+				file << val;
 			else
 				PrintASCII(val, file);
 		}
@@ -38,35 +67,35 @@ namespace interpreter {
 			assert (! "unexpected type of argument");
 	}
 
-	void PrintFunctionInfo(llvm::Function* func, std::ostream& file) {
+	void SolutionPrinter::PrintFunctionInfo(llvm::Function* func, std::ostream& file) {
 		file << func->getName().str() << ": ";
 	}
 
-	void PrintSeparator(std::ostream& file) {
+	void SolutionPrinter::PrintSeparator(std::ostream& file) {
 		file << " ";
 	}
 
-	void PrintTransition(std::ostream& file) {
+	void SolutionPrinter::PrintTransition(std::ostream& file) {
 		file << " => ";
 	}
 
-	void PrintEndl(std::ostream& file) {
+	void SolutionPrinter::PrintEndl(std::ostream& file) {
 		file << std::endl;
 	}
 
-	void PrintWholeSolution(llvm::Function* func, SolutionListPtr arg_sols, SolutionPtr ret_sol, std::ostream& file) {
-		assert (func != nullptr and arg_sols != nullptr and ret_sol != nullptr);
-		assert (func->arg_size() == arg_sols->size());
+	void SolutionPrinter::operator()(std::ostream& file_) {
+		assert (func_ != nullptr and arg_sols_ != nullptr and ret_sol_ != nullptr);
+		assert (func_->arg_size() == arg_sols_->size());
 
-		PrintFunctionInfo(func, file);
-		auto it = arg_sols->begin();
-		while (it != arg_sols->end()) {
-			PrintSolution(*it, file);
-			if (++it != arg_sols->end())
-				PrintSeparator(file);
+		PrintFunctionInfo(func_, file_);
+		auto it = arg_sols_->begin();
+		while (it != arg_sols_->end()) {
+			PrintSolution(*it, file_);
+			if (++it != arg_sols_->end())
+				PrintSeparator(file_);
 		}
-		PrintTransition(file);
-		PrintSolution(ret_sol, file);
-		PrintEndl(file);
+		PrintTransition(file_);
+		PrintSolution(ret_sol_, file_);
+		PrintEndl(file_);
 	}
 }

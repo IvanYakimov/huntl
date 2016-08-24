@@ -49,7 +49,8 @@ namespace interpreter {
 		else
 			assert (false and "the PC is unsatisfiable");
 
-		PrintWholeSolution(target_, arg_sols, ret_sol, file_);
+		SolutionPrinter printer(context_, target_, arg_sols, ret_sol);
+		printer(file_);
 
 		exit(0);
 

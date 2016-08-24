@@ -6,12 +6,13 @@
 #include <vector>
 #include <iostream>
 
-#include "meta-int.hpp"
+//#include "meta-int.hpp"
 #include "object.hpp"
 #include "creatable.hpp"
+#include "holder.hpp"
 
 namespace interpreter {
-	using interpreter::MetaInt; using interpreter::MetaIntRef; using std::ostream;
+	using std::ostream; using memory::HolderPtr;
 	class Solution {
 	public:
 		virtual ~Solution(){}
@@ -22,12 +23,12 @@ namespace interpreter {
 	using IntegerPtr = std::shared_ptr<Integer>;
 	class Integer : public Solution {
 	public:
-		Integer(MetaIntRef value);
-		const MetaIntRef Get() const;
+		Integer(HolderPtr value);
+		const HolderPtr Get() const;
 		virtual ~Integer(){}
-		static IntegerPtr Create(MetaIntRef value);
+		static IntegerPtr Create(HolderPtr value);
 	private:
-		MetaInt value_;
+		HolderPtr value_;
 	};
 
 	class Array;

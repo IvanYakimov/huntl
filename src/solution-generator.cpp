@@ -16,12 +16,12 @@ namespace interpreter {
 	IntegerPtr SolutionGenerator::ProduceInteger(HolderPtr holder) {
 		SolutionPtr result = nullptr;
 		if (memory::IsConcrete(holder)) {
-			MetaIntRef val = memory::GetValue(holder);
-			return Integer::Create(val);
+			//MetaIntRef val = memory::GetValue(holder);
+			return Integer::Create(holder);
 		} else if (memory::IsSymbolic(holder)) {
-			solver::SharedExpr e = memory::GetExpr(holder);
-			interpreter::MetaIntRef val = context_.Solver().GetValue(e);
-			return Integer::Create(val);
+			//solver::SharedExpr e = memory::GetExpr(holder);
+			//interpreter::MetaIntRef val = context_.Solver().GetValue(e);
+			return Integer::Create(holder);
 		} else
 			assert(false and "unexpected behavior");
 	}
