@@ -12,7 +12,20 @@ namespace interpreter {
 
 	}
 
-	void ReadabilityOptimizer::TryMakeAlphabetic(const SharedExpr& x) {
+	bool ReadabilityOptimizer::TryApplyConstraint(const SharedExpr& constraint) {
+		bool probe_result = false;
+		context_.Solver().Push();
+		{
+			context_.Solver().Constraint(constraint);
+			probe_result = context_.Solver().IsSat();
+		}
+		context_.Solver().Pop();
+		if (probe_result == true)
+			context_.Solver().Constraint(constraint);
+		return probe_result;
+	}
+
+	bool ReadabilityOptimizer::TryMakeAlphabetic(const SharedExpr& x) {
 		SharedExpr a = context_.Solver().MkConst(BitVec(8, InfiniteInt('a')));
 		SharedExpr z = context_.Solver().MkConst(BitVec(8, InfiniteInt('z')));
 		SharedExpr A = context_.Solver().MkConst(BitVec(8, InfiniteInt('A')));
@@ -26,22 +39,10 @@ namespace interpreter {
 		SharedExpr A_x_Z = context_.Solver().MkExpr(Kind::AND, x_sge_A, x_sle_Z);
 		SharedExpr maybe_x_alpha = context_.Solver().MkExpr(Kind::OR, a_x_z, A_x_Z);
 		SharedExpr x_indeed_alpha = context_.Solver().MkExpr(Kind::IFF, maybe_x_alpha, truth);
-		TryMake__Helper(x_indeed_alpha);
+		return TryApplyConstraint(x_indeed_alpha);
 	}
 
-	void ReadabilityOptimizer::TryMake__Helper(const SharedExpr& constraint) {
-		bool readability_probe = false;
-		context_.Solver().Push();
-		{
-			context_.Solver().Constraint(constraint);
-			readability_probe = context_.Solver().IsSat();
-		}
-		context_.Solver().Pop();
-		if (readability_probe == true)
-			context_.Solver().Constraint(constraint);
-	}
-
-	void ReadabilityOptimizer::TryMakeReadable(const SharedExpr& x) {
+	bool ReadabilityOptimizer::TryMakeReadable(const SharedExpr& x) {
 		SharedExpr space = context_.Solver().MkConst(BitVec(8, InfiniteInt(' ')));
 		SharedExpr tilda = context_.Solver().MkConst(BitVec(8, InfiniteInt('~')));
 		SharedExpr truth = context_.Solver().MkConst(true);
@@ -49,12 +50,13 @@ namespace interpreter {
 		SharedExpr x_sle_tilda = context_.Solver().MkExpr(Kind::BITVECTOR_SLE, x, tilda);
 		SharedExpr maybe_x_readable = context_.Solver().MkExpr(Kind::AND, x_sge_space, x_sle_tilda);
 		SharedExpr x_indeed_readable = context_.Solver().MkExpr(Kind::IFF, maybe_x_readable, truth);
-		TryMake__Helper(x_indeed_readable);
+		return TryApplyConstraint(x_indeed_readable);
 	}
 
 	void ReadabilityOptimizer::RestrictionHelperInteger(SharedExpr x) {
-		TryMakeReadable(x);
-		TryMakeAlphabetic(x);
+		if (TryMakeReadable(x) == true) {
+			TryMakeAlphabetic(x);
+		}
 	}
 
 	void ReadabilityOptimizer::RestrictionHelper(SolutionPtr sol) {

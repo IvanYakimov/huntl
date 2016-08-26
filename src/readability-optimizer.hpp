@@ -20,9 +20,9 @@ namespace interpreter {
 		SolutionPtr ret_sol_;
 		void RestrictionHelper(SolutionPtr sol);
 		void RestrictionHelperInteger(solver::SharedExpr variable);
-		void TryMakeReadable(const solver::SharedExpr& x);
-		void TryMakeAlphabetic(const solver::SharedExpr& x);
-		void TryMake__Helper(const solver::SharedExpr& constraint);
+		bool TryMakeReadable(const solver::SharedExpr& x);
+		bool TryMakeAlphabetic(const solver::SharedExpr& x);
+		bool TryApplyConstraint(const solver::SharedExpr& constraint);
 };
 }
 
