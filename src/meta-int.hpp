@@ -17,6 +17,8 @@ namespace interpreter {
 
 	solver::BitVec MetaInt_To_BitVec(MetaInt arg);
 	MetaInt BitVec_To_MetaInt(solver::BitVec arg);
+
+	char GetChar(MetaIntRef arg);
 }
 
 #endif

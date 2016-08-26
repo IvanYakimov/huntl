@@ -26,6 +26,7 @@ namespace interpreter {
 	public:
 		Integer(HolderPtr value);
 		const HolderPtr Get() const;
+		bool IsChar();
 		virtual ~Integer(){}
 		static IntegerPtr Create(HolderPtr value);
 	private:

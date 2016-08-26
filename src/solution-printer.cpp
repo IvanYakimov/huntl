@@ -16,8 +16,8 @@ namespace interpreter {
 	}
 
 	void SolutionPrinter::PrintASCII(MetaIntRef symbol, std::ostream& os) {
-		unsigned long code = symbol.getZExtValue();
-		char ascii = (char)code;
+		//unsigned long code = symbol.getZExtValue();
+		char ascii = GetChar(symbol); //ascii = (char)code;
 		if (std::isprint(ascii))
 			os << ascii;
 		else

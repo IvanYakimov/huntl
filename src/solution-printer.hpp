@@ -7,6 +7,7 @@
 #include "instanceof.hpp"
 #include "llvm/IR/Function.h"
 #include "context.hpp"
+#include "meta-int.hpp"
 #include <iostream>
 
 namespace interpreter {

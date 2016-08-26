@@ -34,6 +34,11 @@ namespace interpreter {
 		return res;
 	}
 
+	char GetChar(MetaIntRef arg) {
+		assert (arg.getBitWidth() == sizeof(char)*8);
+		unsigned long long_val = arg.getZExtValue();
+		return (char)long_val;
+	}
 }
 
 
