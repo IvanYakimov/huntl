@@ -23,7 +23,7 @@ namespace interpreter {
 		SharedExpr a_x_z = context_.Solver().MkExpr(Kind::AND, x_sge_a, x_sle_z);
 		SharedExpr x_sge_A = context_.Solver().MkExpr(Kind::BITVECTOR_SGE, x, A);
 		SharedExpr x_sle_Z = context_.Solver().MkExpr(Kind::BITVECTOR_SLE, x, Z);
-		SharedExpr A_x_Z = context_.Solver().MkExpr(Kind::BITVECTOR_AND, x_sge_A, x_sle_Z);
+		SharedExpr A_x_Z = context_.Solver().MkExpr(Kind::AND, x_sge_A, x_sle_Z);
 		SharedExpr maybe_x_alpha = context_.Solver().MkExpr(Kind::OR, a_x_z, A_x_Z);
 		SharedExpr x_indeed_alpha = context_.Solver().MkExpr(Kind::IFF, maybe_x_alpha, truth);
 		TryMake__Helper(x_indeed_alpha);

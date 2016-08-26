@@ -37,6 +37,13 @@ long limit_i64(long x, long lower, long upper) {
 		return x;
 }
 
+void limit2_i8(char* x, char lower, char upper) {
+	if (*x >= upper)
+		*x = upper;
+	else if (*x <= lower)
+		*x = lower;
+}
+
 void limit2_i32(int* x, int lower, int upper) {
 	if (*x >= upper)
 		*x = upper;

@@ -2,15 +2,15 @@
 #include "built-in.h"
 #include "sym-limits.h"
 
-void gen_inc(int x, int r);
-int inc(int x) {
-	return x++;
+void gen_inc(char x, char r);
+char inc(char x) {
+	return x;
 }
 
 void test_inc() {
-	int x,r;
-	x = mksym_i32();
-	limit2_i32(&x, 2,28);
+	char x,r;
+	x = mksym_i8();
+	limit2_i8(&x, 0,127);
 	r = inc(x);
 	gen_inc(x,r);
 }
