@@ -24,6 +24,46 @@ namespace interpreter {
 			os << "\\" << (unsigned)ascii;
 	}
 
+	bool SolutionPrinter::IsString(ArrayPtr array) {
+		if (utils::instanceof<Integer>(array->GetElement(0))) {
+			IntegerPtr integer = std::dynamic_pointer_cast<Integer>(array->GetElement(0));
+			if (interpreter::GetWidth(integer->Get()) == 8) {
+				return true; }}
+		return false;
+	}
+
+	bool SolutionPrinter::IsEndl(SolutionPtr el_sol) {
+		IntegerPtr integer = std::dynamic_pointer_cast<Integer>(el_sol);
+		MetaInt val = Concretize(context_.Solver(), integer->Get());
+		if (val.getZExtValue() == (unsigned long)'\0')
+			return true;
+		else
+			return false;
+	}
+
+	void SolutionPrinter::PrintString(ArrayPtr array, std::ostream& file) {
+		bool end_reached = false;
+		file << "\"";
+		for (int i = 0; i < array->GetSize(); i++) {
+			SolutionPtr el_sol = array->GetElement(i);
+			end_reached = IsEndl(el_sol);
+			if (not end_reached)
+				PrintSolution(el_sol, file);
+		}
+		file << "\"";
+	}
+
+	void SolutionPrinter::PrintArbitraryArray(ArrayPtr array, std::ostream& file) {
+		file << "{";
+		for (int i = 0; i < array->GetSize(); i++) {
+			SolutionPtr el_sol = array->GetElement(i);
+			PrintSolution(el_sol, file);
+			if (i + 1 < array->GetSize())
+				file << ",";
+		}
+		file << "}";
+	}
+
 	void SolutionPrinter::PrintSolution(SolutionPtr sol, std::ostream& file) {
 		if (utils::instanceof<Integer>(sol)) {
 			IntegerPtr integer = std::dynamic_pointer_cast<Integer>(sol);
@@ -32,23 +72,18 @@ namespace interpreter {
 				file << val;
 			else
 				PrintASCII(val, file);
-		}
-		else if (utils::instanceof<Pointer>(sol)) {
+		} else if (utils::instanceof<Pointer>(sol)) {
 			PointerPtr pointer = std::dynamic_pointer_cast<Pointer>(sol);
-			file << "*";
+			file << "* ";
 			PrintSolution(pointer->Dereference(), file);
 			//assert (! "not impl");
-		}
-		else if (utils::instanceof<Array>(sol)) {
+		} else if (utils::instanceof<Array>(sol)) {
 			ArrayPtr array = std::dynamic_pointer_cast<Array>(sol);
-			file << "\'";
-			for (int i = 0; i < array->GetSize(); i++) {
-				SolutionPtr el_sol = array->GetElement(i);
-				PrintSolution(el_sol, file);
-			}
-			file << "\'";
-		}
-		else
+			if (IsString(array))
+				PrintString(array, file);
+			else
+				PrintArbitraryArray(array, file);
+		} else
 			assert (! "unexpected type of argument");
 	}
 
