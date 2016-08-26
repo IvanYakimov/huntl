@@ -47,7 +47,7 @@ namespace interpreter {
 		for (int i = 0; i < array->GetSize(); i++) {
 			SolutionPtr el_sol = array->GetElement(i);
 			end_reached = IsEndl(el_sol);
-			if (not end_reached)
+			//if (not end_reached)
 				PrintSolution(el_sol, file);
 		}
 		file << "\"";
