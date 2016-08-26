@@ -18,6 +18,7 @@ namespace interpreter {
 		ContextRef context_;
 		SolutionListPtr arg_sols_;
 		SolutionPtr ret_sol_;
+		void ConcretizationHelper(SolutionPtr sol);
 		void RestrictionHelper(SolutionPtr sol);
 		void RestrictionHelperInteger(solver::SharedExpr variable);
 		bool TryMakeReadable(const solver::SharedExpr& x);

@@ -23,6 +23,14 @@ namespace interpreter {
 	unsigned Array::GetSize() {
 		return val_list_.size();
 	}
+	bool Array::IsString() {
+		assert (GetSize() > 0);
+		if (utils::instanceof<Integer>(GetElement(0))) {
+			IntegerPtr integer = std::dynamic_pointer_cast<Integer>(GetElement(0));
+			if (interpreter::GetWidth(integer->Get()) == 8) {
+				return true; }}
+		return false;
+	}
 
 	Pointer::Pointer(SolutionPtr target) : target_(target) {}
 	SolutionPtr Pointer::Dereference() {return target_;}

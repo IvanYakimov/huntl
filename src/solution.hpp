@@ -10,6 +10,7 @@
 #include "object.hpp"
 #include "creatable.hpp"
 #include "holder.hpp"
+#include "holder-helper.hpp"
 
 namespace interpreter {
 	using std::ostream; using memory::HolderPtr;
@@ -40,6 +41,7 @@ namespace interpreter {
 		SolutionPtr GetElement(unsigned index);
 		static ArrayPtr Create();
 		unsigned GetSize();
+		bool IsString();
 	private:
 		std::vector<SolutionPtr> val_list_;
 	};

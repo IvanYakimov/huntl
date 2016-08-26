@@ -83,6 +83,25 @@ namespace interpreter {
 			assert (! "unexpected type of argument");
 	}
 
+	void ReadabilityOptimizer::ConcretizationHelper(SolutionPtr sol) {
+		if (utils::instanceof<Integer>(sol)) {
+			IntegerPtr integer = std::dynamic_pointer_cast<Integer>(sol);
+		}
+		else if (utils::instanceof<Pointer>(sol)) {
+			PointerPtr pointer = std::dynamic_pointer_cast<Pointer>(sol);
+			ConcretizationHelper(pointer->Dereference());
+		}
+		else if (utils::instanceof<Array>(sol)) {
+			ArrayPtr array = std::dynamic_pointer_cast<Array>(sol);
+			for (int i = 0; i < array->GetSize(); i++) {
+				SolutionPtr el_sol = array->GetElement(i);
+				ConcretizationHelper(el_sol);
+			}
+		}
+		else
+			assert (! "unexpected type of argument");
+	}
+
 	void ReadabilityOptimizer::RestrictionPass() {
 		for (auto it = arg_sols_->begin(); it != arg_sols_->end(); ++it) {
 			RestrictionHelper(*it);
@@ -91,7 +110,10 @@ namespace interpreter {
 	}
 
 	void ReadabilityOptimizer::ConcretizationPass() {
-
+		for (auto it = arg_sols_->begin(); it != arg_sols_->end(); ++it) {
+			ConcretizationHelper(*it);
+		}
+		ConcretizationHelper(ret_sol_);
 	}
 }
 

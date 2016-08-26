@@ -24,6 +24,7 @@ namespace interpreter {
 			os << "\\" << (unsigned)ascii;
 	}
 
+	/*
 	bool SolutionPrinter::IsString(ArrayPtr array) {
 		if (utils::instanceof<Integer>(array->GetElement(0))) {
 			IntegerPtr integer = std::dynamic_pointer_cast<Integer>(array->GetElement(0));
@@ -31,6 +32,7 @@ namespace interpreter {
 				return true; }}
 		return false;
 	}
+	*/
 
 	bool SolutionPrinter::IsEndl(SolutionPtr el_sol) {
 		IntegerPtr integer = std::dynamic_pointer_cast<Integer>(el_sol);
@@ -47,7 +49,7 @@ namespace interpreter {
 		for (int i = 0; i < array->GetSize(); i++) {
 			SolutionPtr el_sol = array->GetElement(i);
 			end_reached = IsEndl(el_sol);
-			if (not end_reached)
+			//if (not end_reached)
 				PrintSolution(el_sol, file);
 		}
 		file << "\"";
@@ -79,7 +81,7 @@ namespace interpreter {
 			//assert (! "not impl");
 		} else if (utils::instanceof<Array>(sol)) {
 			ArrayPtr array = std::dynamic_pointer_cast<Array>(sol);
-			if (IsString(array))
+			if (array->IsString())
 				PrintString(array, file);
 			else
 				PrintArbitraryArray(array, file);

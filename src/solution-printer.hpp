@@ -24,7 +24,7 @@ namespace interpreter {
 		void PrintEndl(std::ostream& file);
 
 		bool IsEndl(SolutionPtr el_sol);
-		bool IsString(ArrayPtr array);
+		//bool IsString(ArrayPtr array);
 		void PrintString(ArrayPtr array, std::ostream& file);
 		void PrintArbitraryArray(ArrayPtr array, std::ostream& file);
 
