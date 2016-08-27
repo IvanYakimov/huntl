@@ -92,6 +92,7 @@ namespace interpreter {
 
 	void MetaEvaluator::Load(const llvm::LoadInst &lhs, memory::HolderPtr ptr_holder) {
 		//std::cerr << "load from pointer: " << *ptr_holder << std::endl;
+		assert (ptr_holder != nullptr);
 		assert (memory::IsConcrete(ptr_holder));
 		MetaIntRef ptr_holder_value = memory::GetValue(ptr_holder);
 		// dereferencing

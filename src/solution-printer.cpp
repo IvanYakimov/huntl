@@ -37,7 +37,7 @@ namespace interpreter {
 	bool SolutionPrinter::IsEndl(SolutionPtr el_sol) {
 		IntegerPtr integer = std::dynamic_pointer_cast<Integer>(el_sol);
 		MetaInt val = Concretize(context_.Solver(), integer->Get());
-		if (val.getZExtValue() == (unsigned long)'\0')
+		if (GetChar(val) == (unsigned long)'\0')
 			return true;
 		else
 			return false;
@@ -45,12 +45,13 @@ namespace interpreter {
 
 	void SolutionPrinter::PrintString(ArrayPtr array, std::ostream& file) {
 		bool end_reached = false;
+		std::string str;
 		file << "\"";
 		for (int i = 0; i < array->GetSize(); i++) {
 			SolutionPtr el_sol = array->GetElement(i);
-			end_reached = IsEndl(el_sol);
-			//if (not end_reached)
-				PrintSolution(el_sol, file);
+			if (IsEndl(el_sol))
+				break;
+			PrintSolution(el_sol, file);
 		}
 		file << "\"";
 	}
@@ -76,7 +77,7 @@ namespace interpreter {
 				PrintASCII(val, file);
 		} else if (utils::instanceof<Pointer>(sol)) {
 			PointerPtr pointer = std::dynamic_pointer_cast<Pointer>(sol);
-			file << "* ";
+			file << "&";
 			PrintSolution(pointer->Dereference(), file);
 			//assert (! "not impl");
 		} else if (utils::instanceof<Array>(sol)) {

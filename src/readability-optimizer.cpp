@@ -22,6 +22,7 @@ namespace interpreter {
 		context_.Solver().Pop();
 		if (probe_result == true)
 			context_.Solver().Constraint(constraint);
+		assert(context_.Solver().IsSat() and "pc damaged while optimization");
 		return probe_result;
 	}
 
@@ -67,35 +68,64 @@ namespace interpreter {
 			if (width == 8 and IsSymbolic(holder)) {
 				RestrictionHelperInteger(GetExpr(holder));
 			}
-		}
-		else if (utils::instanceof<Pointer>(sol)) {
+		} else if (utils::instanceof<Pointer>(sol)) {
 			PointerPtr pointer = std::dynamic_pointer_cast<Pointer>(sol);
 			RestrictionHelper(pointer->Dereference());
-		}
-		else if (utils::instanceof<Array>(sol)) {
+		} else if (utils::instanceof<Array>(sol)) {
 			ArrayPtr array = std::dynamic_pointer_cast<Array>(sol);
 			for (int i = 0; i < array->GetSize(); i++) {
 				SolutionPtr el_sol = array->GetElement(i);
 				RestrictionHelper(el_sol);
 			}
-		}
-		else
+		} else
 			assert (! "unexpected type of argument");
+	}
+
+	void ReadabilityOptimizer::HandleBigram(SolutionPtr first, SolutionPtr second) {
+		IntegerPtr a_intsol = ToInteger(first);
+		HolderPtr a_holder = a_intsol->Get();
+		IntegerPtr b_intsol = ToInteger(second);
+		HolderPtr b_holder = b_intsol->Get();
+		MetaIntRef a_val = Concretize(context_.Solver(), a_holder);
+		if (IsSymbolic(b_holder)) {
+			char a = GetChar(a_val);
+			SharedExpr b_sym = GetExpr(b_holder);
+			SharedExpr truth = context_.Solver().MkConst(true);
+			char best_next = 0;
+			if (std::islower(a)) {
+				best_next = BigramModel::LowerByLower(a);
+				//std::cerr << "(" << a << " -> " << best_next << ")";
+				SharedExpr best_next_sym = context_.Solver().MkConst(BitVec(8, InfiniteInt(best_next)));
+				SharedExpr b_maybe_best = context_.Solver().MkExpr(Kind::EQUAL, b_sym, best_next_sym);
+				//SharedExpr b_indeed_best = context_.Solver().MkExpr(Kind::IFF, b_maybe_best, truth);
+				TryApplyConstraint(b_maybe_best);
+					//std::cerr << b_maybe_best << std::endl;
+			} else if (std::isupper(a)) {
+				// not implemented
+			} else {
+				// do nothing
+			}
+		}
 	}
 
 	void ReadabilityOptimizer::ConcretizationHelper(SolutionPtr sol) {
 		if (utils::instanceof<Integer>(sol)) {
 			IntegerPtr integer = std::dynamic_pointer_cast<Integer>(sol);
-		}
-		else if (utils::instanceof<Pointer>(sol)) {
+		} else if (utils::instanceof<Pointer>(sol)) {
 			PointerPtr pointer = std::dynamic_pointer_cast<Pointer>(sol);
 			ConcretizationHelper(pointer->Dereference());
-		}
-		else if (utils::instanceof<Array>(sol)) {
+		} else if (utils::instanceof<Array>(sol)) {
 			ArrayPtr array = std::dynamic_pointer_cast<Array>(sol);
-			for (int i = 0; i < array->GetSize(); i++) {
-				SolutionPtr el_sol = array->GetElement(i);
-				ConcretizationHelper(el_sol);
+			if (array->IsString() and array->GetSize() > 1) {
+				for (int i = 0; i < array->GetSize() - 1; i++) {
+					HandleBigram(array->GetElement(i), array->GetElement(i+1));
+				}
+				//std::cerr << "\n";
+			} else {
+				for (int i = 0; i < array->GetSize(); i++) {
+					SolutionPtr el_sol = array->GetElement(i);
+					ConcretizationHelper(el_sol);
+				}
 			}
 		}
 		else
@@ -110,10 +140,14 @@ namespace interpreter {
 	}
 
 	void ReadabilityOptimizer::ConcretizationPass() {
-		for (auto it = arg_sols_->begin(); it != arg_sols_->end(); ++it) {
-			ConcretizationHelper(*it);
+		if (context_.Solver().IsSat()) {
+			for (auto it = arg_sols_->begin(); it != arg_sols_->end(); ++it) {
+				ConcretizationHelper(*it);
+			}
+			ConcretizationHelper(ret_sol_);
 		}
-		ConcretizationHelper(ret_sol_);
+		else
+			assert (false and "pc must be satisfable");
 	}
 }
 

@@ -15,13 +15,13 @@ size_t strlen(const char *s)
 }
 
 void test_strlen() {
-	unsigned char buff[5];
-	for (int i = 0; i < 5; i++) {
+	char buff[6];
+	for (int i = 0; i < 6; i++) {
 		//buff[i] = 'a' + i;
-		buff[i] = mksym_u8();//'a' + i;
-		limit2_u8(&buff[i], '\0', 'a');
+		buff[i] = mksym_i8();//'a' + i;
+		//limit2_u8(&buff[i], '\0', 'a');
 	}
-	buff[4] = '\0';
+	//buff[10] = '\0';
 	size_t len;
 	len = strlen(buff);
 	gen_strlen(buff,len);

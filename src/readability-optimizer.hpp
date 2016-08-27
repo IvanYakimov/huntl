@@ -6,6 +6,7 @@
 #include "holder.hpp"
 #include "holder-helper.hpp"
 #include "solver.hpp"
+#include "bigram-model.hpp"
 
 namespace interpreter {
 	class ReadabilityOptimizer {
@@ -18,6 +19,7 @@ namespace interpreter {
 		ContextRef context_;
 		SolutionListPtr arg_sols_;
 		SolutionPtr ret_sol_;
+		void HandleBigram(SolutionPtr first, SolutionPtr second);
 		void ConcretizationHelper(SolutionPtr sol);
 		void RestrictionHelper(SolutionPtr sol);
 		void RestrictionHelperInteger(solver::SharedExpr variable);

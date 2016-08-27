@@ -58,6 +58,8 @@ namespace interpreter {
 		SolutionPtr target_;
 	};
 
+	IntegerPtr ToInteger(SolutionPtr solution);
+
 	using SolutionList = std::list<SolutionPtr>;
 	using SolutionListPtr = std::shared_ptr<SolutionList>;
 }

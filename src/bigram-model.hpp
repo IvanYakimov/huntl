@@ -5,6 +5,7 @@
 
 namespace interpreter {
 	class BigramModel {
+	public:
 		static char UpperByUpper(char symbol);
 		static char LowerByLower(char symbol);
 		static char UpperByLower(char symbol);

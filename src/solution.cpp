@@ -53,6 +53,12 @@ namespace interpreter {
 	PointerPtr Pointer::Create(SolutionPtr target) {
 		return utils::Create<Pointer>(target);
 	}
+
+	IntegerPtr ToInteger(SolutionPtr solution) {
+		IntegerPtr res = std::dynamic_pointer_cast<Integer>(solution);
+		assert (res != nullptr and "cast error");
+		return res;
+	}
 }
 
 
