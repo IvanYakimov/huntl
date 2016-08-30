@@ -7,7 +7,6 @@
 
 namespace interpreter {
 	class BigramModel {
-	//public:
 		enum class Case {
 			kUpper,
 			kLower
@@ -20,7 +19,6 @@ namespace interpreter {
 		const static unsigned kPenultimateItemIdx = BigramModel::kAlphabetSize - 2;
 		using BigramSquare = float[kAlphabetSize][kAlphabetSize];
 		char Alphabet[kAlphabetSize];
-		//using UniformSquare = unsigned[kAlphabetSize][kAlphabetSize];
 		class Generator {
 		public:
 			Generator(const BigramSquare& bigram, Case kind);
@@ -41,12 +39,9 @@ namespace interpreter {
 		char LowerByLower(char symbol);
 		char UpperByLower(char symbol);
 		char LowerByUpper(char symbol);
-		//float lower_by_lower[26][26];
+	private:
 		BigramSquare lbl_bigram_;
 		Generator lbl_gen_;
-	//protected:
-	//protected:
-
 	};
 }
 
