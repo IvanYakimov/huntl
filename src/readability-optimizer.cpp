@@ -102,8 +102,10 @@ namespace interpreter {
 					//std::cerr << b_maybe_best << std::endl;
 			} else if (std::isupper(a)) {
 				// not implemented
+				assert (false and "uppercase letters support not implemented");
 			} else {
 				// do nothing
+				;
 			}
 		}
 	}
