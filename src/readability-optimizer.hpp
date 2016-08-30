@@ -19,6 +19,7 @@ namespace interpreter {
 		ContextRef context_;
 		SolutionListPtr arg_sols_;
 		SolutionPtr ret_sol_;
+		BigramModel bigrammer_;
 		void HandleBigram(SolutionPtr first, SolutionPtr second);
 		void ConcretizationHelper(SolutionPtr sol);
 		void RestrictionHelper(SolutionPtr sol);

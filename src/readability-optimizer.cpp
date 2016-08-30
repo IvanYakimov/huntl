@@ -5,7 +5,7 @@ namespace interpreter {
 	using solver::SharedExpr; using solver::BitVec; using solver::Kind; using solver::InfiniteInt;
 
 	ReadabilityOptimizer::ReadabilityOptimizer(ContextRef context, SolutionListPtr arg_sols, SolutionPtr ret_sol) :
-		context_(context), arg_sols_(arg_sols), ret_sol_(ret_sol) {
+		context_(context), arg_sols_(arg_sols), ret_sol_(ret_sol), bigrammer_() {
 	}
 
 	ReadabilityOptimizer::~ReadabilityOptimizer() {
@@ -93,7 +93,7 @@ namespace interpreter {
 			SharedExpr truth = context_.Solver().MkConst(true);
 			char best_next = 0;
 			if (std::islower(a)) {
-				best_next = BigramModel::LowerByLower(a);
+				best_next = bigrammer_.LowerByLower(a);
 				//std::cerr << "(" << a << " -> " << best_next << ")";
 				SharedExpr best_next_sym = context_.Solver().MkConst(BitVec(8, InfiniteInt(best_next)));
 				SharedExpr b_maybe_best = context_.Solver().MkExpr(Kind::EQUAL, b_sym, best_next_sym);

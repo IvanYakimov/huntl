@@ -3,7 +3,7 @@
 namespace interpreter {
 	BigramModel::BigramModel() :
 						//		a		b		c		d		e		f		g		h		i		j		k		l		m		n		o		p		q		r		s		t		u		v		w		x		y		z
-		lower_by_lower {/*a*/ {7.38, 	11.5,	12.2, 	12.1, 	9.25, 	10.6, 	11.6, 	9.03, 	12.4, 	9.03, 	11.0, 	13.1, 	11.9, 	13.8, 	7.79, 	11.4, 	7.95, 	13.3, 	13.0, 	13.5, 	11.1, 	11.6, 	10.5, 	9.64, 	12.0,	9.23},
+		lbl_bigram_ {/*a*/ {7.38, 	11.5,	12.2, 	12.1, 	9.25, 	10.6, 	11.6, 	9.03, 	12.4, 	9.03, 	11.0, 	13.1, 	11.9, 	13.8, 	7.79, 	11.4, 	7.95, 	13.3, 	13.0, 	13.5, 	11.1, 	11.6, 	10.5, 	9.64, 	12.0,	9.23},
 						/*b*/ {11.4, 	9.00,	6.57, 	6.50, 	12.4, 	3.85, 	3.56, 	5.33, 	10.9,	8.14,	3.56,	11.5,	6.93,	5.6,	11.5,	5.25,	.0,		10.6,	10.2,	8.52,	11.3,	7.05,	6.57,	0,		11.4,	2.71},
 						/*c*/ {12.4,	4.08,	10.4,	5.76,	12.7,	3.00,	0.69,	12.5,	11.7,	1.10,	11.4,	11.1,	4.89,	4.90,	12.8,	3.76,	7.87,	11.2,	9.47,	12.1,	11.2,	1.95,	3.00,	0.69,	9.93,	5.82},
 						/*d*/ {11.6,	7.33,	7.73,	10.1,	12.8,	7.46,	9.83,	7.55,	12.2,	7.54,	5.46,	9.76,	9.44,	9.16,	11.4,	6.09,	6.83,	10.7,	11.0,	7.30,	11.0,	9.31,	8.73,	0.00,	9.98,	5.09},
@@ -29,8 +29,114 @@ namespace interpreter {
 						/*x*/ {9.11,	3.78,	9.11,	.00,	9.61,	5.59,	1.10,	7.76,	9.11,	.0,		.0,		5.06,	4.39,	2.94,	7.47,	10.3,	4.76,	1.39,	4.55,	9.75,	7.96,	4.62,	6.11,	5.06,	6.00,	.00	},
 						/*y*/ {9.16,	8.22,	8.48,	7.77,	11.4,	6.35,	6.34,	6.32,	9.92,	3.09,	5.96,	9.07,	9.49,	9.11,	10.6,	8.63,	1.61,	8.97,	10.7,	8.86,	6.57,	5.64,	8.04,	4.42,	3.43,	6.56},
 						/*z*/ {9.41,	5.86,	3.69,	4.73,	10.1,	2.56,	5.00,	6.32,	8.93,	.69,	5.29,	6.95,	6.00,	4.67,	8.13,	4.98,	3.14,	4.75,	4.98,	4.84,	6.85,	4.84,	5.21,	.0,		7.23,	8.10}
+		},
+		lbl_gen_(lbl_bigram_, BigramModel::Case::kLower)
+		{
+
 		}
-		{}
+
+		BigramModel::~BigramModel() {
+
+		}
+
+		BigramModel::Generator::Generator(const BigramModel::BigramSquare& bigram, BigramModel::Case kind) :
+				kind_(kind) {
+			for (int n = 0; n < BigramModel::kAlphabetSize; ++n) {
+				unsigned sum = 0;
+				for (int m = 0; m < BigramModel::kAlphabetSize; ++m) {
+					distribution_[n][m] = sum;
+					sum += bigram[n][m] * BigramModel::kPrecision;
+					//std::cerr << distribution_[n][m] << "\t";
+				}
+				upper_limits_[n] = sum;
+				//std::cerr << "|_" << upper_limits_[n] << "_|" << std::endl;
+			}
+		}
+
+		BigramModel::Generator::~Generator() {
+
+		}
+
+		unsigned BigramModel::CharToIdx(char symbol, BigramModel::Case kind) {
+			unsigned idx = 0;
+			if (kind == BigramModel::Case::kUpper) {
+				assert (std::isupper(symbol));
+				idx = symbol - 'A';
+			} else if (kind == BigramModel::Case::kLower) {
+				assert (std::islower(symbol));
+				idx = symbol - 'a';
+			} else
+				assert (false and "unexpected");
+			assert (idx >= 0 and idx <= BigramModel::kUltimateItemIdx);
+			return idx;
+		}
+
+		char BigramModel::IdxToChar(unsigned idx, BigramModel::Case kind) {
+			char result;
+			assert (idx >= 0 and idx <= BigramModel::kUltimateItemIdx);
+			if (kind == BigramModel::Case::kUpper) {
+				result = idx + 'A';
+				assert (std::isupper(result));
+				return result;
+			} else if (kind == BigramModel::Case::kLower) {
+				result = idx + 'a';
+				assert (std::islower(result));
+				return result;
+			}
+			assert (false and "unexpected");
+		}
+
+		char BigramModel::Generator::TurnRoulette(unsigned row, unsigned shout) {
+			char result = 0;
+			assert(shout >= 0 and shout <= upper_limits_[row]);
+			int m = 0;
+			int idx = 0;
+			while(m <= BigramModel::kPenultimateItemIdx) {
+				auto current = distribution_[row][m];
+				auto next = distribution_[row][m + 1];
+				assert(next >= current);
+				if (shout >= current && shout <= next) {
+					idx = m;//result = BigramModel::IdxToChar(m, kind_);
+					break;
+				}
+				++m;
+			}
+			//std::cerr << "m = " << m << std::endl;
+			//std::cerr << "penult = " << BigramModel::kPenultimateItemIdx << std::endl;
+			//std::cerr << "ult = " << BigramModel::kUltimateItemIdx << std::endl;
+			//assert (m == BigramModel::kPenultimateItemIdx);
+			result = BigramModel::IdxToChar(idx, kind_);
+			if (not std::isalpha(result))
+				std::cerr << "idx = " << idx << std::endl;
+			assert (std::isalpha(result) and "bad roulette turn");
+			//abort();
+			return result;
+		}
+
+		unsigned BigramModel::Generator::MakeShout(unsigned row) {
+			std::random_device rd;
+			std::mt19937 gen(rd());
+			std::uniform_int_distribution<unsigned> dis(0, upper_limits_[row]);
+			unsigned shout = dis(gen);
+			assert(shout >= 0 and shout <= upper_limits_[row]);
+			return shout;
+		}
+
+		char BigramModel::Generator::Successor(char symbol) {
+			char result;
+			unsigned row = 0;
+			row = BigramModel::CharToIdx(symbol, kind_);
+			unsigned shout = MakeShout(row);
+			result = TurnRoulette(row, shout);
+			///
+			if (not std::isalpha(result)) {
+				std::cerr << "invalid res: " << (unsigned)result << std::endl;
+				exit(0);
+			}
+			///
+			assert (std::isalpha(result));
+			return result;
+		}
 
 	char BigramModel::UpperByUpper(char symbol) {
 		assert ((symbol >= 'A') and (symbol <= 'Z'));
@@ -67,6 +173,11 @@ namespace interpreter {
 	}
 
 	char BigramModel::LowerByLower(char symbol) {
+		assert (std::islower(symbol));
+		char res = lbl_gen_.Successor(symbol);
+		assert (std::islower(res));
+		return res;
+		/*
 		assert ((symbol >= 'a') and (symbol <= 'z'));
 		switch (symbol) {
 		case 'a':	return 'n';		// 13.8
@@ -98,6 +209,7 @@ namespace interpreter {
 		default:
 			assert (false and "missed symbol");
 		};
+		*/
 	}
 
 	char BigramModel::UpperByLower(char symbol) {
