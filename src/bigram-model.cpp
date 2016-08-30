@@ -46,10 +46,8 @@ namespace interpreter {
 				for (int m = 0; m < BigramModel::kAlphabetSize; ++m) {
 					distribution_[n][m] = sum;
 					sum += bigram[n][m] * BigramModel::kPrecision;
-					//std::cerr << distribution_[n][m] << "\t";
 				}
 				upper_limits_[n] = sum;
-				//std::cerr << "|_" << upper_limits_[n] << "_|" << std::endl;
 			}
 		}
 
@@ -101,15 +99,8 @@ namespace interpreter {
 				}
 				++m;
 			}
-			//std::cerr << "m = " << m << std::endl;
-			//std::cerr << "penult = " << BigramModel::kPenultimateItemIdx << std::endl;
-			//std::cerr << "ult = " << BigramModel::kUltimateItemIdx << std::endl;
-			//assert (m == BigramModel::kPenultimateItemIdx);
 			result = BigramModel::IdxToChar(idx, kind_);
-			if (not std::isalpha(result))
-				std::cerr << "idx = " << idx << std::endl;
 			assert (std::isalpha(result) and "bad roulette turn");
-			//abort();
 			return result;
 		}
 
@@ -128,12 +119,6 @@ namespace interpreter {
 			row = BigramModel::CharToIdx(symbol, kind_);
 			unsigned shout = MakeShout(row);
 			result = TurnRoulette(row, shout);
-			///
-			if (not std::isalpha(result)) {
-				std::cerr << "invalid res: " << (unsigned)result << std::endl;
-				exit(0);
-			}
-			///
 			assert (std::isalpha(result));
 			return result;
 		}
