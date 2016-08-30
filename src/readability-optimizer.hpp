@@ -6,6 +6,7 @@
 #include "holder.hpp"
 #include "holder-helper.hpp"
 #include "solver.hpp"
+#include "unigram-model.hpp"
 #include "bigram-model.hpp"
 
 namespace interpreter {
@@ -20,6 +21,7 @@ namespace interpreter {
 		SolutionListPtr arg_sols_;
 		SolutionPtr ret_sol_;
 		BigramModel bigrammer_;
+		void HandleUnigram(SolutionPtr one);
 		void HandleBigram(SolutionPtr first, SolutionPtr second);
 		void ConcretizationHelper(SolutionPtr sol);
 		void RestrictionHelper(SolutionPtr sol);

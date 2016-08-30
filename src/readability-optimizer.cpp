@@ -81,6 +81,15 @@ namespace interpreter {
 			assert (! "unexpected type of argument");
 	}
 
+	void ReadabilityOptimizer::HandleUnigram(SolutionPtr one) {
+		IntegerPtr a_intsol = ToInteger(one);
+		HolderPtr a_holder = a_intsol->Get();
+		if (IsSymbolic(a_holder)) {
+			char best = UnigramModel::GetLower();
+			assert (false and "not implemented");
+		}
+	}
+
 	void ReadabilityOptimizer::HandleBigram(SolutionPtr first, SolutionPtr second) {
 		IntegerPtr a_intsol = ToInteger(first);
 		HolderPtr a_holder = a_intsol->Get();
