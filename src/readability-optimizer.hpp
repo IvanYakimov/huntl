@@ -29,6 +29,7 @@ namespace interpreter {
 		bool TryMakeReadable(const solver::SharedExpr& x);
 		bool TryMakeAlphabetic(const solver::SharedExpr& x);
 		bool TryApplyConstraint(const solver::SharedExpr& constraint);
+		solver::SharedExpr CharConstraint(solver::Kind relation, solver::SharedExpr var, char symbol);
 };
 }
 

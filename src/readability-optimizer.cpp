@@ -26,17 +26,31 @@ namespace interpreter {
 		return probe_result;
 	}
 
+	SharedExpr ReadabilityOptimizer::CharConstraint(Kind relation, SharedExpr var, char symbol) {
+		SharedExpr c = context_.Solver().MkConst(BitVec(8, InfiniteInt(symbol)));
+		SharedExpr var_R_c = context_.Solver().MkExpr(relation, var, c);
+		return var_R_c;
+	}
+
 	bool ReadabilityOptimizer::TryMakeAlphabetic(const SharedExpr& x) {
+		/*
 		SharedExpr a = context_.Solver().MkConst(BitVec(8, InfiniteInt('a')));
 		SharedExpr z = context_.Solver().MkConst(BitVec(8, InfiniteInt('z')));
 		SharedExpr A = context_.Solver().MkConst(BitVec(8, InfiniteInt('A')));
 		SharedExpr Z = context_.Solver().MkConst(BitVec(8, InfiniteInt('Z')));
+		*/
 		SharedExpr truth = context_.Solver().MkConst(true);
+		/*
 		SharedExpr x_sge_a = context_.Solver().MkExpr(Kind::BITVECTOR_SGE, x, a);
 		SharedExpr x_sle_z = context_.Solver().MkExpr(Kind::BITVECTOR_SLE, x, z);
-		SharedExpr a_x_z = context_.Solver().MkExpr(Kind::AND, x_sge_a, x_sle_z);
 		SharedExpr x_sge_A = context_.Solver().MkExpr(Kind::BITVECTOR_SGE, x, A);
 		SharedExpr x_sle_Z = context_.Solver().MkExpr(Kind::BITVECTOR_SLE, x, Z);
+		*/
+		SharedExpr x_sge_a = CharConstraint(Kind::BITVECTOR_SGE, x, 'a');
+		SharedExpr x_sle_z = CharConstraint(Kind::BITVECTOR_SLE, x, 'z');
+		SharedExpr x_sge_A = CharConstraint(Kind::BITVECTOR_SGE, x, 'A');
+		SharedExpr x_sle_Z = CharConstraint(Kind::BITVECTOR_SLE, x, 'Z');
+		SharedExpr a_x_z = context_.Solver().MkExpr(Kind::AND, x_sge_a, x_sle_z);
 		SharedExpr A_x_Z = context_.Solver().MkExpr(Kind::AND, x_sge_A, x_sle_Z);
 		SharedExpr maybe_x_alpha = context_.Solver().MkExpr(Kind::OR, a_x_z, A_x_Z);
 		SharedExpr x_indeed_alpha = context_.Solver().MkExpr(Kind::IFF, maybe_x_alpha, truth);
@@ -44,11 +58,15 @@ namespace interpreter {
 	}
 
 	bool ReadabilityOptimizer::TryMakeReadable(const SharedExpr& x) {
+		/*
 		SharedExpr space = context_.Solver().MkConst(BitVec(8, InfiniteInt(' ')));
 		SharedExpr tilda = context_.Solver().MkConst(BitVec(8, InfiniteInt('~')));
-		SharedExpr truth = context_.Solver().MkConst(true);
 		SharedExpr x_sge_space = context_.Solver().MkExpr(Kind::BITVECTOR_SGE, x, space);
 		SharedExpr x_sle_tilda = context_.Solver().MkExpr(Kind::BITVECTOR_SLE, x, tilda);
+		*/
+		SharedExpr truth = context_.Solver().MkConst(true);
+		SharedExpr x_sge_space = CharConstraint(Kind::BITVECTOR_SGE, x, ' ');
+		SharedExpr x_sle_tilda = CharConstraint(Kind::BITVECTOR_SLE, x, '~');
 		SharedExpr maybe_x_readable = context_.Solver().MkExpr(Kind::AND, x_sge_space, x_sle_tilda);
 		SharedExpr x_indeed_readable = context_.Solver().MkExpr(Kind::IFF, maybe_x_readable, truth);
 		return TryApplyConstraint(x_indeed_readable);
@@ -85,8 +103,10 @@ namespace interpreter {
 		IntegerPtr a_intsol = ToInteger(one);
 		HolderPtr a_holder = a_intsol->Get();
 		if (IsSymbolic(a_holder)) {
+			SharedExpr a = GetExpr(a_holder);
 			char best = UnigramModel::GetLower();
-			assert (false and "not implemented");
+			SharedExpr a_eq_best = CharConstraint(Kind::EQUAL, a, best);
+			TryApplyConstraint(a_eq_best);
 		}
 	}
 
@@ -128,6 +148,7 @@ namespace interpreter {
 		} else if (utils::instanceof<Array>(sol)) {
 			ArrayPtr array = std::dynamic_pointer_cast<Array>(sol);
 			if (array->IsString() and array->GetSize() > 1) {
+				HandleUnigram(array->GetElement(0));
 				for (int i = 0; i < array->GetSize() - 1; i++) {
 					HandleBigram(array->GetElement(i), array->GetElement(i+1));
 				}

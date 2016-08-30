@@ -18,7 +18,7 @@ namespace interpreter {
 	}
 
 	void Kernel::Do(llvm::Module &mod) {
-		errs() << "module pass\n";
+		//errs() << "module pass\n";
 		eval_.ProcessModule(&mod);
 
 	}
