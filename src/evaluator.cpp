@@ -306,6 +306,7 @@ namespace interpreter {
 			if (child_pid > 0) {
 				wait(&ch_status);
 			} else {
+				std::cerr << "//test suite for " << (*it)->getName().str() << std::endl;
 				auto args = utils::Create<interpreter::ArgMap>();
 				auto ret = CallFunction(*it, args);
 			}

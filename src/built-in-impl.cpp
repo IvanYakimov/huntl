@@ -14,7 +14,7 @@ namespace interpreter {
 		interpreter::TestGenerator generator(module_, target_, args, context_, std::cerr);
 		generator.Do();
 		//TODO: fix
-		exit(0);
+		//exit(0);
 		return memory::Undef::Create();
 	}
 }
