@@ -26,6 +26,7 @@ TEST_RUNNER = test-runner.o
 
 PLAYGROUND = expr-test.o
 
+STRLIB = string.ll
 BENCHMARKS = gcd.ll hweight.ll basic.ll ptr.ll str.ll lab.ll arrays.ll
 BLAH = test-gcd.ll test-hweight.ll test-basic.ll test-ptr.ll test-str.ll test-lab.ll
 
@@ -86,8 +87,10 @@ clean:
 	@rm -vf *.ll api-pattern.cpp
 	@rm -vf \#*\#
 
+.PHONY: benchmarks
 benchmarks: $(BENCHMARKS)
-	touch benchmarks
+.PHONY: string-library
+string-library: $(STRLIB)
 	
 $(BLAH):
 test-%.ll: test-%.c %.c
