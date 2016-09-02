@@ -10,10 +10,9 @@ typedef long  ssize_t;
 typedef char bool;
 
 bool isupper(char c);
-
 bool islower(char c);
-
 bool isspace(char c);
+
 static inline unsigned char tolower(unsigned char c);
 static inline unsigned char toupper(unsigned char c);
 void BUG_ON(bool predicate);
