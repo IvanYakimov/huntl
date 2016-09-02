@@ -2,11 +2,19 @@
 #include "string.c"
 
 void gen_strlen(const char *s, size_t res);
-
-
 void test_strlen() {
-	char buff[6];
-	init_buff(buff,6);
-	size_t len = strlen(buff);
-	gen_strlen(buff,len);
+	const size_t count = 6;
+	char s[count];
+	init_buff(s, count);
+	size_t len = strlen(s);
+	gen_strlen(s, len);
+}
+
+void gen_strnlen(const char *s, size_t count, size_t res);
+void test_strnlen() {
+	const size_t count = 6;
+	char s[count];
+	init_buff(s, count);
+	size_t len = strnlen(s, count);
+	gen_strnlen(s, count, len);
 }

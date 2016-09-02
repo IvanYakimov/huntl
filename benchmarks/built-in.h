@@ -18,7 +18,7 @@ unsigned long	mksym_u64() {return 0;}
 
 void init_buff(char* buff, int len) {
 	for (int i = 0; i < len; i++) {
-		buff[i] = mksym_i8();//'a' + i;
+		buff[i] = mksym_i8();
 	}
 	buff[len-1] = '\0';
 }

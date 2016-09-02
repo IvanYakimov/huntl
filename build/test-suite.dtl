@@ -1,0 +1,104 @@
+strcmp: &"" &"" => 0
+strcmp: &"p" &"p" => 0
+strcmp: &"pa" &"pa" => 0
+strcmp: &"ugd" &"ugd" => 0
+strcmp: &"sbub" &"sbub" => 0
+strcmp: &"dabuy" &"dabuy" => 0
+
+strncmp: &"" &"" 3 => 0
+strncmp: &"n" &"n" 3 => 0
+strncmp: &"dn" &"dn" 3 => 0
+strncmp: &"mix" &"mix" 3 => 0
+
+strncasecmp: &"" &"ssidn" 5 => -115
+strncasecmp: &"axied" &"" 5 => 97
+strncasecmp: &"m" &"mptea" 5 => -112
+strncasecmp: &"aquvi" &"a" 5 => 113
+strncasecmp: &"sy" &"sygfl" 5 => -103
+strncasecmp: &"mbpev" &"mb" 5 => 112
+strncasecmp: &"bsb" &"bsbol" 5 => -111
+strncasecmp: &"bekck" &"bek" 5 => 99
+strncasecmp: &"ouup" &"ouupv" 5 => -118
+strncasecmp: &"ywhyr" &"ywhy" 5 => 114
+strncasecmp: &"tidgl" &"tidgl" 5 => 0
+
+strcpy: &"" &"" => &""
+strcpy: &"e" &"e" => &"e"
+strcpy: &"jo" &"jo" => &"jo"
+strcpy: &"qit" &"qit" => &"qit"
+strcpy: &"bjif" &"bjif" => &"bjif"
+strcpy: &"dejdd" &"dejdd" => &"dejdd"
+
+strncpy: &"" &"" 5 => &""
+strncpy: &"x" &"x" 5 => &"x"
+strncpy: &"un" &"un" 5 => &"un"
+strncpy: &"ngy" &"ngy" 5 => &"ngy"
+strncpy: &"vrxq" &"vrxq" 5 => &"vrxq"
+strncpy: &"vofac" &"vofac" 5 => &"vofac"
+
+strcat: &"" &"" => &""
+strcat: &"" &"n" => &"n"
+strcat: &"" &"nn" => &"nn"
+strcat: &"" &"yee" => &"yee"
+strcat: &"" &"zame" => &"zame"
+strcat: &"w" &"" => &"w"
+strcat: &"w" &"z" => &"wz"
+strcat: &"a" &"ba" => &"aba"
+strcat: &"x" &"gtn" => &"xgtn"
+strcat: &"q" &"gnug" => &"qgnug"
+strcat: &"ft" &"" => &"ft"
+strcat: &"sd" &"r" => &"sdr"
+strcat: &"lu" &"ae" => &"luae"
+strcat: &"cm" &"mjv" => &"cmmjv"
+strcat: &"xo" &"samr" => &"xosamr"
+strcat: &"cca" &"" => &"cca"
+strcat: &"cut" &"n" => &"cutn"
+strcat: &"jnc" &"mp" => &"jncmp"
+strcat: &"aay" &"zoe" => &"aayzoe"
+strcat: &"bnu" &"vrny" => &"bnuvrny"
+strcat: &"fipo" &"" => &"fipo"
+strcat: &"vvis" &"d" => &"vvisd"
+strcat: &"jded" &"yy" => &"jdedyy"
+strcat: &"erih" &"xmi" => &"erihxmi"
+strcat: &"kgnn" &"pmlw" => &"kgnnpmlw"
+strcat: &"jnuss" &"" => &"jnuss"
+strcat: &"uhect" &"c" => &"uhectc"
+strcat: &"ivagg" &"ft" => &"ivaggft"
+strcat: &"owilf" &"fad" => &"owilffad"
+strcat: &"evuxn" &"nhho" => &"evuxnnhho"
+strcat: &"sgkync" &"" => &"sgkync"
+strcat: &"vvedbj" &"g" => &"vvedbjg"
+strcat: &"whdqaj" &"tn" => &"whdqajtn"
+strcat: &"xcymsa" &"pwv" => &"xcymsapwv"
+strcat: &"bediju" &&10 => &"bedijuumcn"
+strcat: &"quxvyvi" &"" => &"quxvyvi"
+strcat: &"ualwaak" &"i" => &"ualwaaki"
+strcat: &"zweipkg" &"vi" => &"zweipkgvi"
+strcat: &"baydkgob" &"" => &"baydkgob"
+strcat: &"tfvumudv" &"y" => &"tfvumudvy"
+strcat: &"onsgeuliv" &"" => &"onsgeuliv"
+
+strncat: &"" &"" 1 => &""
+strncat: &"" &"v" 1 => &"v"
+strncat: &"t" &"" 1 => &"t"
+strncat: &"o" &"c" 1 => &"oc"
+strncat: &"sy" &"" 1 => &"sy"
+strncat: &"gs" &"r" 1 => &"gsr"
+strncat: &"plg" &"" 1 => &"plg"
+strncat: &"lbu" &"q" 1 => &"lbuq"
+strncat: &"jddd" &"" 1 => &"jddd"
+strncat: &"jdnn" &&5 1 => &"jdnnf"
+
+strchr: &"qtie" 113 => &"qtie"
+strchr: &"yaml" 97 => &"aml"
+
+strlen: &"" => 0
+strlen: &"o" => 1
+strlen: &"ip" => 2
+strlen: &"xph" => 3
+strlen: &"uypm" => 4
+strlen: &"augag" => 5
+
+strreplace: &"" a p => &""
+strreplace: &"x" y b => &""
+strreplace: &"d" d a => &""

@@ -41,6 +41,7 @@ bool isspace(char c) {
 	default:
 		return false;
 	};
+	return false;
 }
 
 static inline unsigned char tolower(unsigned char c)

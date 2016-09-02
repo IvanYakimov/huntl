@@ -60,7 +60,7 @@ namespace interpreter {
 
 		//---------------------------------------------------------------------------
 		// JIT:
-		std::vector<GenericValue> jit_args = jit_verifier_.ProduceJITArgs(arg_sols);
+		//std::vector<GenericValue> jit_args = jit_verifier_.ProduceJITArgs(arg_sols);
 		//assert (JIT(arg_sol_list, ret_sol) and "JIT verification failed");
 	}
 }
