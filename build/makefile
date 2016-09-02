@@ -49,6 +49,9 @@ BENCH =	../benchmarks
 BENCH_LIB = $(BENCH)/lib
 BENCH_SUITE = $(BENCH)/test-suite
 
+LINUX_STR_LIB = $(shell ls ../benchmarks/test-suite/string/)
+LINUX_STRING_LL = $(LINUX_STR_LIB:.c=.ll)
+
 vpath %.cpp $(SRC) $(TST) $(TST)/solver/ $(TST)/interpreter $(TST)/matcher
 vpath %.hpp $(SRC) $(TST)/matcher
 vpath %.c 	$(SRC) $(BENCH) $(BENCH_LIB)/string $(BENCH_SUITE)/string
@@ -87,11 +90,11 @@ clean:
 	@rm -vf *.ll api-pattern.cpp
 	@rm -vf \#*\#
 
-.PHONY: benchmarks
-benchmarks: $(BENCHMARKS)
-.PHONY: string-library
-string-library: $(STRLIB)
-		
+string-c: $(LINUX_STR_LIB)
+	$(CLANG) $^
+string-ll: $(LINUX_STRING_LL)
+	./frun-all.sh $^
+	
 %.ll: %.c
 	$(CLANG) $<
 

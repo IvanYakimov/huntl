@@ -1,8 +1,7 @@
-#include "lib-string.c"
+#include "../../lib/llvoyager/built-in.h"
+#include "../../lib/lib-string.c"
 
-#ifndef SWITCH_CASE
-#error "switch-case instruction must be implemented"
-#endif
+#warning "switch-case instruction must be implemented"
 
 void gen_strtobool(const char *s, bool *res, int r);
 
