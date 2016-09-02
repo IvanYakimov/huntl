@@ -1,5 +1,5 @@
-#include "built-in.h"
-#include "string.c"
+#include "../../lib/llvoyager/built-in.h"
+#include "../../lib/string/string.c"
 
 void gen_strlen(const char *s, size_t res);
 void test_strlen() {

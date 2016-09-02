@@ -1,5 +1,7 @@
-#include "built-in.h"
-#include "string.c"
+#include "../../lib/llvoyager/built-in.h"
+#include "../../lib/string/string.c"
+
+#warning "don't work"
 
 void gen_strchr(const char *s, int c, char *res);
 void gen_strchrnul(const char *s, int c, char *res);

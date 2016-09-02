@@ -26,10 +26,6 @@ TEST_RUNNER = test-runner.o
 
 PLAYGROUND = expr-test.o
 
-STRLIB = string.ll
-BENCHMARKS = gcd.ll hweight.ll basic.ll ptr.ll str.ll lab.ll arrays.ll
-BLAH = test-gcd.ll test-hweight.ll test-basic.ll test-ptr.ll test-str.ll test-lab.ll
-
 OBJ = $(INTERPRETER) $(MEMORY) $(SOLVER) $(UTILS)
 OBJ_TEST = $(INTERPRETER_TEST) $(MEMORY_TEST) $(SOLVER_TEST) $(LLVM_TEST_HELPERS) $(PLAYGROUND)
 
@@ -49,9 +45,13 @@ CLANG = clang -S -emit-llvm -O0 -Wint-conversion
 SRC = ../src
 TST = ../test
 
+BENCH =	../benchmarks
+BENCH_LIB = $(BENCH)/lib
+BENCH_SUITE = $(BENCH)/test-suite
+
 vpath %.cpp $(SRC) $(TST) $(TST)/solver/ $(TST)/interpreter $(TST)/matcher
 vpath %.hpp $(SRC) $(TST)/matcher
-vpath %.c 	$(SRC) ../benchmarks
+vpath %.c 	$(SRC) $(BENCH) $(BENCH_LIB)/string $(BENCH_SUITE)/string
 vpath %.h	$(SRC) ../benchmarks
 		
 program.so: shared.o 
@@ -91,13 +91,7 @@ clean:
 benchmarks: $(BENCHMARKS)
 .PHONY: string-library
 string-library: $(STRLIB)
-	
-$(BLAH):
-test-%.ll: test-%.c %.c
-	$(CLANG) $^
 		
-	
-$(BENCHMARKS):
 %.ll: %.c
 	$(CLANG) $<
 

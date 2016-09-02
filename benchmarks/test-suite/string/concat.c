@@ -1,5 +1,5 @@
-#include "built-in.h"
-#include "string.c"
+#include "../../lib/llvoyager/built-in.h"
+#include "../../lib/string/string.c"
 
 void init_dest(char *dest, size_t dest_len) {
 	dest[0] = 'b';
