@@ -53,12 +53,17 @@ LINUX_STR_LIB = $(shell ls ../benchmarks/test-suite/string/)
 LINUX_STRING_LL = $(LINUX_STR_LIB:.c=.ll)
 
 vpath %.cpp $(SRC) $(TST) $(TST)/solver/ $(TST)/interpreter $(TST)/matcher
+vpath %.cpp ../readability
 vpath %.hpp $(SRC) $(TST)/matcher
+vpath %.hpp ../readability
 vpath %.c 	$(SRC) $(BENCH) $(BENCH_LIB)/string $(BENCH_SUITE)/string
 vpath %.h	$(SRC) ../benchmarks
 		
 program.so: shared.o 
 	$(CXX) -shared $< -o $@ $(CXXFLAGS) $(CVC4FLAGS) 
+	
+estimate.out: estimate.hpp estimate.cpp
+	$(CXX) $^ -o $@ $(CXXFLAGS)
 
 #shared.o: $(INTERPRETER) $(SOLVER) $(MEMORY) $(LLVM_PASS) $(UTILS)
 shared.o: $(OBJ) $(LLVM_PASS)
