@@ -40,27 +40,30 @@ namespace interpreter {
 		virtual ~Matcher () {}
 
 		// Specific Instruction type classes
-		void visitReturnInst (const llvm::ReturnInst &inst);
-		void visitBranchInst (const llvm::BranchInst &inst);
+		void visitReturnInst(const llvm::ReturnInst &return_inst);
+		void visitBranchInst(const llvm::BranchInst &branch_inst);
+		void visitSwitchInst(const llvm::SwitchInst &switch_inst);
 		// missed instructions
-		void visitBinaryOperator(const llvm::BinaryOperator &inst);
-		void visitICmpInst (const llvm::ICmpInst &inst);
+		void visitBinaryOperator(const llvm::BinaryOperator &binary_operator);
+		void visitICmpInst (const llvm::ICmpInst &icmp_inst);
 		// missed instructions
-		void visitAllocaInst (const llvm::AllocaInst &inst);
-		void visitLoadInst (const llvm::LoadInst &inst);
-		void visitStoreInst (const llvm::StoreInst &inst);
+		void visitAllocaInst (const llvm::AllocaInst &alloca_inst);
+		void visitLoadInst (const llvm::LoadInst &load_inst);
+		void visitStoreInst (const llvm::StoreInst &store_inst);
 		// missed
-		void visitGetElementPtrInst (const llvm::GetElementPtrInst &inst);
+		void visitGetElementPtrInst (const llvm::GetElementPtrInst &getelementptr_inst);
+		void visitPHINode(const llvm::PHINode &phi_node);
+		void visitTruncInst (const llvm::TruncInst &trunc_inst);
+		void visitZExtInst (const llvm::ZExtInst &zext_inst);
+		void visitSExtInst (const llvm::SExtInst &sext_inst);
 		// missed
-		void visitTruncInst (const llvm::TruncInst &inst);
-		void visitZExtInst (const llvm::ZExtInst &inst);
-		void visitSExtInst (const llvm::SExtInst &inst);
+		void visitPtrToIntInst (const llvm::PtrToIntInst &ptrtoint_inst);
+		void visitIntToPtrInst (const llvm::IntToPtrInst &inttoptr_inst);
+		void visitBitCastInst (const llvm::BitCastInst &bitcast_inst);
 		// missed
-		void visitPtrToIntInst (const llvm::PtrToIntInst &inst);
-		void visitIntToPtrInst (const llvm::IntToPtrInst &inst);
-		void visitBitCastInst (const llvm::BitCastInst &inst);
-		// missed instructions
-		void visitCallInst(const llvm::CallInst &inst);
+		void visitSelectInst(const llvm::SelectInst& select_inst);
+		// missed
+		void visitCallInst(const llvm::CallInst &call_inst);
 
 	protected:
 		// Return
@@ -98,6 +101,9 @@ namespace interpreter {
 		virtual void HandlePtrToInt (const llvm::PtrToIntInst &inst, const llvm::Value* target, const llvm::IntegerType* dest_ty) = 0;
 		// PtrToInt
 		virtual void HandleIntToPtr (const llvm::IntToPtrInst &inst, const llvm::Value* target, const llvm::PointerType* dest_ty) = 0;
+
+		// Phi
+		virtual void HandlePHINode(const llvm::PHINode &phi_node) = 0;
 
 		// Call
 		virtual void HandleCallInst(const llvm::CallInst &inst) = 0;

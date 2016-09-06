@@ -38,10 +38,13 @@ namespace memory {
 		} RetVal;
 		class ProgramCounter {
 		public:
-			void Set(const llvm::BasicBlock* program_counter);
+			/// use nullptr to reset the PC
+			void Set(const llvm::BasicBlock* current);
 			const llvm::BasicBlock* Get();
+			const llvm::BasicBlock* Prior();
 		private:
-			const llvm::BasicBlock* program_counter_ = nullptr;
+			const llvm::BasicBlock* current_ = nullptr;
+			const llvm::BasicBlock* prior_ = nullptr;
 		} PC;
 		//memory::RamAddress Alloca(HolderPtr initial);
 		memory::RamAddress Alloca(const llvm::Type* allocated);

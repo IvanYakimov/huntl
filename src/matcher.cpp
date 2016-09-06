@@ -38,6 +38,10 @@ namespace interpreter {
 			assert(false);
 	}
 
+	void Matcher::visitSwitchInst(const llvm::SwitchInst &switch_inst) {
+		abort();
+	}
+
 	void Matcher::visitBinaryOperator(const llvm::BinaryOperator &inst) {
 		Value *lhs = NULL,
 				*rhs = NULL;
@@ -96,6 +100,10 @@ namespace interpreter {
 		}
 		else
 			assert (false and "not implemented");
+	}
+
+	void Matcher::visitPHINode(const llvm::PHINode &phi_node) {
+		HandlePHINode(phi_node);
 	}
 
 	void Matcher::visitTruncInst (const llvm::TruncInst &inst) {
@@ -159,6 +167,10 @@ namespace interpreter {
 			HandleStoreInst(inst, val, ptr);
 		else
 			assert(false);
+	}
+
+	void Matcher::visitSelectInst(const llvm::SelectInst& select) {
+		abort();
 	}
 
 	void Matcher::visitCallInst(const llvm::CallInst &inst) {

@@ -29,47 +29,27 @@ namespace memory {
 	}
 
 	const llvm::BasicBlock* Activation::ProgramCounter::Get() {
-		return program_counter_;
+		return current_;
 	}
 
-	void Activation::ProgramCounter::Set(const llvm::BasicBlock* program_counter) {
-		program_counter_ = program_counter;
+	const llvm::BasicBlock* Activation::ProgramCounter::Prior() {
+		assert (prior_ != nullptr and "logical error, look at Set function for bugs");
+		return prior_;
+	}
+
+	void Activation::ProgramCounter::Set(const llvm::BasicBlock* cur) {
+		// reset prior_ if cur == nullptr
+		if (not cur)
+			prior_ = nullptr;
+		else
+			prior_ = current_;
+		// set new current PC
+		current_ = cur;
 	}
 
 	RamAddress Activation::Alloca(const Type* allocated) {
 		return ram_.Stack().Alloca(allocated);
 	}
-
-	/*
-	RamAddress Activation::Alloca(const Type* allocated) {
-		if (allocated->isIntegerTy()) {
-			const IntegerType* int_ty = llvm::dyn_cast<IntegerType>(allocated);
-			auto width = int_ty->getBitWidth();
-			auto val = 1;
-			auto holder = memory::Concrete::Create(MetaInt(width, val));
-			assert (width % 8 == 0 or width == 1);
-			return ram_.Stack().Alloca(holder, allocated, memory::kDefAlign);
-		}
-		else if (allocated->isPointerTy()) {
-			auto width = memory::kWordSize;
-			auto val = 1;
-			auto holder = memory::Concrete::Create(MetaInt(width, val));
-			assert (width % 8 == 0);
-			return ram_.Stack().Alloca(holder, allocated, memory::kDefAlign);
-		}
-		else if (allocated->isArrayTy()) {
-			const ArrayType* array_ty = llvm::dyn_cast<ArrayType>(allocated);
-			const Type* el_ty = array_ty->getArrayElementType();
-			auto len = array_ty->getArrayNumElements();
-			auto first_el_addr = Alloca(el_ty);
-			for (int i = 1; i < len; i++)
-				Alloca(el_ty);
-			return first_el_addr;
-		}
-		else
-			assert (! "not implemented");
-	}
-	*/
 
 	HolderPtr Activation::Load(RegisterName register_name) {
 		auto it = local_display_.find(register_name);

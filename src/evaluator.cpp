@@ -272,6 +272,13 @@ namespace interpreter {
 		return called;
 	}
 
+	void Evaluator::HandlePHINode(const llvm::PHINode &phi_node) {
+		std::cerr << "phi-node from:\n";
+		const llvm::BasicBlock *prior = context_.Top()->PC.Prior();
+		llvm::errs() << *prior << "\n";
+		assert (false and "phi-node isn't implemented yet");
+	}
+
 	void Evaluator::HandleCallInst(const llvm::CallInst &inst) {
 		auto called = ExtractCalledFunction(inst);
 		ArgMapPtr argmap = ProduceArgMap(inst);

@@ -94,7 +94,8 @@ namespace interpreter {
 		virtual void HandlePtrToInt (const llvm::PtrToIntInst &inst, const llvm::Value* target, const llvm::IntegerType* dest_ty);
 		// IntToPtr
 		virtual void HandleIntToPtr (const llvm::IntToPtrInst &inst, const llvm::Value* target, const llvm::PointerType* dest_ty);
-
+		// PHINode
+		virtual void HandlePHINode(const llvm::PHINode &phi_node);
 		// Call
 		virtual void HandleCallInst(const llvm::CallInst &inst);
 };
