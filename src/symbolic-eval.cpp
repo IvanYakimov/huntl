@@ -139,8 +139,10 @@ namespace interpreter {
 
 		//std::cerr << ".";
 
+		llvm::outs().flush();
 		llvm::errs().flush();
 		std::flush(std::cerr);
+		std::flush(std::cout);
 
 		child_pid = fork();
 		if (child_pid > 0) {
