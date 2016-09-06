@@ -273,10 +273,20 @@ namespace interpreter {
 	}
 
 	void Evaluator::HandlePHINode(const llvm::PHINode &phi_node) {
-		std::cerr << "phi-node from:\n";
 		const llvm::BasicBlock *prior = context_.Top()->PC.Prior();
-		llvm::errs() << *prior << "\n";
-		assert (false and "phi-node isn't implemented yet");
+		HolderPtr holder = nullptr;
+		auto count = phi_node.getNumIncomingValues();
+		for (auto i = 0; i < count; ++i) {
+			const llvm::BasicBlock *bb = phi_node.getIncomingBlock(i);
+			if (bb == prior) {
+				const llvm::Value *v = phi_node.getIncomingValue(i);
+				//llvm::errs() << "get " << *v << "\n";
+				holder = ProduceHolder(v);
+				//std::cerr << "holder: " << *holder << " of " << GetWidth(holder) << " bitwidth\n";
+			}
+		}
+		assert (holder != nullptr and "a value must be selected and coverted");
+		meta_eval_.PHINode(phi_node, holder);
 	}
 
 	void Evaluator::HandleCallInst(const llvm::CallInst &inst) {

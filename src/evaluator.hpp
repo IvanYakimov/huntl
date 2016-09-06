@@ -18,6 +18,7 @@
 #include "matcher.hpp"
 
 // Uses
+#include "holder-helper.hpp"
 #include "meta-kind.hpp"
 #include "solver.hpp"
 #include "context.hpp"

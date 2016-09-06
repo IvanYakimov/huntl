@@ -2,7 +2,6 @@
 #include "../../lib/string/string.c"
 
 #warning "strXstr methods are hide as they do not work"
-/*
 void gen_strstr(const char *s1, const char *s2, char *res);
 void test_strstr() {
 	const size_t s1_len = 6, s2_len = 3;
@@ -30,7 +29,6 @@ void test_strprk() {
 	char *res = strpbrk(str, key);
 	gen_strpbrk(str, key, res);
 }
-*/
 
 #warning "match_string: getelementptr needs to be fully supported"
 void gen_match_string(const char * const *array, size_t n, const char *string, int res);

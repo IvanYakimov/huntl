@@ -184,6 +184,11 @@ namespace interpreter {
 		context_.Top()->PC.Set(nullptr);
 	}
 
+	void MetaEvaluator::PHINode(const llvm::PHINode& phi_node, HolderPtr value) {
+		auto lhs_address = context_.Top()->GetLocation(&phi_node);
+		Assign(lhs_address, value);
+	}
+
 	//-------------------------------------------------------------------
 	solver::SharedExpr MetaEvaluator::Symbolize(interpreter::MetaIntRef concrete_val) {
 		auto bv_val = interpreter::MetaInt_To_BitVec(concrete_val);

@@ -43,6 +43,7 @@ namespace interpreter {
 		void GetElementPtr(const llvm::GetElementPtrInst &inst, llvm::ArrayType* arr_ty_bound, memory::HolderPtr target_ptr_holder, memory::HolderPtr base_holder, memory::HolderPtr arr_idx_holder);
 		void GetElementPtr(const llvm::GetElementPtrInst &inst, llvm::ArrayType* arr_ty_bound, memory::HolderPtr target_ptr_holder, memory::HolderPtr arr_idx_holder);
 		void GetElementPtr(const llvm::GetElementPtrInst &inst, llvm::IntegerType* int_ptr_ty_bound, memory::HolderPtr target_ptr_holder, memory::HolderPtr arr_idx_holder);
+		void PHINode(const llvm::PHINode& phi_node, memory::HolderPtr value);
 	private:
 		ContextRef context_;
 		ConcreteEval concrete_eval_;
