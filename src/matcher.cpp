@@ -170,7 +170,7 @@ namespace interpreter {
 	}
 
 	void Matcher::visitSelectInst(const llvm::SelectInst& select) {
-		assert (false and "select is not implemented yet");
+		HandleSelectInst(select);
 	}
 
 	void Matcher::visitCallInst(const llvm::CallInst &inst) {

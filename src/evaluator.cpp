@@ -289,6 +289,12 @@ namespace interpreter {
 		meta_eval_.PHINode(phi_node, holder);
 	}
 
+	void Evaluator::HandleSelectInst(const llvm::SelectInst &select_inst) {
+		llvm::errs() << "cond: " << *select_inst.getCondition() << "\n";
+		llvm::errs() << "trueval: " << *select_inst.getTrueValue() << "\n";
+		llvm::errs() << "falseval: " << *select_inst.getFalseValue() << "\n";
+	}
+
 	void Evaluator::HandleCallInst(const llvm::CallInst &inst) {
 		auto called = ExtractCalledFunction(inst);
 		ArgMapPtr argmap = ProduceArgMap(inst);

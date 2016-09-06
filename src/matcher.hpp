@@ -105,6 +105,9 @@ namespace interpreter {
 		// Phi
 		virtual void HandlePHINode(const llvm::PHINode &phi_node) = 0;
 
+		// Select
+		virtual void HandleSelectInst(const llvm::SelectInst &select_inst) = 0;
+
 		// Call
 		virtual void HandleCallInst(const llvm::CallInst &inst) = 0;
 	protected:
