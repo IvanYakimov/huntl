@@ -65,11 +65,14 @@ namespace interpreter {
 		//llvm::errs() << *inst.getType() << "\n";
 		//llvm::errs() << inst << "\n";
 		ConstantInt *constant_int = NULL;
+		Value *value = NULL;
 		Type *allocated_type = inst.getAllocatedType();
 		if (Case (inst, &constant_int))
 			HandleAllocaInst(inst, constant_int, allocated_type);
+		else if (Case (inst, &value))
+			assert(false && "value allocating is not implemented, sorry");
 		else
-			assert(false && "not implemented");
+			assert (false && "not implemented");
 	}
 
 	void Matcher::visitLoadInst (const LoadInst &inst) {

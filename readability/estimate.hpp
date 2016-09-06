@@ -4,6 +4,7 @@
 #include "../src/bigram-model.hpp"
 
 #include <regex>
+#include <cmath>
 
 int main();
 

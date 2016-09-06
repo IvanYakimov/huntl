@@ -785,3 +785,108 @@ char *strreplace(char *s, char old, char new)
 			*s = new;
 	return s;
 }
+
+
+//----------------------------------------------------------------------------------------------------
+// from parser.c
+
+#warning: "switch case needed"
+bool match_wildcard(const char *pattern, const char *str)
+{
+	const char *s = str;
+	const char *p = pattern;
+	bool star = false;
+
+	while (*s) {
+		if (*p == '?') {
+			s++;
+			p++;
+		}
+		else if (*p =='*') {
+			star = true;
+			str = s;
+			if (!*++p)
+				return true;
+			pattern = p;
+		}
+		else {
+			if (*s == *p) {
+				s++;
+				p++;
+			} else {
+				if (!star)
+					return false;
+				str++;
+				s = str;
+				p = pattern;
+			}
+		}
+	}
+
+	if (*p == '*')
+		++p;
+	return !*p;
+}
+
+/*
+bool match_wildcard(const char *pattern, const char *str)
+{
+	const char *s = str;
+	const char *p = pattern;
+	bool star = false;
+
+	while (*s) {
+		switch (*p) {
+		case '?':
+			s++;
+			p++;
+			break;
+		case '*':
+			star = true;
+			str = s;
+			if (!*++p)
+				return true;
+			pattern = p;
+			break;
+		default:
+			if (*s == *p) {
+				s++;
+				p++;
+			} else {
+				if (!star)
+					return false;
+				str++;
+				s = str;
+				p = pattern;
+			}
+			break;
+		}
+	}
+
+	if (*p == '*')
+		++p;
+	return !*p;
+}
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

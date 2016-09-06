@@ -12,17 +12,19 @@ namespace interpreter {
 			kLower
 		};
 		static unsigned CharToIdx(char symbol, BigramModel::Case c);
+		static unsigned CharToIdx(char symbol);
 		static char IdxToChar(unsigned idx, BigramModel::Case kind);
 		const static unsigned kAlphabetSize = 26;
 		const static unsigned kPrecision = 100;
+		constexpr const static double kNorm = 0.01;
 		const static unsigned kUltimateItemIdx = BigramModel::kAlphabetSize - 1;
 		const static unsigned kPenultimateItemIdx = BigramModel::kAlphabetSize - 2;
-		using BigramSquare = float[kAlphabetSize][kAlphabetSize];
+		using BigramSquare = double[kAlphabetSize][kAlphabetSize];
 		char Alphabet[kAlphabetSize];
-		class Generator {
+		class BestNextGenerator {
 		public:
-			Generator(const BigramSquare& bigram, Case kind);
-			~Generator();
+			BestNextGenerator(const BigramSquare& bigram, Case kind);
+			~BestNextGenerator();
 			char Successor(char symbol);
 		private:
 			unsigned distribution_ [kAlphabetSize][kAlphabetSize];
@@ -31,17 +33,29 @@ namespace interpreter {
 
 			char TurnRoulette(unsigned row, unsigned shout);
 			unsigned MakeShout(unsigned row);
-	};
+		};
+		class ProbabilityGenerator {
+		public:
+			ProbabilityGenerator(const BigramSquare& bigram, Case fst_case, Case snd_case);
+			~ProbabilityGenerator();
+			double GetBigramProbability(char first, char second);
+		private:
+			double probabilities_[kAlphabetSize][kAlphabetSize];
+			Case fst_case_;
+			Case snd_case_;
+		};
 	public:
 		BigramModel();
 		~BigramModel();
 		char UpperByUpper(char symbol);
+		double BigramProbability(char pre, char post);
 		char LowerByLower(char symbol);
 		char UpperByLower(char symbol);
 		char LowerByUpper(char symbol);
 	private:
 		BigramSquare lbl_bigram_;
-		Generator lbl_gen_;
+		BestNextGenerator lbl_gen_;
+		ProbabilityGenerator lbl_prob_;
 	};
 }
 

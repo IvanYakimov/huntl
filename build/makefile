@@ -56,13 +56,13 @@ vpath %.cpp $(SRC) $(TST) $(TST)/solver/ $(TST)/interpreter $(TST)/matcher
 vpath %.cpp ../readability
 vpath %.hpp $(SRC) $(TST)/matcher
 vpath %.hpp ../readability
-vpath %.c 	$(SRC) $(BENCH) $(BENCH_LIB)/string $(BENCH_SUITE)/string
+vpath %.c 	$(SRC) $(BENCH) $(BENCH_LIB)/string $(BENCH_SUITE)/string $(BENCH_LIB)/parser
 vpath %.h	$(SRC) ../benchmarks
 		
 program.so: shared.o 
 	$(CXX) -shared $< -o $@ $(CXXFLAGS) $(CVC4FLAGS) 
 	
-estimate.out: estimate.hpp estimate.cpp
+estimate.out: estimate.o bigram-model.o
 	$(CXX) $^ -o $@ $(CXXFLAGS)
 
 #shared.o: $(INTERPRETER) $(SOLVER) $(MEMORY) $(LLVM_PASS) $(UTILS)
@@ -95,8 +95,11 @@ clean:
 	@rm -vf *.ll api-pattern.cpp
 	@rm -vf \#*\#
 
+.PHONY: string-c
 string-c: $(LINUX_STR_LIB)
 	$(CLANG) $^
+
+.PHONY:  string-ll
 string-ll: $(LINUX_STRING_LL)
 	./frun-all.sh $^
 	

@@ -20,8 +20,23 @@ namespace interpreter {
 		char ascii = GetChar(symbol); //ascii = (char)code;
 		if (std::isprint(ascii))
 			os << ascii;
-		else
-			os << "\\" << (unsigned)ascii;
+		else switch (ascii){
+		case 0x7: os << "\\a"; break;
+		case 0x8: os << "\\b"; break;
+		case 0xC: os << "\\f"; break;
+		case 0xA: os << "\\n"; break;
+		case 0xD: os << "\\r"; break;
+		case 0x9: os << "\\t"; break;
+		case 0x5C: os << "\\\\"; break;
+		case 0x27: os << "\\\'"; break;
+		case 0x22: os << "\\\""; break;
+		case 0x3F: os << "\\\?"; break;
+		default:
+			os << "\\";
+			if (ascii < 10)
+				os << "0";
+			os << std::hex << (unsigned)ascii << std::dec;
+		};
 	}
 
 	/*
@@ -47,13 +62,20 @@ namespace interpreter {
 		bool end_reached = false;
 		std::string str;
 		file << "\"";
-		for (int i = 0; i < array->GetSize(); i++) {
+		int i = 0;
+		int len = array->GetSize();
+		while (i < len) {
 			SolutionPtr el_sol = array->GetElement(i);
 			if (IsEndl(el_sol))
 				break;
 			PrintSolution(el_sol, file);
+			++i;
 		}
 		file << "\"";
+		while (i < len) {
+			file << "_";
+			++i;
+		}
 	}
 
 	void SolutionPrinter::PrintArbitraryArray(ArrayPtr array, std::ostream& file) {

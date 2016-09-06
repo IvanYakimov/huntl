@@ -30,7 +30,8 @@ namespace interpreter {
 						/*y*/ {9.16,	8.22,	8.48,	7.77,	11.4,	6.35,	6.34,	6.32,	9.92,	3.09,	5.96,	9.07,	9.49,	9.11,	10.6,	8.63,	1.61,	8.97,	10.7,	8.86,	6.57,	5.64,	8.04,	4.42,	3.43,	6.56},
 						/*z*/ {9.41,	5.86,	3.69,	4.73,	10.1,	2.56,	5.00,	6.32,	8.93,	.69,	5.29,	6.95,	6.00,	4.67,	8.13,	4.98,	3.14,	4.75,	4.98,	4.84,	6.85,	4.84,	5.21,	.0,		7.23,	8.10}
 		},
-		lbl_gen_(lbl_bigram_, BigramModel::Case::kLower)
+		lbl_gen_(lbl_bigram_, BigramModel::Case::kLower),
+		lbl_prob_(lbl_bigram_, Case::kLower, Case::kLower)
 		{
 
 		}
@@ -39,7 +40,7 @@ namespace interpreter {
 
 		}
 
-		BigramModel::Generator::Generator(const BigramModel::BigramSquare& bigram, BigramModel::Case kind) :
+		BigramModel::BestNextGenerator::BestNextGenerator(const BigramModel::BigramSquare& bigram, BigramModel::Case kind) :
 				kind_(kind) {
 			for (int n = 0; n < BigramModel::kAlphabetSize; ++n) {
 				unsigned sum = 0;
@@ -51,8 +52,17 @@ namespace interpreter {
 			}
 		}
 
-		BigramModel::Generator::~Generator() {
+		BigramModel::BestNextGenerator::~BestNextGenerator() {
 
+		}
+
+		unsigned BigramModel::CharToIdx(char symbol) {
+			if (std::islower(symbol))
+				return BigramModel::CharToIdx(symbol, BigramModel::Case::kLower);
+			else if (std::isupper(symbol))
+				return BigramModel::CharToIdx(symbol, BigramModel::Case::kUpper);
+			else
+				assert (false and "not alphabet symbol!");
 		}
 
 		unsigned BigramModel::CharToIdx(char symbol, BigramModel::Case kind) {
@@ -84,7 +94,7 @@ namespace interpreter {
 			assert (false and "unexpected");
 		}
 
-		char BigramModel::Generator::TurnRoulette(unsigned row, unsigned shout) {
+		char BigramModel::BestNextGenerator::TurnRoulette(unsigned row, unsigned shout) {
 			char result = 0;
 			assert(shout >= 0 and shout <= upper_limits_[row]);
 			int m = 0;
@@ -104,7 +114,7 @@ namespace interpreter {
 			return result;
 		}
 
-		unsigned BigramModel::Generator::MakeShout(unsigned row) {
+		unsigned BigramModel::BestNextGenerator::MakeShout(unsigned row) {
 			std::random_device rd;
 			std::mt19937 gen(rd());
 			std::uniform_int_distribution<unsigned> dis(0, upper_limits_[row]);
@@ -113,7 +123,7 @@ namespace interpreter {
 			return shout;
 		}
 
-		char BigramModel::Generator::Successor(char symbol) {
+		char BigramModel::BestNextGenerator::Successor(char symbol) {
 			char result;
 			unsigned row = 0;
 			row = BigramModel::CharToIdx(symbol, kind_);
@@ -135,6 +145,14 @@ namespace interpreter {
 		return res;
 	}
 
+	double BigramModel::BigramProbability(char pre, char post) {
+		assert (std::isalpha(pre) and std::isalpha(post));
+		if (std::islower(pre) and std::islower(post)) {
+			 return lbl_prob_.GetBigramProbability(pre, post);
+		} else
+			assert (false and "not implemented, sorry");
+	}
+
 	char BigramModel::UpperByLower(char symbol) {
 		assert (std::isupper(symbol));
 		assert (false and "not implemented");
@@ -143,6 +161,38 @@ namespace interpreter {
 	char BigramModel::LowerByUpper(char symbol) {
 		assert (std::islower(symbol));
 		assert (false and "not implemented");
+	}
+
+	BigramModel::ProbabilityGenerator::ProbabilityGenerator(const BigramSquare& bigram, Case fst_case, Case snd_case) :
+		fst_case_(fst_case),
+		snd_case_(snd_case){
+		//TODO: refactoring
+		double amounts[kAlphabetSize];
+		double total = 0.0;
+		for (auto row = 0; row < kAlphabetSize; ++row) {
+			double current_amount = 0;
+			for (auto col = 0; col < kAlphabetSize; ++col) {
+				current_amount += bigram[row][col];
+				total += bigram[row][col];
+			}
+			amounts[row] = current_amount;
+		}
+		for (auto row = 0; row < kAlphabetSize; ++row) {
+			for (auto col = 0; col < kAlphabetSize; ++col) {
+				//probabilities_[row][col] = bigram[row][col] / amounts[row];
+				probabilities_[row][col] = bigram[row][col] / total;
+			}
+		}
+	}
+
+	BigramModel::ProbabilityGenerator::~ProbabilityGenerator() {
+
+	}
+
+	double BigramModel::ProbabilityGenerator::GetBigramProbability(char first, char second) {
+		auto fst_idx = BigramModel::CharToIdx(first, fst_case_);
+		auto snd_idx = BigramModel::CharToIdx(second, snd_case_);
+		return probabilities_[fst_idx][snd_idx];
 	}
 }
 
