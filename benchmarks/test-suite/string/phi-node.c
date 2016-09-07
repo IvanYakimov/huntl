@@ -19,6 +19,8 @@ int select(int x, int y) {
 void gen_select(int x, int y, int r);
 void test_SELECT() {
 	int x = 0, y = 2;
+	x = mksym_i32();
+	y = mksym_i32();
 	//int z = x < y ? 3 : 7;
 	int r = select(x, y);
 	gen_select(x, y, r);

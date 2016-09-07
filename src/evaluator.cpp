@@ -280,9 +280,7 @@ namespace interpreter {
 			const llvm::BasicBlock *bb = phi_node.getIncomingBlock(i);
 			if (bb == prior) {
 				const llvm::Value *v = phi_node.getIncomingValue(i);
-				//llvm::errs() << "get " << *v << "\n";
 				holder = ProduceHolder(v);
-				//std::cerr << "holder: " << *holder << " of " << GetWidth(holder) << " bitwidth\n";
 			}
 		}
 		assert (holder != nullptr and "a value must be selected and coverted");
@@ -290,9 +288,6 @@ namespace interpreter {
 	}
 
 	void Evaluator::HandleSelectInst(const llvm::SelectInst &select_inst) {
-		llvm::errs() << "cond: " << *select_inst.getCondition() << "\n";
-		llvm::errs() << "trueval: " << *select_inst.getTrueValue() << "\n";
-		llvm::errs() << "falseval: " << *select_inst.getFalseValue() << "\n";
 		HolderPtr cond = ProduceHolder(select_inst.getCondition());
 		HolderPtr trueval = ProduceHolder(select_inst.getTrueValue());
 		HolderPtr falseval = ProduceHolder(select_inst.getFalseValue());

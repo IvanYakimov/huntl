@@ -140,7 +140,8 @@ namespace interpreter {
 		context_.Ram().Stack().Write(v_holder, lhs);
 	}
 
-	const BasicBlock* SymbolicEval::BranchHelper(const SharedExpr& condition, bool branch_marker, const BasicBlock* branch_ptr) {
+	template <typename R>
+	R SymbolicEval::BranchHelper(const SharedExpr& condition, bool branch_marker, R branch_ptr) {
 		auto cond_eq_true = context_.Solver().MkExpr(Kind::EQUAL, condition, BitTrue());
 		auto converted_condition = context_.Solver().MkExpr(Kind::ITE, cond_eq_true, BoolTrue(), BoolFalse());
 
@@ -154,10 +155,10 @@ namespace interpreter {
 			return branch_ptr;
 	}
 
-	const BasicBlock* SymbolicEval::Branch (SharedExpr condition, const BasicBlock *iftrue, const BasicBlock *iffalse) {
+	const BasicBlock* SymbolicEval::Branch(SharedExpr condition, const BasicBlock *iftrue, const BasicBlock *iffalse) {
 		pid_t child_pid = 0;
 		int ch_status;
-		const BasicBlock* next_branch;
+		const BasicBlock* next_branch = nullptr;
 
 		FlushAll();
 		child_pid = fork();
@@ -168,11 +169,25 @@ namespace interpreter {
 		else {
 			next_branch = BranchHelper(condition, false, iffalse);
 		}
+		assert (next_branch != nullptr);
 		return next_branch;
 	}
 
 	HolderPtr SymbolicEval::Select(RamAddress lhs, SharedExpr condition, HolderPtr trueval, HolderPtr falseval) {
+		pid_t child_pid = 0;
+		int ch_status;
+		HolderPtr result = nullptr;
 
+		FlushAll();
+		child_pid = fork();
+		if (child_pid > 0) {
+			wait(&ch_status);
+			result = BranchHelper(condition, true, trueval);
+		} else {
+			result = BranchHelper(condition, false, falseval);
+		}
+		assert (result != nullptr);
+		return result;
 	}
 }
 

@@ -28,7 +28,8 @@ namespace interpreter {
 		solver::Kind OpCode_To_Kind(unsigned op_code);
 		solver::Kind Predicate_To_Kind(llvm::ICmpInst::Predicate predicate);
 		solver::Kind ConversionHelper(utils::MetaKind kind);
-		const llvm::BasicBlock* BranchHelper(const solver::SharedExpr& condition, bool branch_marker, const llvm::BasicBlock* branch_ptr);
+		template <typename R>
+		R BranchHelper(const solver::SharedExpr& condition, bool branch_marker, R branch_ptr);
 		void FlushAll();
 		ContextRef context_;
 		solver::SharedExpr BoolTrue();

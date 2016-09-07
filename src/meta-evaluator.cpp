@@ -59,7 +59,7 @@ namespace interpreter {
 		if (IsConcrete(cond)) {
 			result = concrete_eval_.Select(lhs, GetValue(cond), trueval, falseval);
 		} else if (IsSymbolic(cond)) {
-			assert (false and "not implemented");
+			result = symbolic_eval_.Select(lhs, GetExpr(cond), trueval, falseval);
 		} else
 			assert (false and "not implemented");
 		assert (result != nullptr);
