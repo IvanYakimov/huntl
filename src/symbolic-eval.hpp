@@ -30,6 +30,8 @@ namespace interpreter {
 		solver::Kind ConversionHelper(utils::MetaKind kind);
 		template <typename R>
 		R BranchHelper(const solver::SharedExpr& condition, bool branch_marker, R branch_ptr);
+		template <typename R>
+		R Branching (solver::SharedExpr condition, R iftrue, R iffalse);
 		void FlushAll();
 		ContextRef context_;
 		solver::SharedExpr BoolTrue();

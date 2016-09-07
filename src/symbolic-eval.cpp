@@ -141,53 +141,45 @@ namespace interpreter {
 	}
 
 	template <typename R>
-	R SymbolicEval::BranchHelper(const SharedExpr& condition, bool branch_marker, R branch_ptr) {
-		auto cond_eq_true = context_.Solver().MkExpr(Kind::EQUAL, condition, BitTrue());
-		auto converted_condition = context_.Solver().MkExpr(Kind::ITE, cond_eq_true, BoolTrue(), BoolFalse());
-
-		auto direction = context_.Solver().MkConst(branch_marker);
-		auto final_constraint = context_.Solver().MkExpr(Kind::IFF, converted_condition, direction);
-
+	R SymbolicEval::BranchHelper(const SharedExpr& e, bool decision_marker, R decision) {
+		// v
+		auto v = context_.Solver().MkConst(decision_marker);
+		// (cond == 1)
+		auto cond_is_true = context_.Solver().MkExpr(Kind::EQUAL, e, BitTrue());
+		// ite (cond == 1) true false
+		auto ite = context_.Solver().MkExpr(Kind::ITE, cond_is_true, BoolTrue(), BoolFalse());
+		// (ite (cond == 1) true false) <=> v
+		auto final_constraint = context_.Solver().MkExpr(Kind::IFF, ite, v);
 		context_.Solver().Constraint(final_constraint);
 		if (!context_.Solver().IsSat())
 			exit(EXIT_SUCCESS);
 		else
-			return branch_ptr;
+			return decision;
 	}
 
-	const BasicBlock* SymbolicEval::Branch(SharedExpr condition, const BasicBlock *iftrue, const BasicBlock *iffalse) {
+	template <typename R>
+	R SymbolicEval::Branching(solver::SharedExpr condition, R iftrue, R iffalse) {
 		pid_t child_pid = 0;
 		int ch_status;
-		const BasicBlock* next_branch = nullptr;
-
+		R result = nullptr;
 		FlushAll();
 		child_pid = fork();
 		if (child_pid > 0) {
 			wait(&ch_status);
-			next_branch = BranchHelper(condition, true, iftrue);
-		}
-		else {
-			next_branch = BranchHelper(condition, false, iffalse);
-		}
-		assert (next_branch != nullptr);
-		return next_branch;
-	}
-
-	HolderPtr SymbolicEval::Select(RamAddress lhs, SharedExpr condition, HolderPtr trueval, HolderPtr falseval) {
-		pid_t child_pid = 0;
-		int ch_status;
-		HolderPtr result = nullptr;
-
-		FlushAll();
-		child_pid = fork();
-		if (child_pid > 0) {
-			wait(&ch_status);
-			result = BranchHelper(condition, true, trueval);
+			result = BranchHelper(condition, true, iftrue);
 		} else {
-			result = BranchHelper(condition, false, falseval);
+			result = BranchHelper(condition, false, iffalse);
 		}
 		assert (result != nullptr);
 		return result;
+	}
+
+	const BasicBlock* SymbolicEval::Branch(SharedExpr condition, const BasicBlock *iftrue, const BasicBlock *iffalse) {
+		return Branching(condition, iftrue, iffalse);
+	}
+
+	HolderPtr SymbolicEval::Select(RamAddress lhs, SharedExpr condition, HolderPtr trueval, HolderPtr falseval) {
+		return Branching(condition, trueval, falseval);
 	}
 }
 
