@@ -10,6 +10,9 @@ namespace interpreter {
 	using solver::InfiniteInt;
 	using utils::MetaKind;
 	using memory::Ram;
+	using memory::HolderPtr;
+	using memory::RamAddress;
+	using llvm::BasicBlock;
 
 	SymbolicEval::SymbolicEval(ContextRef context) :
 			context_(context) {
@@ -75,6 +78,32 @@ namespace interpreter {
 		}
 	}
 
+	solver::SharedExpr SymbolicEval::BoolTrue() {
+		return context_.Solver().MkConst(true);
+	}
+
+	solver::SharedExpr SymbolicEval::BoolFalse() {
+		return context_.Solver().MkConst(false);
+	}
+
+	solver::SharedExpr SymbolicEval::BitTrue() {
+		return context_.Solver().MkConst(BitVec(1, InfiniteInt(1)));
+	}
+
+	solver::SharedExpr SymbolicEval::BitFalse() {
+		return context_.Solver().MkConst(BitVec(1, InfiniteInt(0)));
+	}
+
+	void SymbolicEval::FlushAll() {
+		llvm::outs().flush();
+		llvm::errs().flush();
+		std::flush(std::cerr);
+		std::flush(std::cout);
+	}
+
+	//-----------------------------------------------------------------------------------------------------------
+	//
+
 	void SymbolicEval::BinOp (memory::RamAddress lhs, unsigned op_code, SharedExpr left, SharedExpr right) {
 		auto kind = OpCode_To_Kind(op_code);
 		auto constraint = context_.Solver().MkExpr(kind, left, right);
@@ -111,15 +140,9 @@ namespace interpreter {
 		context_.Ram().Stack().Write(v_holder, lhs);
 	}
 
-	const llvm::BasicBlock* SymbolicEval::BranchHelper(const solver::SharedExpr& condition, const llvm::BasicBlock* branch_ptr, bool branch_marker) {
-		// Replace by constant class members
-		auto bit_true = context_.Solver().MkConst(BitVec(1, InfiniteInt(1)));
-		auto bit_false = context_.Solver().MkConst(BitVec(1, InfiniteInt(0)));
-		auto bool_true = context_.Solver().MkConst(true);
-		auto bool_false = context_.Solver().MkConst(false);
-
-		auto cond_eq_true = context_.Solver().MkExpr(Kind::EQUAL, condition, bit_true);
-		auto converted_condition = context_.Solver().MkExpr(Kind::ITE, cond_eq_true, bool_true, bool_false);
+	const BasicBlock* SymbolicEval::BranchHelper(const SharedExpr& condition, const BasicBlock* branch_ptr, bool branch_marker) {
+		auto cond_eq_true = context_.Solver().MkExpr(Kind::EQUAL, condition, BitTrue());
+		auto converted_condition = context_.Solver().MkExpr(Kind::ITE, cond_eq_true, BoolTrue(), BoolFalse());
 
 		auto direction = context_.Solver().MkConst(branch_marker);
 		auto final_constraint = context_.Solver().MkExpr(Kind::IFF, converted_condition, direction);
@@ -131,19 +154,12 @@ namespace interpreter {
 			return branch_ptr;
 	}
 
-	const llvm::BasicBlock* SymbolicEval::Branch (solver::SharedExpr condition,
-			const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse) {
+	const BasicBlock* SymbolicEval::Branch (SharedExpr condition, const BasicBlock *iftrue, const BasicBlock *iffalse) {
 		pid_t child_pid = 0;
 		int ch_status;
-		const llvm::BasicBlock* next_branch;
+		const BasicBlock* next_branch;
 
-		//std::cerr << ".";
-
-		llvm::outs().flush();
-		llvm::errs().flush();
-		std::flush(std::cerr);
-		std::flush(std::cout);
-
+		FlushAll();
 		child_pid = fork();
 		if (child_pid > 0) {
 			wait(&ch_status);
@@ -153,6 +169,10 @@ namespace interpreter {
 			next_branch = BranchHelper(condition, iffalse, false);
 		}
 		return next_branch;
+	}
+
+	HolderPtr SymbolicEval::Select(RamAddress lhs, SharedExpr condition, HolderPtr trueval, HolderPtr falseval) {
+
 	}
 }
 
