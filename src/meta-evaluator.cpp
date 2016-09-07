@@ -7,6 +7,7 @@ namespace interpreter {
 	using memory::HolderPtr;
 	using memory::IsConcrete;
 	using memory::IsSymbolic;
+	using memory::RamAddress;
 	using utils::MetaKind;
 	using llvm::ICmpInst;
 	using std::placeholders::_1; using std::placeholders::_2; using std::placeholders::_3; using std::placeholders::_4;
@@ -49,14 +50,28 @@ namespace interpreter {
 		return nullptr;
 	}
 
+	void MetaEvaluator::Select (const llvm::SelectInst &select_inst, HolderPtr cond, HolderPtr trueval, HolderPtr falseval) {
+		//std::cerr << "cond holder: " << *cond << "\n";
+		//std::cerr << "trueval holder: " << *trueval << "\n";
+		//std::cerr << "falseval holder: " << *falseval << "\n";
+		RamAddress lhs = context_.Top()->GetLocation(&select_inst);
+		HolderPtr result = nullptr;
+		if (IsConcrete(cond)) {
+			result = concrete_eval_.Select(lhs, GetValue(cond), trueval, falseval);
+		} else if (IsSymbolic(cond)) {
+			assert (false and "not implemented");
+		} else
+			assert (false and "not implemented");
+		assert (result != nullptr);
+		Assign(lhs, result);
+	}
+
 	void MetaEvaluator::Assign (memory::RamAddress lhs, memory::HolderPtr target) {
 		if (memory::IsConcrete(target)) {
 			concrete_eval_.Assign(lhs, memory::GetValue(target));
-		}
-		else if (memory::IsSymbolic(target)) {
+		} else if (memory::IsSymbolic(target)) {
 			symbolic_eval_.Assign(lhs, memory::GetExpr(target));
-		}
-		else
+		} else
 			assert (false and "unexpected behavior");
 	}
 
@@ -80,15 +95,6 @@ namespace interpreter {
 		Assign(lhs_address, target_address_holder);
 		//std::cerr << "alloca addr: " << *target_address_holder << std::endl;
 	}
-
-	/*
-	void MetaEvaluator::Alloca(const llvm::AllocaInst &lhs, memory::HolderPtr initial) {
-		auto lhs_address = context_.Top()->GetLocation(&lhs);
-		auto target_address = context_.Top()->Alloca(initial);
-		auto target_address_holder = memory::Concrete::Create(interpreter::MetaInt(memory::Ram::machine_word_bitsize_, target_address));
-		Assign(lhs_address, target_address_holder);
-	}
-	*/
 
 	void MetaEvaluator::Load(const llvm::LoadInst &lhs, memory::HolderPtr ptr_holder) {
 		//std::cerr << "load from pointer: " << *ptr_holder << std::endl;

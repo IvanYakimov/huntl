@@ -32,6 +32,7 @@ namespace interpreter {
 		void BinOp (const llvm::BinaryOperator &binop, memory::HolderPtr left, memory::HolderPtr right);
 		void IntComparison (const llvm::ICmpInst &comparison, memory::HolderPtr left, memory::HolderPtr right);
 		const llvm::BasicBlock* Branch (memory::HolderPtr condition, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse);
+		void Select (const llvm::SelectInst &select_inst, memory::HolderPtr cond, memory::HolderPtr trueval, memory::HolderPtr falseval);
 		void Assign (memory::RamAddress lhs, memory::HolderPtr rhs_holder);
 		void Conversion (memory::RamAddress lhs, memory::HolderPtr rhs, utils::MetaKind kind, unsigned new_width);
 		void Return(const llvm::ReturnInst &inst, memory::HolderPtr holder);

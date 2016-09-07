@@ -293,6 +293,10 @@ namespace interpreter {
 		llvm::errs() << "cond: " << *select_inst.getCondition() << "\n";
 		llvm::errs() << "trueval: " << *select_inst.getTrueValue() << "\n";
 		llvm::errs() << "falseval: " << *select_inst.getFalseValue() << "\n";
+		HolderPtr cond = ProduceHolder(select_inst.getCondition());
+		HolderPtr trueval = ProduceHolder(select_inst.getTrueValue());
+		HolderPtr falseval = ProduceHolder(select_inst.getFalseValue());
+		meta_eval_.Select(select_inst, cond, trueval, falseval);
 	}
 
 	void Evaluator::HandleCallInst(const llvm::CallInst &inst) {

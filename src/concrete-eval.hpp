@@ -18,6 +18,7 @@ namespace interpreter {
 		void IntComparison(memory::RamAddress lhs, llvm::ICmpInst::Predicate predicate, interpreter::MetaIntRef left_val, interpreter::MetaIntRef right_val);
 		void Assign (memory::RamAddress lhs, interpreter::MetaIntRef value);
 		const llvm::BasicBlock* Branch (interpreter::MetaIntRef condition, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse);
+		memory::HolderPtr Select(memory::RamAddress lhs, interpreter::MetaIntRef cond, memory::HolderPtr trueval, memory::HolderPtr falseval);
 	private:
 		const MetaInt True;
 		const MetaInt False;

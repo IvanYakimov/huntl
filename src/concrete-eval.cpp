@@ -3,12 +3,13 @@
 namespace interpreter {
 	using interpreter::MetaInt;
 	using interpreter::MetaIntRef;
-	using llvm::Instruction;
-	using memory::Concrete;
 	using interpreter::ContextRef;
-	using memory::HolderPtr;
+	using llvm::Instruction;
 	using llvm::ICmpInst;
 	using utils::MetaKind;
+	using memory::Concrete;
+	using memory::HolderPtr;
+	using memory::RamAddress;
 
 	ConcreteEval::ConcreteEval(ContextRef context) : context_(context), True(1,1,false), False(1,0,false) {
 
@@ -127,6 +128,15 @@ namespace interpreter {
 		else
 			assert (false and "unexpected conditional");
 		return nullptr;
+	}
+
+	HolderPtr ConcreteEval::Select(RamAddress lhs, MetaIntRef condition, HolderPtr trueval, HolderPtr falseval) {
+		if (condition == True) {
+			return trueval;
+		} else if (condition == False) {
+			return falseval;
+		} else
+			assert (false and "unexpected behavior");
 	}
 }
 
