@@ -140,7 +140,7 @@ namespace interpreter {
 		context_.Ram().Stack().Write(v_holder, lhs);
 	}
 
-	const BasicBlock* SymbolicEval::BranchHelper(const SharedExpr& condition, const BasicBlock* branch_ptr, bool branch_marker) {
+	const BasicBlock* SymbolicEval::BranchHelper(const SharedExpr& condition, bool branch_marker, const BasicBlock* branch_ptr) {
 		auto cond_eq_true = context_.Solver().MkExpr(Kind::EQUAL, condition, BitTrue());
 		auto converted_condition = context_.Solver().MkExpr(Kind::ITE, cond_eq_true, BoolTrue(), BoolFalse());
 
@@ -163,10 +163,10 @@ namespace interpreter {
 		child_pid = fork();
 		if (child_pid > 0) {
 			wait(&ch_status);
-			next_branch = BranchHelper(condition, iftrue, true);
+			next_branch = BranchHelper(condition, true, iftrue);
 		}
 		else {
-			next_branch = BranchHelper(condition, iffalse, false);
+			next_branch = BranchHelper(condition, false, iffalse);
 		}
 		return next_branch;
 	}
