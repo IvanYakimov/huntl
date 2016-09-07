@@ -25,9 +25,10 @@ void test_1() {
 #warning "strcasecmp: fails everytime, phi node required!"
 void gen_strcasecmp(const char *s1, const char *s2, int res);
 void test_strcasecmp() {
-	const size_t len = 6;
+	const size_t len = 4;
 	char s1[len], s2[len];
 	init_buff(s1, len); init_buff(s2, len);
+	s1[0] = 'B'; s1[1] = 'y'; s1[2] = 'e'; s1[3] = '\0';
 	int res = strcasecmp(s1, s2);
 	gen_strcasecmp(s1,s2,res);
 }
@@ -35,9 +36,10 @@ void test_strcasecmp() {
 #warning "strncasecmp: fails sometime Load()-ended call-chain: visitZExtInst -> HandleZExtInst -> ProduceHolder -> Load"
 void gen_strncasecmp(const char *s1, const char *s2, size_t len, int res);
 void test_strncasecmp() {
-	const size_t len = 6;
+	const size_t len = 4;
 	char s1[len], s2[len];
 	init_buff(s1, len); init_buff(s2, len);
+	s1[0] = 'B'; s1[1] = 'y'; s1[2] = 'e'; s1[3] = '\0';
 	int res = strncasecmp(s1, s2, len-1);
 	gen_strncasecmp(s1,s2,len-1,res);
 }
