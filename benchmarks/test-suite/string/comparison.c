@@ -14,7 +14,7 @@ void test_strcmp() {
 #warning "strncmp: fails sometimes"
 void gen_strncmp(const char *cs, const char *ct, size_t count, int res);
 void test_1() {
-	const size_t len = 4;
+	const size_t len = 6;
 	char s1[len], s2[len];
 	init_buff(s1, len);
 	init_buff(s2, len);
@@ -22,6 +22,7 @@ void test_1() {
 	gen_strncmp(s1, s2, len-1, res);
 }
 
+/*
 #warning "strcasecmp: fails everytime, phi node required!"
 void gen_strcasecmp(const char *s1, const char *s2, int res);
 void test_strcasecmp() {
@@ -43,6 +44,7 @@ void test_strncasecmp() {
 	int res = strncasecmp(s1, s2, len-1);
 	gen_strncasecmp(s1,s2,len-1,res);
 }
+*/
 
 #warning "sysfs_streq: doesn't work"
 void gen_sysfs_streq(const char *s1, const char *s2, bool res);

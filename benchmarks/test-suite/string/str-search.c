@@ -16,13 +16,13 @@ void test_strnstr() {
 	const size_t s1_len = 6, s2_len = 3;
 	char s1[s1_len], s2[s2_len];
 	init_buff(s1, s1_len); init_buff(s2, s2_len);
-	char *res = strnstr(s1, s2, s2_len);
-	gen_strnstr(s1, s2, s2_len, res);
+	char *res = strnstr(s1, s2, s2_len-1);
+	gen_strnstr(s1, s2, s2_len-1, res);
 }
 
 void gen_strpbrk(const char *cs, const char *ct, char *res);
 void test_strprk() {
-	const size_t str_size = 6, key_size = 5;
+	const size_t str_size = 6, key_size = 6;
 	char str[str_size], key[key_size];
 	init_buff(str, str_size); //init_buff(key, ct_size);
 	key[0] = 'a'; key[1] = 'e'; key[2] = 'i'; key[3] = 'o'; key[4] = 'u'; key[5] = '\0';

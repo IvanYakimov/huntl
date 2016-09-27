@@ -29,6 +29,7 @@ mutt utf8_to_utf7
 ## Linux Kernel 
 https://github.com/torvalds/linux/blob/master/lib/btree.c
 https://github.com/torvalds/linux/blob/master/lib/plist.c
+https://github.com/torvalds/linux/blob/master/lib/parser.c
 
 # In addition:
 ## Minix

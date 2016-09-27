@@ -15,39 +15,32 @@ namespace interpreter {
 
 	}
 
-	void SolutionPrinter::PrintASCII(MetaIntRef symbol, std::ostream& os) {
-		//unsigned long code = symbol.getZExtValue();
+#warning "potential bug: incorrect values sometimes occur within string (see strXstr functions)"
+	void SolutionPrinter::PrintASCII(MetaIntRef symbol, std::ostream& file) {
 		char ascii = GetChar(symbol); //ascii = (char)code;
 		if (std::isprint(ascii))
-			os << ascii;
+			file << ascii;
 		else switch (ascii){
-		case 0x7: os << "\\a"; break;
-		case 0x8: os << "\\b"; break;
-		case 0xC: os << "\\f"; break;
-		case 0xA: os << "\\n"; break;
-		case 0xD: os << "\\r"; break;
-		case 0x9: os << "\\t"; break;
-		case 0x5C: os << "\\\\"; break;
-		case 0x27: os << "\\\'"; break;
-		case 0x22: os << "\\\""; break;
-		case 0x3F: os << "\\\?"; break;
+		case 0x0: file << "\\0"; break;
+		case 0x7: file << "\\a"; break;
+		case 0x8: file << "\\b"; break;
+		case 0xC: file << "\\f"; break;
+		case 0xA: file << "\\n"; break;
+		case 0xD: file << "\\r"; break;
+		case 0x9: file << "\\t"; break;
+		case 0x5C: file << "\\\\"; break;
+		case 0x27: file << "\\\'"; break;
+		case 0x22: file << "\\\""; break;
+		case 0x3F: file << "\\\?"; break;
 		default:
-			os << "\\";
-			if (ascii < 10)
-				os << "0";
-			os << std::hex << (unsigned)ascii << std::dec;
+			file << "\\x";
+			std::stringstream ss;
+			unsigned fst = (unsigned)ascii % 0xf;
+			ascii /= 0xf;
+			unsigned snd = (unsigned)ascii % 0xf;
+			file << snd << fst;
 		};
 	}
-
-	/*
-	bool SolutionPrinter::IsString(ArrayPtr array) {
-		if (utils::instanceof<Integer>(array->GetElement(0))) {
-			IntegerPtr integer = std::dynamic_pointer_cast<Integer>(array->GetElement(0));
-			if (interpreter::GetWidth(integer->Get()) == 8) {
-				return true; }}
-		return false;
-	}
-	*/
 
 	bool SolutionPrinter::IsEndl(SolutionPtr el_sol) {
 		IntegerPtr integer = std::dynamic_pointer_cast<Integer>(el_sol);
@@ -72,10 +65,15 @@ namespace interpreter {
 			++i;
 		}
 		file << "\"";
+		file << "{";
 		while (i < len) {
-			file << "_";
+			SolutionPtr el_sol = array->GetElement(i);
+			PrintSolution(el_sol, file);
+			if (i+1 < len) file << ",";
+			//file << "_";
 			++i;
 		}
+		file << "}";
 	}
 
 	void SolutionPrinter::PrintArbitraryArray(ArrayPtr array, std::ostream& file) {
@@ -121,7 +119,7 @@ namespace interpreter {
 	}
 
 	void SolutionPrinter::PrintTransition(std::ostream& file) {
-		file << " => ";
+		file << " :=> ";
 	}
 
 	void SolutionPrinter::PrintEndl(std::ostream& file) {

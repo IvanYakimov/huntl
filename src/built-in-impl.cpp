@@ -12,6 +12,8 @@ namespace interpreter {
 			context_(context), target_(target), module_(module) {}
 	memory::HolderPtr Gen::operator()(llvm::Function* f, memory::ArgMapPtr args) {
 		interpreter::TestGenerator generator(module_, target_, args, context_, std::cerr);
+		//std::flush(std::cerr);
+		//std::flush(std::cout);
 		generator.Do();
 		//TODO: fix
 		//exit(0);

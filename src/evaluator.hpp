@@ -66,6 +66,9 @@ namespace interpreter {
 		virtual void HandleBranchInst (const llvm::BranchInst &inst, const llvm::Value *cond, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse);
 		virtual void HandleBranchInst (const llvm::BranchInst &inst, const llvm::BasicBlock *jump);
 
+		// Switch
+		virtual void HandleSwitchInst (const llvm::SwitchInst& switch_inst);
+
 		// BinOp
 		virtual void HandleBinOp (const llvm::BinaryOperator &inst, const llvm::Value *lhs, const llvm::Value *rhs);
 

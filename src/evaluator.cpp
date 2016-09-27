@@ -126,6 +126,18 @@ namespace interpreter {
 		meta_eval_.Return(inst);
 	}
 
+	// Switch
+	// see http://llvm.org/docs/doxygen/html/classllvm_1_1SwitchInst_1_1CaseIteratorT.html#a60499571002635a94d89b8a9341b5e12
+	void Evaluator::HandleSwitchInst (const llvm::SwitchInst& switch_inst) {
+		Value* cond = switch_inst.getCondition();
+		errs() << "the condition is: " << *cond << "\n";
+		for (llvm::SwitchInst::ConstCaseIt case_it = switch_inst.case_begin(); case_it != switch_inst.case_end(); case_it++) {
+			errs() << *case_it.getCaseValue() << " leads to \n";
+			errs() << *case_it.getCaseSuccessor() << "\n";
+		}
+		std::cerr << "switch is matched\n"; exit(0);
+	}
+
 	// Branch
 	void Evaluator::HandleBranchInst (const llvm::BranchInst &inst, const llvm::Value *cond, const llvm::BasicBlock *iftrue, const llvm::BasicBlock *iffalse) {
 		HolderPtr cond_holder = ProduceHolder(cond);

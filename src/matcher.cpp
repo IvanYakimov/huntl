@@ -39,7 +39,7 @@ namespace interpreter {
 	}
 
 	void Matcher::visitSwitchInst(const llvm::SwitchInst &switch_inst) {
-		abort();
+		HandleSwitchInst(switch_inst);
 	}
 
 	void Matcher::visitBinaryOperator(const llvm::BinaryOperator &inst) {

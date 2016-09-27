@@ -1,18 +1,36 @@
 /* Start. Some mocked externals */
+
+#undef NULL
+#undef true
+#undef false
+#undef EINVAL
+
 #define NULL 0
 #define true 1
 #define false 0
 #define EINVAL 22
+
+#undef u64
+#undef u8
+#undef size_t
+#undef ssize_t
+#undef bool
 typedef unsigned long u64;
 typedef unsigned char u8;
 typedef unsigned long size_t;
 typedef long  ssize_t;
 typedef char bool;
 
+#undef isupper
+#undef islower
+#undef isspace
 bool isupper(char c);
 bool islower(char c);
 bool isspace(char c);
 
+#undef tolower
+#undef toupper
+#undef BUG_ON
 static inline unsigned char tolower(unsigned char c);
 static inline unsigned char toupper(unsigned char c);
 void BUG_ON(bool predicate);

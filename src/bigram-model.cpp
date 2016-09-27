@@ -149,8 +149,10 @@ namespace interpreter {
 		assert (std::isalpha(pre) and std::isalpha(post));
 		if (std::islower(pre) and std::islower(post)) {
 			 return lbl_prob_.GetBigramProbability(pre, post);
-		} else
-			assert (false and "not implemented, sorry");
+		} else {
+			std::cerr << "not implemented, sorry";
+			return 0;
+		}
 	}
 
 	char BigramModel::UpperByLower(char symbol) {
