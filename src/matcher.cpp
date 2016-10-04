@@ -179,6 +179,7 @@ namespace interpreter {
 
 	//--------------------
 	// Case matcher
+	/*
 	template <class D, class I>
 	D* Matcher::ExtractDestType(const I &inst) {
 		Type *ty = inst.getDestTy();
@@ -221,6 +222,7 @@ namespace interpreter {
 		else
 			return false;
 	}
+	*/
 }
 
 
