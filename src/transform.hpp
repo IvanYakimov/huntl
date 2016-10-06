@@ -16,6 +16,7 @@ namespace transform {
 		Counter inst_num_ = 0;
 		llvm::Module& module_;
 		std::map <std::string, llvm::Function*> func_table_;
+		std::map <llvm::Value*, llvm::Constant*> name_map_;
 
 		const char* BINOP_I32 = "binop_i32";
 
@@ -33,8 +34,11 @@ namespace transform {
 
 		llvm::GlobalVariable* status_;
 		llvm::GlobalVariable* status_ptr_;
-		llvm::Constant* CountNewInst();
+		llvm::Constant* BindValue(llvm::Value* val);
+		llvm::Constant* GetValueId(llvm::Value* val);
 		llvm::Constant* GetOpCode(unsigned int opcode);
+		llvm::Constant* GetBinOpFlag(llvm::BinaryOperator* binop);
+		void InstrumentTheInst(llvm::Instruction* target, llvm::Function* f, std::vector<llvm::Value*> &fargs);
 		const bool kNotsigned = false;
 	public:
 		Transform(llvm::Module& module);
@@ -44,7 +48,7 @@ namespace transform {
 		void visitBranchInst(const llvm::BranchInst &branch_inst);
 		//void visitSwitchInst(const llvm::SwitchInst &switch_inst);
 		void visitBinaryOperator(llvm::BinaryOperator &binop);
-		void visitICmpInst (const llvm::ICmpInst &icmp_inst);
+		void visitICmpInst (llvm::ICmpInst &icmp);
 		// missed instructions
 		void visitAllocaInst (const llvm::AllocaInst &alloca_inst);
 		void visitLoadInst (const llvm::LoadInst &load_inst);

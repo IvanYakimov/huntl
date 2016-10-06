@@ -53,18 +53,36 @@ namespace transform {
 	Transform::~Transform() {
 	}
 
-	Constant* Transform::CountNewInst() {
-		return ConstantInt::get(i64, inst_num_++, kNotsigned);
+	Constant* Transform::BindValue(Value* val) {
+		Constant* res = ConstantInt::get(i64, inst_num_++, kNotsigned);
+		assert (name_map_.find(val) == name_map_.end());
+		name_map_.emplace(val, res);
+		return res;
 	}
 
 	Constant* Transform::GetOpCode(unsigned int opcode) {
 		return ConstantInt::get(i32, opcode, kNotsigned);
 	}
 
+	// this is a common template
+	Constant* Transform::GetValueId(Value* val) {
+		auto it = name_map_.find(val);
+#warning "the code below is dummy:"
+		if (it == name_map_.end())
+			return ConstantInt::get(i64, 999, kNotsigned);
+		else
+			return it->second;
+	}
+
 	Function* Transform::GetFunction(std::string name) {
 		auto it = func_table_.find(name);
 		assert (it != func_table_.end());
 		return it->second;
+	}
+
+	void Transform::InstrumentTheInst(llvm::Instruction* target, llvm::Function* f, std::vector<llvm::Value*> &fargs) {
+		IRBuilder<> builder(target);
+		builder.CreateCall(f, fargs);
 	}
 
 	void Transform::visitReturnInst(const llvm::ReturnInst &return_inst) {
@@ -75,30 +93,40 @@ namespace transform {
 
 	}
 
-	// http://stackoverflow.com/questions/22310091/how-to-declare-a-function-in-llvm-and-define-it-later
+	Constant* Transform::GetBinOpFlag(llvm::BinaryOperator* binop) {
+#warning "dummy for binop flags"
+		uint16_t flagvalue = 0;
+		if (binop->hasNoInfs()) flagvalue = 1;
+		else if (binop->hasNoNaNs()) flagvalue = 2;
+		else if (binop->hasNoSignedWrap()) flagvalue = 3;
+		else if (binop->hasNoSignedZeros()) flagvalue = 4;
+		else if (binop->hasNoUnsignedWrap()) flagvalue = 5;
+		return ConstantInt::get(i16, flagvalue, kNotsigned);
+	}
+
 	void Transform::visitBinaryOperator(BinaryOperator &binop) {
 		Value *lhs = nullptr,
 				*rhs = nullptr;
 		if (Case(binop, &lhs, &rhs)) {
-			BasicBlock *pb = binop.getParent();
-			Function *f = GetFunction(BINOP_I32);
-			IRBuilder<> builder(&binop);
-			Constant* stubref = ConstantInt::get(i64, 42, kNotsigned);
-			Constant* target_number = CountNewInst();
-			Constant* opcode = GetOpCode(binop.getOpcode());
-			Constant* stubflag = ConstantInt::get(i16, 3, kNotsigned);
-			std::vector<Value*> args = {target_number, opcode, stubflag, stubref, lhs, stubref, rhs};
-			builder.CreateCall(f, args);
+			Function *transformer = GetFunction(BINOP_I32);
+			Constant *tgt_id = BindValue(&binop),
+					*lhs_id = GetValueId(lhs),
+					*rhs_id = GetValueId(rhs),
+					*opcode = GetOpCode(binop.getOpcode()),
+					*flag = GetBinOpFlag(&binop);
+			std::vector<Value*> args = {tgt_id, opcode, flag, lhs_id, lhs, rhs_id, rhs};
+			InstrumentTheInst(&binop, transformer, args);
 		}
 		else
 			assert (false && "not implemented");
 	}
 
-	void Transform::visitICmpInst (const llvm::ICmpInst &icmp_inst)  {
+	void Transform::visitICmpInst (llvm::ICmpInst &icmp) {
 		Value *lhs = nullptr, *rhs = nullptr;
 
-		if (Case (icmp_inst, &lhs, &rhs)) {
+		if (Case (icmp, &lhs, &rhs)) {
 
+			//Function *f = GetFunction("");
 		}
 		else
 			assert (false && "not implemented");

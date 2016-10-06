@@ -10,7 +10,7 @@ int main() {
 	int a = mksym_i32(),
 		b = mksym_i32();
 	int res = 0;
-	a += 28;
+	a += 101;
 	if (a < b)
 		res = a;
 	else
