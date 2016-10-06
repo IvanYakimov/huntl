@@ -10,19 +10,6 @@ namespace transform {
 		func_table_.emplace(name, f);
 	}
 
-	void Transform::InitGlobals() {
-		Type* i8ptr = PointerType::get(i8, 0);
-		Type* i8ptr_ptr = PointerType::get(i8ptr, 0);
-		status_ = new GlobalVariable(module_, i8, false, GlobalVariable::ExternalLinkage, 0, "status");
-		status_->setAlignment(1);
-		status_ptr_ = new GlobalVariable(module_, i8ptr, false, GlobalVariable::ExternalLinkage, 0, "status_ptr");
-		status_ptr_->setAlignment(8);
-		ConstantInt* status_const = ConstantInt::get(module_.getContext(), APInt(8, 0L));
-		status_->setInitializer(status_const);
-		status_ptr_->setInitializer(status_);
-		errs() << "status: \n" << *status_ << "\n";
-	}
-
 	void Transform::InitBinOp() {
 		auto opcode = i32;
 		auto ref = i64;
@@ -46,7 +33,6 @@ namespace transform {
 
 	Transform::Transform(Module& module) : module_(module) {
 		InitTypes();
-		//InitGlobals();
 		InitBinOp();
 	}
 

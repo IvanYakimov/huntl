@@ -24,7 +24,6 @@ namespace transform {
 		void DeclareFunction(std::string name, llvm::FunctionType* ftype);
 		void InitBinOp();
 		void InitTypes();
-		void InitGlobals();
 
 		llvm::Type* i1;
 		llvm::Type* i8;
