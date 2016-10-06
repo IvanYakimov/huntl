@@ -8,15 +8,11 @@
 # include "llvm/Support/Debug.h"
 #include "llvm/IR/IRBuilder.h"
 
-extern "C" {
-#include "opcodes.h"
-}
-
 namespace transform {
 	class Transform : public llvm::InstVisitor <Transform>
 	{
 	private:
-		using Counter = int;
+		using Counter = uint64_t;
 		Counter inst_num_ = 0;
 		llvm::Module& module_;
 		std::map <std::string, llvm::Function*> func_table_;
@@ -37,24 +33,24 @@ namespace transform {
 
 		llvm::GlobalVariable* status_;
 		llvm::GlobalVariable* status_ptr_;
+		llvm::Constant* CountNewInst();
+		llvm::Constant* GetOpCode(unsigned int opcode);
+		const bool kNotsigned = false;
 	public:
 		Transform(llvm::Module& module);
 		~Transform();
 		// Specific Instruction type classes
-		/*
 		void visitReturnInst(const llvm::ReturnInst &return_inst);
 		void visitBranchInst(const llvm::BranchInst &branch_inst);
-		void visitSwitchInst(const llvm::SwitchInst &switch_inst);
-		// missed instructions
-		 */
+		//void visitSwitchInst(const llvm::SwitchInst &switch_inst);
 		void visitBinaryOperator(llvm::BinaryOperator &binop);
-		/*
 		void visitICmpInst (const llvm::ICmpInst &icmp_inst);
 		// missed instructions
 		void visitAllocaInst (const llvm::AllocaInst &alloca_inst);
 		void visitLoadInst (const llvm::LoadInst &load_inst);
 		void visitStoreInst (const llvm::StoreInst &store_inst);
 		// missed
+		/*
 		void visitGetElementPtrInst (const llvm::GetElementPtrInst &getelementptr_inst);
 		void visitPHINode(const llvm::PHINode &phi_node);
 		void visitTruncInst (const llvm::TruncInst &trunc_inst);
@@ -66,9 +62,9 @@ namespace transform {
 		void visitBitCastInst (const llvm::BitCastInst &bitcast_inst);
 		// missed
 		void visitSelectInst(const llvm::SelectInst& select_inst);
+		*/
 		// missed
 		void visitCallInst(const llvm::CallInst &call_inst);
-		*/
 	};
 }
 

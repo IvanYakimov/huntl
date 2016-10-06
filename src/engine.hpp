@@ -3,15 +3,16 @@
 
 extern "C" {
 #include <stdint.h>
-#include "opcodes.h"
-typedef I32 int32_t;
+  typedef unsigned int OpCode;
+typedef int32_t I32;
 typedef uint64_t Ref;
+typedef uint16_t Flag;
 int32_t add(Ref x);
-// replace with macro (if possible without "tricky" code")
-int32_t binop_i32(OpCode code, Ref x, int8_t flag, Ref y, I32 op1, Ref z, int32_t op2, int8_t* status);
+// TODO: replace with a macro 
+I32 binop_i32(Ref a, OpCode code, Flag flag, Ref b, I32 op1, Ref c, int32_t op2);
 }
 
 #include <iostream>
-int32_t Dummy(Ref x);
+int32_t Dummy();
 
 #endif

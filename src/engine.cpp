@@ -1,12 +1,11 @@
 #include "engine.hpp"
 
 extern "C" {
-	int32_t add(Ref x) {
-		return Dummy(x);
+	I32 binop_i32(Ref a, OpCode code, Flag flag, Ref b, I32 op1, Ref c, int32_t op2) {
+		Dummy();
 	}
 }
 
-int32_t Dummy(Ref x) {
-	std::cout << "add: " << x << std::endl;
-	return 101;
+int32_t Dummy() {
+	std::cout << "add: \n";
 }

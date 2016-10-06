@@ -1,5 +1,7 @@
 #include "transform.hpp"
 
+#include "case.hpp"
+
 namespace transform {
 	using namespace llvm;
 
@@ -28,7 +30,6 @@ namespace transform {
 		auto val = i32;
 		auto pstatus = PointerType::get(PointerType::get(i8,0),0);
 		std::vector<Type*> fargs = {ref, opcode, flag, ref, val, ref, val};
-		//std::vector<Type*> fargs = {pstatus};
 		FunctionType* ftype = FunctionType::get(val, fargs, false);
 		std::string fname(BINOP_I32);
 		DeclareFunction(fname, ftype);
@@ -45,11 +46,19 @@ namespace transform {
 
 	Transform::Transform(Module& module) : module_(module) {
 		InitTypes();
-		InitGlobals();
+		//InitGlobals();
 		InitBinOp();
 	}
 
 	Transform::~Transform() {
+	}
+
+	Constant* Transform::CountNewInst() {
+		return ConstantInt::get(i64, inst_num_++, kNotsigned);
+	}
+
+	Constant* Transform::GetOpCode(unsigned int opcode) {
+		return ConstantInt::get(i32, opcode, kNotsigned);
 	}
 
 	Function* Transform::GetFunction(std::string name) {
@@ -58,17 +67,61 @@ namespace transform {
 		return it->second;
 	}
 
+	void Transform::visitReturnInst(const llvm::ReturnInst &return_inst) {
+
+	}
+
+	void Transform::visitBranchInst(const llvm::BranchInst &branch_inst) {
+
+	}
+
 	// http://stackoverflow.com/questions/22310091/how-to-declare-a-function-in-llvm-and-define-it-later
 	void Transform::visitBinaryOperator(BinaryOperator &binop) {
-		BasicBlock *pb = binop.getParent();
-		Function *f = GetFunction(BINOP_I32);
-		IRBuilder<> builder(&binop);
-		ConstantInt* stub = ConstantInt::get(Type::getInt32Ty(module_.getContext()), 28, false);
-		std::vector<Value*> args;
-		args.push_back(stub);
-		//builder.CreateCall(f, args);
+		Value *lhs = nullptr,
+				*rhs = nullptr;
+		if (Case(binop, &lhs, &rhs)) {
+			BasicBlock *pb = binop.getParent();
+			Function *f = GetFunction(BINOP_I32);
+			IRBuilder<> builder(&binop);
+			Constant* stubref = ConstantInt::get(i64, 42, kNotsigned);
+			Constant* target_number = CountNewInst();
+			Constant* opcode = GetOpCode(binop.getOpcode());
+			Constant* stubflag = ConstantInt::get(i16, 3, kNotsigned);
+			std::vector<Value*> args = {target_number, opcode, stubflag, stubref, lhs, stubref, rhs};
+			builder.CreateCall(f, args);
+		}
+		else
+			assert (false && "not implemented");
+	}
+
+	void Transform::visitICmpInst (const llvm::ICmpInst &icmp_inst)  {
+		Value *lhs = nullptr, *rhs = nullptr;
+
+		if (Case (icmp_inst, &lhs, &rhs)) {
+
+		}
+		else
+			assert (false && "not implemented");
+	}
+
+	void Transform::visitAllocaInst (const llvm::AllocaInst &alloca_inst) {
+
+	}
+
+	void Transform::visitLoadInst (const llvm::LoadInst &load_inst) {
+
+	}
+
+	void Transform::visitStoreInst (const llvm::StoreInst &store_inst) {
+
+	}
+
+	void Transform::visitCallInst(const llvm::CallInst &call_inst) {
+
 	}
 }
+
+
 
 
 

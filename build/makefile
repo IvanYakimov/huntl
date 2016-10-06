@@ -4,9 +4,9 @@ LLVM_PASS = voyager-pass.o
 
 INTERPRETER = kernel.o matcher.o evaluator.o meta-evaluator.o meta-int.o context.o concrete-eval.o symbolic-eval.o \
 	eval-tracer.o built-in-impl.o test-generator.o solution.o solution-printer.o jit-verifier.o solution-generator.o \
-	readability-optimizer.o holder-helper.o bigram-model.o unigram-model.o
+	readability-optimizer.o holder-helper.o bigram-model.o unigram-model.o 
 	
-TRANSFORM = transform.o
+TRANSFORM = transform.o case.o
 ENGINE = engine.o
  
 INTERPRETER_TEST = $(SOLVER) $(MEMORY) $(LLVM_TEST_HELPERS) $(TEST_RUNNER) \
@@ -29,8 +29,10 @@ TEST_RUNNER = test-runner.o
 
 PLAYGROUND = expr-test.o
 
-OBJ = $(TRANSFORM) $(ENGINE) $(INTERPRETER) $(MEMORY) $(SOLVER) $(UTILS)
-OBJ_TEST = $(INTERPRETER_TEST) $(MEMORY_TEST) $(SOLVER_TEST) $(LLVM_TEST_HELPERS) $(PLAYGROUND)
+OBJ = $(TRANSFORM) $(ENGINE) 
+#$(INTERPRETER) $(MEMORY) $(SOLVER) $(UTILS)
+OBJ_TEST = 
+#$(INTERPRETER_TEST) $(MEMORY_TEST) $(SOLVER_TEST) $(LLVM_TEST_HELPERS) $(PLAYGROUND)
 
 CXX = g++
 #CXX = clang++
@@ -59,7 +61,7 @@ vpath %.cpp $(SRC) $(TST) $(TST)/solver/ $(TST)/interpreter $(TST)/matcher
 vpath %.cpp ../readability
 vpath %.hpp $(SRC) $(TST)/matcher
 vpath %.hpp ../readability
-vpath %.c 	$(SRC) $(BENCH) $(BENCH_LIB)/string $(BENCH_SUITE)/string $(BENCH_LIB)/parser
+vpath %.c 	$(SRC) $(BENCH) $(BENCH_LIB)/string $(BENCH_SUITE)/string $(BENCH_LIB)/parser ./
 vpath %.h	$(SRC) ../benchmarks
 		
 program.so: shared.o 

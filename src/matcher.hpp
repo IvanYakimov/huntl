@@ -20,6 +20,7 @@ http://www.cplusplus.com/reference/type_traits/remove_pointer/
 # include "llvm/Support/Debug.h"
 
 #include "printer.hpp"
+#include "case.hpp"
 
 # include <type_traits>
 # include <map>
