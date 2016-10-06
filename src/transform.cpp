@@ -10,16 +10,15 @@ namespace transform {
 		func_table_.emplace(name, f);
 	}
 
-	void Transform::InitBinOp() {
+	void Transform::DeclareBinOp(Type* ty) {
+		assert (ty->isIntegerTy());
+		auto width = ty->getIntegerBitWidth();
 		auto opcode = i32;
 		auto ref = i64;
 		auto flag = i16;
-		auto val = i32;
-		auto pstatus = PointerType::get(PointerType::get(i8,0),0);
-		std::vector<Type*> fargs = {ref, opcode, flag, ref, val, ref, val};
-		FunctionType* ftype = FunctionType::get(val, fargs, false);
-		std::string fname(BINOP_I32);
-		DeclareFunction(fname, ftype);
+		std::vector<Type*> fargs = {ref, opcode, flag, ref, ty, ref, ty};
+		FunctionType* ftype = FunctionType::get(ty, fargs, false);
+		DeclareFunction(BINOP_PREFIX + std::to_string(width), ftype);
 	}
 
 	void Transform::InitTypes() {
@@ -33,7 +32,10 @@ namespace transform {
 
 	Transform::Transform(Module& module) : module_(module) {
 		InitTypes();
-		InitBinOp();
+		DeclareBinOp(i8);
+		DeclareBinOp(i16);
+		DeclareBinOp(i32);
+		DeclareBinOp(i64);
 	}
 
 	Transform::~Transform() {
@@ -93,8 +95,9 @@ namespace transform {
 	void Transform::visitBinaryOperator(BinaryOperator &binop) {
 		Value *lhs = nullptr,
 				*rhs = nullptr;
-		if (Case(binop, &lhs, &rhs)) {
-			Function *transformer = GetFunction(BINOP_I32);
+		if (binop.getType()->isIntegerTy() and Case(binop, &lhs, &rhs)) {
+			auto width =binop.getType()->getIntegerBitWidth();
+			Function *transformer = GetFunction(BINOP_PREFIX + std::to_string(width));
 			Constant *tgt_id = BindValue(&binop),
 					*lhs_id = GetValueId(lhs),
 					*rhs_id = GetValueId(rhs),

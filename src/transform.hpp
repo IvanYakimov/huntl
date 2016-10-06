@@ -8,6 +8,8 @@
 # include "llvm/Support/Debug.h"
 #include "llvm/IR/IRBuilder.h"
 
+#include <iostream>
+
 namespace transform {
 	class Transform : public llvm::InstVisitor <Transform>
 	{
@@ -18,11 +20,11 @@ namespace transform {
 		std::map <std::string, llvm::Function*> func_table_;
 		std::map <llvm::Value*, llvm::Constant*> name_map_;
 
-		const char* BINOP_I32 = "binop_i32";
+		const char* BINOP_PREFIX = "binop_i";
 
 		llvm::Function* GetFunction(std::string name);
 		void DeclareFunction(std::string name, llvm::FunctionType* ftype);
-		void InitBinOp();
+		void DeclareBinOp(llvm::Type* ty);
 		void InitTypes();
 
 		llvm::Type* i1;
