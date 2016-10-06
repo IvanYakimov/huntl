@@ -5,6 +5,9 @@ LLVM_PASS = voyager-pass.o
 INTERPRETER = kernel.o matcher.o evaluator.o meta-evaluator.o meta-int.o context.o concrete-eval.o symbolic-eval.o \
 	eval-tracer.o built-in-impl.o test-generator.o solution.o solution-printer.o jit-verifier.o solution-generator.o \
 	readability-optimizer.o holder-helper.o bigram-model.o unigram-model.o
+	
+TRANSFORM = transform.o
+ENGINE = engine.o
  
 INTERPRETER_TEST = $(SOLVER) $(MEMORY) $(LLVM_TEST_HELPERS) $(TEST_RUNNER) \
 test-holder.o test-regex.o test-evaluator.o 
@@ -26,7 +29,7 @@ TEST_RUNNER = test-runner.o
 
 PLAYGROUND = expr-test.o
 
-OBJ = $(INTERPRETER) $(MEMORY) $(SOLVER) $(UTILS)
+OBJ = $(TRANSFORM) $(ENGINE) $(INTERPRETER) $(MEMORY) $(SOLVER) $(UTILS)
 OBJ_TEST = $(INTERPRETER_TEST) $(MEMORY_TEST) $(SOLVER_TEST) $(LLVM_TEST_HELPERS) $(PLAYGROUND)
 
 CXX = g++

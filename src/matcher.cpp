@@ -1,6 +1,8 @@
 #include "matcher.hpp"
 using namespace llvm;
 
+#include "case.hpp"
+
 /*
 author: Ivan Yakimov
 date: 2015

@@ -12,6 +12,8 @@
 // Project
 #include "kernel.hpp"
 
+#include "transform.hpp"
+
 namespace
 {
   struct VoyagerPass : public llvm::ModulePass

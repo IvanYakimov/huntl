@@ -35,7 +35,7 @@ int main(int argc, char**argv) {
 Module* makeLLVMModule() {
  // Module Construction
  Module* mod = new Module("test.ll", getGlobalContext());
- mod->setDataLayout("0x1bb6af8");
+ mod->setDataLayout("0xc5c998");
  mod->setTargetTriple("x86_64-pc-linux-gnu");
  
  // Type Definitions
@@ -43,39 +43,8 @@ Module* makeLLVMModule() {
  
  PointerType* PointerTy_1 = PointerType::get(PointerTy_0, 0);
  
- std::vector<Type*>FuncTy_2_args;
- FunctionType* FuncTy_2 = FunctionType::get(
-  /*Result=*/IntegerType::get(mod->getContext(), 32),
-  /*Params=*/FuncTy_2_args,
-  /*isVarArg=*/false);
- 
  
  // Function Declarations
- 
- Function* func_main = mod->getFunction("main");
- if (!func_main) {
- func_main = Function::Create(
-  /*Type=*/FuncTy_2,
-  /*Linkage=*/GlobalValue::ExternalLinkage,
-  /*Name=*/"main", mod); 
- func_main->setCallingConv(CallingConv::C);
- }
- AttributeSet func_main_PAL;
- {
-  SmallVector<AttributeSet, 4> Attrs;
-  AttributeSet PAS;
-   {
-    AttrBuilder B;
-    B.addAttribute(Attribute::NoUnwind);
-    B.addAttribute(Attribute::UWTable);
-    PAS = AttributeSet::get(mod->getContext(), ~0U, B);
-   }
-  
-  Attrs.push_back(PAS);
-  func_main_PAL = AttributeSet::get(mod->getContext(), Attrs);
-  
- }
- func_main->setAttributes(func_main_PAL);
  
  // Global Variable Declarations
 
@@ -97,24 +66,13 @@ Module* makeLLVMModule() {
  gvar_ptr_s_ptr->setAlignment(8);
  
  // Constant Definitions
- ConstantInt* const_int8_3 = ConstantInt::get(mod->getContext(), APInt(8, StringRef("0"), 10));
- ConstantInt* const_int32_4 = ConstantInt::get(mod->getContext(), APInt(32, StringRef("0"), 10));
+ ConstantInt* const_int8_2 = ConstantInt::get(mod->getContext(), APInt(8, StringRef("0"), 10));
  
  // Global Variable Definitions
- gvar_int8_s->setInitializer(const_int8_3);
+ gvar_int8_s->setInitializer(const_int8_2);
  gvar_ptr_s_ptr->setInitializer(gvar_int8_s);
  
  // Function Definitions
- 
- // Function: main (func_main)
- {
-  
-  BasicBlock* label_5 = BasicBlock::Create(mod->getContext(), "",func_main,0);
-  
-  // Block  (label_5)
-  ReturnInst::Create(mod->getContext(), const_int32_4, label_5);
-  
- }
  
  return mod;
 }
