@@ -5,6 +5,12 @@
 namespace transform {
 	using namespace llvm;
 
+	std::string Transform::ProduceFuncName(const char* prefix, llvm::Type* ty) {
+		assert (ty->isIntegerTy());
+		auto width = ty->getIntegerBitWidth();
+		return std::string(prefix) + "_i" + std::to_string(width);
+	}
+
 	void Transform::DeclareFunction(std::string name, FunctionType* ftype) {
 		Function* f = Function::Create(ftype, Function::ExternalLinkage, name.c_str(), &module_);
 		func_table_.emplace(name, f);
@@ -12,17 +18,26 @@ namespace transform {
 
 	void Transform::DeclareBinOp(Type* ty) {
 		assert (ty->isIntegerTy());
-		auto width = ty->getIntegerBitWidth();
 		auto opcode = i32;
 		auto ref = i64;
 		auto flag = i16;
 		std::vector<Type*> fargs = {ref, opcode, flag, ref, ty, ref, ty};
-		FunctionType* ftype = FunctionType::get(ty, fargs, false);
-		DeclareFunction(BINOP_PREFIX + std::to_string(width), ftype);
+		FunctionType* ftype = FunctionType::get(void_, fargs, false);
+		DeclareFunction(ProduceFuncName(BINOP_PREFIX, ty), ftype);
+	}
+
+	void Transform::DeclareICmp(llvm::Type* ty) {
+		assert (ty->isIntegerTy());
+		auto cond = i32;
+		auto ref = i64;
+		std::vector<Type*> fargs = {ref, cond, ref, ty, ref, ty};
+		FunctionType* ftype = FunctionType::get(void_ , fargs, false);
+		DeclareFunction(ProduceFuncName(ICMP_PREFIX, ty), ftype);
 	}
 
 	void Transform::InitTypes() {
 		LLVMContext& context = module_.getContext();
+		void_ = Type::getVoidTy(context);
 		i1 = Type::getInt1Ty(context);
 		i8 = Type::getInt8Ty(context);
 		i16 = Type::getInt16Ty(context);
@@ -32,10 +47,11 @@ namespace transform {
 
 	Transform::Transform(Module& module) : module_(module) {
 		InitTypes();
-		DeclareBinOp(i8);
-		DeclareBinOp(i16);
-		DeclareBinOp(i32);
-		DeclareBinOp(i64);
+		// Declarations:
+		// BinaryOperator
+		DeclareBinOp(i8); 	DeclareBinOp(i16); 	DeclareBinOp(i32);	DeclareBinOp(i64);
+		// ICmp
+		DeclareICmp(i8);	DeclareICmp(i16);	DeclareICmp(i32);	DeclareICmp(i64);
 	}
 
 	Transform::~Transform() {
@@ -50,6 +66,10 @@ namespace transform {
 
 	Constant* Transform::GetOpCode(unsigned int opcode) {
 		return ConstantInt::get(i32, opcode, kNotsigned);
+	}
+
+	llvm::Constant* Transform::GetCond(llvm::ICmpInst::Predicate cond) {
+		return ConstantInt::get(i32, (unsigned)cond, kNotsigned);
 	}
 
 	// this is a common template
@@ -95,16 +115,15 @@ namespace transform {
 	void Transform::visitBinaryOperator(BinaryOperator &binop) {
 		Value *lhs = nullptr,
 				*rhs = nullptr;
-		if (binop.getType()->isIntegerTy() and Case(binop, &lhs, &rhs)) {
-			auto width =binop.getType()->getIntegerBitWidth();
-			Function *transformer = GetFunction(BINOP_PREFIX + std::to_string(width));
+		if (Case(binop, &lhs, &rhs)) {
+			Function *f = GetFunction(ProduceFuncName(BINOP_PREFIX, binop.getType()));
 			Constant *tgt_id = BindValue(&binop),
 					*lhs_id = GetValueId(lhs),
 					*rhs_id = GetValueId(rhs),
 					*opcode = GetOpCode(binop.getOpcode()),
 					*flag = GetBinOpFlag(&binop);
-			std::vector<Value*> args = {tgt_id, opcode, flag, lhs_id, lhs, rhs_id, rhs};
-			InstrumentTheInst(&binop, transformer, args);
+			std::vector<Value*> fargs = {tgt_id, opcode, flag, lhs_id, lhs, rhs_id, rhs};
+			InstrumentTheInst(&binop, f, fargs);
 		}
 		else
 			assert (false && "not implemented");
@@ -114,8 +133,13 @@ namespace transform {
 		Value *lhs = nullptr, *rhs = nullptr;
 
 		if (Case (icmp, &lhs, &rhs)) {
-
-			//Function *f = GetFunction("");
+			Function *f = GetFunction(ProduceFuncName(ICMP_PREFIX, lhs->getType()));
+			Constant *res_id = BindValue(&icmp),
+					*lhs_id = GetValueId(lhs),
+					*rhs_id = GetValueId(rhs),
+					*cond = GetCond(icmp.getPredicate());
+			std::vector<Value*> fargs = {res_id, cond, lhs_id, lhs, rhs_id, rhs};
+			InstrumentTheInst(&icmp, f, fargs);
 		}
 		else
 			assert (false && "not implemented");

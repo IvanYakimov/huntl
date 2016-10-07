@@ -20,13 +20,18 @@ namespace transform {
 		std::map <std::string, llvm::Function*> func_table_;
 		std::map <llvm::Value*, llvm::Constant*> name_map_;
 
-		const char* BINOP_PREFIX = "binop_i";
+		const char* BINOP_PREFIX = "binop";
+		const char* ICMP_PREFIX = "icmp";
 
 		llvm::Function* GetFunction(std::string name);
 		void DeclareFunction(std::string name, llvm::FunctionType* ftype);
 		void DeclareBinOp(llvm::Type* ty);
+		void DeclareICmp(llvm::Type* ty);
 		void InitTypes();
 
+		std::string ProduceFuncName(const char* prefix, llvm::Type* ty);
+
+		llvm::Type* void_;
 		llvm::Type* i1;
 		llvm::Type* i8;
 		llvm::Type* i32;
@@ -38,6 +43,7 @@ namespace transform {
 		llvm::Constant* BindValue(llvm::Value* val);
 		llvm::Constant* GetValueId(llvm::Value* val);
 		llvm::Constant* GetOpCode(unsigned int opcode);
+		llvm::Constant* GetCond(llvm::ICmpInst::Predicate cond);
 		llvm::Constant* GetBinOpFlag(llvm::BinaryOperator* binop);
 		void InstrumentTheInst(llvm::Instruction* target, llvm::Function* f, std::vector<llvm::Value*> &fargs);
 		const bool kNotsigned = false;
