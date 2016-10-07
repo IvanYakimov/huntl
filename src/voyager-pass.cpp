@@ -15,6 +15,7 @@ bool VoyagerPass::runOnFunction (llvm::Function &func) {
 bool VoyagerPass::runOnModule(llvm::Module &M) {
 	transform::Transform tr(M);
 	tr.visit(M);
+	llvm::errs().flush();
 	llvm::errs() << M;
 	return true;
 	/*

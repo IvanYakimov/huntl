@@ -22,16 +22,19 @@ namespace transform {
 
 		const char* BINOP_PREFIX = "binop";
 		const char* ICMP_PREFIX = "icmp";
+		const char* ALLOCA_PREFIX = "alloca";
 
 		llvm::Function* GetFunction(std::string name);
 		void DeclareFunction(std::string name, llvm::FunctionType* ftype);
 		void DeclareBinOp(llvm::Type* ty);
 		void DeclareICmp(llvm::Type* ty);
+		void DeclareAlloca(llvm::Type* ty);
 		void InitTypes();
 
 		std::string ProduceFuncName(const char* prefix, llvm::Type* ty);
 
 		llvm::Type* void_;
+		llvm::Type* string_;
 		llvm::Type* i1;
 		llvm::Type* i8;
 		llvm::Type* i32;
@@ -57,9 +60,9 @@ namespace transform {
 		void visitBinaryOperator(llvm::BinaryOperator &binop);
 		void visitICmpInst (llvm::ICmpInst &icmp);
 		// missed instructions
-		void visitAllocaInst (const llvm::AllocaInst &alloca_inst);
-		void visitLoadInst (const llvm::LoadInst &load_inst);
-		void visitStoreInst (const llvm::StoreInst &store_inst);
+		void visitAllocaInst (llvm::AllocaInst &alloca);
+		void visitLoadInst (llvm::LoadInst &load);
+		void visitStoreInst (llvm::StoreInst &store);
 		// missed
 		/*
 		void visitGetElementPtrInst (const llvm::GetElementPtrInst &getelementptr_inst);
@@ -75,7 +78,7 @@ namespace transform {
 		void visitSelectInst(const llvm::SelectInst& select_inst);
 		*/
 		// missed
-		void visitCallInst(const llvm::CallInst &call_inst);
+		void visitCallInst(llvm::CallInst &call);
 	};
 }
 

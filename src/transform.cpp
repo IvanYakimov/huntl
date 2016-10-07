@@ -35,9 +35,18 @@ namespace transform {
 		DeclareFunction(ProduceFuncName(ICMP_PREFIX, ty), ftype);
 	}
 
+	void Transform::DeclareAlloca(llvm::Type* ty) {
+		assert (ty->isIntegerTy());
+		auto ref = i64;
+		std::vector<Type*> fargs = {ref, string_};
+		FunctionType* ftype = FunctionType::get(void_, fargs, true /*isVarArg*/);
+		DeclareFunction(ProduceFuncName(ALLOCA_PREFIX, ty), ftype);
+	}
+
 	void Transform::InitTypes() {
 		LLVMContext& context = module_.getContext();
 		void_ = Type::getVoidTy(context);
+		string_ = Type::getInt8PtrTy(context);
 		i1 = Type::getInt1Ty(context);
 		i8 = Type::getInt8Ty(context);
 		i16 = Type::getInt16Ty(context);
@@ -52,6 +61,8 @@ namespace transform {
 		DeclareBinOp(i8); 	DeclareBinOp(i16); 	DeclareBinOp(i32);	DeclareBinOp(i64);
 		// ICmp
 		DeclareICmp(i8);	DeclareICmp(i16);	DeclareICmp(i32);	DeclareICmp(i64);
+		// Alloca
+		DeclareAlloca(i8);	DeclareAlloca(i16);	DeclareAlloca(i32);	DeclareAlloca(i64);
 	}
 
 	Transform::~Transform() {
@@ -145,19 +156,26 @@ namespace transform {
 			assert (false && "not implemented");
 	}
 
-	void Transform::visitAllocaInst (const llvm::AllocaInst &alloca_inst) {
+	void Transform::visitAllocaInst (llvm::AllocaInst &alloca) {
+		ConstantInt *constant_int = NULL;
+		Value *value = NULL;
+		Type *alloca_ty =  alloca.getAllocatedType();
+		if (Case (alloca, &constant_int)) {
+
+		} else if (Case (alloca, &value)) {
+
+		} else assert (false && "not implemented");
+	}
+
+	void Transform::visitLoadInst (llvm::LoadInst &load_inst) {
 
 	}
 
-	void Transform::visitLoadInst (const llvm::LoadInst &load_inst) {
+	void Transform::visitStoreInst (llvm::StoreInst &store_inst) {
 
 	}
 
-	void Transform::visitStoreInst (const llvm::StoreInst &store_inst) {
-
-	}
-
-	void Transform::visitCallInst(const llvm::CallInst &call_inst) {
+	void Transform::visitCallInst(llvm::CallInst &call_inst) {
 
 	}
 }
