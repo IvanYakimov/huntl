@@ -19,39 +19,37 @@ namespace transform {
 	void Transform::DeclareBinOp(Type* ty) {
 		assert (ty->isIntegerTy());
 		auto opcode = i32;
-		auto ref = i64;
 		auto flag = i16;
-		std::vector<Type*> fargs = {ref, opcode, flag, ref, ty, ref, ty};
-		FunctionType* ftype = FunctionType::get(void_, fargs, false);
+		std::vector<Type*> fargs = {refty, opcode, flag, refty, ty, refty, ty};
+		FunctionType* ftype = FunctionType::get(voidty, fargs, false);
 		DeclareFunction(ProduceFuncName(BINOP_PREFIX, ty), ftype);
 	}
 
 	void Transform::DeclareICmp(llvm::Type* ty) {
 		assert (ty->isIntegerTy());
 		auto cond = i32;
-		auto ref = i64;
-		std::vector<Type*> fargs = {ref, cond, ref, ty, ref, ty};
-		FunctionType* ftype = FunctionType::get(void_ , fargs, false);
+		std::vector<Type*> fargs = {refty, cond, refty, ty, refty, ty};
+		FunctionType* ftype = FunctionType::get(voidty , fargs, false);
 		DeclareFunction(ProduceFuncName(ICMP_PREFIX, ty), ftype);
 	}
 
 	void Transform::DeclareAlloca(llvm::Type* ty) {
 		assert (ty->isIntegerTy());
-		auto ref = i64;
-		std::vector<Type*> fargs = {ref, string_};
-		FunctionType* ftype = FunctionType::get(void_, fargs, true /*isVarArg*/);
+		std::vector<Type*> fargs = {refty, ty};
+		FunctionType* ftype = FunctionType::get(voidty, fargs, false /*isn't VarArg*/);
 		DeclareFunction(ProduceFuncName(ALLOCA_PREFIX, ty), ftype);
 	}
 
 	void Transform::InitTypes() {
 		LLVMContext& context = module_.getContext();
-		void_ = Type::getVoidTy(context);
-		string_ = Type::getInt8PtrTy(context);
+		voidty = Type::getVoidTy(context);
+		stringty = Type::getInt8PtrTy(context);
 		i1 = Type::getInt1Ty(context);
 		i8 = Type::getInt8Ty(context);
 		i16 = Type::getInt16Ty(context);
 		i32 = Type::getInt32Ty(context);
 		i64 = Type::getInt64Ty(context);
+		refty = Type::getInt64Ty(context);
 	}
 
 	Transform::Transform(Module& module) : module_(module) {
@@ -85,6 +83,9 @@ namespace transform {
 
 	// this is a common template
 	Constant* Transform::GetValueId(Value* val) {
+		if (isa<Constant>(val))
+			return ConstantInt::get(refty, not_ref_, kNotsigned);
+
 		auto it = name_map_.find(val);
 #warning "the code below is dummy:"
 		if (it == name_map_.end())
@@ -157,13 +158,17 @@ namespace transform {
 	}
 
 	void Transform::visitAllocaInst (llvm::AllocaInst &alloca) {
-		ConstantInt *constant_int = NULL;
-		Value *value = NULL;
-		Type *alloca_ty =  alloca.getAllocatedType();
+		ConstantInt *constant_allocator = NULL;
+		Value *referenced_allocator = NULL;
+		Type *allocated_type =  alloca.getAllocatedType();
 		auto align = alloca.getAlignment();
-		if (Case (alloca, &constant_int)) {
-			std::string format = "const i32 numElements, const i32 align";
-		} else if (Case (alloca, &value)) {
+		assert (allocated_type->isIntegerTy() and "sorry, only integer allocation supported yet");
+		if (Case (alloca, &constant_allocator)) {
+			Function *f = GetFunction(ProduceFuncName(ALLOCA_PREFIX, allocated_type));
+			Constant *res_it = BindValue(&alloca);
+			std::vector<Value*> fargs = {res_it, constant_allocator};
+			InstrumentTheInst(&alloca, f, fargs);
+		} else if (Case (alloca, &referenced_allocator)) {
 
 		} else assert (false && "not implemented");
 	}

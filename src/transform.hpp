@@ -15,7 +15,8 @@ namespace transform {
 	{
 	private:
 		using Counter = uint64_t;
-		Counter inst_num_ = 0;
+		Counter not_ref_ = 0;
+		Counter inst_num_ = 1;
 		llvm::Module& module_;
 		std::map <std::string, llvm::Function*> func_table_;
 		std::map <llvm::Value*, llvm::Constant*> name_map_;
@@ -23,26 +24,31 @@ namespace transform {
 		const char* BINOP_PREFIX = "binop";
 		const char* ICMP_PREFIX = "icmp";
 		const char* ALLOCA_PREFIX = "alloca";
+		const char* LOAD = "load";
+		const char* STORE = "store";
+		const char* BR = "br";
+		const char* RET = "ret";
 
 		llvm::Function* GetFunction(std::string name);
 		void DeclareFunction(std::string name, llvm::FunctionType* ftype);
 		void DeclareBinOp(llvm::Type* ty);
 		void DeclareICmp(llvm::Type* ty);
 		void DeclareAlloca(llvm::Type* ty);
+		void DeclareLoad(llvm::Type* ty);
+		void DeclareStore(llvm::Type* ty);
 		void InitTypes();
 
 		std::string ProduceFuncName(const char* prefix, llvm::Type* ty);
 
-		llvm::Type* void_;
-		llvm::Type* string_;
+		llvm::Type* voidty;
+		llvm::Type* stringty;
 		llvm::Type* i1;
 		llvm::Type* i8;
 		llvm::Type* i32;
 		llvm::Type* i16;
 		llvm::Type* i64;
+		llvm::Type* refty;
 
-		llvm::GlobalVariable* status_;
-		llvm::GlobalVariable* status_ptr_;
 		llvm::Constant* BindValue(llvm::Value* val);
 		llvm::Constant* GetValueId(llvm::Value* val);
 		llvm::Constant* GetOpCode(unsigned int opcode);
