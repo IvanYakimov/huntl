@@ -160,8 +160,9 @@ namespace transform {
 		ConstantInt *constant_int = NULL;
 		Value *value = NULL;
 		Type *alloca_ty =  alloca.getAllocatedType();
+		auto align = alloca.getAlignment();
 		if (Case (alloca, &constant_int)) {
-
+			std::string format = "const i32 numElements, const i32 align";
 		} else if (Case (alloca, &value)) {
 
 		} else assert (false && "not implemented");
