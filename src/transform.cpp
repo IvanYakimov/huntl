@@ -28,16 +28,22 @@ namespace transform {
 	void Transform::DeclareICmp(llvm::Type* ty) {
 		assert (ty->isIntegerTy());
 		auto cond = i32;
-		std::vector<Type*> fargs = {refty, cond, refty, ty, refty, ty};
+		FormalArgs fargs = {refty, cond, refty, ty, refty, ty};
 		FunctionType* ftype = FunctionType::get(voidty , fargs, false);
 		DeclareFunction(ProduceFuncName(ICMP_PREFIX, ty), ftype);
 	}
 
 	void Transform::DeclareAlloca(llvm::Type* ty) {
 		assert (ty->isIntegerTy());
-		std::vector<Type*> fargs = {refty, ty};
+		FormalArgs fargs = {refty, ty};
 		FunctionType* ftype = FunctionType::get(voidty, fargs, false /*isn't VarArg*/);
 		DeclareFunction(ProduceFuncName(ALLOCA_PREFIX, ty), ftype);
+	}
+
+	void Transform::DeclareLoad() {
+		FormalArgs fargs = {refty, refty};
+		FunctionType* ftype = FunctionType::get(voidty, fargs, false);
+		DeclareFunction(LOAD, ftype);
 	}
 
 	void Transform::InitTypes() {
@@ -61,6 +67,8 @@ namespace transform {
 		DeclareICmp(i8);	DeclareICmp(i16);	DeclareICmp(i32);	DeclareICmp(i64);
 		// Alloca
 		DeclareAlloca(i8);	DeclareAlloca(i16);	DeclareAlloca(i32);	DeclareAlloca(i64);
+		// Load
+		DeclareLoad();
 	}
 
 	Transform::~Transform() {
@@ -174,7 +182,15 @@ namespace transform {
 	}
 
 	void Transform::visitLoadInst (llvm::LoadInst &load_inst) {
-
+		Instruction *instruction = NULL;
+		if (Case (load_inst, &instruction)) {
+			auto f = GetFunction(LOAD);
+			Constant *res_id = BindValue(&load_inst),
+					*target_id = GetValueId(instruction);
+			std::vector<Value*> fargs = {res_id, target_id};
+			InstrumentTheInst(&load_inst, f, fargs);
+		} else
+			assert(false);
 	}
 
 	void Transform::visitStoreInst (llvm::StoreInst &store_inst) {

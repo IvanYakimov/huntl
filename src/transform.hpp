@@ -29,12 +29,14 @@ namespace transform {
 		const char* BR = "br";
 		const char* RET = "ret";
 
+		using FormalArgs = std::vector<llvm::Type*>;
+
 		llvm::Function* GetFunction(std::string name);
 		void DeclareFunction(std::string name, llvm::FunctionType* ftype);
 		void DeclareBinOp(llvm::Type* ty);
 		void DeclareICmp(llvm::Type* ty);
 		void DeclareAlloca(llvm::Type* ty);
-		void DeclareLoad(llvm::Type* ty);
+		void DeclareLoad();
 		void DeclareStore(llvm::Type* ty);
 		void InitTypes();
 
