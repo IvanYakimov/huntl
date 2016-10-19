@@ -15,55 +15,67 @@ namespace transform {
 	{
 	private:
 		using Counter = uint64_t;
+		using FormalArgs = std::vector<llvm::Type*>;
+		using FuncOps = std::vector<llvm::Value*>;
+		using FuncTable = std::map <std::string, llvm::Function*>;
+		using IdMap = std::map <llvm::Value*, llvm::Constant*>;
+
 		Counter not_ref_ = 0;
 		Counter inst_num_ = 1;
 		llvm::Module& module_;
-		std::map <std::string, llvm::Function*> func_table_;
-		std::map <llvm::Value*, llvm::Constant*> name_map_;
+		FuncTable func_table_;
+		IdMap name_map_;
 
-		const char* BINOP_PREFIX = "binop";
-		const char* ICMP_PREFIX = "icmp";
-		const char* ALLOCA_PREFIX = "alloca";
+		const bool kNotsigned = false;
+
+		const char* BINOP = "binop";
+		const char* ICMP = "icmp";
+		const char* ALLOCA = "alloca";
 		const char* LOAD = "load";
 		const char* STORE = "store";
 		const char* BR = "br";
 		const char* RET = "ret";
 
-		using FormalArgs = std::vector<llvm::Type*>;
+		llvm::Type* voidty;
+		llvm::Type* stringty;
+		llvm::IntegerType* i1;
+		llvm::IntegerType* i8;
+		llvm::IntegerType* i32;
+		llvm::IntegerType* i16;
+		llvm::IntegerType* i64;
+		llvm::Type* refty;
+		llvm::Type* ptrty;
+		void InitTypes();
 
-		llvm::Function* GetFunction(std::string name);
+		void FunctionHeader(llvm::Type* ret, std::string name, std::vector<llvm::Type*> args);
 		void DeclareFunction(std::string name, llvm::FunctionType* ftype);
+
+		std::string Name(const char* prefix);
+		std::string Name_TY(const char* prefix, llvm::Type* ty);
+		std::string Name_REF(const char* prefix);
+
 		void DeclareBinOp(llvm::Type* ty);
-		void DeclareICmp(llvm::Type* ty);
+		void DeclareICmp(llvm::IntegerType* ty);
 		void DeclareAlloca(llvm::Type* ty);
 		void DeclareLoad();
 		void DeclareStore(llvm::Type* ty);
-		void InitTypes();
+		void DeclareStoreByRef();
 
-		std::string ProduceFuncName(const char* prefix, llvm::Type* ty);
+		llvm::Constant* BindVal(llvm::Value* val);
+		llvm::Constant* ValId(llvm::Value* val);
+		llvm::Constant* OpCode(unsigned int opcode);
+		llvm::Constant* Cond(llvm::ICmpInst::Predicate cond);
+		llvm::Constant* BinOpFlag(llvm::BinaryOperator* binop);
+		llvm::Function* GetFunc(std::string name);
 
-		llvm::Type* voidty;
-		llvm::Type* stringty;
-		llvm::Type* i1;
-		llvm::Type* i8;
-		llvm::Type* i32;
-		llvm::Type* i16;
-		llvm::Type* i64;
-		llvm::Type* refty;
-
-		llvm::Constant* BindValue(llvm::Value* val);
-		llvm::Constant* GetValueId(llvm::Value* val);
-		llvm::Constant* GetOpCode(unsigned int opcode);
-		llvm::Constant* GetCond(llvm::ICmpInst::Predicate cond);
-		llvm::Constant* GetBinOpFlag(llvm::BinaryOperator* binop);
 		void InstrumentTheInst(llvm::Instruction* target, llvm::Function* f, std::vector<llvm::Value*> &fargs);
-		const bool kNotsigned = false;
+
 	public:
 		Transform(llvm::Module& module);
 		~Transform();
 		// Specific Instruction type classes
-		void visitReturnInst(const llvm::ReturnInst &return_inst);
-		void visitBranchInst(const llvm::BranchInst &branch_inst);
+		void visitReturnInst(llvm::ReturnInst &return_inst);
+		void visitBranchInst(llvm::BranchInst &branch_inst);
 		//void visitSwitchInst(const llvm::SwitchInst &switch_inst);
 		void visitBinaryOperator(llvm::BinaryOperator &binop);
 		void visitICmpInst (llvm::ICmpInst &icmp);

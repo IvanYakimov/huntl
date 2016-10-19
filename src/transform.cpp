@@ -5,10 +5,18 @@
 namespace transform {
 	using namespace llvm;
 
-	std::string Transform::ProduceFuncName(const char* prefix, llvm::Type* ty) {
+	std::string Transform::Name(const char* prefix) {
+		return std::string(prefix);
+	}
+
+	std::string Transform::Name_TY(const char* prefix, llvm::Type* ty) {
 		assert (ty->isIntegerTy());
 		auto width = ty->getIntegerBitWidth();
 		return std::string(prefix) + "_i" + std::to_string(width);
+	}
+
+	std::string Transform::Name_REF(const char* prefix) {
+		return std::string(prefix) + "_ref";
 	}
 
 	void Transform::DeclareFunction(std::string name, FunctionType* ftype) {
@@ -20,30 +28,36 @@ namespace transform {
 		assert (ty->isIntegerTy());
 		auto opcode = i32;
 		auto flag = i16;
-		std::vector<Type*> fargs = {refty, opcode, flag, refty, ty, refty, ty};
-		FunctionType* ftype = FunctionType::get(voidty, fargs, false);
-		DeclareFunction(ProduceFuncName(BINOP_PREFIX, ty), ftype);
+		FunctionHeader(voidty, Name_TY(BINOP, ty), {refty, opcode, flag, refty, ty, refty, ty});
 	}
 
-	void Transform::DeclareICmp(llvm::Type* ty) {
+	void Transform::DeclareICmp(llvm::IntegerType* ty) {
 		assert (ty->isIntegerTy());
 		auto cond = i32;
-		FormalArgs fargs = {refty, cond, refty, ty, refty, ty};
-		FunctionType* ftype = FunctionType::get(voidty , fargs, false);
-		DeclareFunction(ProduceFuncName(ICMP_PREFIX, ty), ftype);
+		FunctionHeader(voidty, Name_TY(ICMP, ty), {refty, cond, refty, ty, refty, ty});
 	}
 
 	void Transform::DeclareAlloca(llvm::Type* ty) {
 		assert (ty->isIntegerTy());
-		FormalArgs fargs = {refty, ty};
-		FunctionType* ftype = FunctionType::get(voidty, fargs, false /*isn't VarArg*/);
-		DeclareFunction(ProduceFuncName(ALLOCA_PREFIX, ty), ftype);
+		FunctionHeader(voidty, Name_TY(ALLOCA, ty), {refty, ty});
 	}
 
 	void Transform::DeclareLoad() {
-		FormalArgs fargs = {refty, refty};
-		FunctionType* ftype = FunctionType::get(voidty, fargs, false);
-		DeclareFunction(LOAD, ftype);
+		FunctionHeader(voidty, Name(LOAD), {refty, refty});
+	}
+
+	void Transform::FunctionHeader(Type* ret, std::string name, std::vector<llvm::Type*> fargs) {
+		FunctionType* ftype = FunctionType::get(ret, fargs, false);
+		DeclareFunction(name, ftype);
+	}
+
+	void Transform::DeclareStore(Type* ty) {
+		assert (ty->isIntegerTy());
+		FunctionHeader(voidty, Name_TY(STORE, ty), {ty, refty});
+	}
+
+	void Transform::DeclareStoreByRef() {
+		FunctionHeader(voidty, Name_REF(STORE), {refty, refty});
 	}
 
 	void Transform::InitTypes() {
@@ -56,6 +70,7 @@ namespace transform {
 		i32 = Type::getInt32Ty(context);
 		i64 = Type::getInt64Ty(context);
 		refty = Type::getInt64Ty(context);
+		ptrty = Type::getInt64Ty(context);
 	}
 
 	Transform::Transform(Module& module) : module_(module) {
@@ -69,28 +84,31 @@ namespace transform {
 		DeclareAlloca(i8);	DeclareAlloca(i16);	DeclareAlloca(i32);	DeclareAlloca(i64);
 		// Load
 		DeclareLoad();
+		// Store
+		DeclareStore(i8);	DeclareStore(i16); 	DeclareStore(i32);	DeclareStore(i64);
+		DeclareStoreByRef();
 	}
 
 	Transform::~Transform() {
 	}
 
-	Constant* Transform::BindValue(Value* val) {
+	Constant* Transform::BindVal(Value* val) {
 		Constant* res = ConstantInt::get(i64, inst_num_++, kNotsigned);
 		assert (name_map_.find(val) == name_map_.end());
 		name_map_.emplace(val, res);
 		return res;
 	}
 
-	Constant* Transform::GetOpCode(unsigned int opcode) {
+	Constant* Transform::OpCode(unsigned int opcode) {
 		return ConstantInt::get(i32, opcode, kNotsigned);
 	}
 
-	llvm::Constant* Transform::GetCond(llvm::ICmpInst::Predicate cond) {
+	llvm::Constant* Transform::Cond(llvm::ICmpInst::Predicate cond) {
 		return ConstantInt::get(i32, (unsigned)cond, kNotsigned);
 	}
 
 	// this is a common template
-	Constant* Transform::GetValueId(Value* val) {
+	Constant* Transform::ValId(Value* val) {
 		if (isa<Constant>(val))
 			return ConstantInt::get(refty, not_ref_, kNotsigned);
 
@@ -102,7 +120,7 @@ namespace transform {
 			return it->second;
 	}
 
-	Function* Transform::GetFunction(std::string name) {
+	Function* Transform::GetFunc(std::string name) {
 		auto it = func_table_.find(name);
 		assert (it != func_table_.end());
 		return it->second;
@@ -113,15 +131,25 @@ namespace transform {
 		builder.CreateCall(f, fargs);
 	}
 
-	void Transform::visitReturnInst(const llvm::ReturnInst &return_inst) {
+	void Transform::visitReturnInst(llvm::ReturnInst &return_inst) {
 
 	}
 
-	void Transform::visitBranchInst(const llvm::BranchInst &branch_inst) {
+	void Transform::visitBranchInst(llvm::BranchInst &branch) {
+		BasicBlock *iftrue = NULL,
+				*iffalse = NULL,
+				*jump = NULL;
+		Value *cond = NULL;
 
+		//NOTE: the operands are stored in reversed order, as follow: (IfTrue, IfFalse, Cond)^R = (Cond, IfFalse, IfTrue)
+		//see: http://llvm.org/docs/doxygen/html/classllvm_1_1BranchInst.html
+		if (Case (branch, &cond, &iffalse, &iftrue)) {
+			ConstantInt* val = ConstantInt::get(i1, true, false);
+			branch.replaceUsesOfWith(cond, val);
+		}
 	}
 
-	Constant* Transform::GetBinOpFlag(llvm::BinaryOperator* binop) {
+	Constant* Transform::BinOpFlag(llvm::BinaryOperator* binop) {
 #warning "dummy for binop flags"
 		uint16_t flagvalue = 0;
 		if (binop->hasNoInfs()) flagvalue = 1;
@@ -133,68 +161,65 @@ namespace transform {
 	}
 
 	void Transform::visitBinaryOperator(BinaryOperator &binop) {
-		Value *lhs = nullptr,
-				*rhs = nullptr;
+		Value *lhs = nullptr, *rhs = nullptr;
 		if (Case(binop, &lhs, &rhs)) {
-			Function *f = GetFunction(ProduceFuncName(BINOP_PREFIX, binop.getType()));
-			Constant *tgt_id = BindValue(&binop),
-					*lhs_id = GetValueId(lhs),
-					*rhs_id = GetValueId(rhs),
-					*opcode = GetOpCode(binop.getOpcode()),
-					*flag = GetBinOpFlag(&binop);
-			std::vector<Value*> fargs = {tgt_id, opcode, flag, lhs_id, lhs, rhs_id, rhs};
-			InstrumentTheInst(&binop, f, fargs);
-		}
-		else
+			auto func = GetFunc(Name_TY(BINOP, binop.getType()));
+			FuncOps fargs = {BindVal(&binop), OpCode(binop.getOpcode()), BinOpFlag(&binop), ValId(lhs), lhs, ValId(rhs), rhs};
+			InstrumentTheInst(&binop, func, fargs);
+		} else
 			assert (false && "not implemented");
 	}
 
 	void Transform::visitICmpInst (llvm::ICmpInst &icmp) {
 		Value *lhs = nullptr, *rhs = nullptr;
-
 		if (Case (icmp, &lhs, &rhs)) {
-			Function *f = GetFunction(ProduceFuncName(ICMP_PREFIX, lhs->getType()));
-			Constant *res_id = BindValue(&icmp),
-					*lhs_id = GetValueId(lhs),
-					*rhs_id = GetValueId(rhs),
-					*cond = GetCond(icmp.getPredicate());
-			std::vector<Value*> fargs = {res_id, cond, lhs_id, lhs, rhs_id, rhs};
-			InstrumentTheInst(&icmp, f, fargs);
-		}
-		else
+			auto func = GetFunc(Name_TY(ICMP, lhs->getType()));
+			FuncOps fargs = {BindVal(&icmp), Cond(icmp.getPredicate()), ValId(lhs), lhs, ValId(rhs), rhs};
+			InstrumentTheInst(&icmp, func, fargs);
+		} else
 			assert (false && "not implemented");
 	}
 
 	void Transform::visitAllocaInst (llvm::AllocaInst &alloca) {
-		ConstantInt *constant_allocator = NULL;
-		Value *referenced_allocator = NULL;
+		ConstantInt *const_allocator = nullptr;
+		Value *ref_allocator = nullptr;
 		Type *allocated_type =  alloca.getAllocatedType();
 		auto align = alloca.getAlignment();
 		assert (allocated_type->isIntegerTy() and "sorry, only integer allocation supported yet");
-		if (Case (alloca, &constant_allocator)) {
-			Function *f = GetFunction(ProduceFuncName(ALLOCA_PREFIX, allocated_type));
-			Constant *res_it = BindValue(&alloca);
-			std::vector<Value*> fargs = {res_it, constant_allocator};
-			InstrumentTheInst(&alloca, f, fargs);
-		} else if (Case (alloca, &referenced_allocator)) {
+		if (Case (alloca, &const_allocator)) {
+			auto func = GetFunc(Name_TY(ALLOCA, allocated_type));
+			FuncOps fargs = {BindVal(&alloca), const_allocator};
+			InstrumentTheInst(&alloca, func, fargs);
+		} else if (Case (alloca, &ref_allocator)) {
 
-		} else assert (false && "not implemented");
+		} else
+			assert (false && "not implemented");
 	}
 
-	void Transform::visitLoadInst (llvm::LoadInst &load_inst) {
-		Instruction *instruction = NULL;
-		if (Case (load_inst, &instruction)) {
-			auto f = GetFunction(LOAD);
-			Constant *res_id = BindValue(&load_inst),
-					*target_id = GetValueId(instruction);
-			std::vector<Value*> fargs = {res_id, target_id};
-			InstrumentTheInst(&load_inst, f, fargs);
+	void Transform::visitLoadInst (llvm::LoadInst &load) {
+		Instruction *inst = NULL;
+		if (Case (load, &inst)) {
+			FuncOps fargs = {BindVal(&load), ValId(inst)};
+			InstrumentTheInst(&load, GetFunc(Name(LOAD)), fargs);
 		} else
 			assert(false);
 	}
 
-	void Transform::visitStoreInst (llvm::StoreInst &store_inst) {
-
+	void Transform::visitStoreInst (llvm::StoreInst &store) {
+		ConstantInt *const_int = NULL;
+		Instruction *inst = NULL;
+		Value *ptr = NULL;
+		if (Case (store, &const_int, &ptr)) {
+			auto func = GetFunc(Name_TY(STORE, const_int->getType()));
+			FuncOps fargs = {const_int, ValId(ptr)};
+			InstrumentTheInst(&store, func, fargs);
+		} else if (Case (store, &inst, &ptr)){
+			//std::cerr << "// sorry";
+			auto func = GetFunc(Name_REF(STORE));
+			FuncOps fargs = {ValId(inst), ValId(ptr)};
+			InstrumentTheInst(&store, func, fargs);
+		} else
+			assert (false);
 	}
 
 	void Transform::visitCallInst(llvm::CallInst &call_inst) {

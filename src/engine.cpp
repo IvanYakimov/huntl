@@ -16,6 +16,14 @@ extern "C" {
 	void load(Ref res, Ref target) {
 
 	}
+
+	void store_i32(I32 value, Ref ptr) {
+
+	}
+
+	void store_ref(Ref value, Ref ptr) {
+
+	}
 }
 
 int32_t Dummy() {
