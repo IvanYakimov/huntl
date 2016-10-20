@@ -24,6 +24,10 @@ extern "C" {
 	void store_ref(Ref value, Ref ptr) {
 
 	}
+
+	bool ite(Ref ref, bool cond) {
+
+	}
 }
 
 int32_t Dummy() {

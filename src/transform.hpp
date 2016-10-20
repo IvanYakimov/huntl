@@ -33,7 +33,8 @@ namespace transform {
 		const char* ALLOCA = "alloca";
 		const char* LOAD = "load";
 		const char* STORE = "store";
-		const char* BR = "br";
+		const char* ITE = "ite";
+		const char* JUMP = "jump";
 		const char* RET = "ret";
 
 		llvm::Type* voidty;
@@ -52,14 +53,20 @@ namespace transform {
 
 		std::string Name(const char* prefix);
 		std::string Name_TY(const char* prefix, llvm::Type* ty);
-		std::string Name_REF(const char* prefix);
+		std::string Name_PTR(const char* prefix);
+		std::string Name_VOID(const char* prefix);
+		llvm::Value* FirstOp(llvm::Instruction& target);
+		llvm::Value* SecondOp(llvm::Instruction& target);
 
 		void DeclareBinOp(llvm::Type* ty);
 		void DeclareICmp(llvm::IntegerType* ty);
 		void DeclareAlloca(llvm::Type* ty);
 		void DeclareLoad();
 		void DeclareStore(llvm::Type* ty);
-		void DeclareStoreByRef();
+		void DeclareStorePtr();
+		void DeclareITE();
+		void DeclareRet(llvm::Type* ty);
+		void DeclareRetVoid();
 
 		llvm::Constant* BindVal(llvm::Value* val);
 		llvm::Constant* ValId(llvm::Value* val);
@@ -68,7 +75,7 @@ namespace transform {
 		llvm::Constant* BinOpFlag(llvm::BinaryOperator* binop);
 		llvm::Function* GetFunc(std::string name);
 
-		void InstrumentTheInst(llvm::Instruction* target, llvm::Function* f, std::vector<llvm::Value*> &fargs);
+		llvm::Value* InstrumentTheInst(llvm::Instruction* target, llvm::Function* f, std::vector<llvm::Value*> &fargs);
 
 	public:
 		Transform(llvm::Module& module);

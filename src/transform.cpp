@@ -15,8 +15,20 @@ namespace transform {
 		return std::string(prefix) + "_i" + std::to_string(width);
 	}
 
-	std::string Transform::Name_REF(const char* prefix) {
-		return std::string(prefix) + "_ref";
+	std::string Transform::Name_PTR(const char* prefix) {
+		return std::string(prefix) + "_ptr";
+	}
+
+	std::string Transform::Name_VOID(const char* prefix) {
+		return std::string(prefix) + "_void";
+	}
+
+	llvm::Value* Transform::FirstOp(llvm::Instruction& target) {
+		return target.getOperand(0);
+	}
+
+	llvm::Value* Transform::SecondOp(llvm::Instruction& target) {
+		return target.getOperand(1);
 	}
 
 	void Transform::DeclareFunction(std::string name, FunctionType* ftype) {
@@ -53,11 +65,23 @@ namespace transform {
 
 	void Transform::DeclareStore(Type* ty) {
 		assert (ty->isIntegerTy());
-		FunctionHeader(voidty, Name_TY(STORE, ty), {ty, refty});
+		FunctionHeader(voidty, Name_TY(STORE, ty), {refty, ty, refty});
 	}
 
-	void Transform::DeclareStoreByRef() {
-		FunctionHeader(voidty, Name_REF(STORE), {refty, refty});
+	void Transform::DeclareStorePtr() {
+		FunctionHeader(voidty, Name_PTR(STORE), {refty, refty});
+	}
+
+	void Transform::DeclareITE() {
+		FunctionHeader(i1, Name(ITE), {refty, i1});
+	}
+
+	void Transform::DeclareRet(Type* ty) {
+		FunctionHeader(voidty, Name_TY(RET, ty), {refty, ty});
+	}
+
+	void Transform::DeclareRetVoid() {
+		FunctionHeader(voidty, Name_VOID(RET), {refty});
 	}
 
 	void Transform::InitTypes() {
@@ -86,7 +110,12 @@ namespace transform {
 		DeclareLoad();
 		// Store
 		DeclareStore(i8);	DeclareStore(i16); 	DeclareStore(i32);	DeclareStore(i64);
-		DeclareStoreByRef();
+		DeclareStorePtr();
+		// Branch
+		DeclareITE();
+		// Ret
+		DeclareRet(i8);		DeclareRet(i16);	DeclareRet(i32);	DeclareRet(i64);
+		DeclareRetVoid();
 	}
 
 	Transform::~Transform() {
@@ -97,6 +126,17 @@ namespace transform {
 		assert (name_map_.find(val) == name_map_.end());
 		name_map_.emplace(val, res);
 		return res;
+	}
+
+	Constant* Transform::BinOpFlag(llvm::BinaryOperator* binop) {
+#warning "dummy for binop flags"
+		uint16_t flagvalue = 0;
+		if (binop->hasNoInfs()) flagvalue = 1;
+		else if (binop->hasNoNaNs()) flagvalue = 2;
+		else if (binop->hasNoSignedWrap()) flagvalue = 3;
+		else if (binop->hasNoSignedZeros()) flagvalue = 4;
+		else if (binop->hasNoUnsignedWrap()) flagvalue = 5;
+		return ConstantInt::get(i16, flagvalue, kNotsigned);
 	}
 
 	Constant* Transform::OpCode(unsigned int opcode) {
@@ -126,38 +166,41 @@ namespace transform {
 		return it->second;
 	}
 
-	void Transform::InstrumentTheInst(llvm::Instruction* target, llvm::Function* f, std::vector<llvm::Value*> &fargs) {
+	Value* Transform::InstrumentTheInst(llvm::Instruction* target, llvm::Function* f, std::vector<llvm::Value*> &fargs) {
 		IRBuilder<> builder(target);
-		builder.CreateCall(f, fargs);
+		return builder.CreateCall(f, fargs);
 	}
 
 	void Transform::visitReturnInst(llvm::ReturnInst &return_inst) {
+		Value *ret_val = NULL;
 
+		/*
+		if (Case (inst, &ret_val))
+			HandleReturnInst(inst, ret_val);
+		else if (Case (inst))
+			HandleReturnInst(inst);
+		else
+			assert(false);
+			*/
 	}
 
 	void Transform::visitBranchInst(llvm::BranchInst &branch) {
-		BasicBlock *iftrue = NULL,
-				*iffalse = NULL,
-				*jump = NULL;
-		Value *cond = NULL;
+		BasicBlock *iftrue = nullptr,
+				*iffalse = nullptr,
+				*jump = nullptr;
+		Value *cond = nullptr;
 
-		//NOTE: the operands are stored in reversed order, as follow: (IfTrue, IfFalse, Cond)^R = (Cond, IfFalse, IfTrue)
+		//NOTE: operands are stored in the reversed order! So the pattern does.
 		//see: http://llvm.org/docs/doxygen/html/classllvm_1_1BranchInst.html
 		if (Case (branch, &cond, &iffalse, &iftrue)) {
-			ConstantInt* val = ConstantInt::get(i1, true, false);
-			branch.replaceUsesOfWith(cond, val);
-		}
-	}
-
-	Constant* Transform::BinOpFlag(llvm::BinaryOperator* binop) {
-#warning "dummy for binop flags"
-		uint16_t flagvalue = 0;
-		if (binop->hasNoInfs()) flagvalue = 1;
-		else if (binop->hasNoNaNs()) flagvalue = 2;
-		else if (binop->hasNoSignedWrap()) flagvalue = 3;
-		else if (binop->hasNoSignedZeros()) flagvalue = 4;
-		else if (binop->hasNoUnsignedWrap()) flagvalue = 5;
-		return ConstantInt::get(i16, flagvalue, kNotsigned);
+			auto func = GetFunc(Name(ITE));
+			FuncOps fargs = {ValId(cond), cond};
+			auto call = InstrumentTheInst(&branch, func, fargs);
+			branch.replaceUsesOfWith(cond, call);
+		} else if (Case (branch, &jump)) {
+			// do nothing
+		} else
+			assert (false);
 	}
 
 	void Transform::visitBinaryOperator(BinaryOperator &binop) {
@@ -206,20 +249,19 @@ namespace transform {
 	}
 
 	void Transform::visitStoreInst (llvm::StoreInst &store) {
-		ConstantInt *const_int = NULL;
-		Instruction *inst = NULL;
-		Value *ptr = NULL;
-		if (Case (store, &const_int, &ptr)) {
-			auto func = GetFunc(Name_TY(STORE, const_int->getType()));
-			FuncOps fargs = {const_int, ValId(ptr)};
+		assert (store.getNumOperands() == 2);
+		auto src = FirstOp(store), dst = SecondOp(store);
+		auto srcty = src->getType();
+		if (srcty->isIntegerTy()) {
+			auto func = GetFunc(Name_TY(STORE, src->getType()));
+			FuncOps fargs = {ValId(src), src, ValId(dst)};
 			InstrumentTheInst(&store, func, fargs);
-		} else if (Case (store, &inst, &ptr)){
-			//std::cerr << "// sorry";
-			auto func = GetFunc(Name_REF(STORE));
-			FuncOps fargs = {ValId(inst), ValId(ptr)};
+		} else if (srcty->isPointerTy()){
+			auto func = GetFunc(Name_PTR(STORE));
+			FuncOps fargs = {ValId(src), ValId(dst)};
 			InstrumentTheInst(&store, func, fargs);
 		} else
-			assert (false);
+			assert (not "implemented");
 	}
 
 	void Transform::visitCallInst(llvm::CallInst &call_inst) {

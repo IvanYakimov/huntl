@@ -17,6 +17,7 @@ void alloca_i32(Ref res, I32 allocator);
 void load(Ref res, Ref target);
 void store_i32(I32 value, Ref ptr);
 void store_ref(Ref value, Ref ptr);
+bool ite(Ref ref, bool cond);
 }
 
 #include <iostream>
