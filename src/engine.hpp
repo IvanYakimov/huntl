@@ -18,6 +18,7 @@ void load(Ref res, Ref target);
 void store_i32(I32 value, Ref ptr);
 void store_ref(Ref value, Ref ptr);
 bool ite(Ref ref, bool cond);
+void ret_i32(Ref res, Ref op, I32 val);
 }
 
 #include <iostream>

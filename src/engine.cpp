@@ -28,8 +28,24 @@ extern "C" {
 	bool ite(Ref ref, bool cond) {
 
 	}
+
+	void ret_i32(Ref res, Ref op, I32 val) {
+
+	}
 }
 
 int32_t Dummy() {
 	std::cout << "handler catched\n";
 }
+
+
+
+
+
+
+
+
+
+
+
+

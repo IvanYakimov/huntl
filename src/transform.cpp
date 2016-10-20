@@ -77,7 +77,7 @@ namespace transform {
 	}
 
 	void Transform::DeclareRet(Type* ty) {
-		FunctionHeader(voidty, Name_TY(RET, ty), {refty, ty});
+		FunctionHeader(voidty, Name_TY(RET, ty), {refty, refty, ty});
 	}
 
 	void Transform::DeclareRetVoid() {
@@ -171,17 +171,21 @@ namespace transform {
 		return builder.CreateCall(f, fargs);
 	}
 
-	void Transform::visitReturnInst(llvm::ReturnInst &return_inst) {
+	void Transform::visitReturnInst(llvm::ReturnInst &ret) {
 		Value *ret_val = NULL;
+		if (Case (ret, &ret_val)) {
+			auto ty = ret_val->getType();
+			if (ty->isIntegerTy()) {
+				auto func = GetFunc(Name_TY(RET, ty));
+				FuncOps fargs = {BindVal(&ret), ValId(ret_val), ret_val};
+				InstrumentTheInst(&ret, func, fargs);
+			} else if (ty->isPointerTy()) {
+				assert (not "implemented");
+			}
+		} else if (Case (ret)) {
 
-		/*
-		if (Case (inst, &ret_val))
-			HandleReturnInst(inst, ret_val);
-		else if (Case (inst))
-			HandleReturnInst(inst);
-		else
-			assert(false);
-			*/
+		} else
+			assert(not "implemented");
 	}
 
 	void Transform::visitBranchInst(llvm::BranchInst &branch) {
@@ -220,7 +224,7 @@ namespace transform {
 			FuncOps fargs = {BindVal(&icmp), Cond(icmp.getPredicate()), ValId(lhs), lhs, ValId(rhs), rhs};
 			InstrumentTheInst(&icmp, func, fargs);
 		} else
-			assert (false && "not implemented");
+			assert (not "implemented");
 	}
 
 	void Transform::visitAllocaInst (llvm::AllocaInst &alloca) {

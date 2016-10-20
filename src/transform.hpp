@@ -75,7 +75,7 @@ namespace transform {
 		llvm::Constant* BinOpFlag(llvm::BinaryOperator* binop);
 		llvm::Function* GetFunc(std::string name);
 
-		llvm::Value* InstrumentTheInst(llvm::Instruction* target, llvm::Function* f, std::vector<llvm::Value*> &fargs);
+		llvm::Value* InstrumentTheInst(llvm::Instruction* target, llvm::Function* f, FuncOps &fargs);
 
 	public:
 		Transform(llvm::Module& module);
