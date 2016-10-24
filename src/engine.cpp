@@ -1,13 +1,28 @@
 #include "engine.hpp"
 
 extern "C" {
-	void binop_i32(Ref a, OpCode code, Flag flag, Ref b, I32 op1, Ref c, int32_t op2) {
-		Dummy();
+	// BinOp:
+	FUNC_HEAD(i8, binop_, BINOP_ARGS) {
+
 	}
 
-	void icmp_i32(Ref res, Cond cond, Ref op1, I32 v1, Ref op2, I32 v2) {
-		Dummy();
+	FUNC_HEAD(i16, binop_, BINOP_ARGS) {
+
 	}
+
+	FUNC_HEAD(i32, binop_, BINOP_ARGS) {
+
+	}
+
+	FUNC_HEAD(i64, binop_, BINOP_ARGS) {
+
+	}
+
+	// ICmp:
+	FUNC_HEAD(i8, icmp_, ICMP_ARGS) {}
+	FUNC_HEAD(i16, icmp_, ICMP_ARGS) {}
+	FUNC_HEAD(i32, icmp_, ICMP_ARGS) {}
+	FUNC_HEAD(i64, icmp_, ICMP_ARGS) {}
 
 	void alloca_i32(Ref res, I32 allocator) {
 
