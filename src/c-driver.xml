@@ -1,0 +1,10 @@
+<template>
+  <func name="binop">
+    <ret>void</ret>
+    <header>_$INT(Ref res, $INT op1, $INT op2)</header>
+  </func>
+  <func name="icmp">
+    <ret> void </ret>
+    <header> _$INT(Ret res, $INT op1, $INT op2)</header>
+  </func>
+</template>
