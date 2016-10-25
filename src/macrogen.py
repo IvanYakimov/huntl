@@ -39,11 +39,11 @@ class FunctionHandler (xml.sax.ContentHandler):
             self.key = atts["type"]
             
     def endElement(self, tag):
-        global polymorphic
-        global simple
-        global unsorted
         if tag == "func":
-            func = (self.name, self.ret, self.header)
+            global polymorphic
+            global simple
+            global unsorted
+            func = (self.name, self.header)
             if self.key == "polymorphic":
                 polymorphic.append(func)
             elif self.key == "simple":
@@ -59,8 +59,6 @@ class FunctionHandler (xml.sax.ContentHandler):
             prefix.append(str.strip())
         elif tagStack.top() == "postfix":
             postfix.append(str.strip())
-        if tagStack.top() == "ret":
-            self.ret = str
         elif tagStack.top() == "header":
             self.header = str
     
@@ -79,11 +77,10 @@ for s in prefix:
 print "\t// POLYMORPHIC FUNCTIONS:\n"
 for func in polymorphic:
     name = func[0].strip()
-    ret = func[1].strip()
-    header = func[2].strip()
+    header = func[1].strip().replace("$NAME", name)
     print "\t//" + name
     for i in ["i8", "i16", "i32", "i64"]:
-        print "\t" + ret + " " + name + header.replace("$INT", i) + ";"
+        print "\t" + name + header.replace("$INT", i) + ";"
     print ""
 
 for s in postfix:
