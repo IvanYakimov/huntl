@@ -1,10 +1,24 @@
-<template>
-  <func name="binop">
-    <ret>void</ret>
-    <header>_$INT(Ref res, $INT op1, $INT op2)</header>
-  </func>
-  <func name="icmp">
-    <ret> void </ret>
-    <header> _$INT(Ret res, $INT op1, $INT op2)</header>
-  </func>
-</template>
+<body>
+  <prefix>
+    #ifndef __ENGINE_HPP__
+    #define __ENGINE_HPP__
+    extern "C" {
+    #include "stdint.h"
+  </prefix>
+  <postfix>
+    }
+    #endif // __ENGINE_HPP__
+  </postfix>
+  <collection type = "polymorphic">
+    <func name="binop">
+      <ret>void</ret>
+      <header>_$INT(Ref res, $INT op1, $INT op2)</header>
+    </func>
+    <func name="icmp">
+      <ret>void</ret>
+      <header>_$INT(Ret res, $INT op1, $INT op2)</header>
+    </func>
+  </collection>
+  <collection type = "simple">
+  </collection>
+</body>
