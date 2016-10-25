@@ -80,7 +80,7 @@ for func in polymorphic:
     header = func[1].strip().replace("$NAME", name)
     print "\t//" + name
     for i in ["i8", "i16", "i32", "i64"]:
-        print "\t" + name + header.replace("$INT", i) + ";"
+        print "\t" + header.replace("$INT", i) + ";"
     print ""
 
 for s in postfix:
