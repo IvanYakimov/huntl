@@ -7,8 +7,10 @@ intTy = "$INT"
 poly = []
 simple = []
 unsorted = []
-prefix = []
-postfix = []
+header_prefix = []
+header_postfix = []
+source_prefix = []
+source_postfix = []
 
 #parsing args
 argnum = len(sys.argv)
@@ -39,7 +41,7 @@ tagStack = Stack()
 
 # parser
 
-class FunctionHandler (xml.sax.ContentHandler):
+class TemplateHandler (xml.sax.ContentHandler):
     def __init__(self):
         key = ""
 
@@ -65,12 +67,14 @@ class FunctionHandler (xml.sax.ContentHandler):
         tagStack.pop()
             
     def characters(self, str):
-        global prefix
-        global postfix
-        if tagStack.top() == "prefix":
-            prefix.append(str.strip())
-        elif tagStack.top() == "postfix":
-            postfix.append(str.strip())
+        if tagStack.top() == "header_prefix":
+            header_prefix.append(str.strip())
+        elif tagStack.top() == "header_postfix":
+            header_postfix.append(str.strip())
+        elif tagStack.top() == "source_prefix":
+            source_prefix.append(str.strip())
+        elif tagStack.top() == "soruce_postfix":
+            source_postfix.append(str.strip())
         elif tagStack.top() == "ret":
             self.ret = str.strip()
         elif tagStack.top() == "header":
@@ -78,7 +82,7 @@ class FunctionHandler (xml.sax.ContentHandler):
     
 parser = xml.sax.make_parser()
 parser.setFeature(xml.sax.handler.feature_namespaces,0)
-handler = FunctionHandler()
+handler = TemplateHandler()
 parser.setContentHandler(handler)
 
 parser.parse(sys.stdin)
@@ -94,24 +98,25 @@ def printlist(f, l):
     for s in l:
         f.write(s.strip() + "\n")
 
-printlist(header, prefix)
-
-def printcolon(dest):
+def printSemiColon(dest):
     dest.write(";\n")
     
-def printhead(dest, ret, name, args):
+def printHead(dest, ret, name, args):
     dest.write("\t" + ret + " " + name + "(" + args + ")")
 
-def printpoly(dest, ret, name, args):
+def printPolyDeclaration(dest, ret, name, args):
     pname = name + "_$INT"
     for i in ["i8", "i16", "i32", "i64"]:
-        printhead(dest, ret, pname.replace("$INT", i), args.replace("$INT", i))
-        printcolon(dest)
+        printHead(dest, ret, pname.replace("$INT", i), args.replace("$INT", i))
+        printSemiColon(dest)
 
-def printsimple(dest, ret, name, args):
-    printhead(dest, ret, name, args)
-    printcolon(dest)
+def printSimpleDeclaration(dest, ret, name, args):
+    printHead(dest, ret, name, args)
+    printSemiColon(dest)
 
+def printSimpleDefinition(dest, ret, name, args):
+    printHead(dest, ret, name, args)
+    dest.write("{}")
 
 def printCollection(dest, title, collection, printer):
     dest.write( "\t// " + title + "\n")
@@ -122,7 +127,13 @@ def printCollection(dest, title, collection, printer):
         dest.write("\t//" + name + "\n")
         printer(dest, ret, name, args)
 
-printCollection(header, "POLY", poly, printpoly)
-printCollection(header, "SIMPLE", simple, printsimple)
+# header
+printlist(header, header_prefix)
+printCollection(header, "POLY", poly, printPolyDeclaration)
+printCollection(header, "SIMPLE", simple, printSimpleDeclaration)
+printlist(header, header_postfix)
 
-printlist(header, postfix)
+#source
+printlist(source, source_prefix)
+printCollection(source, "SIMPLE", simple, printSimpleDefinition)
+printlist(source, source_postfix)

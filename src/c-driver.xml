@@ -1,5 +1,5 @@
 <body>
-  <prefix kind = "header">
+  <header_prefix>
     #ifndef __ENGINE_HPP__
     #define __ENGINE_HPP__
     extern "C" {
@@ -13,11 +13,18 @@
     typedef int32_t I32;
     typedef uint64_t Ref;
     typedef uint16_t Flag;
-  </prefix>
-  <postfix kind = "header">
+  </header_prefix>
+  <header_postfix>
     }
     #endif // __ENGINE_HPP__
-  </postfix>
+  </header_postfix>
+  <source_prefix>
+    #include "c-driver.hpp"
+    extern "C" {
+  </source_prefix>
+  <source_postfix>
+    }
+  </source_postfix>
   <collection type = "poly">
     <func name = "alloca">
       <ret> void </ret>
