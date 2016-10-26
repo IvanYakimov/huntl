@@ -4,7 +4,7 @@ import sys
 #see: https://www.tutorialspoint.com/python/python_xml_processing.htm
 import xml.sax
 intTy = "$INT"
-polymorphic = []
+poly = []
 simple = []
 unsorted = []
 prefix = []
@@ -20,9 +20,8 @@ elif argnum == 2:
 else:
     print "wrong number of arguments: " + str(argnum)
     sys.exit()
-
 # see: https://interactivepython.org/runestone/static/pythonds/BasicDS/ImplementingaStackinPython.html
-class stack:
+class Stack:
      def __init__(self):
          self.items = []
      def isEmpty(self):
@@ -35,8 +34,8 @@ class stack:
          return self.items[len(self.items)-1]
      def size(self):
          return len(self.items)
-
-tagStack = stack()
+    
+tagStack = Stack()
 
 # parser
 
@@ -53,12 +52,12 @@ class FunctionHandler (xml.sax.ContentHandler):
             
     def endElement(self, tag):
         if tag == "func":
-            global polymorphic
+            global poly
             global simple
             global unsorted
-            func = (self.name, self.header)
-            if self.key == "polymorphic":
-                polymorphic.append(func)
+            func = (self.ret, self.name, self.header)
+            if self.key == "poly":
+                poly.append(func)
             elif self.key == "simple":
                 simple.append(func)
             else:
@@ -72,6 +71,8 @@ class FunctionHandler (xml.sax.ContentHandler):
             prefix.append(str.strip())
         elif tagStack.top() == "postfix":
             postfix.append(str.strip())
+        elif tagStack.top() == "ret":
+            self.ret = str.strip()
         elif tagStack.top() == "header":
             self.header = str.strip()
     
@@ -95,23 +96,31 @@ def printlist(f, l):
 
 printlist(header, prefix)
 
-def printpoly(f, header):
+def semicolon(header):
+    return ";"
+
+def printpoly(dest, header):
     for i in ["i8", "i16", "i32", "i64"]:
-        f.write( "\t" + header.replace("$INT", i) + ";" + "\n")
+        res = header.replace("$POSTFIX", "_$INT")
+        dest.write( "\t" + res.replace("$INT", i) + ";" + "\n")
 
-def printsimple(f, header):
-    f.write( "\t" + header + ";" + "\n" )
+def printsimple(dest, header):
+    res = header.replace("$POSTFIX", "")
+    dest.write( "\t" + res + ";" + "\n" )
 
-def printCollection(f, title, collection, printer):
-    f.write( "\t// " + title + "\n")
+def printCollection(dest, title, collection, printer):
+    dest.write( "\t// " + title + "\n")
     for func in collection:
-        name = func[0]
-        header = func[1]
-        final = header.replace("$NAME", name)
-        f.write("\t//" + name + "\n")
-        printer(f, final)
+        ret = func[0]
+        name = func[1]
+        args = func[2]
+        header = ret + " " + \
+                 name + "$POSTFIX" + \
+                 "(" + args.replace("$NAME", name) + ")"
+        dest.write("\t//" + name + "\n")
+        printer(dest, header)
 
-printCollection(header, "POLYMORPHIC", polymorphic, printpoly)
+printCollection(header, "POLY", poly, printpoly)
 printCollection(header, "SIMPLE", simple, printsimple)
 
 printlist(header, postfix)

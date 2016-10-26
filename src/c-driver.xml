@@ -18,7 +18,7 @@
     }
     #endif // __ENGINE_HPP__
   </postfix>
-  <collection type = "polymorphic">
+  <collection type = "poly">
     <func name = "alloca">
       <ret> void </ret>
       <header>Ref res, $INT allocator</header>
