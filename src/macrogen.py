@@ -96,9 +96,6 @@ def printlist(f, l):
 
 printlist(header, prefix)
 
-def semicolon(header):
-    return ";"
-
 def printcolon(dest):
     dest.write(";\n")
     
@@ -108,12 +105,13 @@ def printhead(dest, ret, name, args):
 def printpoly(dest, ret, name, args):
     pname = name + "_$INT"
     for i in ["i8", "i16", "i32", "i64"]:
-        printhead(dest, ret, pname, args.replace("$INT", i)
-        printcolon
+        printhead(dest, ret, pname.replace("$INT", i), args.replace("$INT", i))
+        printcolon(dest)
 
 def printsimple(dest, ret, name, args):
     printhead(dest, ret, name, args)
-    printcolon
+    printcolon(dest)
+
 
 def printCollection(dest, title, collection, printer):
     dest.write( "\t// " + title + "\n")
