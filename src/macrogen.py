@@ -99,14 +99,21 @@ printlist(header, prefix)
 def semicolon(header):
     return ";"
 
-def printpoly(dest, header):
-    for i in ["i8", "i16", "i32", "i64"]:
-        res = header.replace("$POSTFIX", "_$INT")
-        dest.write( "\t" + res.replace("$INT", i) + ";" + "\n")
+def printcolon(dest):
+    dest.write(";\n")
+    
+def printhead(dest, ret, name, args):
+    dest.write("\t" + ret + " " + name + "(" + args + ")")
 
-def printsimple(dest, header):
-    res = header.replace("$POSTFIX", "")
-    dest.write( "\t" + res + ";" + "\n" )
+def printpoly(dest, ret, name, args):
+    pname = name + "_$INT"
+    for i in ["i8", "i16", "i32", "i64"]:
+        printhead(dest, ret, pname, args.replace("$INT", i)
+        printcolon
+
+def printsimple(dest, ret, name, args):
+    printhead(dest, ret, name, args)
+    printcolon
 
 def printCollection(dest, title, collection, printer):
     dest.write( "\t// " + title + "\n")
@@ -114,11 +121,8 @@ def printCollection(dest, title, collection, printer):
         ret = func[0]
         name = func[1]
         args = func[2]
-        header = ret + " " + \
-                 name + "$POSTFIX" + \
-                 "(" + args.replace("$NAME", name) + ")"
         dest.write("\t//" + name + "\n")
-        printer(dest, header)
+        printer(dest, ret, name, args)
 
 printCollection(header, "POLY", poly, printpoly)
 printCollection(header, "SIMPLE", simple, printsimple)
