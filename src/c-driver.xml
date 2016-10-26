@@ -1,5 +1,5 @@
 <body>
-  <prefix>
+  <prefix kind = "header">
     #ifndef __ENGINE_HPP__
     #define __ENGINE_HPP__
     extern "C" {
@@ -14,24 +14,28 @@
     typedef uint64_t Ref;
     typedef uint16_t Flag;
   </prefix>
-  <postfix>
+  <postfix kind = "header">
     }
     #endif // __ENGINE_HPP__
   </postfix>
   <collection type = "polymorphic">
-    <func name="alloca">
-      <header>void $NAME_$INT(Ref res, $INT allocator)</header>
+    <func name = "alloca">
+      <ret> void </ret>
+      <header>Ref res, $INT allocator</header>
     </func>
-    <func name="binop">
-      <header>void $NAME_$INT(Ref res, OpCode code, Flag flag, Ref arg1, $INT op1, Ref arg2, $INT op2)</header>
+    <func name = "binop">
+      <ret> void </ret>
+      <header>Ref res, OpCode code, Flag flag, Ref arg1, $INT op1, Ref arg2, $INT op2</header>
     </func>
-    <func name="icmp">
-      <header>void $NAME_$INT(Ret res, $INT op1, $INT op2)</header>
+    <func name = "icmp">
+      <ret> void </ret>
+      <header>Ret res, $INT op1, $INT op2</header>
     </func>
   </collection>
   <collection type = "simple">
     <func name = "ite">
-      <header> bool ite(Ref ret, bool cond)</header>
+      <ret> bool </ret>
+      <header> Ref ret, bool cond</header>
     </func>
   </collection>
 </body>
