@@ -1,48 +1,20 @@
 <body>
-  <header_prefix>
-    #ifndef __ENGINE_HPP__
-    #define __ENGINE_HPP__
-    extern "C" {
-    #include "stdint.h"
-    typedef unsigned int OpCode;
-    typedef unsigned int Cond;
-    typedef int8_t i8;
-    typedef int16_t i16;
-    typedef int32_t i32;
-    typedef int64_t i64;
-    typedef int32_t I32;
-    typedef uint64_t Ref;
-    typedef uint16_t Flag;
-  </header_prefix>
-  <header_postfix>
-    }
-    #endif // __ENGINE_HPP__
-  </header_postfix>
-  <source_prefix>
-    #include "c-driver.hpp"
-    extern "C" {
-  </source_prefix>
-  <source_postfix>
-    }
-  </source_postfix>
-  <collection type = "poly">
+  <template id = "$T" exp= "I8 I16 I32 I64">
     <func name = "alloca">
-      <ret> void </ret>
-      <header>Ref res, $INT allocator</header>
+      <header>void alloca_$T(Ref res, $T allocator)</header>
+      <body> cpp_alloca_$T(res, allocator);</body>
     </func>
     <func name = "binop">
-      <ret> void </ret>
-      <header>Ref res, OpCode code, Flag flag, Ref arg1, $INT op1, Ref arg2, $INT op2</header>
+      <header>void binop_$T(Ref res, OpCode code, Flag flag, Ref arg1, $T op1, Ref arg2, $T op2)</header>
+      <body> cpp_binop_$T(res, code, flag, arg1, op1, arg2, op2);</body>
     </func>
     <func name = "icmp">
-      <ret> void </ret>
-      <header>Ret res, $INT op1, $INT op2</header>
+      <header>void icmp_$T(Ref res, $T op1, $T op2)</header>
+      <body>cpp_icmp_$T(res, op1, op2);</body>
     </func>
-  </collection>
-  <collection type = "simple">
-    <func name = "ite">
-      <ret> bool </ret>
-      <header> Ref ret, bool cond</header>
-    </func>
-  </collection>
+  </template>
+  <func name = "ite">
+    <header>bool ite(Ref ret, bool cond)</header>
+    <body>return cpp_ite(ret, cond);</body>
+  </func>
 </body>
