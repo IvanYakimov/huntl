@@ -1,0 +1,8 @@
+<file>
+  <template id = "$T" exp = "I8 I16 I32 I64">
+    <func name = "cpp_alloca">
+      <header> void cpp_alloca_$T(Ref res, $T allocated) </header>
+      <body> Alloca &lt;$T>(res, allocated); </body>
+    </func>
+  </template>
+</file>

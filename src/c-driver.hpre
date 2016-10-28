@@ -1,14 +1,10 @@
-#ifndef __ENGINE_HPP__
-#define __ENGINE_HPP__
+#ifndef __C_DRIVER_HPP__
+#define __C_DRIVER_HPP__
+
+#include "cpp-driver.hpp"
+
+#include "raw-type-decls.hpp"
 
 extern "C" {
-#include <stdint.h>
-typedef unsigned int OpCode;
-typedef unsigned int Cond;
-typedef int8_t I8;
-typedef int16_t I16;
-typedef int32_t I32;
-typedef int64_t I64;
-typedef uint64_t Ref;
-typedef uint16_t Flag;
+
 

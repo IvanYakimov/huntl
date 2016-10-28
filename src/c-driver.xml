@@ -1,20 +1,36 @@
-<body>
+<file>
   <template id = "$T" exp= "I8 I16 I32 I64">
     <func name = "alloca">
       <header>void alloca_$T(Ref res, $T allocator)</header>
       <body> cpp_alloca_$T(res, allocator);</body>
     </func>
+    <!--
     <func name = "binop">
       <header>void binop_$T(Ref res, OpCode code, Flag flag, Ref arg1, $T op1, Ref arg2, $T op2)</header>
       <body> cpp_binop_$T(res, code, flag, arg1, op1, arg2, op2);</body>
     </func>
     <func name = "icmp">
-      <header>void icmp_$T(Ref res, $T op1, $T op2)</header>
-      <body>cpp_icmp_$T(res, op1, op2);</body>
+      <header>void icmp_$T(Ref res, Cond cond, Ref op1,  $T v1, Ref op2, $T v2)</header>
+      <body>cpp_icmp_$T(res, cond, op1, v1, op2, v2);</body>
     </func>
+    <func name = "store">
+      <header>void store_$T($T value, Ref ptr)</header>
+      <body>cpp_store_$T(value, ptr);</body>
+    </func>
+    <func name = "ret">
+      <header> void ret_$T(Ref res, Ref op, $T val) </header>
+      <body> cpp_ret_$T(res, op, val);</body>
+      </func>
+      -->
   </template>
+  <!--
+  <func name = "load" >
+    <header> void load(Ref res, Ref target) </header>
+    <body> cpp_load(res, target); </body>
+  </func>
   <func name = "ite">
     <header>bool ite(Ref ret, bool cond)</header>
     <body>return cpp_ite(ret, cond);</body>
-  </func>
-</body>
+    </func>
+    -->
+</file>

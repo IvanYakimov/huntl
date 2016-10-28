@@ -7,7 +7,7 @@ INTERPRETER = kernel.o matcher.o evaluator.o meta-evaluator.o meta-int.o context
 	readability-optimizer.o holder-helper.o bigram-model.o unigram-model.o 
 	
 TRANSFORM = transform.o case.o
-ENGINE = engine.o c-driver.o
+ENGINE = engine.o c-driver.o cpp-driver.o
  
 INTERPRETER_TEST = $(SOLVER) $(MEMORY) $(LLVM_TEST_HELPERS) $(TEST_RUNNER) \
 test-holder.o test-regex.o test-evaluator.o 
@@ -63,6 +63,11 @@ vpath %.hpp $(SRC) $(TST)/matcher
 vpath %.hpp ../readability
 vpath %.c 	$(SRC) $(BENCH) $(BENCH_LIB)/string $(BENCH_SUITE)/string $(BENCH_LIB)/parser ./
 vpath %.h	$(SRC) ../benchmarks
+vpath %.xml $(SRC)
+vpath %.hpre $(SRC)
+vpath %.hpost $(SRC)
+vpath %.spre $(SRC)
+vpath %.spost $(SRC)
 		
 program.so: shared.o 
 	$(CXX) -shared $< -o $@ $(CXXFLAGS) $(CVC4FLAGS) 
@@ -89,8 +94,9 @@ memory-test.out: $(MEMORY) $(MEMORY_TEST)
 playground-test.out: $(PLAYGROUND) $(TEST_RUNNER)
 	$(CXX) $^ -o $@ $(GTESTFLAGS) $(CVC4FLAGS) $(CXXFLAGS) $(LLVM_STATIC) 
 
-c-driver.hpp c-driver.cpp:
-	./../src/macrogen-script.sh c-driver
+$(TEMPLATES):
+%.cpp: %.xml %.hpre %.hpost %.spre %.spost
+	./../src/macrogen-script.sh $(basename $@)
 
 $(OBJ_TEST):
 $(OBJ):
@@ -102,7 +108,7 @@ clean:
 	@rm -vf *~ *.o *.out *.so
 	@rm -vf *.ll api-pattern.cpp
 	@rm -vf \#*\#
-	@rm -vf ../src/c-driver.{hpp,cpp}
+	@rm -vf ls ../src/c*-driver.*pp
 
 .PHONY: string-c
 string-c: $(LINUX_STR_LIB)
