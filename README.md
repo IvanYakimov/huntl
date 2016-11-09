@@ -1,5 +1,5 @@
 # README #
-Copyrigth 2016 [Ivan Yakimov](ivan.yakimov.research@yandex.ru)
+Copyrigth 2016 Ivan Yakimov
 
 ## About ##
 Huntl is a test generation tool based on dynamic symbolic exectuion.
@@ -10,9 +10,9 @@ It relies on:
 ## Background ##
 The symbolic execution (in context of test generation) was [invited](https://academic.microsoft.com/#/detail/2101512909) by King in 1976.
 
-The closest system to the Huntl are [EXE](https://academic.microsoft.com/#/detail/31771106) and [KLEE](https://klee.github.io/).
+The closest systems to the Huntl are [EXE](https://academic.microsoft.com/#/detail/31771106) and [KLEE](https://klee.github.io/).
 
-Also it provides innovate method of readability optimization (*conceptually*) like [this](https://academic.microsoft.com/#/detail/31771106).
+Also it provides a new (in context of symbolic exectuion) method of readability optimization (*conceptually*) like [this](https://academic.microsoft.com/#/detail/31771106).
 
 ## Examples ##
 We have tested this program against 12 Linux functions for [string processing](https://github.com/torvalds/linux/blob/master/lib/string.c) with **no modifications**. 
@@ -72,4 +72,4 @@ strcmp: &"ychmp"{\0} &"yhies"{\0} :=> -1
 strcmp: &"qeutu"{\0} &"cpalp"{\0} :=> 1
 strcmp: &"xeptv"{\0} &"yngmb"{\0} :=> -1
 ```
-As you can see, the optimized test suite is more readable and *less* expensive in terms of the "*Human Oralce Cost*"
+As you can see, the optimized test suite is more readable and *less* expensive in terms of the "*Human Oralce Cost*" than unoptimized one.
