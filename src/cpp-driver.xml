@@ -4,5 +4,13 @@
       <header> void cpp_alloca_$T(Ref res, $T allocated) </header>
       <body> Alloca &lt;$T>(res, allocated); </body>
     </func>
+    <func name = "cpp_binop">
+      <header> void cpp_binop_$T(Ref res, OpCode code, Flag flag, Ref arg1, $T op1, Ref arg2, $T op2) </header>
+      <body> Binop &lt;$T>(res, code, flag, arg1, op1, arg2, op2); </body>
+    </func>
+    <func name = "cpp_icmp">
+      <header> void cpp_icmp_$T(Ref res, Cond cond, Ref op1, $T v1, Ref op2, $T v2) </header>
+      <body> ICmp &lt;$T>(res, cond, op1, v1, op2, v2); </body>
+    </func>
   </template>
 </file>
