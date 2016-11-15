@@ -73,3 +73,5 @@ strcmp: &"qeutu"{\0} &"cpalp"{\0} :=> 1
 strcmp: &"xeptv"{\0} &"yngmb"{\0} :=> -1
 ```
 As you can see, the optimized test suite is more readable and *less* expensive in terms of the "*Human Oralce Cost*" than unoptimized one.
+
+Note: this output can be used to produce test-suite in the C language, as here: [Huntl Prototype](https://github.com/IvanYakimov/huntl-prototype)
