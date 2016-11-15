@@ -1,4 +1,4 @@
-#include "../../lib/llvoyager/built-in.h"
+#include "built-in.h"
 
 int func(int y, int z) {
 	return y && z;

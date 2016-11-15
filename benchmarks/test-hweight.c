@@ -1,6 +1,5 @@
 #include "built-in.h"
 #include "hweight.c"
-#include "sym-limits.h"
 #include <limits.h>
 
 //TODO: replace by macro OR generate

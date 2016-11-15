@@ -1,6 +1,5 @@
 // see http://stackoverflow.com/questions/27447865/understanding-the-simplest-llvm-ir
 #include "built-in.h"
-#include "sym-limits.h"
 
 void gen_inc(char x, char r);
 char inc(char x) {

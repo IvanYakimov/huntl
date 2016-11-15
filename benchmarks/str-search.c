@@ -1,5 +1,5 @@
-#include "../../lib/llvoyager/built-in.h"
-#include "../../lib/string/string.c"
+#include "built-in.h"
+#include "string.c"
 
 #warning "strXstr methods are hide as they do not work"
 void gen_strstr(const char *s1, const char *s2, char *res);

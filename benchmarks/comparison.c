@@ -1,5 +1,5 @@
-#include "../../lib/llvoyager/built-in.h"
-#include "../../lib/string/string.c"
+#include "built-in.h"
+#include "string.c"
 
 #warning "strcmp: select required & fails sometimes"
 void gen_strcmp(const char *cs, const char *ct, int res);

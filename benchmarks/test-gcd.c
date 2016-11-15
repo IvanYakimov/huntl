@@ -1,5 +1,4 @@
 #include "built-in.h"
-#include "sym-limits.h"
 #include "gcd.c"
 
 //TODO: replace by macro OR generate

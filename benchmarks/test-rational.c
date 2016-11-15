@@ -1,5 +1,4 @@
 #include "built-in.h"
-#include "sym-limits.h"
 #include <limits.h>
 
 #include "rational.c"

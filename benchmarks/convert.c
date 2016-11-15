@@ -1,5 +1,5 @@
-#include "../../lib/llvoyager/built-in.h"
-#include "../../lib/lib-string.c"
+#include "built-in.h"
+#include "lib-string.c"
 
 #warning "switch-case instruction must be implemented"
 /*

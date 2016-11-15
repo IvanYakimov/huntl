@@ -1,5 +1,5 @@
-#include "../../lib/string/string.c"
-#include "../../lib/llvoyager/built-in.h"
+#include "string.c"
+#include "built-in.h"
 
 void gen_match_wildcard(const char *pattern, const char *str, bool res);
 void test_match_wildcard() {

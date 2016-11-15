@@ -1,5 +1,5 @@
-#include "../../lib/llvoyager/built-in.h"
-#include "../../lib/string/string.c"
+#include "built-in.h"
+#include "string.c"
 
 #warning "strcpy: all OK"
 void gen_strcpy(char *dest, const char *src, char *res);
