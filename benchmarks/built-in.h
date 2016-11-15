@@ -23,6 +23,19 @@ void init_buff(char* buff, int len) {
   buff[len-1] = '\0';
 }
 
+void init_int_buff(int buff[], int len) {
+  for (int i = 0; i < len; i++) {
+    buff[i] = mksym_i32();
+  }
+}
+
+void cpy_int_buff(int dest[], const int src[], int len) {
+  for (int i = 0; i < len; i++) {
+    dest[i] = src[i];
+  }
+}
+
+
 #endif
 
 #ifndef __SYM_LIMITS__
