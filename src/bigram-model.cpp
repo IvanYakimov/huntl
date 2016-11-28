@@ -138,9 +138,31 @@ namespace interpreter {
 		assert (false and "not implemented");
 	}
 
+#include "options.hpp"
+  
 	char BigramModel::LowerByLower(char symbol) {
 		assert (std::islower(symbol));
-		char res = lbl_gen_.Successor(symbol);
+		char res;
+#ifdef ROULETTE_NEXT
+		res = lbl_gen_.Successor(symbol);
+#elif defined PURE_NEXT
+		//TODO: refactoring - best fit generation
+		auto raw = CharToIdx(symbol, Case::kLower);
+		int max = lbl_bigram_[raw][0],
+		  col = 0;
+		for (int i = 0; i < kAlphabetSize; i++) {
+		  if (max < lbl_bigram_[raw][i]) {
+		    max = lbl_bigram_[raw][i];
+		    col = i; }}
+		res = IdxToChar(col, Case::kLower);
+#elif defined RANDOM_NEXT
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution<char> dis('a', 'z');
+		res = dis(gen);
+#else
+		assert (fasle and "not implemented");
+#endif
 		assert (std::islower(res));
 		return res;
 	}

@@ -99,7 +99,10 @@ namespace interpreter {
 			assert (! "unexpected type of argument");
 	}
 
+#include "options.hpp"
+  
 	void ReadabilityOptimizer::HandleUnigram(SolutionPtr one) {
+#ifdef RANDOM_FIRST
 		IntegerPtr a_intsol = ToInteger(one);
 		HolderPtr a_holder = a_intsol->Get();
 		if (IsSymbolic(a_holder)) {
@@ -108,6 +111,7 @@ namespace interpreter {
 			SharedExpr a_eq_best = CharConstraint(Kind::EQUAL, a, best);
 			TryApplyConstraint(a_eq_best);
 		}
+#endif
 	}
 
 	void ReadabilityOptimizer::HandleBigram(SolutionPtr first, SolutionPtr second) {

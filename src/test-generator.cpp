@@ -26,6 +26,8 @@ namespace interpreter {
 
 	}
 
+#include "options.hpp"
+
 	//TODO: implement void function support
 	void TestGenerator::Do() {
 		SolutionListPtr arg_sols;
@@ -50,8 +52,13 @@ namespace interpreter {
 			assert (false and "the PC is unsatisfiable");
 
 		ReadabilityOptimizer optimizer(context_, arg_sols, ret_sol);
+		
+		#ifdef RESTRICTION_PASS
 		optimizer.RestrictionPass();
+		#ifdef CONCRETIZATION_PASS
 		optimizer.ConcretizationPass();
+		#endif
+		#endif
 
 		SolutionPrinter printer(context_, target_, arg_sols, ret_sol);
 		printer(file_);

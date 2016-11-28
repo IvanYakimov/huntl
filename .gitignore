@@ -5,3 +5,6 @@ docs/
 api-pattern.cpp
 *.ll
 .settings/
+*~
+*.tar.gz
+*.trace
