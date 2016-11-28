@@ -25,6 +25,9 @@ vpath %.h $(BENCH)
 huntl.so: $(OBJ)
 	$(CXX) -shared $^ -o $@ $(CVC4FLAGS) $(CXXFLAGS) $(LLVM_CXX)
 
+estimate.out: estimate.o bigram-model.o
+	$(CXX) $^ -o $@ 
+
 $(OBJ):
 %.o: %.cpp %.hpp
 	$(CXX) -c $< -o $@ $(CXXFLAGS) 
