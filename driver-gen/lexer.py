@@ -14,9 +14,9 @@ class Array:
     def __str__(self):
         return '{' + str(self.data)[1:-1] + '}'
     def Initializer(self, target):
-        return "int " + target + "[] = " + str(self) + ";" + os.linesep
+        return "char " + target + "[] = " + str(self) + ";" + os.linesep
     def Declaration(self, target):
-        return "int *" + target + " = NULL;" + os.linesep
+        return "char *" + target + " = NULL;" + os.linesep
 
 class Integer:
     def __init__(self, value):
@@ -26,6 +26,8 @@ class Integer:
         return str(self.value)
     def Initializer(self, target):
         return "int " + target + " = " + str(self) + ";" + os.linesep
+    def Declaration(self, target):
+        return "int " + target + " = 0;" + os.linesep
 
 class Arrow:
     def __init__(self):

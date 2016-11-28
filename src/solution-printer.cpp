@@ -1,5 +1,7 @@
 #include "solution-printer.hpp"
 
+#include "options.hpp"
+
 namespace interpreter {
 	using memory::HolderPtr;
 
@@ -86,15 +88,18 @@ namespace interpreter {
 		}
 		file << "}";
 	}
-
+  
 	void SolutionPrinter::PrintSolution(SolutionPtr sol, std::ostream& file) {
 		if (utils::instanceof<Integer>(sol)) {
 			IntegerPtr integer = std::dynamic_pointer_cast<Integer>(sol);
 			MetaInt val = Concretize(context_.Solver(), integer->Get());
-			if (val.getBitWidth() > 8)
-				file << val;
+#ifdef CHAR_PRINTING
+			if (val.getBitWidth() == 8)
+			  PrintASCII(val, file);
 			else
-				PrintASCII(val, file);
+#endif
+			  file << val;
+				
 		} else if (utils::instanceof<Pointer>(sol)) {
 			PointerPtr pointer = std::dynamic_pointer_cast<Pointer>(sol);
 			file << "&";
@@ -102,9 +107,11 @@ namespace interpreter {
 			//assert (! "not impl");
 		} else if (utils::instanceof<Array>(sol)) {
 			ArrayPtr array = std::dynamic_pointer_cast<Array>(sol);
+#ifdef STRING_PRINTING
 			if (array->IsString())
 				PrintString(array, file);
 			else
+#endif
 				PrintArbitraryArray(array, file);
 		} else
 			assert (! "unexpected type of argument");

@@ -9,3 +9,7 @@
 #define PURE_NEXT
 //#define ROULETTE_NEXT
 //#define RANDOM_NEXT
+
+// PRINTING
+// #define CHAR_PRINTING
+// #define STRING_PRINTING

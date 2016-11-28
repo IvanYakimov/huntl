@@ -43,6 +43,7 @@ class Parser:
             arrow, items = self.parseArrow(items)
             res, items = self.parseRes(items)
             case = TestCase(fname, args, res)
+            print "//", str(case)
             suite.append(case)
         return suite
                         
