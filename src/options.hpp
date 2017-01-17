@@ -11,5 +11,5 @@
 //#define RANDOM_NEXT
 
 // PRINTING
-// #define CHAR_PRINTING
-// #define STRING_PRINTING
+#define CHAR_PRINTING
+#define STRING_PRINTING

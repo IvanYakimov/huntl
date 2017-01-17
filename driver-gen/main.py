@@ -28,6 +28,7 @@ def main(argv):
     suite = parser.do(inFile)
     print "//parsed"
     gen.do(suite, outFile)
+    print "//generated"
     for f in opened:
         assert (f)
         f.close()

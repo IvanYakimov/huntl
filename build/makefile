@@ -38,4 +38,4 @@ $(C_BENCH):
 
 .PHONY: clean
 clean:
-	@rm -vf *~ *.o *.so *.ll \#*\#
+	@rm -vf *~ *.o *.so *.ll \#*\# *gcov *gcda *gcno *c
