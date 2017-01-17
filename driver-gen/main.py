@@ -12,7 +12,7 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv,"hi:o:", ["help","ifile=","ofile="])
     except getopt.GetoptError:
-        print 
+        print "Cannot parse the arguments"
         sys.exit(errno.EIVNAL)
     for opt, arg in opts:
         if opt == '-h':
