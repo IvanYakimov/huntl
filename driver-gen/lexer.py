@@ -1,6 +1,12 @@
 import re
 import os
 
+class LexerError(Exception):
+    def __init__(self, msg):
+        self.msg = msg
+    def __str__(self):
+        return repr(self.msg)
+
 class Id:
     def __init__(self, name):
         self.name = name
@@ -49,4 +55,4 @@ class Lexer:
         elif string == ":=>":
             return Arrow()
         else:
-            exit(1)
+            raise LexerError(string)
