@@ -18,17 +18,23 @@ ofile=""
 silent=0
 
 # Note: "--" means end of options!
-while getopts "hsf:" opt; do
+while getopts "hsf:o:" opt; do
     case "$opt" in
 	h) show_help && exit 0;;
 	s) silent=1;;
 	f) ifile=$OPTARG;;
+	o) ofile=$OPTARG;;
     esac
 done
 
 shift $((OPTIND-1))
 [ "$1" = "--" ] && shift
 # now we can use $@ to get POSIX operands
+
+if [[ -n $ofile ]]; then
+    echo "Output redirected to" $ofile
+    exec 2>$ofile
+fi
 
 if [[ -z $ifile ]]; then
     echo "Target name is empty"
