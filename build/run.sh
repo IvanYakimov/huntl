@@ -2,7 +2,7 @@
 target="$1"
 
 helper() {
-    opt -load=./huntl.so < $1 -ll-voyager 1>/dev/null
+    opt -load=./huntl.so -ll-voyager 1>/dev/null
 }
 
 show_help() {
@@ -18,11 +18,11 @@ ofile=""
 silent=0
 
 # Note: "--" means end of options!
-while getopts "hsf:o:" opt; do
+while getopts "hsi:o:" opt; do
     case "$opt" in
 	h) show_help && exit 0;;
 	s) silent=1;;
-	f) ifile=$OPTARG;;
+	i) ifile=$OPTARG;;
 	o) ofile=$OPTARG;;
     esac
 done
@@ -32,18 +32,25 @@ shift $((OPTIND-1))
 # now we can use $@ to get POSIX operands
 
 if [[ -n $ofile ]]; then
-    echo "Output redirected to" $ofile
-    exec 2>$ofile
+    if [[ -f $ofile ]] || ! [[ -e $ofile ]]; then
+	echo "Output redirected to" $ofile
+	exec 2>$ofile
+    else
+	echo "Cannot redirect output to '" $ofile "'"
+	exit 0
+    fi
 fi
 
-if [[ -z $ifile ]]; then
-    echo "Target name is empty"
-    show_help
-else
-    if ((silent == 0)); then
-	helper $ifile
-    else
-	echo "// SILENT MODE ENABLED"
-	(helper $ifile) | grep ":=>"
+if ! [[ -z $ifile ]]; then
+    if [[ -f $ifile ]]; then
+	echo "Input redirected from" $ifile
+	exec 0<$ifile
     fi
+fi
+
+if ((silent == 0)); then
+    helper $ifile
+else
+    echo "// SILENT MODE ENABLED"
+    (helper $ifile) | grep ":=>"
 fi
