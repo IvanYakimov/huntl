@@ -52,7 +52,8 @@ namespace interpreter {
 			assert (false and "the PC is unsatisfiable");
 
 		ReadabilityOptimizer optimizer(context_, arg_sols, ret_sol);
-		
+
+		optimizer.IntOptPass();
 		#ifdef RESTRICTION_PASS
 		optimizer.RestrictionPass();
 		#ifdef CONCRETIZATION_PASS
