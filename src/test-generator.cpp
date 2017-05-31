@@ -53,7 +53,7 @@ namespace interpreter {
 
 		ReadabilityOptimizer optimizer(context_, arg_sols, ret_sol);
 
-		optimizer.IntOptPass();
+		//optimizer.IntOptPass();
 		#ifdef RESTRICTION_PASS
 		optimizer.RestrictionPass();
 		#ifdef CONCRETIZATION_PASS

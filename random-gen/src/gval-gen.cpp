@@ -2,21 +2,24 @@
 
 using namespace llvm;
 
-char buff1[] = "Hello";
-char buff2[] = " world!";
-
 GValGenPtr GStrGen::Create() {
   return std::make_shared<GStrGen>();
 }
 
 void GStrGen::Update() {
-  static int num = 0;
+  int num = std::rand() % 3;
   if (num == 0) {
-    num++;
-  value = PTOGV((void*)buff1);
+    for (int i = 0; i < sizeof(buffer_); i++) {
+      int k = std::rand() % sizeof(symbols_);
+      char val = symbols_[k];
+      buffer_[i] = val;
+    }
+    value = PTOGV((void*)buffer_);
+  } else if (num == 1){
+    value = PTOGV((void*)"");
+  } else if (num == 2) {
+    value = PTOGV((void*)"");
   } else {
-    value = PTOGV((void*)0);
+    assert (not "implemented");
   }
-    
-  //  value = PTOGV((void*)buffer_);
 }

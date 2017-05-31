@@ -2,6 +2,9 @@
 #define __GVAL_GEN_HPP__
 
 #include <memory>
+#include <cstdlib>
+#include <iostream>
+#include <ctime>
 
 #include "llvm/ExecutionEngine/GenericValue.h"
 
@@ -26,7 +29,8 @@ public:
   static GValGenPtr Create();
   virtual void Update();
 private:
-  char buffer_[10] = "hello ";
+  char buffer_[10] = "";
+  char symbols_[10] = {'a','f','k','v','e',' ',' ','\0','\0','\0'};
 };
 
 #endif

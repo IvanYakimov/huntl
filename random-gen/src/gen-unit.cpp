@@ -13,12 +13,9 @@ void PrintGenericValue(raw_ostream &output, GenericValue gval) {
 }
 
 void GenUnit::Run(Function& func) {
+  std::srand(std::time(0));
   std::string ostatus;
   raw_fd_ostream output("tmp.txt", ostatus, sys::fs::OpenFlags::F_RW);
-  //TODO: s handling
-  
-  //  raw_fd_ostream output(1, false, false);
-  //  output << "\n\n\nHELLO !!!!\n";
 
   output << "//##################################\n";
   output << "// Test suite for the " << func.getName() << " function:\n";
@@ -55,17 +52,7 @@ void GenUnit::Run(Function& func) {
     i++;
 
     PrintGenericValue(output, gval);
-    /*
-    void* tmp = GVTOP(gval);
-    char* s = (char*)tmp;
-    if (s != nullptr)
-      output << s << " ";
-    else
-      output << "nullptr ";
-    */
   }
-
-  gargs[1] = GenericValue(0);
 
   output << ":=> ";
 
@@ -80,15 +67,6 @@ void GenUnit::Run(Function& func) {
     auto ret_ty = func.getFunctionType()->getReturnType();
     if (ret_ty->isPointerTy()) {
       PrintGenericValue(output, gres);
-      /*
-      void* res = GVTOP(gres);
-      char* str = (char*)res;
-      errs() << str;
-      if (str != nullptr)
-	output << str << " ";
-      else
-	output << "nullptr ";
-      */
     } else if (ret_ty->isIntegerTy(32)) {
       errs() << gres.IntVal;
     }
@@ -98,7 +76,7 @@ void GenUnit::Run(Function& func) {
     wait(&wstatus);
     // Handle the waiting status:
     if (WIFEXITED(wstatus)) {
-      //errs() << "\nOK";
+      ;
     } else {
       output << "CRASH";
     }
@@ -110,25 +88,6 @@ void GenUnit::Run(Function& func) {
   // Else report the error
 
   output << "\n";
-  
-  /*
-    Module *mod = func.getParent();
-    ExecutionEngine *jit = EngineBuilder(mod).create();
-    char buff[80] = "Hello ";
-    char target[] = "world!";
-    std::vector<GenericValue> args(2);
-    args[0] = PTOGV(buff);
-    args[1] = PTOGV(target);
-    GenericValue gres = jit->runFunction(&func, args);
-    //  void* res = GVTOP(gres);
-    //  int *val = (int*)res;
-  
-    errs() << "val = " << gres.IntVal << "\n";
-    //char* str = (char*)res;
-    //  errs() << str;
-
-    errs() << "\nend\n";
-  */
 
   errs() << "// Test suite generated successfully\n";
 }
