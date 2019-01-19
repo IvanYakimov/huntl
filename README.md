@@ -2,21 +2,25 @@
 Copyrigth 2016 Ivan Yakimov
 
 ## About ##
-Huntl is a test generation tool based on dynamic symbolic exectuion.
-It relies on:
+Huntl is an automated code-based test generation tool.
+It relies on Dynamic Symbolic Execution (DSE) to guide process of program evaluation along the set of desired paths. 
+The technology behind it:
 * LLVM compiler infrastructure
 * CVC4 solver.
 
-## Background ##
-The symbolic execution (in context of test generation) was [invited](https://academic.microsoft.com/#/detail/2101512909) by King in 1976.
+## The main feature
 
-The closest systems to the Huntl are [EXE](https://academic.microsoft.com/#/detail/31771106) and [KLEE](https://klee.github.io/).
+Modern advanced DSE generators tend to produce dozens of almost unreadable test cases. This tool provides test data optimization method that drastically improves readability of produced test inputs. You can check out article about this new method here: [in Russian](http://www.ispras.ru/proceedings/isp_28_2016_5/isp_28_2016_5_227/)
 
-Also it provides a new (in context of symbolic exectuion) method of readability optimization (*conceptually*) like [this](https://academic.microsoft.com/#/detail/31771106).
+## Background
+Symbolic Execution (in context of test generation) was [introduced](https://academic.microsoft.com/#/detail/2101512909) by King in 1976.
 
-## Examples ##
+In terms of realization the closest systems to the Huntl are [EXE](https://academic.microsoft.com/#/detail/31771106) and [KLEE](https://klee.github.io/).
+
+## Examples
 We have tested this program against 12 Linux functions for [string processing](https://github.com/torvalds/linux/blob/master/lib/string.c) with **no modifications**. 
-###Target###
+
+Let's say we have `strcmp` function as a target.
 ```
 int strcmp(const char *cs, const char *ct)
 {
@@ -33,7 +37,43 @@ int strcmp(const char *cs, const char *ct)
 	return 0;
 }
 ```
-###Unoptimized output###
+
+Before start generating test inputs we should feed the generator a test driver.
+Test driver is a simple program that declares type of function arguments and its result.
+The declaration has name `gen_<NAME>` where NAME is a name of the target function.
+In case of strcmp we have declared `gen_strcmp`. 
+First two arguments of `gen_strcmp` are the same as `strcmp`: `cs` and `ct`.
+The last argument `res` has a return type of the target funciton.
+This arg tells the DSE engine which type we expect to be returned from the target `strcmp`.
+
+```
+void gen_strcmp(const char *cs, const char *ct, int res);
+```
+
+The test driver also defines the way execution of the target function is approached.
+First we put a restriction to the length of the input and output strings `s1` and `s2`.
+Function `init_buff` intializes a fixed-length array of symbolic values.
+So, each symbolic value inside `s1/s2` despite the null-termiator is not restricted to have any concrete value,
+as they are symbolic values.
+After the inputs initialization proceeds a call to the actual `strcmp` function.
+The target `strcmp` function is called as it is - without any modifications in source code.
+To produce test data `gen_strcmp` is called at the end of the test drive source code.
+
+```
+void test_strcmp() {
+	const size_t len = 6;
+	char s1[len], s2[len];
+	init_buff(s1, len); init_buff(s2, len);
+	int res = strcmp(s1,s2);
+	gen_strcmp(s1,s2,res);
+}
+```
+
+### Unoptimized output
+
+In the output below each line represents test data leading program along a unique execution path.
+As you can see it is hard to evaluate the meaning of each line.
+
 ```
 strcmp: &""{\0,\0,\0,\0,\0,\0} &""{\0,\0,\0,\0,\0,\0} :=> 0
 strcmp: &"\x02"{\0,\0,\0,\0,\0} &"\x02"{\0,\0,\0,\0,\0} :=> 0
@@ -52,8 +92,9 @@ strcmp: &"\x02"{\0,\0,\0,\0,\0} &"\x02\x01"{\0,\0,\0,\0} :=> -1
 strcmp: &"\x014"{\0,\0,\0,\0,\0} &"\x01"{\0,\0,\0,\0,\0} :=> 1
 strcmp: &""{\0,\0,\0,\0,\0,\0} &"\x01"{\0,\0,\0,\0,\0} :=> -1
 ```
-##vs.##
-###Optimized one###
+
+### Optimized one
+
 ```
 strcmp: &""{\0,p,i,m,s,\0} &""{\0,p,e,l,a,\0} :=> 0
 strcmp: &"w"{\0,p,w,h,\0} &"w"{\0,p,i,b,\0} :=> 0
