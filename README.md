@@ -21,7 +21,7 @@ In terms of realization the closest systems to the Huntl are [EXE](https://acade
 We have tested this program against 12 Linux functions for [string processing](https://github.com/torvalds/linux/blob/master/lib/string.c) with **no modifications**. 
 
 Let's say we have `strcmp` function as a target.
-```
+``` C
 int strcmp(const char *cs, const char *ct)
 {
 	unsigned char c1, c2;
@@ -46,7 +46,7 @@ First two arguments of `gen_strcmp` are the same as `strcmp`: `cs` and `ct`.
 The last argument `res` has a return type of the target funciton.
 This arg tells the DSE engine which type we expect to be returned from the target `strcmp`.
 
-```
+``` C
 void gen_strcmp(const char *cs, const char *ct, int res);
 ```
 
@@ -59,7 +59,7 @@ After the inputs initialization proceeds a call to the actual `strcmp` function.
 The target `strcmp` function is called as it is - without any modifications in source code.
 To produce test data `gen_strcmp` is called at the end of the test drive source code.
 
-```
+``` C
 void test_strcmp() {
 	const size_t len = 6;
 	char s1[len], s2[len];
@@ -74,7 +74,7 @@ void test_strcmp() {
 In the output below each line represents test data leading program along a unique execution path.
 As you can see it is hard to evaluate the meaning of each line.
 
-```
+``` Haskell
 strcmp: &""{\0,\0,\0,\0,\0,\0} &""{\0,\0,\0,\0,\0,\0} :=> 0
 strcmp: &"\x02"{\0,\0,\0,\0,\0} &"\x02"{\0,\0,\0,\0,\0} :=> 0
 strcmp: &"\x02\x01"{\0,\0,\0,\0} &"\x02\x01"{\0,\0,\0,\0} :=> 0
@@ -95,7 +95,7 @@ strcmp: &""{\0,\0,\0,\0,\0,\0} &"\x01"{\0,\0,\0,\0,\0} :=> -1
 
 ### Optimized one
 
-```
+``` Haskell
 strcmp: &""{\0,p,i,m,s,\0} &""{\0,p,e,l,a,\0} :=> 0
 strcmp: &"w"{\0,p,w,h,\0} &"w"{\0,p,i,b,\0} :=> 0
 strcmp: &"jj"{\0,p,t,\0} &"jj"{\0,p,i,\0} :=> 0
