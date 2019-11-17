@@ -131,7 +131,7 @@ namespace interpreter {
 		if (e_type.isBitVector())
 			kind = solver::Kind::EQUAL;
 		else if (e_type.isBoolean())
-			kind = solver::Kind::IFF;
+			kind = solver::Kind::EQUAL;
 		auto constraint = context_.Solver().MkExpr(kind, v, e);
 		// Add constraint to PC
 		context_.Solver().Constraint(constraint);
@@ -149,7 +149,7 @@ namespace interpreter {
 		// ite (cond == 1) true false
 		auto ite = context_.Solver().MkExpr(Kind::ITE, cond_is_true, BoolTrue(), BoolFalse());
 		// (ite (cond == 1) true false) <=> v
-		auto final_constraint = context_.Solver().MkExpr(Kind::IFF, ite, v);
+		auto final_constraint = context_.Solver().MkExpr(Kind::EQUAL, ite, v);
 		context_.Solver().Constraint(final_constraint);
 		if (!context_.Solver().IsSat())
 			exit(EXIT_SUCCESS);
