@@ -2,7 +2,8 @@
 target="$1"
 
 helper() {
-    opt -load=./huntl.so -ll-voyager 1>/dev/null
+    echo "Launching the task"
+    opt-3.5 -load=./huntl.so -ll-voyager 1>/dev/null
 }
 
 show_help() {
