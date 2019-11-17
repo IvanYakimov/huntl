@@ -8,6 +8,10 @@ The technology behind it:
 * LLVM compiler infrastructure
 * CVC4 solver.
 
+## Build
+
+To build this package use `Dockerfile` in the root of the repository.
+
 ## The main feature
 
 Modern advanced DSE generators tend to produce dozens of almost unreadable test cases. This tool provides test data optimization method that drastically improves readability of produced test inputs. You can check out article about this new method here: [in Russian](http://www.ispras.ru/proceedings/isp_28_2016_5/isp_28_2016_5_227/)
