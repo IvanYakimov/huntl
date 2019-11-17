@@ -57,7 +57,7 @@ namespace interpreter {
     SharedExpr a_x_z = context_.Solver().MkExpr(Kind::AND, x_sge_a, x_sle_z);
     SharedExpr A_x_Z = context_.Solver().MkExpr(Kind::AND, x_sge_A, x_sle_Z);
     SharedExpr maybe_x_alpha = context_.Solver().MkExpr(Kind::OR, a_x_z, A_x_Z);
-    SharedExpr x_indeed_alpha = context_.Solver().MkExpr(Kind::IFF, maybe_x_alpha, truth);
+    SharedExpr x_indeed_alpha = context_.Solver().MkExpr(Kind::EQUAL, maybe_x_alpha, truth);
     return TryApplyConstraint(x_indeed_alpha);
   }
 
@@ -66,7 +66,7 @@ namespace interpreter {
     SharedExpr x_sge_space = CharConstraint(Kind::BITVECTOR_SGE, x, ' ');
     SharedExpr x_sle_tilda = CharConstraint(Kind::BITVECTOR_SLE, x, '~');
     SharedExpr maybe_x_readable = context_.Solver().MkExpr(Kind::AND, x_sge_space, x_sle_tilda);
-    SharedExpr x_indeed_readable = context_.Solver().MkExpr(Kind::IFF, maybe_x_readable, truth);
+    SharedExpr x_indeed_readable = context_.Solver().MkExpr(Kind::EQUAL, maybe_x_readable, truth);
     return TryApplyConstraint(x_indeed_readable);
   }
 
@@ -128,7 +128,7 @@ namespace interpreter {
 	//std::cerr << "(" << a << " -> " << best_next << ")";
 	SharedExpr best_next_sym = context_.Solver().MkConst(BitVec(8, InfiniteInt(best_next)));
 	SharedExpr b_maybe_best = context_.Solver().MkExpr(Kind::EQUAL, b_sym, best_next_sym);
-	//SharedExpr b_indeed_best = context_.Solver().MkExpr(Kind::IFF, b_maybe_best, truth);
+	//SharedExpr b_indeed_best = context_.Solver().MkExpr(Kind::EQUAL, b_maybe_best, truth);
 	TryApplyConstraint(b_maybe_best);
 	//std::cerr << b_maybe_best << std::endl;
       } else if (std::isupper(a)) {
