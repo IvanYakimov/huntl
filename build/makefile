@@ -8,7 +8,7 @@ CXX = g++
 CXXFLAGS = -fdiagnostics-color=always -g -std=c++14 -fpic -rdynamic -Wno-deprecated
 CVC4FLAGS = -lcvc4 -lgmp  
 LLVM_CXX = $(filter-out -g -fno-exceptions -O2 -std=c++11, $(shell llvm-config-3.5 --cxxflags))
-CLANG = clang -S -emit-llvm -O0 -Wint-conversion
+CLANG = clang-3.5 -S -emit-llvm -O0 -Wint-conversion
 
 SRC = ../src
 BENCH =	../benchmarks
